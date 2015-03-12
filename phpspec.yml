@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: Ghi
+        psr4_prefix: Ghi
+        src_path: app
