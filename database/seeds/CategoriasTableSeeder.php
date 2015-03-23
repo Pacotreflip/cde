@@ -1,15 +1,23 @@
 <?php
 
+use Ghi\Almacenes\Domain\Categoria;
 use Illuminate\Database\Seeder;
-
-// composer require laracasts/testdummy
-use Laracasts\TestDummy\Factory as TestDummy;
 
 class CategoriasTableSeeder extends Seeder {
 
     public function run()
     {
-        // TestDummy::times(20)->create('App\Post');
+        Categoria::create([
+            'descripcion' => 'Equipo Mayor'
+        ]);
+
+        Categoria::create([
+            'descripcion' => 'Equipo Menor'
+        ]);
+
+        Categoria::create([
+            'descripcion' => 'Equipo de Transporte'
+        ]);
     }
 
 }

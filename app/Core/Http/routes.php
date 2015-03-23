@@ -44,32 +44,6 @@ get('auth/logout', [
 ]);
 
 
-//Route::group(['before' => 'auth|tenant'], function()
-//{
-//    /**
-//     * Almacenes
-//     */
-//
-//    Route::get('almacenes', [
-//        'as' => 'almacenes.index',
-//        'uses' => 'Almacenes\AlmacenesController@index'
-//    ]);
-//
-//    Route::get('almacenes/registro', [
-//        'as' => 'almacenes.create',
-//        'uses' => 'Almacenes\AlmacenesController@create'
-//    ]);
-//
-//    Route::post('almacenes/registro', [
-//        'as' => 'almacenes.store',
-//        'uses' => 'Almacenes\AlmacenesController@store'
-//    ]);
-//
-//    Route::get('almacenes/{id}', [
-//        'as' => 'almacenes.show',
-//        'uses' => 'Almacenes\AlmacenesController@show'
-//    ]);
-//
 //    /**
 //     * Conceptos
 //     */
@@ -81,8 +55,8 @@ get('auth/logout', [
 //
 //});
 //
-//Route::group(['prefix' => 'api'], function()
-//{
+Route::group(['prefix' => 'api'], function()
+{
 ////    \TenantContext::setConnectionName('SAO1814_DEVELOP');
 ////    \TenantContext::setTenantId(1);
 ////    if ( ! Auth::check())
@@ -94,6 +68,7 @@ get('auth/logout', [
 //
 //    get('obras', 'Api\ObrasController@lists');
 //
-//    get('conceptos/{id}', 'Api\ConceptosController@show');
-//    get('conceptos', 'Api\ConceptosController@lists');
-//});
+    get('conceptos/{id}', 'Api\ConceptosController@show');
+
+    get('conceptos', 'Api\ConceptosController@lists');
+});

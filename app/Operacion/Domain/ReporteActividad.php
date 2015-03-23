@@ -1,8 +1,7 @@
 <?php namespace Ghi\Operacion\Domain;
 
 use Ghi\Core\App\Exceptions\ReglaNegocioException;
-use Ghi\Core\Domain\Almacenes\AlmacenMaquinaria;
-use Ghi\Core\Domain\Obras\Obra;
+use Ghi\Almacenes\Domain\AlmacenMaquinaria;
 use Ghi\Core\Domain\Usuarios\User;
 use Ghi\Operacion\Domain\Events\ReporteHorasSeHaRegistrado;
 use Ghi\Operacion\Domain\Events\ReporteActividadSeHaRegistrado;
@@ -15,6 +14,11 @@ use Laracasts\Presenter\PresentableTrait;
 class ReporteActividad extends Model {
 
     use PresentableTrait;
+
+    /**
+     * Numero limite de horas que pueden ser reportadas en un dia
+     */
+    const LIMITE_HORAS_DIA = 24;
 
     /**
      * @var string
@@ -40,22 +44,20 @@ class ReporteActividad extends Model {
     /**
      * @var array
      */
+    protected $casts = [
+        'cerrado' => 'boolean',
+        'conciliado' => 'boolean',
+    ];
+
+    /**
+     * @var array
+     */
     protected $dates = ['fecha'];
 
     /**
      * @var string
      */
     protected $presenter = ReporteActividadPresenter::class;
-
-    /**
-     * Obra a la que pertenece el reporte actual
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function obra()
-    {
-        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
-    }
 
     /**
      * Almacen maquina al que pertenece el reporte actual
@@ -87,19 +89,6 @@ class ReporteActividad extends Model {
         return $this->belongsTo(User::class, 'creado_por', 'usuario');
     }
 
-//    /**
-//     * @param $value
-//     */
-//    public function setFechaAttribute($value)
-//    {
-//        if (is_object($value))
-//        {
-//            $this->attributes['fecha'] = $value;
-//        }
-//
-//        $this->attributes['fecha'] = date('Y-m-d',(strtotime($value)));
-//    }
-
     /**
      * Crea un reporte de actividades
      *
@@ -111,50 +100,51 @@ class ReporteActividad extends Model {
     }
 
     /**
+     * Identifica si las horas diarias limite del reporte son superadas al reportar mas actividades
+     *
      * @param $cantidad
      * @throws LimiteDeHorasSuperadoException
      */
-    public function verificaLimiteHorasDiarias($cantidad)
+    public function superaLimiteHorasDiarias($cantidad)
     {
-        if ($this->horas->sum('cantidad') + $cantidad > 24)
+        if ($this->actividades->sum('cantidad') + $cantidad > static::LIMITE_HORAS_DIA)
         {
-            throw (new LimiteDeHorasSuperadoException)->setHorasActuales($this->horas->sum('cantidad'));
+            throw (new LimiteDeHorasSuperadoException)->setHorasActuales($this->actividades->sum('cantidad'));
         }
     }
 
     /**
-     * @param $horometroFinal
-     * @param $kilometrajeFinal
      * @return $this
      * @throws ReglaNegocioException
      * @throws ReporteOperacionCerradoException
      */
-    public function cierraOperacion($horometroFinal, $kilometrajeFinal)
+    public function cerrar()
     {
         if ($this->cerrado)
         {
             throw new ReporteOperacionCerradoException;
         }
 
-        if ($this->horometro_inicial && $this->horometro_inicial > $horometroFinal)
+        if ($this->horometro_inicial && $this->horometro_inicial > $this->horometro_final)
         {
             throw new ReglaNegocioException('El horometro final no puede ser menor al inicial.');
         }
 
-        if ($this->kilometraje_inicial && $this->kilometraje_inicial > $kilometrajeFinal)
+        if ($this->kilometraje_inicial && $this->kilometraje_inicial > $this->kilometraje_final)
         {
             throw new ReglaNegocioException('El kilometraje final no puede ser menor al inicial.');
         }
 
-        if ($this->horas()->count() == 0)
+        if ($this->actividades()->count('cantidad') == 0)
         {
-            throw new ReglaNegocioException('El reporte no tiene horas reportadas.');
+            throw new ReglaNegocioException('El reporte no contiene actividades reportadas.');
         }
 
         $this->cerrado = true;
-        $this->horometro_final = $horometroFinal;
-        $this->kilometraje_final = $kilometrajeFinal;
+
+        $this->save();
 
         return $this;
     }
+
 }

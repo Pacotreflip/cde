@@ -1,13 +1,18 @@
-@extends ('app')
+@extends('app')
 
-@section ('content')
+@section('nav-sub')
+    @include('partials.nav-sub', ['almacen' => $reporte->almacen])
+@endsection
+
+@section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', [$reporte->almacen->id_almacen]) }}">{{ $reporte->almacen->descripcion }}</a></li>
         <li><a href="{{ route('reportes.index', [$reporte->almacen->id_almacen]) }}">Reportes de actividad</a></li>
         <li class="active">{{ $reporte->present()->fecha }}</li>
     </ol>
 
-    <h1>Reporte de Actividades <small>{{ $reporte->present()->fecha }}</small></h1>
+    <h1 class="page-header">Reporte de Actividades</h1>
 
     <div class="row">
         <div class="col-sm-12">
@@ -75,12 +80,12 @@
                     ['class' => 'btn btn-sm btn-primary pull-right']) !!}
             </p>
         @endunless
-        <h1>Actividades Reportadas</h1>
+        <h3>Actividades Reportadas</h3>
     </div>
 
     @if(count($reporte->actividades))
         <div class="panel panel-default">
-                @include('reportes.partials.actividades', ['actividades' => $reporte->actividades])
+                @include('reportes.partials.actividades', ['reporte' => $reporte])
         </div>
     @else
         <p class="alert alert-warning"><strong>No existen actividades reportadas.</strong></p>

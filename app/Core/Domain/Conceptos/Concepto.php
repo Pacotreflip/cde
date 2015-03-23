@@ -5,6 +5,9 @@ use Laracasts\Presenter\PresentableTrait;
 
 class Concepto extends Model {
 
+    const CONCEPTO_FACTURABLE = 1;
+    const CONCEPTO_MEDIBLE = 3;
+
     use PresentableTrait;
 
     /**
@@ -43,8 +46,7 @@ class Concepto extends Model {
      */
     public function esMedible()
     {
-        if ($this->concepto_medible == 3 || $this->concepto_medible == 1)
-        {
+        if ($this->concepto_medible == 3 || $this->concepto_medible == 1) {
             return true;
         }
 
@@ -56,11 +58,11 @@ class Concepto extends Model {
      */
     public function esMaterial()
     {
-        if ($this->id_material)
-        {
+        if ($this->id_material) {
             return true;
         }
 
         return false;
     }
+
 }

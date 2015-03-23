@@ -15,4 +15,5 @@ class Fractal extends Facade {
     {
         return 'fractal.manager';
     }
+
 }

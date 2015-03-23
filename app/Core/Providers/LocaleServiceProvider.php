@@ -13,4 +13,5 @@ class LocaleServiceProvider extends ServiceProvider {
     {
         setlocale(LC_TIME, 'es_MX.UTF8');
     }
+
 }

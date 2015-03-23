@@ -3,59 +3,68 @@
 interface ConceptoRepository {
 
     /**
+     * Obtiene un concepto por su id
+     *
+     * @param $idConcepto
+     * @return mixed
+     */
+    public function getById($idConcepto);
+
+    /**
+     * Obtiene todos los conceptos de una obra
+     *
+     * @return mixed
+     */
+    public function getAll();
+
+    /**
+     * Obtiene los descendientes de un concepto
+     *
      * @param $idObra
      * @param $idConcepto
      * @return mixed
      */
-    public function findById($idObra, $idConcepto);
+    public function getDescendantsOf($idObra, $idConcepto);
 
     /**
+     * Obtiene los conceptos raiz del presupuesto de obra
+     *
      * @param $idObra
      * @return mixed
      */
-    public function findAll($idObra);
+    public function getRootLevels($idObra);
 
     /**
-     * @param $idObra
-     * @param $idConcepto
-     * @return mixed
-     */
-    public function findDescendantsOf($idObra, $idConcepto);
-
-    /**
-     * @param $idObra
-     * @return mixed
-     */
-    public function findRootLevels($idObra);
-
-    /**
+     * Obtiene los ancestros de un concepto
+     *
      * @param $idObra
      * @param $idConcepto
      * @return mixed
      */
-    public function findAncestorsOf($idObra, $idConcepto);
+    public function getAncestorsOf($idObra, $idConcepto);
 
     /**
      * Obtiene una lista de todos los niveles del presupuesto de obra
-     * excluyendo los niveles que son descendientes de conceptos medibles
+     * hasta llegar a los niveles de conceptos medibles
+     *
      * @param $idObra
      */
     public function getConceptosList($idObra);
 
     /**
-     * Obtiene todos los conceptos que son medibles
-     * @param $idObra
+     * Obtiene todos los conceptos que son medibles/facturables
+     *
      * @return mixed
      */
-    public function findOnlyMedibles($idObra);
+    public function getMedibles();
 
     /**
-     * Realiza una busqueda por descripcion o clave
-     * @param $idObra
+     * Realiza una busqueda de conceptos por descripcion o clave
+     *
      * @param $search
      * @param array $filters
      * @return
      */
-    public function search($idObra, $search, array $filters);
+    public function search($search, array $filters);
 
 }

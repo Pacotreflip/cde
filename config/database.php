@@ -46,7 +46,7 @@ return [
 
 	'connections' => [
 
-		'generales' => [
+		'sqlite' => [
 			'driver'   => 'sqlite',
 			'database' => storage_path().'/database.sqlite',
 			'prefix'   => '',
@@ -63,6 +63,15 @@ return [
 			'prefix'    => '',
 			'strict'    => false,
 		],
+
+        'generales' => [
+            'driver'   => 'sqlsrv',
+            'host'     => env('DB_HOST_CADECO', 'localhost'),
+            'database' => env('DB_DATABASE_GENERALES', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'prefix'   => '',
+        ],
 
         'cadeco' => [
             'driver'   => 'sqlsrv',

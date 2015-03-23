@@ -1,14 +1,19 @@
 @extends('app')
 
+@section('nav-sub')
+    @include('partials.nav-sub', ['almacen' => $reporte->almacen])
+@endsection
+
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', [$reporte->almacen->id_almacen]) }}">{{ $reporte->almacen->descripcion }}</a></li>
         <li><a href="{{ route('reportes.index', [$reporte->almacen->id_almacen]) }}">Reportes de actividad</a></li>
         <li><a href="{{ route('reportes.show', [$reporte->almacen->id_almacen, $reporte->id]) }}">{{ $reporte->present()->fecha }}</a></li>
-        <li class="active">{{ $reporte->present()->fecha }}</li>
+        <li class="active">cerrar</li>
     </ol>
 
-    <h1>Cierre de Actividades <small>{{ $reporte->present()->fecha }}</small></h1>
+    <h1 class="page-header">Cierre de Actividades</h1>
 
     @include('partials.errors')
 

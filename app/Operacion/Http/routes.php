@@ -4,75 +4,72 @@
  * Reportes de Operacion
  */
 
-get('reporte-actividades', [
-    'as' => 'reportes.almacenes',
-    'uses' => 'ReportesActividadController@almacenes'
-]);
+Route::group(['prefix' => 'almacenes/{id}/'], function()
+{
+    get('reporte-actividades', [
+        'as' => 'reportes.index',
+        'uses' => 'ReportesActividadController@index'
+    ]);
 
-get('reporte-actividades/{idAlmacen}', [
-    'as' => 'reportes.index',
-    'uses' => 'ReportesActividadController@index'
-]);
+    get('reporte-actividades/iniciar', [
+        'as' => 'reportes.create',
+        'uses' => 'ReportesActividadController@create'
+    ]);
 
-get('reporte-actividades/{idAlmacen}/iniciar', [
-    'as' => 'reportes.create',
-    'uses' => 'ReportesActividadController@create'
-]);
+    post('reporte-actividades', [
+        'as' => 'reportes.store',
+        'uses' => 'ReportesActividadController@store'
+    ]);
 
-post('reporte-actividades/{idAlmacen}', [
-    'as' => 'reportes.store',
-    'uses' => 'ReportesActividadController@store'
-]);
+    get('reporte-actividades/{idReporte}', [
+        'as' => 'reportes.show',
+        'uses' => 'ReportesActividadController@show'
+    ]);
 
-get('reporte-actividades/{idAlmacen}/{idReporte}', [
-    'as' => 'reportes.show',
-    'uses' => 'ReportesActividadController@show'
-]);
+    get('reporte-actividades/{idReporte}/modificar', [
+        'as' => 'reportes.edit',
+        'uses' => 'ReportesActividadController@edit'
+    ]);
 
-get('reporte-actividades/{idAlmacen}/{idReporte}/modificar', [
-    'as' => 'reportes.edit',
-    'uses' => 'ReportesActividadController@edit'
-]);
+    patch('reporte-actividades/{idReporte}', [
+        'as' => 'reportes.update',
+        'uses' => 'ReportesActividadController@update'
+    ]);
 
-patch('reporte-actividades/{idAlmacen}/{idReporte}', [
-    'as' => 'reportes.update',
-    'uses' => 'ReportesActividadController@update'
-]);
+    get('reporte-actividades/{idReporte}/cierre', [
+        'as' => 'reportes.cierre',
+        'uses' => 'ReportesActividadController@cierre'
+    ]);
 
-get('reporte-actividades/{idAlmacen}/{idReporte}/cierre', [
-    'as' => 'reportes.cierre',
-    'uses' => 'ReportesActividadController@cierre'
-]);
+    put('reporte-actividades/{idReporte}/cierre', [
+        'as' => 'reportes.cierre',
+        'uses' => 'ReportesActividadController@cerrarReporte'
+    ]);
 
-put('reporte-actividades/{idAlmacen}/{idReporte}/cierre', [
-    'as' => 'reportes.cierre',
-    'uses' => 'ReportesActividadController@cerrarReporte'
-]);
-
-delete('reporte-actividades/{idAlmacen}/{idReporte}', [
-    'as' => 'reportes.destroy',
-    'uses' => 'ReportesActividadController@destroy'
-]);
+    delete('reporte-actividades/{idReporte}', [
+        'as' => 'reportes.destroy',
+        'uses' => 'ReportesActividadController@destroy'
+    ]);
 
 
-/**
- * Horas reporte
- */
+    /**
+     * Actividades del Reporte
+     */
 
-get('reporte-actividades/{idAlmacen}/{idReporte}/actividades/reportar', [
-    'as' => 'actividades.create',
-    'uses' => 'ActividadesController@create'
-]);
+    get('reporte-actividades/{idReporte}/actividades/reportar', [
+        'as' => 'actividades.create',
+        'uses' => 'ActividadesController@create'
+    ]);
 
-post('reporte-actividades/{idAlmacen}/{idReporte}/actividades/reportar', [
-    'as' => 'actividades.store',
-    'uses' => 'ActividadesController@store'
-]);
+    post('reporte-actividades/{idReporte}/actividades', [
+        'as' => 'actividades.store',
+        'uses' => 'ActividadesController@store'
+    ]);
 
-delete('reporte-actividades/{idAlmacen}/{idReporte}/actividades/{idActividad}', [
-    'as' => 'actividades.delete',
-    'uses' => 'ActividadesController@destroy'
-]);
-
+    delete('reporte-actividades/{idReporte}/actividades/{idActividad}', [
+        'as' => 'actividades.delete',
+        'uses' => 'ActividadesController@destroy'
+    ]);
+});
 
 \Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

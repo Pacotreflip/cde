@@ -1,6 +1,6 @@
 <?php
 
-use Ghi\Maquinaria\Domain\Operacion\TipoHora;
+use Ghi\Operacion\Domain\TipoHora;
 use Illuminate\Database\Seeder;
 
 class TiposHoraTableSeeder extends Seeder {

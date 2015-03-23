@@ -150,8 +150,11 @@ return [
 		'Ghi\Core\Providers\LocaleServiceProvider',
 		'Ghi\Core\Providers\RepositoryServiceProvider',
 		'Ghi\Core\Providers\ContextServiceProvider',
-//		'Ghi\Core\Providers\ViewShareServiceProvider',
 		'Ghi\Core\Providers\ViewComposerServiceProvider',
+		'Ghi\Core\Providers\FractalServiceProvider',
+
+        'Ghi\Almacenes\Providers\RouteServiceProvider',
+		'Ghi\Almacenes\Providers\RepositoryServiceProvider',
 
 		'Ghi\Operacion\Providers\RouteServiceProvider',
 		'Ghi\Operacion\Providers\RepositoryServiceProvider',
@@ -212,6 +215,7 @@ return [
         'Flash'     => 'Laracasts\Flash\Flash',
 
 		'Context'   => 'Ghi\Core\App\Facades\Context',
+		'Fractal'   => 'Ghi\Core\App\Facades\Fractal',
 
 	],
 

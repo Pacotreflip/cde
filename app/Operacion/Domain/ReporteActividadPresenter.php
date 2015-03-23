@@ -1,5 +1,6 @@
 <?php namespace Ghi\Operacion\Domain;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Laracasts\Presenter\Presenter;
 
@@ -51,4 +52,5 @@ class ReporteActividadPresenter extends Presenter {
 
         return 'PENDIENTE';
     }
-} 
+
+}

@@ -2,6 +2,7 @@
 
 use Ghi\Core\App\BaseRepository;
 use Ghi\Conciliacion\Domain\Exceptions\NoExisteOperacionPorConciliarEnPeriodoException;
+use Ghi\Core\App\Exceptions\ReglaNegocioException;
 use Ghi\Operacion\Domain\ReporteActividadRepository;
 use Ghi\Operacion\Domain\Hora;
 use Ghi\Operacion\Domain\HoraTipo;
@@ -31,9 +32,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function getByIdAlmacen($idAlmacen)
     {
-        return ReporteActividad::whereIdObra($this->context->getTenantId())
-            ->where('id_almacen', $idAlmacen)
-            ->with('usuarioRegistro')
+        return ReporteActividad::where('id_almacen', $idAlmacen)
             ->orderBy('fecha', 'desc')
             ->get();
     }
@@ -47,8 +46,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function getByIdAlmacenPaginated($idAlmacen, $howMany = 30)
     {
-        return ReporteActividad::where('id_obra', $this->context->getId())
-            ->where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $idAlmacen)
             ->orderBy('fecha', 'desc')
             ->paginate($howMany);
     }
@@ -77,8 +75,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function getByPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
     {
-        return ReporteActividad::where('id_obra', $this->context->getId())
-            ->where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $idAlmacen)
             ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
             ->get();
     }
@@ -92,8 +89,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function existeEnFecha($idAlmacen, $fecha)
     {
-        return ReporteActividad::where('id_obra', $this->context->getId())
-            ->where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $idAlmacen)
             ->where('fecha', $fecha)
             ->exists();
     }
@@ -333,5 +329,23 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
         return Hora::where('id_reporte', $id)
             ->whereIn('id_tipo_hora', [HoraTipo::EFECTIVA, HoraTipo::OCIO, HoraTipo::REPARACION_MAYOR])
             ->get();
+    }
+
+    /**
+     * Borra un reporte de actividades
+     *
+     * @param $id
+     * @return mixed
+     * @throws ReglaNegocioException
+     */
+    public function borraReporte($id)
+    {
+        $reporte = $this->getById($id);
+
+        if ($reporte->cerrado) {
+            throw new ReglaNegocioException('Este reporte no puede ser modificado por que ya esta cerrado.');
+        }
+
+        $reporte->delete();
     }
 }

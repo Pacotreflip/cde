@@ -23,7 +23,7 @@ class CreateActividadesTable extends Migration {
 			$table->decimal('cantidad', 5, 2);
             $table->boolean('con_cargo')->default(false);
 			$table->text('observaciones')->default('');
-            $table->string('usuario', 16);
+            $table->string('creado_por', 16);
 			$table->timestamps();
 
             $table->foreign('id_reporte', 'FK_actividades_reportes_actividad')

@@ -1,6 +1,7 @@
 <?php namespace Ghi\Operacion\Domain;
 
 use Ghi\Conciliacion\Domain\Exceptions\NoExisteOperacionPorConciliarEnPeriodoException;
+use Ghi\Core\App\Exceptions\ReglaNegocioException;
 use Ghi\SharedKernel\Models\Equipo;
 
 interface ReporteActividadRepository
@@ -206,5 +207,14 @@ interface ReporteActividadRepository
      * @return mixed
      */
     public function getHorasEfectivas($id);
+
+    /**
+     * Borra un reporte de actividades
+     *
+     * @param $id
+     * @return mixed
+     * @throws ReglaNegocioException
+     */
+    public function borraReporte($id);
 
 }

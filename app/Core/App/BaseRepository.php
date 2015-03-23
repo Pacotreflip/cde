@@ -29,4 +29,5 @@ abstract class BaseRepository {
 
         $this->config->set('database.connections.cadeco.database', $this->context->getDatabaseName());
     }
+
 }

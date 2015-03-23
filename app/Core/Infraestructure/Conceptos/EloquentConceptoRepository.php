@@ -4,6 +4,8 @@ use Ghi\Core\App\BaseRepository;
 use Ghi\Core\Domain\Conceptos\Concepto;
 use Ghi\Core\Domain\Conceptos\ConceptoRepository;
 use Ghi\Core\Domain\Conceptos\NivelParser;
+use Ghi\Core\Services\Context;
+use Illuminate\Config\Repository;
 
 class EloquentConceptoRepository extends BaseRepository implements ConceptoRepository {
 
@@ -13,69 +15,82 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     private $nivelParser;
 
     /**
+     * @var array
+     */
+    private $filterFields = ['concepto_medible', 'clave'];
+
+    /**
+     * @param Context $context
+     * @param Repository $config
      * @param NivelParser $nivelParser
      */
-    function __construct(NivelParser $nivelParser)
+    function __construct(Context $context, Repository $config, NivelParser $nivelParser)
     {
+        parent::__construct($context, $config);
+
         $this->nivelParser = $nivelParser;
     }
 
     /**
-     * @param $idObra
+     * Obtiene un concepto por su id
+     *
      * @param $idConcepto
      * @return mixed
      */
-    public function findById($idObra, $idConcepto)
+    public function getById($idConcepto)
     {
-        return Concepto::where('id_obra', '=', $idObra)
+        return Concepto::where('id_obra', $this->context->getId())
             ->where('id_concepto', '=', $idConcepto)
             ->firstOrFail();
     }
 
     /**
-     * @param $idObra
+     * Obtiene todos los conceptos de una obra
+     *
      * @return mixed
      */
-    public function findAll($idObra)
+    public function getAll()
     {
-        return Concepto::whereIdObra($idObra)
+        return Concepto::where('id_obra', $this->context->getId())
             ->orderBy('nivel')
             ->get();
     }
 
     /**
+     * Obtiene los descendientes de un concepto
+     *
      * @param $idObra
      * @param $idConcepto
      * @return mixed
      */
-    public function findDescendantsOf($idObra, $idConcepto)
+    public function getDescendantsOf($idObra, $idConcepto)
     {
         if (is_null($idConcepto))
         {
-            return $this->findRootLevels($idObra);
+            return $this->getRootLevels($idObra);
         }
-        else
-        {
-            $concepto = $this->findById($idObra, $idConcepto);
 
-            $numNivel = $this->nivelParser->calculaProfundidad($concepto->nivel) + 1;
+        $concepto = $this->getById($idObra, $idConcepto);
 
-            return Concepto::where('id_obra', '=', $idObra)
-                ->where('nivel', 'LIKE', $concepto->nivel . '%')
-                ->whereRaw("LEN(nivel) / 4 = {$numNivel}")
-                ->orderBy('nivel')
-                ->get();
-        }
+        $numNivel = $this->nivelParser->calculaProfundidad($concepto->nivel) + 1;
+
+        return Concepto::where('id_obra', '=', $idObra)
+            ->where('nivel', 'LIKE', $concepto->nivel . '%')
+            ->whereRaw("LEN(nivel) / 4 = {$numNivel}")
+            ->orderBy('nivel')
+            ->get();
     }
 
     /**
+     * Obtiene los ancestros de un concepto
+     *
      * @param $idObra
      * @param $idConcepto
      * @return mixed
      */
-    public function findAncestorsOf($idObra, $idConcepto)
+    public function getAncestorsOf($idObra, $idConcepto)
     {
-        $concepto = $this->findById($idObra, $idConcepto);
+        $concepto = $this->getById($idObra, $idConcepto);
 
         $niveles = $this->nivelParser->extraeNiveles($concepto->nivel);
 
@@ -93,10 +108,12 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
+     * Obtiene los conceptos raiz del presupuesto de obra
+     *
      * @param $idObra
      * @return mixed
      */
-    public function findRootLevels($idObra)
+    public function getRootLevels($idObra)
     {
         return Concepto::where('id_obra', '=', $idObra)
             ->whereRaw('LEN(nivel) = 4')
@@ -106,7 +123,8 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
 
     /**
      * Obtiene una lista de todos los niveles del presupuesto de obra
-     * excluyendo los niveles que son descendientes de conceptos medibles
+     * hasta llegar a los niveles de conceptos medibles
+     *
      * @param $idObra
      */
     public function getConceptosList($idObra)
@@ -128,13 +146,13 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene todos los conceptos que son medibles
-     * @param $idObra
+     * Obtiene todos los conceptos que son medibles/facturables
+     *
      * @return mixed
      */
-    public function findOnlyMedibles($idObra)
+    public function getMedibles()
     {
-        return Concepto::whereIdObra($idObra)
+        return Concepto::whereIdObra($this->context->getId())
             ->whereIn('concepto_medible', [1, 3])
             ->orderBy('nivel')
             ->get();
@@ -142,14 +160,16 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
 
     /**
      * Realiza una busqueda por descripcion o clave
-     * @param $idObra
+     *
      * @param $search
      * @param array $filters
      * @return
      */
-    public function search($idObra, $search, array $filters)
+    public function search($search, array $filters)
     {
-        return Concepto::whereIdObra($idObra)
+        $filters = $this->parseFilters($filters);
+
+        return Concepto::where('id_obra', $this->context->getId())
             ->where(function($query) use($search)
             {
                 $query->where('descripcion', 'LIKE', '%' . $search . '%')
@@ -157,11 +177,46 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
             })
             ->where(function($query) use($filters)
             {
-                foreach ($filters as $filter => $value)
+                foreach ($filters as $filter)
                 {
-                    $query->where($filter, '=', $value);
+                    $query->{$filter['method']}($filter['field'], $filter['value']);
                 }
             })
             ->get();
     }
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    private function parseFilters(array $filters)
+    {
+        $filterFields = [];
+
+        foreach ($this->filterFields as $field)
+        {
+            if ( ! array_key_exists($field, $filters)) {
+                continue;
+            }
+
+            if ($field == 'concepto_medible') {
+                $filterFields[] = [
+                    'field' => $field,
+                    'method' => 'whereIn',
+                    'value' => [Concepto::CONCEPTO_MEDIBLE, Concepto::CONCEPTO_FACTURABLE],
+                ];
+
+                continue;
+            }
+
+            $filterFields[] = [
+                'field' => $field,
+                'method' => 'where',
+                'value' => $filters[$field],
+            ];
+        }
+
+        return $filterFields;
+    }
+
 }

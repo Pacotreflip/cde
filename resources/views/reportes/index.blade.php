@@ -1,14 +1,19 @@
 @extends('app')
 
+@section('nav-sub')
+    @include('partials.nav-sub', ['almacen' => $almacen])
+@endsection
+
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', $almacen->id_almacen) }}">{{ $almacen->descripcion }}</a></li>
         <li class="active">Reportes de actividad</li>
     </ol>
 
     <div>
         {!! link_to_route('reportes.create', 'Nuevo reporte', [$almacen->id_almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
-        <h1>Reportes de Actividad <small>{{ $almacen->descripcion }}</small></h1>
+        <h1 class="page-header">Reportes de Actividad</h1>
     </div>
 
     @if(count($reportes))

@@ -1,5 +1,6 @@
 <?php namespace Ghi\Core\App;
 
+use Ghi\Core\App\Facades\Fractal;
 use Illuminate\Routing\Controller;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
@@ -56,7 +57,7 @@ class ApiController extends Controller {
 	{
 		$resource = new Collection($collection, $callback);
 
-		$data = \Fractal::createData($resource);
+		$data = Fractal::createData($resource);
 
 		return $this->respondWithArray($data->toArray());
 	}
@@ -141,4 +142,5 @@ class ApiController extends Controller {
 		return $this->setStatusCode(400)
 			->respondWithError($message, self::CODE_WRONG_ARGS);
 	}
+
 }

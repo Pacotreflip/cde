@@ -17,4 +17,5 @@ class FractalServiceProvider extends ServiceProvider {
             return new Manager();
         });
     }
+
 }

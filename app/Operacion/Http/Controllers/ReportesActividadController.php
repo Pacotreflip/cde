@@ -1,9 +1,9 @@
 <?php namespace Ghi\Operacion\Http\Controllers;
 
 use Ghi\Core\App\Exceptions\ReglaNegocioException;
-use Ghi\Core\Domain\Almacenes\AlmacenMaquinariaRepository;
+use Ghi\Almacenes\Domain\AlmacenMaquinariaRepository;
 use Ghi\Core\Domain\Obras\ObraRepository;
-use Ghi\Core\Services\Context;
+use Ghi\Core\App\Facades\Context;
 use Ghi\Operacion\Domain\ReporteActividad;
 use Ghi\Operacion\Http\Requests\InicioActividadesRequest;
 use Ghi\Operacion\Domain\ReporteActividadRepository;
@@ -54,20 +54,6 @@ class ReportesActividadController extends Controller {
 	}
 
     /**
-     * Muestra los almacenes de la obra en contexto
-     *
-     * @return mixed
-     */
-    public function almacenes()
-    {
-        $almacenes = $this->almacenRepository->getAllPaginated();
-
-        return view('reportes.almacenes')
-            ->withAlmacenes($almacenes);
-    }
-
-
-    /**
      * Muestra un formulario para crear un nuevo reporte de actividades
      *
      * @param $idAlmacen
@@ -86,11 +72,10 @@ class ReportesActividadController extends Controller {
      *
      * @param $idAlmacen
      * @param InicioActividadesRequest $request
-     * @param ObraRepository $obraRepository
      * @return Response
      * @throws ReglaNegocioException
      */
-	public function store($idAlmacen, InicioActividadesRequest $request, ObraRepository $obraRepository)
+	public function store($idAlmacen, InicioActividadesRequest $request)
 	{
         try
         {
@@ -99,7 +84,6 @@ class ReportesActividadController extends Controller {
                 throw new ReglaNegocioException('El reporte de actividades para la fecha indicada ya existe');
             }
 
-            $obra = $obraRepository->getById(Context::getId());
             $almacen = $this->almacenRepository->getById($idAlmacen);
 
             $except = [];
@@ -121,7 +105,6 @@ class ReportesActividadController extends Controller {
 
             $reporte = new ReporteActividad($request->except($except));
 
-            $reporte->obra()->associate($obra);
             $reporte->almacen()->associate($almacen);
             $reporte->creadoPor()->associate(\Auth::user());
 
@@ -164,8 +147,6 @@ class ReportesActividadController extends Controller {
 	{
         $reporte = $this->reporteRepository->getById($idReporte);
 
-        $this->redirectSiReporteEstaCerrado($reporte);
-
         return view('reportes.edit')->withReporte($reporte);
 	}
 
@@ -176,75 +157,32 @@ class ReportesActividadController extends Controller {
      * @param $idAlmacen
      * @param $idReporte
      * @param Request $request
-     * @throws \Exception
+     * @throws \ReglaNegocioException
      * @return Response
      */
 	public function update($idAlmacen, $idReporte, Request $request)
 	{
         try
         {
-            DB::beginTransaction();
-
             $reporte = $this->reporteRepository->getById($idReporte);
 
-            if ($reporte->cerrado)
-            {
+            if ($reporte->cerrado) {
                 throw new ReglaNegocioException('Este reporte no puede ser modificado por que ya esta cerrado.');
             }
 
-            if ($request->has('cerrar'))
-            {
-                $reporte->cerrado = true;
+            if ($request->has('cerrar')) {
+                $reporte->horometro_final = $request->get('horometro_final');
+                $reporte->kilometraje_final = $request->get('kilometraje_final');
+                $reporte->operador = $request->get('operador');
+                $reporte->observaciones = $request->get('observaciones');
+                $reporte->cerrar();
+            } else {
+                $reporte->update($request->all());
             }
-
-            $reporte->update($request->all());
-
-            if ($request->has('actividades'))
-            {
-                foreach ($request->get('actividades', []) as $key => $horaInput)
-                {
-                    if ( ! $reporte->horas->contains($key))
-                    {
-                        continue;
-                    }
-
-                    $hora = $reporte->horas->find($key);
-
-                    if (array_key_exists('borrar', $horaInput))
-                    {
-                        $hora->delete();
-                        continue;
-                    }
-
-                    $hora->cantidad = $horaInput['cantidad'];
-                    $hora->observaciones = $horaInput['observaciones'];
-
-                    $hora->con_cargo = false;
-
-                    if (array_key_exists('con_cargo', $horaInput))
-                    {
-                        $hora->con_cargo = true;
-                    }
-
-                    $hora->save();
-                }
-            }
-
-            DB::commit();
         }
         catch(ReglaNegocioException $e)
         {
-            Flash::error($e->getMessage());
-        }
-        catch (ModelNotFoundException $e)
-        {
-            Flash::error($e->getMessage());
-        }
-        finally
-        {
-            DB::rollback();
-
-            return redirect()->back();
+            return redirect()->back()->withErrors($e->getMessage())->withInput();
         }
 
         Flash::success('Los cambios fueron guardados.');
@@ -262,46 +200,8 @@ class ReportesActividadController extends Controller {
     {
         $reporte = $this->reporteRepository->getById($idReporte);
 
-        $this->redirectSiReporteEstaCerrado($reporte);
-
         return view('reportes.cierre')->withReporte($reporte);
     }
-
-    /**
-     * Redirecciona a la pagina del reporte si este esta cerrado
-     *
-     * @param ReporteActividad $reporte
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    private function redirectSiReporteEstaCerrado(ReporteActividad $reporte)
-    {
-        if ($reporte->cerrado)
-        {
-            Flash::error('Este reporte no puede ser modificado por que ya esta cerrado.');
-
-            return redirect()->route('reportes.show', [$reporte->id]);
-        }
-    }
-
-//    /**
-//     * @param $idEquipo
-//     * @param $fecha
-//     * @param CierraReporteOperacionequest $request
-//     * @return
-//     */
-//    public function cerrarReporte($idEquipo, $fecha, CierraReporteOperacionequest $request)
-//    {
-//        $reporte = $this->operacionService->cierraOperacion(
-//            $idEquipo,
-//            $fecha,
-//            $request->get('horometro_final'),
-//            $request->get('kilometraje_final')
-//        );
-//
-//        \Flash::success("El reporte de operación del {$reporte->present()->fechaFormatoLocal} fue cerrado.");
-//
-//        return \Redirect::route('operacion.index', [$idEquipo]);
-//    }
 
 
     /**
@@ -313,9 +213,16 @@ class ReportesActividadController extends Controller {
      */
 	public function destroy($idAlmacen, $idReporte)
 	{
-        $reporte = $this->reporteRepository->getById($idReporte);
+        try
+        {
+            $this->reporteRepository->borraReporte($idReporte);
+        }
+        catch(ReglaNegocioException $e)
+        {
+            Flash::error($e->getMessage());
 
-        $reporte->delete();
+            return redirect()->back();
+        }
 
         Flash::message('El reporte fue eliminado.');
 

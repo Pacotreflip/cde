@@ -1,131 +1,130 @@
 <?php namespace Ghi\Operacion\Http\Controllers;
 
+use Ghi\Core\App\Exceptions\ReglaNegocioException;
 use Ghi\Core\Domain\Conceptos\ConceptoRepository;
-use Ghi\Operacion\Http\Requests\ReportarHorasRequest;
+use Ghi\Operacion\Domain\Actividad;
+use Ghi\Operacion\Domain\Exceptions\ConceptoNoEsMedibleException;
+use Ghi\Operacion\Domain\ReporteActividadRepository;
+use Ghi\Operacion\Http\Requests\ReportarActividadRequest;
 use Ghi\Operacion\Domain\Commands\ReportarHorasCommand;
-use Ghi\Maquinaria\Domain\Operacion\OperacionService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Laracasts\Commander\CommanderTrait;
+use Laracasts\Flash\Flash;
+
+//use Laracasts\Commander\CommanderTrait;
 
 class ActividadesController extends Controller {
 
-    use CommanderTrait;
-
-	/**
-	 * @var OperacionService
+    /**
+     * @var ReporteActividadRepository
      */
-	private $operacionService;
+    private $reporteRepository;
 
-	/**
-	 * @var ConceptoRepository
-	 */
-	private $conceptoRepository;
+    /**
+     * @var ConceptoRepository
+     */
+    private $conceptoRepository;
 
-	/**
-	 * @param OperacionService $operacionService
-	 * @param ConceptoRepository $conceptoRepository
-	 */
-	function __construct(OperacionService $operacionService, ConceptoRepository $conceptoRepository)
+    /**
+     * @param ReporteActividadRepository $reporteRepository
+     * @param ConceptoRepository $conceptoRepository
+     */
+	function __construct(ReporteActividadRepository $reporteRepository, ConceptoRepository $conceptoRepository)
 	{
         $this->middleware('auth');
         $this->middleware('context');
 
-		$this->operacionService = $operacionService;
-		$this->conceptoRepository = $conceptoRepository;
-	}
+        $this->reporteRepository = $reporteRepository;
+        $this->conceptoRepository = $conceptoRepository;
+    }
 
 
 	/**
 	 * Show the form for creating a new resource.
 	 *
-	 * @param $idEquipo
-	 * @param $fecha
+	 * @param $idAlmacen
+	 * @param $idReporte
 	 * @return Response
 	 */
-	public function create($idEquipo, $fecha)
+	public function create($idAlmacen, $idReporte)
 	{
-		$tipoHora = $this->operacionService->getTiposHoraList();
+		$tiposHora = $this->reporteRepository->getTiposHoraList();
 
-		$reporte = $this->operacionService->findByFecha($idEquipo, $fecha);
+		$reporte = $this->reporteRepository->getById($idReporte);
 
 //		$conceptos = [null => 'Elija una opción'] + $this->conceptoRepository->getConceptosList(TenantContext::getTenantId());
 
-		return view('maquinaria.horas.create', compact('reporte', 'tipoHora', 'conceptos'));
+		return view('actividades.create', compact('reporte', 'tiposHora'));
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param $idEquipo
-	 * @param $fecha
-	 * @param ReportarHorasRequest $request
-	 * @return Response
-	 */
-	public function store($idEquipo, $fecha, ReportarHorasRequest $request)
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param $idAlmacen
+     * @param $idReporte
+     * @param ReportarActividadRequest $request
+     * @return Response
+     * @throws ConceptoNoEsMedibleException
+     */
+	public function store($idAlmacen, $idReporte, ReportarActividadRequest $request)
 	{
-        $idTipoHora = $request->get('tipo_hora');
-        $cantidad = $request->get('cantidad');
-        $idConcepto = $request->get('id_concepto');
-        $conCargo = $request->get('con_cargo');
-        $observaciones = $request->get('observaciones');
-        $usuario = \Auth::user()->usuario;
+        try
+        {
+            $reporte = $this->reporteRepository->getById($idReporte);
 
-        $this->execute(ReportarHorasCommand::class, compact(
-            'idEquipo', 'fecha', 'idTipoHora', 'cantidad', 'idConcepto', 'conCargo', 'observaciones', 'usuario')
-        );
+            $actividad = new Actividad($request->all());
+            $actividad->id_tipo_hora = $request->get('tipo_hora');
+            $actividad->creadoPor()->associate(Auth::user());
 
-		\Flash::success('Las horas fueron reportadas.');
+            if ($request->has('id_concepto'))
+            {
+                $concepto = $this->conceptoRepository->getById($request->get('id_concepto'));
 
-		return \Redirect::route('operacion.show', [$idEquipo, $fecha]);
+                if ( ! $concepto->esMedible())
+                {
+                    throw new ConceptoNoEsMedibleException;
+                }
+
+                $actividad->destino()->associate($concepto);
+            }
+
+            $actividad->reportarEn($reporte);
+        }
+        catch(ReglaNegocioException $e)
+        {
+            return redirect()->back()->withErrors($e->getMessage())->withInput();
+        }
+
+		Flash::success('La actividad fue agregada al reporte.');
+
+		return redirect()->route('reportes.show', [$idAlmacen, $idReporte]);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param $idEquipo
-	 * @param $fecha
-	 * @param $idHora
+	 * @param $idAlmacen
+	 * @param $idReporte
+	 * @param $idActividad
 	 * @return Response
 	 */
-	public function destroy($idEquipo, $fecha, $idHora)
+	public function destroy($idAlmacen, $idReporte, $idActividad)
 	{
-		$this->operacionService->borraHora($idEquipo, $fecha, $idHora);
+        $reporte = $this->reporteRepository->getById($idReporte);
 
-		return Redirect::route('operacion.show', [$idEquipo, $fecha]);
+        if ($reporte->cerrado)
+        {
+            Flash::error('Este reporte no puede ser modificado');
+
+            return redirect()->back();
+        }
+
+		$reporte->actividades()->find($idActividad)->delete();
+
+		return redirect()->route('reportes.show', [$idAlmacen, $idReporte]);
 	}
 
 }

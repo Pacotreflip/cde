@@ -1,12 +1,13 @@
 <?php namespace Ghi\Operacion\Domain;
 
 use Ghi\Core\Domain\Conceptos\Concepto;
-use Ghi\Core\Domain\Usuarios\UsuarioCadeco;
-use Ghi\Operacion\Domain\Exceptions\ConceptoNoEsMedibleException;
-use Ghi\Operacion\Domain\ReporteActividad;
+use Ghi\Core\Domain\Usuarios\User;
 use Illuminate\Database\Eloquent\Model;
+use Laracasts\Presenter\PresentableTrait;
 
 class Actividad extends Model {
+
+    use PresentableTrait;
 
     /**
      * @var string
@@ -22,15 +23,28 @@ class Actividad extends Model {
      * @var array
      */
     protected $fillable = [
-        'id_tipo_hora',
         'cantidad',
         'con_cargo',
         'observaciones',
-        'usuario',
+        'hora_inicial',
+        'hora_final',
     ];
 
     /**
-     * Reporte de horas al que pertenece la hora actual
+     * @var array
+     */
+    protected $casts = [
+        'con_cargo' => 'boolean',
+    ];
+
+    /**
+     * @var
+     */
+    protected $presenter = ActividadPresenter::class;
+
+    /**
+     * Reporte de actividades al que pertenece la actividad actual
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function reporte()
@@ -39,7 +53,8 @@ class Actividad extends Model {
     }
 
     /**
-     * Tipo de hora de la hora actual
+     * Tipo de hora de la actividad actual
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function tipoHora()
@@ -47,70 +62,39 @@ class Actividad extends Model {
         return $this->belongsTo(TipoHora::class, 'id_tipo_hora');
     }
 
+
     /**
-     * Concepto asignado a la hora
+     * Concepto destino de la actividad
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function concepto()
+    public function destino()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
+
     /**
-     * Usuario que capturo la hora en el reporte
+     * Usuario que reporto la actividad
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function usuarioRegistro()
+    public function creadoPor()
     {
-        return $this->belongsTo(UsuarioCadeco::class, 'usuario', 'usuario');
-    }
-
-    /**
-     * @param $idTipoHora
-     * @param $cantidad
-     * @param Concepto $concepto
-     * @param $conCargo
-     * @param $observaciones
-     * @param $usuario
-     * @throws ConceptoNoEsMedibleException
-     * @return Actividad
-     */
-    public static function creaHora($idTipoHora, $cantidad, Concepto $concepto = null, $conCargo, $observaciones, $usuario)
-    {
-        $horaTipo = new HoraTipo($idTipoHora);
-
-        $hora = new self([
-            'cantidad' => $cantidad,
-            'con_cargo' => $conCargo,
-            'observaciones' => $observaciones,
-            'usuario' => $usuario,
-        ]);
-
-        $hora->id_tipo_hora = $horaTipo->getIdTipoHora();
-
-        if ($concepto)
-        {
-            if ( ! $concepto->esMedible())
-            {
-                throw new ConceptoNoEsMedibleException;
-            }
-
-            $hora->concepto()->associate($concepto);
-        }
-
-        return $hora;
+        return $this->belongsTo(User::class, 'creado_por', 'usuario');
     }
 
 
     /**
-     * @param ReporteOperacion $unReporte
+     * @param ReporteActividad $reporte
+     *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function reportarEn(ReporteOperacion $unReporte)
+    public function reportarEn(ReporteActividad $reporte)
     {
-        $unReporte->verificaLimiteHorasDiarias($this->cantidad);
+        $reporte->superaLimiteHorasDiarias($this->cantidad);
 
-        return $unReporte->horas()->save($this);
+        return $reporte->actividades()->save($this);
     }
 
     /**
@@ -118,6 +102,6 @@ class Actividad extends Model {
      */
     public function tieneDestino()
     {
-        return $this->concepto;
+        return (boolean) $this->concepto;
     }
 }

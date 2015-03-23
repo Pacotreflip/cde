@@ -1,8 +1,13 @@
 @extends('app')
 
+@section('nav-sub')
+    @include('partials.nav-sub', ['almacen' => $almacen])
+@endsection
+
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen->id_almacen]) }}">{{ $almacen->descripcion }}</a></li>
         <li><a href="{{ route('reportes.index', [$almacen->id_almacen]) }}">Reportes de actividad</a></li>
         <li class="active">Inicio de actividades</li>
     </ol>
@@ -61,7 +66,7 @@
             {!! Form::submit('Guardar', ['class' => 'btn btn-success']) !!}
         </div>
     {!! Form::close() !!}
-@stop
+@endsection
 
 @section('scripts')
     <script>
@@ -71,4 +76,4 @@
         autoclose: true
     });
     </script>
-@stop
+@endsection

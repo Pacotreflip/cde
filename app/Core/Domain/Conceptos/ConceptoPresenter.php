@@ -6,15 +6,16 @@ class ConceptoPresenter extends Presenter {
 
     /**
      * Muestra la descripcion de un concepto con su clave
+     *
      * @return mixed|string
      */
-    public function descripcionConClave()
+    public function descripcion()
     {
-        if ($this->clave_concepto)
+        if ($this->entity->clave_concepto)
         {
-            return '[' . $this->clave_concepto . ']' . ' ' . $this->descripcion;
+            return '[' . $this->entity->clave_concepto . ']' . ' ' . $this->entity->descripcion;
         }
 
-        return $this->descripcion;
+        return $this->entity->descripcion;
     }
 }
