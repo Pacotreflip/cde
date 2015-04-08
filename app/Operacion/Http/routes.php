@@ -71,5 +71,3 @@ Route::group(['prefix' => 'almacenes/{id}/'], function()
         'uses' => 'ActividadesController@destroy'
     ]);
 });
-
-\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

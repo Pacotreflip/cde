@@ -20,19 +20,14 @@ class RepositoryServiceProvider extends ServiceProvider {
 	private function bindRepositories()
 	{
         $this->app->bind(
-            'Ghi\Conciliacion\Domain\ProveedorRepository',
-            'Ghi\Conciliacion\Infraestructure\EloquentProveedorRepository'
+            'Ghi\Conciliacion\Domain\ConciliacionRepository',
+            'Ghi\Conciliacion\Infraestructure\EloquentConciliacionRepository'
         );
 
-        $this->app->bind(
-            'Ghi\Conciliacion\Domain\Periodos\PeriodoRepository',
-            'Ghi\Conciliacion\Infraestructure\EloquentPeriodoRepository'
-        );
-
-        $this->app->bind(
-            'Ghi\Conciliacion\Domain\Rentas\ContratoRentaRepository',
-            'Ghi\Conciliacion\Infraestructure\EloquentContratoRentaRepository'
-        );
+//        $this->app->bind(
+//            'Ghi\Conciliacion\Domain\Rentas\ContratoRentaRepository',
+//            'Ghi\Conciliacion\Infraestructure\EloquentContratoRentaRepository'
+//        );
 	}
 
 }

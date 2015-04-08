@@ -2,8 +2,8 @@
 
 use Ghi\Core\Http\Requests\Request;
 
-class RegistrarHorasMensualesRequest extends Request {
-
+class RegistrarHorasMensualesRequest extends Request
+{
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *

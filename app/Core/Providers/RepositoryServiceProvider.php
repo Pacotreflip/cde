@@ -20,6 +20,11 @@ class RepositoryServiceProvider extends ServiceProvider {
 	private function bindRepositories()
 	{
         $this->app->bind(
+            'Ghi\Core\Domain\Usuarios\UserRepository',
+            'Ghi\Core\Infraestructure\Usuarios\EloquentUserRepository'
+        );
+
+        $this->app->bind(
             'Ghi\Core\Domain\Obras\ObraRepository',
             'Ghi\Core\Infraestructure\Obras\EloquentObraRepository'
         );
@@ -30,9 +35,10 @@ class RepositoryServiceProvider extends ServiceProvider {
 		);
 
         $this->app->bind(
-            'Ghi\Core\Domain\Usuarios\UserRepository',
-            'Ghi\Core\Infraestructure\Usuarios\EloquentUserRepository'
+            'Ghi\Core\Domain\EmpresaRepository',
+            'Ghi\Core\Infraestructure\EloquentEmpresaRepository'
         );
+
 	}
 
 }

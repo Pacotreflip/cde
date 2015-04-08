@@ -1,11 +1,17 @@
-@extends('layouts.default')
+@extends('app')
 
 @section('content')
+    <ol class="breadcrumb">
+        <li><a href="">Conciliación</a></li>
+        <li>{!! link_to_route('conciliacion.almacenes', $empresa->razon_social, [$empresa->id_empresa]) !!}</li>
+        <li class="active">{{ $almacen->descripcion }}</li>
+    </ol>
+
     <div class="page-header">
-        <h2>Conciliar Periodo de Operación</h2>
+        <h2>Nueva Conciliación</h2>
     </div>
 
-    @include('layouts.partials.errors')
+    @include('partials.errors')
 
     {!! Form::open() !!}
         <div class="row">
@@ -13,14 +19,14 @@
                 <!-- Fecha Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('fecha_inicial', 'Fecha Inicial:') !!}
-                    {!! Form::text('fecha_inicial', null, ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
+                    {!! Form::input('date', 'fecha_inicial', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
                 </div>
             </div>
             <div class="col-sm-6">
                 <!-- Fecha Final Form Input -->
                 <div class="form-group">
                     {!! Form::label('fecha_final', 'Fecha Final:') !!}
-                    {!! Form::text('fecha_final', null, ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
+                    {!! Form::input('date', 'fecha_final', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
                 </div>
             </div>
         </div>

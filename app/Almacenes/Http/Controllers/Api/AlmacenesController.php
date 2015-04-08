@@ -1,13 +1,13 @@
-<?php  namespace Ghi\Maquinaria\Http\Controllers\Api;
+<?php  namespace Ghi\Almacenes\Http\Controllers\Api;
 
-use Ghi\Maquinaria\Api\EquipoTransformer;
+use Ghi\Maquinaria\Api\AlmacenTransformer;
 use Ghi\Core\App\ApiController;
 use Ghi\Core\App\Facades\Fractal;
 use Ghi\SharedKernel\Contracts\EquipoRepository;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 
-class EquiposController extends ApiController {
+class AlmacenesController extends ApiController {
 
     /**
      * @var EquipoRepository
@@ -28,7 +28,7 @@ class EquiposController extends ApiController {
     {
         $equipos = $this->equipoRepository->getAll();
 
-        $resource = new Collection($equipos, new EquipoTransformer);
+        $resource = new Collection($equipos, new AlmacenTransformer);
 
         return Fractal::createData($resource)->toJson();
     }
@@ -42,7 +42,7 @@ class EquiposController extends ApiController {
     {
         $equipo = $this->equipoRepository->findById($id);
 
-        $resource = new Item($equipo, new EquipoTransformer);
+        $resource = new Item($equipo, new AlmacenTransformer);
 
         return Fractal::createData($resource)->toJson();
     }

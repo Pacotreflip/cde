@@ -3,13 +3,12 @@
 use Ghi\Almacenes\Domain\AlmacenMaquinariaRepository;
 use Ghi\Almacenes\Http\Requests\RegistrarHorasMensualesRequest;
 use Ghi\Core\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laracasts\Flash\Flash;
 
-class HorasMensualesController extends Controller {
-
+class HorasMensualesController extends Controller
+{
     /**
      * @var AlmacenMaquinariaRepository
      */

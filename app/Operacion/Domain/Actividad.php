@@ -5,8 +5,8 @@ use Ghi\Core\Domain\Usuarios\User;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
-class Actividad extends Model {
-
+class Actividad extends Model
+{
     use PresentableTrait;
 
     /**

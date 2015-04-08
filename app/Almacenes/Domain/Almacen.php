@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 //use Laracasts\Commander\Events\EventGenerator;
 use Laracasts\Presenter\PresentableTrait;
 
-class Almacen extends Model {
-
+class Almacen extends Model
+{
     use PresentableTrait;
 //    use EventGenerator, PresentableTrait;
 

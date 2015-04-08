@@ -8,8 +8,8 @@ use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Support\Facades\Session;
 use Laracasts\Flash\Flash;
 
-class AuthController extends Controller {
-
+class AuthController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -59,12 +59,10 @@ class AuthController extends Controller {
         $usuario = $request->get('usuario');
         $clave = $request->get('clave');
 
-        try
-        {
+        try {
             $user = $repository->getByNombreUsuario($usuario);
 
-            if (md5($clave) !== $user->clave)
-            {
+            if (md5($clave) !== $user->clave) {
                 throw new Exception('Usuario y/o clave no válidos.');
             }
 
@@ -72,10 +70,8 @@ class AuthController extends Controller {
 
             Flash::message("Bienvenido {$user->nombre}!");
 
-            return redirect()->route('pages.home');
-        }
-        catch (Exception $e)
-        {
+            return redirect()->route('pages.obras');
+        } catch (Exception $e) {
             Flash::error($e->getMessage());
 
             return redirect()->route('auth.login')->withinput();

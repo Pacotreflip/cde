@@ -4,11 +4,12 @@
 //use Laracasts\Commander\CommandHandler;
 //use Laracasts\Commander\Events\DispatchableTrait;
 
-class RegistroAlmacenCommandHandler implements CommandHandler {
-
+class RegistroAlmacenCommandHandler implements CommandHandler
+{
     use DispatchableTrait;
 
     protected $almacenRepository;
+
     /**
      * @var TenantContextInterface
      */

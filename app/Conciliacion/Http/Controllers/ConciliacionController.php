@@ -1,141 +1,204 @@
 <?php namespace Ghi\Conciliacion\Http\Controllers;
 
-use Ghi\Conciliacion\Domain\Commands\CerrarPeriodoCommand;
-use Ghi\Conciliacion\Domain\Commands\GenerarPeriodoCommand;
-use Ghi\Conciliacion\Domain\ConciliacionService;
-use Ghi\Conciliacion\Domain\Periodos\PeriodoRepository;
-use Ghi\Conciliacion\Domain\ProveedorRepository;
-use Ghi\Core\App\Facades\Context;
-use Ghi\SharedKernel\Contracts\EquipoRepository;
+use Ghi\Almacenes\Domain\AlmacenMaquinariaRepository;
+use Ghi\Conciliacion\Domain\Conciliacion;
+use Ghi\Conciliacion\Domain\ConciliacionRepository;
+use Ghi\Conciliacion\Domain\Exceptions\NoExisteOperacionPorConciliarEnPeriodoException;
+use Ghi\Conciliacion\Domain\Exceptions\YaExisteConciliacionException;
+use Ghi\Core\Domain\EmpresaRepository;
+use Ghi\Operacion\Domain\ReporteActividadRepository;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Laracasts\Commander\CommanderTrait;
+use Illuminate\Support\Facades\Auth;
 
-class ConciliacionController extends Controller {
 
-	use CommanderTrait;
-
-	/**
-	 * @var ProveedorRepository
-	 */
-	private $proveedorRepository;
+class ConciliacionController extends Controller
+{
+    /**
+     * @var EmpresaRepository
+     */
+    private $empresaRepository;
 
     /**
-	 * @var EquipoRepository
-	 */
-	private $equipoRepository;
-
-	/**
-	 * @var PeriodoRepository
-	 */
-	private $periodoRepository;
-
-	/**
-	 * @param ProveedorRepository $proveedorRepository
-	 * @param EquipoRepository $equipoRepository
-	 * @param PeriodoRepository $periodoRepository
+     * @var AlmacenMaquinariaRepository
      */
-	function __construct(ProveedorRepository $proveedorRepository, EquipoRepository $equipoRepository, PeriodoRepository $periodoRepository)
+    private $almacenRepository;
+
+    /**
+     * @var ConciliacionRepository
+     */
+    private $conciliacionRepository;
+
+    /**
+     * @var ReporteActividadRepository
+     */
+    private $reporteRepository;
+
+    /**
+     * @param EmpresaRepository $empresaRepository
+     * @param AlmacenMaquinariaRepository $almacenRepository
+     * @param ConciliacionRepository $conciliacionRepository
+     * @param ReporteActividadRepository $reporteRepository
+     */
+	function __construct(EmpresaRepository $empresaRepository, AlmacenMaquinariaRepository $almacenRepository,
+                         ConciliacionRepository $conciliacionRepository, ReporteActividadRepository $reporteRepository)
 	{
-		$this->proveedorRepository = $proveedorRepository;
-		$this->equipoRepository = $equipoRepository;
-		$this->periodoRepository = $periodoRepository;
-	}
+        $this->middleware('auth');
+        $this->middleware('context');
+
+        $this->empresaRepository = $empresaRepository;
+        $this->almacenRepository = $almacenRepository;
+        $this->conciliacionRepository = $conciliacionRepository;
+        $this->reporteRepository = $reporteRepository;
+    }
 
 
 	/**
+     * Muestra una lista de empresas que rentan maquinaria
+     *
 	 * @return mixed
      */
 	public function proveedores()
 	{
-		$proveedores = $this->proveedorRepository->findAll(Context::getId());
+		$proveedores = $this->empresaRepository->getWithEntradasEquipo();
 
-		return view('maquinaria.conciliacion.proveedores')->withProveedores($proveedores);
+		return view('conciliacion.proveedores')->withProveedores($proveedores);
 	}
 
 
 	/**
-	 * @param $idProveedor
+     * Muestra una lista de almacenes relacionados con una empresa
+     *
+	 * @param $idEmpresa
 	 * @return mixed
      */
-	public function equipos($idProveedor)
+	public function almacenes($idEmpresa)
 	{
-		$equipos = $this->equipoRepository->findByIdProveedor(Context::getId(), $idProveedor);
+        $empresa = $this->empresaRepository->getById($idEmpresa);
+		$almacenes = $this->almacenRepository->getByIdEmpresa($idEmpresa);
 
-		$proveedor = $this->proveedorRepository->findById($idProveedor);
-
-		return view('maquinaria.conciliacion.equipos')
-			->withEquipos($equipos)
-			->withProveedor($proveedor);
+		return view('conciliacion.equipos')
+            ->withAlmacenes($almacenes)
+            ->withEmpresa($empresa);
 	}
 
 
 	/**
-	 * @param $idProveedor
-	 * @param $idEquipo
+     * Muestra una lita de conciliaciones de un almacen
+     *
+	 * @param $idEmpresa
+	 * @param $idAlmacen
 	 * @return
 	 */
-	public function index($idProveedor, $idEquipo)
+	public function index($idEmpresa, $idAlmacen)
 	{
-		$periodos = $this->periodoRepository->findByEquipo(Context::getId(), $idProveedor, $idEquipo);
+		$conciliaciones = $this->conciliacionRepository->getByAlmacen($idAlmacen);
+        $empresa = $this->empresaRepository->getById($idEmpresa);
+        $almacen = $this->almacenRepository->getById($idAlmacen);
 
-		$proveedor = $this->proveedorRepository->findById($idProveedor);
-
-		$equipo = $this->equipoRepository->findById($idEquipo);
-
-		return view('maquinaria.conciliacion.index')
-			->withPeriodos($periodos)
-			->withProveedor($proveedor)
-			->withEquipo($equipo);
+		return view('conciliacion.index')
+			->withConciliaciones($conciliaciones)
+			->withEmpresa($empresa)
+			->withAlmacen($almacen);
 	}
 
 
 	/**
-	 * @param $idProveedor
-	 * @param $idEquipo
+     * Muestra un formulario para conciliar un nuevo periodo
+     *
+	 * @param $idEmpresa
+	 * @param $idAlmacen
 	 * @return $this
 	 */
-	public function create($idProveedor, $idEquipo)
+	public function create($idEmpresa, $idAlmacen)
 	{
-		return view('maquinaria.conciliacion.create')
-			->with('idProveedor', $idProveedor)
-			->with('idEquipo', $idEquipo);
+        $empresa = $this->empresaRepository->getById($idEmpresa);
+        $almacen = $this->almacenRepository->getById($idAlmacen);
+
+		return view('conciliacion.create')
+            ->withEmpresa($empresa)
+            ->withAlmacen($almacen);
 	}
 
-	/**
-	 * @param $idProveedor
-	 * @param $idEquipo
-	 * @param Request $request
-	 * @return mixed
+    /**
+     * Persiste una nueva conciliacion
+     *
+     * @param $idEmpresa
+     * @param $idAlmacen
+     * @param Request $request
+     * @return mixed
+     * @throws YaExisteConciliacionException
+     * @throws NoExisteOperacionPorConciliarEnPeriodoException
      */
-	public function store($idProveedor, $idEquipo, Request $request)
+	public function store($idEmpresa, $idAlmacen, Request $request)
 	{
-		$idObra = Context::getId();
-		$fechaInicial = $request->get('fecha_inicial');
-		$fechaFinal = $request->get('fecha_final');
+		$fecha_inicial = $request->get('fecha_inicial');
+		$fecha_final = $request->get('fecha_final');
 		$observaciones = $request->get('observaciones');
-		$usuario = \Auth::user()->usuario;
 
-		$periodo = $this->execute(GenerarPeriodoCommand::class,
-			compact('idObra', 'idProveedor', 'idEquipo', 'fechaInicial', 'fechaFinal', 'observaciones', 'usuario')
-		);
+        if ($this->conciliacionRepository->existeConciliacionEnPeriodo($idAlmacen, $fecha_inicial, $fecha_final)) {
+            throw new YaExisteConciliacionException;
+        }
 
-		return \Redirect::route('conciliacion.edit', [$idProveedor, $idEquipo, $periodo->id]);
+        if ( ! $this->reporteRepository->existenHorasPorConciliarEnPeriodo($idAlmacen, $fecha_inicial, $fecha_final)) {
+            throw new NoExisteOperacionPorConciliarEnPeriodoException;
+        }
+
+        $horas_contrato = $this->reporteRepository->getHorasContratoEnPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_efectivas = $this->reporteRepository->sumaHorasEfectivasPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_reparacion_mayor = $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_reparacion_menor = $this->reporteRepository->sumaHorasReparacionMenorPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_mantenimiento = $this->reporteRepository->sumaHorasMantenimientoPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_ocio = $this->reporteRepository->sumaHorasOcioPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horometro_inicial = $this->reporteRepository->getHorometroIncialPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horometro_final = $this->reporteRepository->getHorometroFinalPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $horas_horometro = $this->reporteRepository->getHorasHorometroPorPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+        $dias_con_operacion = $this->reporteRepository->diasConOperacionEnPeriodo($idAlmacen, $fecha_inicial, $fecha_final);
+
+        $conciliacion = Conciliacion::generar(compact(
+            'fecha_inicial',
+            'fecha_final',
+            'dias_con_operacion',
+            'horas_contrato',
+            'horas_efectivas',
+            'horas_reparacion_mayor',
+            'horas_reparacion_menor',
+            'horas_mantenimiento',
+            'horas_ocio',
+            'horometro_inicial',
+            'horometro_final',
+            'horas_horometro',
+            'observaciones'
+        ));
+
+        $almacen = $this->almacenRepository->getById($idAlmacen);
+        $empresa = $this->empresaRepository->getById($idEmpresa);
+        $usuario = Auth::user()->usuarioCadeco;
+
+        $conciliacion->empresa()->associate($empresa);
+        $conciliacion->almacen()->associate($almacen);
+        $conciliacion->creadoPor()->associate($usuario);
+//dd($conciliacion);
+        $conciliacion->save();
+
+		return redirect()->route('conciliacion.edit', [$idEmpresa, $idAlmacen, $conciliacion->id]);
 	}
 
 
 	/**
-	 * @param $idProveedor
-	 * @param $idEquipo
+     * Muestra un formulario para modificar una conciliacion
+     *
+	 * @param $idEmpresa
+	 * @param $idAlmacen
 	 * @param $idConciliacion
 	 * @return mixed
      */
-	public function edit($idProveedor, $idEquipo, $idConciliacion)
+	public function edit($idEmpresa, $idAlmacen, $idConciliacion)
 	{
-		$periodo = $this->periodoRepository->findById($idConciliacion);
+		$conciliacion = $this->conciliacionRepository->getById($idConciliacion);
 
-		return view('maquinaria.conciliacion.edit')
-			->withPeriodo($periodo);
+		return view('conciliacion.edit')
+			->withConciliacion($conciliacion);
 	}
 
 	/**

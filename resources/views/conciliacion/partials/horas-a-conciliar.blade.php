@@ -13,9 +13,9 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ $periodo->horas_a_conciliar }}</td>
-                <td>{{ $periodo->horasPropuestas() }}</td>
-                <td><strong class="text-info">{{ $periodo->horas_conciliadas }}</strong></td>
+                <td>{{ $conciliacion->horas_a_conciliar }}</td>
+                <td>{{ $conciliacion->horasPropuestas() }}</td>
+                <td><strong class="text-info">{{ $conciliacion->horas_conciliadas }}</strong></td>
             </tr>
         </tbody>
     </table>
@@ -30,9 +30,9 @@
         </thead>
         <tbody>
         <tr>
-            <td>{{ $periodo->horas_efectivas }}</td>
-            <td>{{ $periodo->horasReparacionMayorPropuesta() }}</td>
-            <td>{{ $periodo->horasOcioPropuesta() }}</td>
+            <td>{{ $conciliacion->horas_efectivas }}</td>
+            <td>{{ $conciliacion->horasReparacionMayorPropuesta() }}</td>
+            <td>{{ $conciliacion->horasOcioPropuesta() }}</td>
         </tr>
         </tbody>
     </table>

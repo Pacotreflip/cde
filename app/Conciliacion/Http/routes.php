@@ -9,32 +9,34 @@ get('conciliacion/', [
     'uses' => 'ConciliacionController@proveedores'
 ]);
 
-get('conciliacion/{idProveedor}/equipos', [
-    'as' => 'conciliacion.equipos',
-    'uses' => 'ConciliacionController@equipos'
+get('conciliacion/{idEmpresa}/almacenes', [
+    'as' => 'conciliacion.almacenes',
+    'uses' => 'ConciliacionController@almacenes'
 ]);
 
-get('conciliacion/{idProveedor}/equipos/{idEquipo}/periodos', [
+get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'as' => 'conciliacion.index',
     'uses' => 'ConciliacionController@index'
 ]);
 
-get('conciliacion/{idProveedor}/equipos/{idEquipo}/conciliar', [
+get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
     'as' => 'conciliacion.conciliar',
     'uses' => 'ConciliacionController@create'
 ]);
 
-post('conciliacion/{idProveedor}/equipos/{idEquipo}/conciliar', [
+post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
     'as' => 'conciliacion.store',
     'uses' => 'ConciliacionController@store'
 ]);
 
-get('conciliacion/{idProveedor}/equipos/{idEquipo}/periodos/{idConciliacion}', [
+get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.edit',
     'uses' => 'ConciliacionController@edit'
 ]);
 
-put('conciliacion/{idProveedor}/equipos/{idEquipo}/periodos/{idConciliacion}', [
+put('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.update',
     'uses' => 'ConciliacionController@update'
 ]);
+
+\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

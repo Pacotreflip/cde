@@ -2,10 +2,11 @@
 
 use Laracasts\Presenter\Presenter;
 
-class AlmacenMaquinariaPresenter extends Presenter {
-
+class AlmacenMaquinariaPresenter extends Presenter
+{
     /**
      * Descripcion completa de un almacen maquina
+     *
      * @return string
      */
     public function descripcionCompleta()

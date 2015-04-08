@@ -4,15 +4,13 @@ use Ghi\Core\App\Exceptions\ReglaNegocioException;
 use Ghi\Almacenes\Domain\AlmacenMaquinaria;
 use Ghi\Core\Domain\Usuarios\User;
 use Ghi\Operacion\Domain\Events\ReporteHorasSeHaRegistrado;
-use Ghi\Operacion\Domain\Events\ReporteActividadSeHaRegistrado;
 use Ghi\Operacion\Domain\Exceptions\LimiteDeHorasSuperadoException;
 use Ghi\Operacion\Domain\Exceptions\ReporteOperacionCerradoException;
 use Illuminate\Database\Eloquent\Model;
-//use Laracasts\Commander\Events\EventGenerator;
 use Laracasts\Presenter\PresentableTrait;
 
-class ReporteActividad extends Model {
-
+class ReporteActividad extends Model
+{
     use PresentableTrait;
 
     /**
@@ -60,7 +58,7 @@ class ReporteActividad extends Model {
     protected $presenter = ReporteActividadPresenter::class;
 
     /**
-     * Almacen maquina al que pertenece el reporte actual
+     * Almacen de maquinaria relacionado con este reporte
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -70,7 +68,7 @@ class ReporteActividad extends Model {
     }
 
     /**
-     * Horas asociadas con el reporte actual
+     * Horas asociadas con este reporte
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -80,7 +78,7 @@ class ReporteActividad extends Model {
     }
 
     /**
-     * Usuario que registra el reporte actual
+     * Usuario que registra este reporte
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -107,8 +105,7 @@ class ReporteActividad extends Model {
      */
     public function superaLimiteHorasDiarias($cantidad)
     {
-        if ($this->actividades->sum('cantidad') + $cantidad > static::LIMITE_HORAS_DIA)
-        {
+        if ($this->actividades->sum('cantidad') + $cantidad > static::LIMITE_HORAS_DIA) {
             throw (new LimiteDeHorasSuperadoException)->setHorasActuales($this->actividades->sum('cantidad'));
         }
     }
@@ -120,23 +117,19 @@ class ReporteActividad extends Model {
      */
     public function cerrar()
     {
-        if ($this->cerrado)
-        {
+        if ($this->cerrado) {
             throw new ReporteOperacionCerradoException;
         }
 
-        if ($this->horometro_inicial && $this->horometro_inicial > $this->horometro_final)
-        {
+        if ($this->horometro_inicial && $this->horometro_inicial > $this->horometro_final) {
             throw new ReglaNegocioException('El horometro final no puede ser menor al inicial.');
         }
 
-        if ($this->kilometraje_inicial && $this->kilometraje_inicial > $this->kilometraje_final)
-        {
+        if ($this->kilometraje_inicial && $this->kilometraje_inicial > $this->kilometraje_final) {
             throw new ReglaNegocioException('El kilometraje final no puede ser menor al inicial.');
         }
 
-        if ($this->actividades()->count('cantidad') == 0)
-        {
+        if ($this->actividades()->count('cantidad') == 0) {
             throw new ReglaNegocioException('El reporte no contiene actividades reportadas.');
         }
 

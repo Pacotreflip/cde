@@ -3,9 +3,9 @@
 use Ghi\Core\Domain\Obras\ObraRepository;
 use Ghi\Core\Domain\Usuarios\UserSaoRepository;
 use Ghi\Conciliacion\Domain\Rentas\ContratoRentaRepository;
-use Ghi\Conciliacion\Domain\Periodos\PeriodoRepository;
+use Ghi\Conciliacion\Domain\Periodos\ConciliacionRepository;
 use Ghi\Conciliacion\Domain\ProveedorRepository;
-use Ghi\Conciliacion\Domain\Periodos\PeriodoConciliacion;
+use Ghi\Conciliacion\Domain\Periodos\Conciliacion;
 use Ghi\Operacion\Domain\ReporteActividadRepository;
 use Ghi\SharedKernel\Contracts\EquipoRepository;
 use Laracasts\Commander\CommandHandler;
@@ -21,7 +21,7 @@ class GenerarPeriodoCommandHandler implements CommandHandler {
     private $operacionRepository;
 
     /**
-     * @var PeriodoRepository
+     * @var ConciliacionRepository
      */
     private $periodoRepository;
 
@@ -52,7 +52,7 @@ class GenerarPeriodoCommandHandler implements CommandHandler {
 
     /**
      * @param ReporteActividadRepository $operacionRepository
-     * @param PeriodoRepository $periodoRepository
+     * @param ConciliacionRepository $periodoRepository
      * @param ObraRepository $obraRepository
      * @param ProveedorRepository $proveedorRepository
      * @param EquipoRepository $equipoRepository
@@ -61,7 +61,7 @@ class GenerarPeriodoCommandHandler implements CommandHandler {
      */
     function __construct(
         ReporteActividadRepository $operacionRepository,
-        PeriodoRepository $periodoRepository,
+        ConciliacionRepository $periodoRepository,
         ObraRepository $obraRepository,
         ProveedorRepository $proveedorRepository,
         EquipoRepository $equipoRepository,
@@ -109,7 +109,7 @@ class GenerarPeriodoCommandHandler implements CommandHandler {
         $horasHorometro = $this->operacionRepository->getHorasHorometroPorPeriodo($command->idEquipo, $command->fechaInicial, $command->fechaFinal);
         $diasConOperacion = $this->operacionRepository->diasConOperacionEnPeriodo($command->idEquipo, $command->fechaInicial, $command->fechaFinal);
 
-        $periodo = PeriodoConciliacion::generar(
+        $periodo = Conciliacion::generar(
             $obra, $proveedor, $equipo, $command->fechaInicial, $command->fechaFinal, $diasConOperacion,
             $horasContrato, $efectivas, $repMayor, $repMenor, $mantenimiento,
             $ocio, $horometroInicial, $horometroFinal, $horasHorometro,

@@ -24,4 +24,10 @@ class Empresa extends Model {
      */
     public $timestamps = false;
 
+    public function entradasEquipo()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa')
+            ->where('tipo_transaccion', Transaccion::TIPO_ENTRADA_EQUIPO)
+            ->where('opciones', Transaccion::OPCIONES_ENTRADA_EQUIPO);
+    }
 }

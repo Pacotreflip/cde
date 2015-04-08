@@ -14,6 +14,7 @@ interface ReporteActividadRepository
      */
     public function getById($id);
 
+
     /**
      * Obtiene los reportes de horas de un almacen
      *
@@ -21,6 +22,7 @@ interface ReporteActividadRepository
      * @return mixed
      */
     public function getByIdAlmacen($idAlmacen);
+
 
     /**
      * Obtiene los reportes de horas de un almacen paginados
@@ -31,6 +33,7 @@ interface ReporteActividadRepository
      */
     public function getByIdAlmacenPaginated($idAlmacen, $howMany = 30);
 
+
     /**
      * Busca un reporte de operacion por fecha
      *
@@ -39,6 +42,7 @@ interface ReporteActividadRepository
      * @return mixed
      */
     public function getByFecha($idAlmacen, $fecha);
+
 
     /**
      * Obtiene los reportes de operacion de un equipo en un periodo de tiempo
@@ -50,6 +54,7 @@ interface ReporteActividadRepository
      */
     public function getByPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
 
+
     /**
      * Indica si existe un reporte de operacion en la fecha indicada
      *
@@ -58,6 +63,7 @@ interface ReporteActividadRepository
      * @return mixed
      */
     public function existeEnFecha($idAlmacen, $fecha);
+
 
     /**
      * Indica si existen horas por conciliar de un almacen en un periodo de tiempo
@@ -70,6 +76,7 @@ interface ReporteActividadRepository
      */
     public function existenHorasPorConciliarEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
 
+
     /**
      * Persiste un reporte de operacion
      *
@@ -77,6 +84,7 @@ interface ReporteActividadRepository
      * @return bool
      */
     public function save(ReporteActividad $operacion);
+
 
     /**
      * Elimina un reporte de operacion
@@ -86,19 +94,32 @@ interface ReporteActividadRepository
      */
     public function delete(ReporteActividad $reporte);
 
+
+    /**
+     * Elimina un registro de horas del reporte de operacion
+     *
+     * @param ReporteActividad $reporte
+     * @param $idHora
+     */
+    public function deleteHora(ReporteActividad $reporte, $idHora);
+
+
     /**
      * Obtiene los tipos de hora en formato de lista (id, descripcion)
      */
     public function getTiposHoraList();
 
+
     /**
-     * Elimina un registro de horas del reporte de operacion
+     * Obtiene las horas de contrato vigentes en un periodo
      *
-*@param ReporteActividad $reporte
-     * @param $idHora
-     * @return
+     * @param $idAlmacen
+     * @param $fechaInicial
+     * @param $fechaFinal
+     * @return mixed
      */
-    public function deleteHora(ReporteActividad $reporte, $idHora);
+    public function getHorasContratoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
+
 
     /**
      * Obtiene la suma total de horas reportadas en un periodo por tipo de hora
@@ -110,6 +131,7 @@ interface ReporteActividadRepository
      * @return mixed
      */
     public function sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, $tipoHora);
+
 
     /**
      * Obtiene la suma total de horas efectivas reportadas en un periodo de tiempo

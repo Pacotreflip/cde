@@ -1,7 +1,7 @@
 <?php namespace Ghi\Almacenes\Domain;
 
-class AlmacenSeHaRegistrado {
-
+class AlmacenSeHaRegistrado
+{
     public $almacen;
 
     /**
@@ -12,4 +12,4 @@ class AlmacenSeHaRegistrado {
         $this->almacen = $almacen;
     }
 
-} 
+}

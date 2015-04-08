@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Material extends Model {
-
+class Material extends Model
+{
     const TIPO_MATERIALES = 1;
     const TIPO_MANO_OBRA_Y_SERVICIOS = 2;
     const TIPO_HERRAMIENTA_Y_EQUIPO = 4;

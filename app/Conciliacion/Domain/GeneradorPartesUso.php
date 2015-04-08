@@ -4,7 +4,7 @@ use Ghi\Conciliacion\Domain\Rentas\ContratoRentaRepository;
 use Ghi\Conciliacion\Domain\Rentas\ItemParteUso;
 use Ghi\Conciliacion\Domain\Rentas\ParteUso;
 use Ghi\Conciliacion\Domain\Events\PeriodoFueCerrado;
-use Ghi\Conciliacion\Domain\Periodos\PeriodoRepository;
+use Ghi\Conciliacion\Domain\Periodos\ConciliacionRepository;
 use Ghi\Operacion\Domain\ReporteActividadRepository;
 use Ghi\SharedKernel\Contracts\EquipoRepository;
 use Laracasts\Commander\Events\EventListener;
@@ -30,7 +30,7 @@ class GeneradorPartesUso extends EventListener {
     private $operacionRepository;
 
     /**
-     * @var PeriodoRepository
+     * @var ConciliacionRepository
      */
     private $periodoRepository;
 
@@ -50,14 +50,14 @@ class GeneradorPartesUso extends EventListener {
     private $equipoRepository;
 
     /**
-     * @param PeriodoRepository $periodoRepository
+     * @param ConciliacionRepository $periodoRepository
      * @param ReporteActividadRepository $operacionRepository
      * @param HoraAParteUsoConverter $converter
      * @param ContratoRentaRepository $contratoRentaRepository
      * @param EquipoRepository $equipoRepository
      */
     function __construct(
-        PeriodoRepository $periodoRepository,
+        ConciliacionRepository $periodoRepository,
         ReporteActividadRepository $operacionRepository,
         HoraAParteUsoConverter $converter,
         ContratoRentaRepository $contratoRentaRepository,

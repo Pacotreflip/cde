@@ -1,7 +1,7 @@
 <?php namespace Ghi\Almacenes\Domain;
 
-class RegistroAlmacenCommand {
-
+class RegistroAlmacenCommand
+{
     /**
      * @var string
      */

@@ -3,8 +3,8 @@
 use Ghi\Core\Domain\Obras\Obra;
 use Illuminate\Database\Eloquent\Model;
 
-class UsuarioCadeco extends Model {
-
+class UsuarioCadeco extends Model
+{
     /**
      * @var string
      */
@@ -48,8 +48,7 @@ class UsuarioCadeco extends Model {
      */
     public function obras()
     {
-        if ($this->tieneAccesoATodasLasObras())
-        {
+        if ($this->tieneAccesoATodasLasObras()) {
             return Obra::all();
         }
 
@@ -65,4 +64,5 @@ class UsuarioCadeco extends Model {
     {
         return is_null($this->id_obra);
     }
+
 }

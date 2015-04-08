@@ -2,8 +2,8 @@
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ActualizaAlmacenMaquinariaRequest extends FormRequest {
-
+class ActualizaAlmacenMaquinariaRequest extends FormRequest
+{
 	/**
 	 * Get the validation rules that apply to the request.
 	 *

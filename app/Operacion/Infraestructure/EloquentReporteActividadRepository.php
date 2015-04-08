@@ -1,11 +1,12 @@
 <?php namespace Ghi\Operacion\Infraestructure;
 
+use Ghi\Almacenes\Domain\HoraMensual;
 use Ghi\Core\App\BaseRepository;
 use Ghi\Conciliacion\Domain\Exceptions\NoExisteOperacionPorConciliarEnPeriodoException;
 use Ghi\Core\App\Exceptions\ReglaNegocioException;
-use Ghi\Operacion\Domain\ReporteActividadRepository;
-use Ghi\Operacion\Domain\Hora;
+use Ghi\Operacion\Domain\Actividad;
 use Ghi\Operacion\Domain\HoraTipo;
+use Ghi\Operacion\Domain\ReporteActividadRepository;
 use Ghi\Operacion\Domain\ReporteActividad;
 use Ghi\Operacion\Domain\TipoHora;
 use Ghi\SharedKernel\Models\Equipo;
@@ -105,17 +106,10 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function existenHorasPorConciliarEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
     {
-        $existe = ReporteActividad::where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $idAlmacen)
             ->where('conciliado', false)
             ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
             ->exists();
-
-        if ( ! $existe)
-        {
-            throw new NoExisteOperacionPorConciliarEnPeriodoException;
-        }
-
-        return true;
     }
 
     /**
@@ -143,15 +137,6 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     }
 
     /**
-     * Obtiene los tipos de hora en formato de lista (id, descripcion)
-     */
-    public function getTiposHoraList()
-    {
-        return TipoHora::all()
-            ->lists('descripcion', 'id');
-    }
-
-    /**
      * Elimina un registro de horas del reporte de operacion
      *
      * @param ReporteActividad $reporte
@@ -167,6 +152,32 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     }
 
     /**
+     * Obtiene los tipos de hora en formato de lista (id, descripcion)
+     */
+    public function getTiposHoraList()
+    {
+        return TipoHora::all()
+            ->lists('descripcion', 'id');
+    }
+
+    /**
+     * Obtiene las horas de contrato vigentes en un periodo
+     *
+     * @param $idAlmacen
+     * @param $fechaInicial
+     * @param $fechaFinal
+     * @return mixed
+     */
+    public function getHorasContratoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    {
+        return HoraMensual::where('id_almacen', $idAlmacen)
+            ->whereBetween('inicio_vigencia', [$fechaInicial, $fechaFinal])
+            ->orderBy('inicio_vigencia', 'DESC')
+            ->firstOrFail()
+            ->horas_contrato;
+    }
+
+    /**
      * Obtiene la suma total de horas reportadas en un periodo por tipo de hora
      *
      * @param $idAlmacen
@@ -177,11 +188,11 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, $tipoHora)
     {
-        return Hora::whereHas('reporte', function($query) use($idAlmacen, $fechaInicial, $fechaFinal)
+        return Actividad::whereHas('reporte', function($query) use($idAlmacen, $fechaInicial, $fechaFinal)
             {
-                $query->whereIdAlmacen($idAlmacen)
+                $query->where('id_almacen', $idAlmacen)
                     ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
-                    ->whereConciliado(false);
+                    ->where('conciliado', false);
             })
             ->where('id_tipo_hora', $tipoHora)
             ->sum('cantidad');
@@ -326,7 +337,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function getHorasEfectivas($id)
     {
-        return Hora::where('id_reporte', $id)
+        return Actividad::where('id_reporte', $id)
             ->whereIn('id_tipo_hora', [HoraTipo::EFECTIVA, HoraTipo::OCIO, HoraTipo::REPARACION_MAYOR])
             ->get();
     }
@@ -348,4 +359,5 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
 
         $reporte->delete();
     }
+
 }

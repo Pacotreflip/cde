@@ -7,9 +7,10 @@ use Ghi\Core\App\BaseRepository;
 use Ghi\Almacenes\Domain\Almacen;
 use Ghi\Almacenes\Domain\AlmacenMaquinaria;
 use Ghi\Almacenes\Domain\AlmacenMaquinariaRepository;
+use Ghi\Core\Domain\Transaccion;
 
-class EloquentAlmacenMaquinariaRepository extends BaseRepository implements AlmacenMaquinariaRepository{
-
+class EloquentAlmacenMaquinariaRepository extends BaseRepository implements AlmacenMaquinariaRepository
+{
     /**
      * Obtiene un almacen por su id, incluyendo los
      * equipos que han entrado
@@ -58,23 +59,34 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Busca los almacenes de maquinaria de un proveedor
-     * a traves de las entradas de equipo en almacen
+     * Obtiene los ids de transaccion de las entradas de equipo de una empresa
      *
-     * @param $idObra
      * @param $idEmpresa
      * @return mixed
      */
-    public function findByIdProveedor($idObra, $idEmpresa)
+    protected function getIdsEntradaEquipo($idEmpresa)
     {
+        return Transaccion::where('id_obra', $this->context->getId())
+            ->entradaEquipo()
+            ->where('id_empresa', $idEmpresa)
+            ->lists('id_transaccion');
+    }
+
+    /**
+     * Busca los almacenes de una empresa a traves de las entradas de equipo
+     *
+     * @param $idEmpresa
+     * @return mixed
+     */
+    public function getByIdEmpresa($idEmpresa)
+    {
+        $idsEntradaEquipo = $this->getIdsEntradaEquipo($idEmpresa);
+
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
-            ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA,Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
-            ->whereHas('maquinas', function($query) use($idObra, $idEmpresa)
+            ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
+            ->whereHas('equipos.item', function($query) use($idsEntradaEquipo)
             {
-                $query->whereHas('entrada', function($query) use($idEmpresa)
-                {
-                    $query->whereIdEmpresa($idEmpresa);
-                });
+                $query->whereIn('id_transaccion', $idsEntradaEquipo);
             })
             ->orderBy('descripcion')
             ->get();
@@ -90,7 +102,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      * @return mixed
      * @throws ReglaNegocioException
      */
-    public function findMaquinaActivaEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getEquipoActivoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
     {
         $maquina =  AlmacenMaquinaria::where('id_almacen', $idAlmacen)
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA,Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
@@ -105,8 +117,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
             })
             ->first();
 
-        if ( ! $maquina)
-        {
+        if ( ! $maquina) {
             throw new ReglaNegocioException('No existe una maquina activa en el periodo indicado para este almacen.');
         }
 

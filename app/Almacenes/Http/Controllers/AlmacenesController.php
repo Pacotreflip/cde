@@ -11,8 +11,8 @@ use Ghi\Core\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 
-class AlmacenesController extends Controller {
-
+class AlmacenesController extends Controller
+{
     /**
      * @var AlmacenMaquinariaRepository
      */

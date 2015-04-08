@@ -28,14 +28,12 @@ interface AlmacenMaquinariaRepository
     public function getAllPaginated($howMany = 30);
 
     /**
-     * Busca los almacenes de maquinaria de un proveedor
-     * a traves de las entradas de equipo en almacen
+     * Busca los almacenes de una empresa a traves de las entradas de equipo
      *
-     * @param $idObra
      * @param $idEmpresa
      * @return mixed
      */
-    public function findByIdProveedor($idObra, $idEmpresa);
+    public function getByIdEmpresa($idEmpresa);
 
     /**
      * Obtiene la maquina que entro en un almacen y que esta activa
@@ -47,7 +45,7 @@ interface AlmacenMaquinariaRepository
      * @return mixed
      * @throws ReglaNegocioException
      */
-    public function findMaquinaActivaEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
+    public function getEquipoActivoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
 
     /**
      * Obtiene una categoria por su id

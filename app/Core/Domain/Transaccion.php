@@ -4,6 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaccion extends Model {
 
+    const TIPO_ENTRADA_EQUIPO = 33;
+    const OPCIONES_ENTRADA_EQUIPO = 8;
+
     /**
      * @var string
      */
@@ -23,6 +26,18 @@ class Transaccion extends Model {
      * @var bool
      */
     public $timestamps = false;
+
+    /**
+     * Obtiene las transacciones que son entradas de equipo
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeEntradaEquipo($query)
+    {
+        return $query->where('tipo_transaccion', static::TIPO_ENTRADA_EQUIPO)
+            ->where('opciones', static::OPCIONES_ENTRADA_EQUIPO);
+    }
 
     /**
      * Items relacionados con esta transaccion

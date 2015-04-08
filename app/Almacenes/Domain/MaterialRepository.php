@@ -1,7 +1,7 @@
 <?php namespace Ghi\Almacenes\Domain;
 
-interface MaterialRepository {
-
+interface MaterialRepository
+{
     /**
      * Obtiene un material por su id
      *

@@ -4,8 +4,8 @@ use Ghi\Almacenes\Domain\MaterialRepository;
 use Ghi\Core\App\BaseRepository;
 use Ghi\Almacenes\Domain\Material;
 
-class EloquentMaterialRepository extends BaseRepository implements MaterialRepository {
-
+class EloquentMaterialRepository extends BaseRepository implements MaterialRepository
+{
     /**
      * Obtiene un material por su id
      *

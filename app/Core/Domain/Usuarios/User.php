@@ -8,8 +8,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Laracasts\Presenter\PresentableTrait;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
-
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+{
 	use Authenticatable, CanResetPassword, PresentableTrait;
 
     /**
@@ -54,5 +54,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var
      */
     protected $presenter = UserPresenter::class;
+
+    /**
+     * Usuario cadeco relacionado con este usuario de intranet
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function usuarioCadeco()
+    {
+        return $this->hasOne(UsuarioCadeco::class, 'usuario', 'usuario');
+    }
 
 }

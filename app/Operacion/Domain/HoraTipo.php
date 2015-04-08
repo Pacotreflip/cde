@@ -1,9 +1,9 @@
-<?php namespace Ghi\Maquinaria\Domain\Operacion;
+<?php namespace Ghi\Operacion\Domain;
 
 use Ghi\Operacion\Domain\Exceptions\TipoHoraInvalidoException;
 
-class HoraTipo {
-
+class HoraTipo
+{
     const EFECTIVA = 1;
     const REPARACION_MENOR = 2;
     const REPARACION_MAYOR = 3;
@@ -35,8 +35,7 @@ class HoraTipo {
             $idTipoHora != static::REPARACION_MENOR &&
             $idTipoHora != static::MANTENIMIENTO &&
             $idTipoHora != static::OCIO
-        )
-        {
+        ) {
             throw new TipoHoraInvalidoException;
         }
     }
@@ -48,4 +47,5 @@ class HoraTipo {
     {
         return $this->idTipoHora;
     }
+
 }

@@ -1,22 +1,20 @@
-@extends('layouts.default')
+@extends('app')
 
 @section('content')
-
     <ol class="breadcrumb">
-        <li class="active">{{ $proveedor->razon_social }}</li>
+        <li><a href="">Conciliación</a></li>
+        <li>{!! link_to_route('conciliacion.almacenes', $empresa->razon_social, [$empresa->id_empresa]) !!}</li>
     </ol>
 
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <h3 class="panel-title">Equipos</h3>
-        </div>
+    <h1 class="page-header">Almacenes</h1>
 
+    <div class="panel panel-success">
         <ul class="list-group">
-            @forelse($equipos as $equipo)
-                {!! link_to_route('conciliacion.index', $equipo->descripcion, [$proveedor->id_empresa, $equipo->id_almacen], ['class' => 'list-group-item']) !!}
+            @forelse($almacenes as $almacen)
+                {!! link_to_route('conciliacion.index', $almacen->descripcion, [$empresa->id_empresa, $almacen->id_almacen], ['class' => 'list-group-item']) !!}
             @empty
-                <li class="list-group-item text-danger">No se encontraron equipos.</li>
+                <li class="list-group-item text-danger">No se encontraron almacenes.</li>
             @endforelse
         </ul>
     </div>
-@stop
+@endsection

@@ -2,8 +2,8 @@
 
 use Ghi\Core\Domain\Inventario;
 
-class AlmacenMaquinaria extends Almacen {
-
+class AlmacenMaquinaria extends Almacen
+{
     /**
      * @var array
      */

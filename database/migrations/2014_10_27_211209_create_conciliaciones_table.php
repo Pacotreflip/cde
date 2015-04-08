@@ -12,12 +12,11 @@ class CreateConciliacionesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('maquinaria.conciliaciones', function(Blueprint $table)
+		Schema::create('Maquinaria.conciliaciones', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->unsignedInteger('id_obra');
-			$table->unsignedInteger('id_empresa');
 			$table->unsignedInteger('id_almacen');
+			$table->unsignedInteger('id_empresa');
 			$table->date('fecha_inicial');
 			$table->date('fecha_final');
 			$table->smallInteger('dias_con_operacion');
@@ -29,8 +28,8 @@ class CreateConciliacionesTable extends Migration {
 			$table->smallInteger('horas_reparacion_menor');
 			$table->smallInteger('horas_mantenimiento');
 			$table->smallInteger('horas_ocio');
-			$table->integer('horometro_inicial')->nullable();
-			$table->integer('horometro_final')->nullable();
+            $table->decimal('horometro_inicial', 6, 1)->nullable();
+            $table->decimal('horometro_final', 6, 1)->nullable();
 			$table->smallInteger('horas_horometro')->nullable();
 			$table->smallInteger('horas_propuesta')->default(0);
 			$table->smallInteger('horas_conciliadas')->default(0);
@@ -38,24 +37,19 @@ class CreateConciliacionesTable extends Migration {
 			$table->smallInteger('horas_conciliadas_reparacion_mayor')->default(0);
 			$table->smallInteger('horas_conciliadas_ocio')->default(0);
 			$table->boolean('cerrado')->default(false);
-			$table->string('usuario', 16);
+            $table->text('observaciones')->default('');
+			$table->string('creado_por', 16);
 			$table->timestamps();
 
-			$table->unique([
-                'id_obra', 'id_empresa', 'id_almacen', 'fecha_inicial', 'fecha_final'
-            ], 'UQ_conciliaciones');
-
-            $table->foreign('id_obra', 'FK_conciliaciones_obras')
-                ->references('id_obra')
-                ->on('obras');
-
-			$table->foreign('id_empresa', 'FK_conciliaciones_empresas')
-                ->references('id_empresa')
-                ->on('empresas');
+			$table->unique(['id_almacen', 'fecha_inicial', 'fecha_final'], 'UQ_conciliaciones');
 
 			$table->foreign('id_almacen', 'FK_conciliaciones_almacenes')
                 ->references('id_almacen')
                 ->on('almacenes');
+
+            $table->foreign('id_empresa', 'FK_conciliaciones_empresas')
+                ->references('id_empresa')
+                ->on('empresas');
 		});
 	}
 
@@ -67,7 +61,7 @@ class CreateConciliacionesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('maquinaria.conciliaciones');
+		Schema::drop('Maquinaria.conciliaciones');
 	}
 
 }

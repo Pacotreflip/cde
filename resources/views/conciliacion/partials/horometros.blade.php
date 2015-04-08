@@ -13,9 +13,9 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ $periodo->present()->horometroInicial }}</td>
-                <td>{{ $periodo->present()->horometroFinal }}</td>
-                <td>{{ $periodo->present()->horasHorometro }}</td>
+                <td>{{ $conciliacion->present()->horometro_inicial }}</td>
+                <td>{{ $conciliacion->present()->horometro_final }}</td>
+                <td>{{ $conciliacion->present()->horas_horometro }}</td>
             </tr>
         </tbody>
     </table>

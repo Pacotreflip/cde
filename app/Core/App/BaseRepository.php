@@ -1,10 +1,10 @@
-<?php  namespace Ghi\Core\App;
+<?php namespace Ghi\Core\App;
 
 use Ghi\Core\Services\Context;
 use Illuminate\Config\Repository;
 
-abstract class BaseRepository {
-
+abstract class BaseRepository
+{
     /**
      * @var Context
      */

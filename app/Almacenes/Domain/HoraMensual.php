@@ -1,9 +1,9 @@
-<?php  namespace Ghi\Almacenes\Domain; 
+<?php namespace Ghi\Almacenes\Domain;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HoraMensual extends Model {
-
+class HoraMensual extends Model
+{
     /**
      * @var string
      */

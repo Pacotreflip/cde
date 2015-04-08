@@ -12,7 +12,7 @@
         <li class="active">Inicio de actividades</li>
     </ol>
 
-    <h1>Inicio de Actividades</h1>
+    <h1 class="page-header">Inicio de Actividades</h1>
 
     @include('partials.errors')
 
