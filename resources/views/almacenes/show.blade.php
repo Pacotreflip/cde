@@ -60,7 +60,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h4>Equipos
+            <h4>Equipos Ingresados
                 <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Equipos que han entrado a este almacén." aria-hidden="true"></span></small>
             </h4>
         </div>

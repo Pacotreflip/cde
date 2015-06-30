@@ -7,6 +7,7 @@
             </a>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="{{ route('reportes.index', [$almacen]) }}">Lista de reportes</a></li>
+                <li><a href="{{ route('reportes.create', [$almacen]) }}">Generar nuevo reporte</a></li>
                 <li><a href="{{ route('horas-mensuales.index', [$almacen]) }}">Horas de contrato</a></li>
             </ul>
         </li>

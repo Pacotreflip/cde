@@ -42,14 +42,14 @@
                 <!-- Horometro Final Form Input -->
                 <div class="form-group">
                     {!! Form::label('horometro_final', 'Horometro Final:') !!}
-                    {!! Form::text('horometro_final', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('horometro_final', null, ['class' => 'form-control decimal', 'placeholder' => '0']) !!}
                 </div>
             </div>
             <div class="col-sm-6">
                 <!-- Kilometraje Final Form Input -->
                 <div class="form-group">
                     {!! Form::label('kilometraje_final', 'Kilometraje Final:') !!}
-                    {!! Form::text('kilometraje_final', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('kilometraje_final', null, ['class' => 'form-control decimal', 'placeholder' => '0']) !!}
                 </div>
             </div>
         </div>
@@ -72,4 +72,16 @@
         </div>
 
     {!! Form::close() !!}
+@stop
+
+@section('scripts')
+    <script>
+        $('input.decimal').inputmask('decimal', {
+            autoGroup: true,
+            groupSeparator: ',',
+            allowMinus: true,
+            rightAlign: false,
+            removeMaskOnSubmit: true
+        });
+    </script>
 @stop

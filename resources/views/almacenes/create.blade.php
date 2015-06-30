@@ -6,7 +6,7 @@
         <li class="active">Registro de almacén</li>
     </ol>
 
-    <h1 class="page-header">Registro de Almacén</h1>
+    <h1 class="page-header">Registro de Almacén de Maquinaria</h1>
 
     @include('partials.errors')
 

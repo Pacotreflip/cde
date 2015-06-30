@@ -66,7 +66,7 @@ return [
 
         'generales' => [
             'driver'   => 'sqlsrv',
-            'host'     => env('DB_HOST_CADECO', 'localhost'),
+            'host'     => env('DB_HOST_GENERALES', 'localhost'),
             'database' => env('DB_DATABASE_GENERALES', 'forge'),
             'username' => env('DB_USERNAME_GENERALES', 'forge'),
             'password' => env('DB_PASSWORD_GENERALES', ''),

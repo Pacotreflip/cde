@@ -2,6 +2,7 @@
 
 namespace Ghi\Http\Controllers\ReportesActividad;
 
+use Ghi\Domain\Almacenes\AlmacenMaquinariaRepository;
 use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Core\Conceptos\ConceptoRepository;
 use Ghi\Domain\ReportesActividad\Actividad;
@@ -24,18 +25,26 @@ class ActividadesController extends Controller
     private $conceptoRepository;
 
     /**
+     * @var AlmacenMaquinariaRepository
+     */
+    private $almacenRepository;
+
+    /**
      * @param ReporteActividadRepository $reporteRepository
      * @param ConceptoRepository $conceptoRepository
+     * @param AlmacenMaquinariaRepository $almacenRepository
      */
     public function __construct(
         ReporteActividadRepository $reporteRepository,
-        ConceptoRepository $conceptoRepository
+        ConceptoRepository $conceptoRepository,
+        AlmacenMaquinariaRepository $almacenRepository
     ) {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->reporteRepository = $reporteRepository;
         $this->conceptoRepository = $conceptoRepository;
+        $this->almacenRepository = $almacenRepository;
     }
 
 
@@ -48,11 +57,11 @@ class ActividadesController extends Controller
      */
     public function create($idAlmacen, $idReporte)
     {
+        $almacen = $this->almacenRepository->getById($idAlmacen);
         $tiposHora = $this->reporteRepository->getTiposHoraList();
-
         $reporte = $this->reporteRepository->getById($idReporte);
 
-        return view('actividades.create', compact('reporte', 'tiposHora'));
+        return view('actividades.create', compact('reporte', 'tiposHora', 'almacen'));
     }
 
 
