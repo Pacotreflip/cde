@@ -26,7 +26,7 @@ return [
 	|
 	*/
 
-	'default' => 'igh',
+    'default' => env('DB_CONNECTION', 'mysql'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,10 +54,10 @@ return [
 
 		'igh' => [
 			'driver'    => 'mysql',
-			'host'      => env('DB_HOST', 'localhost'),
-			'database'  => env('DB_DATABASE', 'forge'),
-			'username'  => env('DB_USERNAME', 'forge'),
-			'password'  => env('DB_PASSWORD', ''),
+			'host'      => env('DB_HOST_INTRANET', 'localhost'),
+			'database'  => env('DB_DATABASE_INTRANET', 'forge'),
+			'username'  => env('DB_USERNAME_INTRANET', 'forge'),
+			'password'  => env('DB_PASSWORD_INTRANET', ''),
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
@@ -68,8 +68,8 @@ return [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST_CADECO', 'localhost'),
             'database' => env('DB_DATABASE_GENERALES', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_USERNAME_GENERALES', 'forge'),
+            'password' => env('DB_PASSWORD_GENERALES', ''),
             'prefix'   => '',
         ],
 
@@ -77,8 +77,8 @@ return [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST_CADECO', 'localhost'),
             'database' => env('DB_DATABASE_CADECO', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_USERNAME_CADECO', 'forge'),
+            'password' => env('DB_PASSWORD_CADECO', ''),
             'prefix'   => '',
         ],
 

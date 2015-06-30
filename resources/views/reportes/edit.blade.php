@@ -1,15 +1,15 @@
 @extends('app')
 
 @section('nav-sub')
-    @include('partials.nav-sub', ['almacen' => $reporte->almacen])
-@endsection
+    @include('partials.nav-sub', ['almacen' => $almacen])
+@stop
 
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
-        <li><a href="{{ route('almacenes.show', [$reporte->almacen->id_almacen]) }}">{{ $reporte->almacen->descripcion }}</a></li>
-        <li><a href="{{ route('reportes.index', [$reporte->almacen->id_almacen]) }}">Reportes de actividad</a></li>
-        <li><a href="{{ route('reportes.show', [$reporte->almacen->id_almacen, $reporte->id]) }}">{{ $reporte->present()->fecha }}</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $almacen->descripcion }}</a></li>
+        <li><a href="{{ route('reportes.index', [$almacen]) }}">Reportes de actividad</a></li>
+        <li><a href="{{ route('reportes.show', [$almacen, $reporte]) }}">{{ $reporte->present()->fecha }}</a></li>
         <li class="active">modificar</li>
     </ol>
 
@@ -17,7 +17,7 @@
 
     @include('partials.errors')
 
-    {!! Form::model($reporte, ['route' => ['reportes.update', $reporte->id_almacen, $reporte->id], 'method' => 'PATCH'] ) !!}
+    {!! Form::model($reporte, ['route' => ['reportes.update', $almacen, $reporte], 'method' => 'PATCH'] ) !!}
 
         <div class="row">
             <div class="col-sm-6">
@@ -49,7 +49,7 @@
 
         <!-- Operador Form Input -->
         <div class="form-group">
-            {!! Form::label('operador', 'Operador:') !!}
+            {!! Form::label('operador', 'Nombre del Operador:') !!}
             {!! Form::text('operador', null, ['class' => 'form-control', 'placeholder' => 'Nombre del operador']) !!}
         </div>
 
@@ -105,8 +105,9 @@
         {{--</div>--}}
 
         <div class="form-group">
-            {!! link_to_route('reportes.show', 'Cancelar', [$reporte->id_almacen, $reporte->id], ['class' => 'btn btn-md btn-danger']) !!}
+            {!! link_to_route('reportes.show', 'Cancelar', [$almacen, $reporte], ['class' => 'btn btn-md btn-danger']) !!}
             {!! Form::submit('Guardar', ['class' => 'btn btn-md btn-primary']) !!}
         </div>
+
     {!! Form::close() !!}
-@endsection
+@stop

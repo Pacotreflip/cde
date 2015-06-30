@@ -13,4 +13,4 @@
             <a class="list-group-item" href="{{ route('context.set', [$obra->databaseName, $obra->id_obra]) }}">{{ $obra->nombre }}</a>
         @endforeach
     </div>
-@endsection
+@stop

@@ -2,8 +2,8 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="">Conciliación</a></li>
-        <li>{!! link_to_route('conciliacion.almacenes', $empresa->razon_social, [$empresa->id_empresa]) !!}</li>
+        <li><a href="{{ route('conciliacion.proveedores') }}">Proveedores</a></li>
+        <li><a href="{{ route('conciliacion.almacenes', [$empresa->id_empresa]) }}">{{ $empresa->razon_social }}</a></li>
         <li class="active">{{ $almacen->descripcion }}</li>
     </ol>
 

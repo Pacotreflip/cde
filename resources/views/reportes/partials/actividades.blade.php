@@ -17,9 +17,7 @@
                 <td>{{ $actividad->tipoHora->descripcion }}</td>
                 <td class="text-center">
                     @if($actividad->con_cargo)
-                        <div class="form-group">
-                            <span class="glyphicon glyphicon-ok"></span>
-                        </div>
+                        <span class="glyphicon glyphicon-ok"></span>
                     @else
                         <span class="glyphicon glyphicon-remove"></span>
                     @endif
@@ -29,17 +27,24 @@
                 <td>{{ $actividad->cantidad }}</td>
                 <td>
                     @if ($actividad->destino)
-                        {{ $actividad->destino->present()->descripcion }}
+                        <span data-toggle="tooltip" data-placement="top" title="{{ $actividad->destino->present()->descripcion }}" aria-hidden="true">
+                            {{ str_limit($actividad->destino->present()->descripcion, 40) }}
+                        </span>
                     @endif
                 </td>
-                <td>{{ $actividad->observaciones }}</td>
+                <td>
+                    <span data-toggle="tooltip" data-placement="top" title="{{ $actividad->observaciones }}" aria-hidden="true">
+                        {{ str_limit($actividad->observaciones, 20) }}
+                    </span>
+                </td>
                 <td class="text-center">
-                    @unless($reporte->cerrado)
-                        {!! Form::open(['route' => ['actividades.delete', $reporte->almacen->id_almacen, $reporte->id, $actividad->id],
-                            'method' => 'DELETE']) !!}
-                            {!! Form::submit('borrar',['class' => 'btn btn-xs btn-danger']) !!}
-                        {!! Form::close() !!}
-                    @endunless
+                @unless($reporte->cerrado)
+                    {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
+
+                        {!! Form::submit('Eliminar', ['class' => 'btn btn-xs btn-danger']) !!}
+
+                    {!! Form::close() !!}
+                @endunless
                 </td>
             </tr>
         @endforeach

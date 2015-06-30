@@ -1,12 +1,15 @@
 {
-  "name": "Control de Maquinaria",
+  "name": "control-maquinaria",
   "private": true,
   "dependencies": {
     "jquery": "~2.1.3",
-    "bootstrap": "3.3.2",
-    "font-awesome": "~4.2.0",
+    "bootstrap": "~3.3.4",
+    "font-awesome": "~4.3.0",
     "typeahead.js": "~0.10.5",
     "bootstrap-datepicker": "~1.3.0",
     "typeahead.js-bootstrap3.less": "~0.2.3"
+  },
+  "resolutions": {
+    "bootstrap": "~3.3.4"
   }
 }

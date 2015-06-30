@@ -2,7 +2,7 @@
 
 @section('nav-sub')
     @include('partials.nav-sub', ['almacen' => $almacen])
-@endsection
+@stop
 
 @section('content')
     <ol class="breadcrumb">
@@ -16,7 +16,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            {!! link_to_route('almacenes.edit', 'Modificar', [$almacen->id_almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
+            {!! link_to_route('almacenes.edit', 'Modificar este almacén', [$almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
             <h4>Datos Generales</h4>
         </div>
 
@@ -65,7 +65,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4>Equipos
-                <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Aqui se listan los equipos que han entrado a este almacén." aria-hidden="true"></span></small>
+                <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Equipos que han entrado a este almacén." aria-hidden="true"></span></small>
             </h4>
         </div>
         <table class="table table-striped">
@@ -96,7 +96,7 @@
         <div class="panel-heading">
             {!! link_to_route('horas-mensuales.create', 'Nuevo', [$almacen->id_almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
             <h4>Horas Mensuales
-                <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Diferentes tipos de horas designadas para el almacén de forma mensual." aria-hidden="true"></span></small>
+                <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Horas mensuales de los contratos" aria-hidden="true"></span></small>
             </h4>
         </div>
         @if(count($almacen->horasMensuales))
@@ -110,4 +110,4 @@
             </div>
         @endif
     </div>
-@endsection
+@stop

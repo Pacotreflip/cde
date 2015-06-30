@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddNumeroEconomicoToAlmacenesTable extends Migration {
-
+class AddNumeroEconomicoToAlmacenesTable extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -12,8 +12,7 @@ class AddNumeroEconomicoToAlmacenesTable extends Migration {
      */
     public function up()
     {
-        Schema::table('almacenes', function(Blueprint $table)
-        {
+        Schema::table('almacenes', function (Blueprint $table) {
             $table->string('numero_economico', 50)->nullable();
         });
     }
@@ -26,10 +25,8 @@ class AddNumeroEconomicoToAlmacenesTable extends Migration {
      */
     public function down()
     {
-        Schema::table('almacenes', function(Blueprint $table)
-        {
+        Schema::table('almacenes', function (Blueprint $table) {
             $table->dropColumn('numero_economico');
         });
     }
-
 }

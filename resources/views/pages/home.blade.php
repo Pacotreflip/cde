@@ -6,4 +6,4 @@
             <h1>Bienvenido a Grupo Hermes!</h1>
         </div>
     @endunless
-@endsection
+@stop
