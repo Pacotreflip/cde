@@ -12,10 +12,9 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.copy('vendor/bower_components/bootstrap/fonts', 'public/fonts/bootstrap')
+    mix.less('app.less')
+        .copy('vendor/bower_components/bootstrap/fonts', 'public/fonts/bootstrap')
         .copy('vendor/bower_components/font-awesome/fonts', 'public/fonts/font-awesome')
-        .copy('vendor/bower_components/bootstrap-datepicker/less/datepicker3.less', 'resources/assets/less/bootstrap-datepicker/datepicker3.less')
-        .less('app.less')
         .scripts([
             'jquery/dist/jquery.js',
             'bootstrap/dist/js/bootstrap.js',
