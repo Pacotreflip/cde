@@ -90,8 +90,8 @@
         }
 
         $('input#actividad').typeahead({
-            hint: true,
             highlight: true,
+            limit: 10,
             displayKey: 'value',
             minLength: 1
         }, {
