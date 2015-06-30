@@ -3,28 +3,27 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateActividadesTable extends Migration {
-
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('maquinaria.actividades', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->unsignedInteger('id_reporte');
-			$table->unsignedInteger('id_tipo_hora');
-			$table->unsignedInteger('id_concepto')->nullable();
+class CreateActividadesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('maquinaria.actividades', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('id_reporte');
+            $table->unsignedInteger('id_tipo_hora');
+            $table->unsignedInteger('id_concepto')->nullable();
             $table->time('hora_inicial')->nullable();
             $table->time('hora_final')->nullable();
-			$table->decimal('cantidad', 5, 2);
+            $table->decimal('cantidad', 5, 2);
             $table->boolean('con_cargo')->default(false);
-			$table->text('observaciones')->default('');
+            $table->text('observaciones')->default('');
             $table->string('creado_por', 16);
-			$table->timestamps();
+            $table->timestamps();
 
             $table->foreign('id_reporte', 'FK_actividades_reportes_actividad')
                 ->references('id')
@@ -37,19 +36,19 @@ class CreateActividadesTable extends Migration {
 
             $table->foreign('id_concepto', 'FK_actividades_conceptos')
                 ->references('id_concepto')
-                ->on('conceptos');
-		});
-	}
+                ->on('conceptos')
+                ->onDelete('cascade');
+        });
+    }
 
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('maquinaria.actividades');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('maquinaria.actividades');
+    }
 }

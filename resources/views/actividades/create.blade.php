@@ -11,7 +11,7 @@
 
     <h1 class="page-header">Reportar Actividades</h1>
 
-    @include ('partials.errors')
+    @include('partials.errors')
 
     {!! Form::open(['route' => ['actividades.store', $reporte->almacen->id_almacen, $reporte->id], 'method' => 'POST']) !!}
         <div class="row">
@@ -71,7 +71,7 @@
             {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
         </div>
     {!! Form::close() !!}
-@endsection
+@stop
 
 @section('scripts')
     <script>
@@ -100,4 +100,4 @@
             $('#id_concepto').val(item.id);
         });
     </script>
-@endsection
+@stop

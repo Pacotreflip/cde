@@ -1,23 +1,14 @@
 <?php
 
-use Ghi\Almacenes\Domain\Propiedad;
+use Ghi\Domain\Almacenes\Propiedad;
 use Illuminate\Database\Seeder;
 
-class PropiedadesTableSeeder extends Seeder {
-
+class PropiedadesTableSeeder extends Seeder
+{
     public function run()
     {
-        Propiedad::create([
-            'descripcion' => 'Propio',
-        ]);
-
-        Propiedad::create([
-            'descripcion' => 'Rentado',
-        ]);
-
-        Propiedad::create([
-            'descripcion' => 'En Sociedad',
-        ]);
+        factory(Propiedad::class)->create(['descripcion' => 'Propio']);
+        factory(Propiedad::class)->create(['descripcion' => 'Rentado']);
+        factory(Propiedad::class)->create(['descripcion' => 'En Sociedad']);
     }
-
 }

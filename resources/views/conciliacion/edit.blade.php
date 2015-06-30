@@ -62,4 +62,4 @@
             @include('conciliacion.partials.distribucion-horas')
         </div>
     </div>
-@endsection
+@stop

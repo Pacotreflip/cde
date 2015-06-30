@@ -1,23 +1,14 @@
 <?php
 
-use Ghi\Almacenes\Domain\Categoria;
+use Ghi\Domain\Almacenes\Categoria;
 use Illuminate\Database\Seeder;
 
-class CategoriasTableSeeder extends Seeder {
-
+class CategoriasTableSeeder extends Seeder
+{
     public function run()
     {
-        Categoria::create([
-            'descripcion' => 'Equipo Mayor'
-        ]);
-
-        Categoria::create([
-            'descripcion' => 'Equipo Menor'
-        ]);
-
-        Categoria::create([
-            'descripcion' => 'Equipo de Transporte'
-        ]);
+        factory(Categoria::class)->create(['descripcion' => 'Equipo Mayor']);
+        factory(Categoria::class)->create(['descripcion' => 'Equipo Menor']);
+        factory(Categoria::class)->create(['descripcion' => 'Equipo de Transporte']);
     }
-
 }

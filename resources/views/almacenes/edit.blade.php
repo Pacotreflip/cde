@@ -58,4 +58,4 @@
             {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
         </div>
     {!! Form::close() !!}
-@endsection
+@stop

@@ -2,13 +2,13 @@
 
 @section('nav-sub')
     @include('partials.nav-sub', ['almacen' => $almacen])
-@endsection
+@stop
 
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
-        <li><a href="{{ route('almacenes.show', [$almacen->id_almacen]) }}">{{ $almacen->descripcion }}</a></li>
-        <li><a href="{{ route('reportes.index', [$almacen->id_almacen]) }}">Reportes de actividad</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $almacen->descripcion }}</a></li>
+        <li><a href="{{ route('reportes.index', [$almacen]) }}">Reportes de actividad</a></li>
         <li class="active">Inicio de actividades</li>
     </ol>
 
@@ -16,7 +16,7 @@
 
     @include('partials.errors')
 
-    {!! Form::open(['route' => ['reportes.store', $almacen->id_almacen]] ) !!}
+    {!! Form::open(['route' => ['reportes.store', $almacen]] ) !!}
 
         <div class="row">
             <div class="col-sm-6">
@@ -65,8 +65,9 @@
             {!! link_to_route('reportes.index', 'Cancelar', [$almacen->id_almacen], ['class' => 'btn btn-danger']) !!}
             {!! Form::submit('Guardar', ['class' => 'btn btn-success']) !!}
         </div>
+
     {!! Form::close() !!}
-@endsection
+@stop
 
 @section('scripts')
     <script>
@@ -76,4 +77,4 @@
         autoclose: true
     });
     </script>
-@endsection
+@stop

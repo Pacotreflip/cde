@@ -5,7 +5,7 @@
         <li class="active">Almacenes</li>
     </ol>
 
-    <h1>Almacenes de Maquinaria</h1>
+    <h1 class="page-header">Almacenes de Maquinaria</h1>
 
     @if(count($almacenes))
         <div class="panel-default">
@@ -20,4 +20,4 @@
     @endif
 
     {!! $almacenes->render() !!}
-@endsection
+@stop
