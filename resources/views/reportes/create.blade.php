@@ -1,9 +1,5 @@
 @extends('app')
 
-@section('nav-sub')
-    @include('partials.nav-sub', ['almacen' => $almacen])
-@stop
-
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
@@ -62,7 +58,7 @@
          </div>
 
         <div class="form-group">
-            {!! link_to_route('reportes.index', 'Cancelar', [$almacen->id_almacen], ['class' => 'btn btn-danger']) !!}
+            {!! link_to_route('reportes.index', 'Cancelar', [$almacen], ['class' => 'btn btn-danger']) !!}
             {!! Form::submit('Guardar', ['class' => 'btn btn-success']) !!}
         </div>
 

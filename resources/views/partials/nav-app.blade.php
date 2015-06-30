@@ -7,7 +7,7 @@
             <li>{!! link_to_route('pages.obras', 'Cambiar de obra') !!}</li>
         </ul>
     </li>
-    <li class="dropdown">
+    <li class="dropdown {{ Request::is('almacenes*') ? 'active' : '' }}">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             Almacenes <span class="caret"></span>
         </a>
@@ -16,10 +16,12 @@
             <li><a href="{{ route('almacenes.create') }}">Nuevo almacén</a></li>
         </ul>
     </li>
+
+    @section('nav-sub')
+        @include('partials.nav-sub')
+    @show
 @else
     <li>
         <a href="{{ route('pages.obras') }}">Obras</a>
     </li>
 @endif
-
-@yield('nav-sub')

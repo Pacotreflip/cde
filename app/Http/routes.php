@@ -196,37 +196,37 @@ Route::group(['prefix' => 'almacenes/{id}/'], function()
  */
 get('conciliacion/', [
     'as' => 'conciliacion.proveedores',
-    'uses' => 'Conciliacion\ConciliacionController@proveedores'
+    'uses' => 'Conciliacion\ConciliacionesController@proveedores'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes', [
     'as' => 'conciliacion.almacenes',
-    'uses' => 'Conciliacion\ConciliacionController@almacenes'
+    'uses' => 'Conciliacion\ConciliacionesController@almacenes'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'as' => 'conciliacion.index',
-    'uses' => 'Conciliacion\ConciliacionController@index'
+    'uses' => 'Conciliacion\ConciliacionesController@index'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
     'as' => 'conciliacion.conciliar',
-    'uses' => 'Conciliacion\ConciliacionController@create'
+    'uses' => 'Conciliacion\ConciliacionesController@create'
 ]);
 
 post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
     'as' => 'conciliacion.store',
-    'uses' => 'Conciliacion\ConciliacionController@store'
+    'uses' => 'Conciliacion\ConciliacionesController@store'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.edit',
-    'uses' => 'Conciliacion\ConciliacionController@edit'
+    'uses' => 'Conciliacion\ConciliacionesController@edit'
 ]);
 
 put('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.update',
-    'uses' => 'Conciliacion\ConciliacionController@update'
+    'uses' => 'Conciliacion\ConciliacionesController@update'
 ]);
 
 \Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

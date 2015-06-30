@@ -1,9 +1,5 @@
 @extends('app')
 
-@section('nav-sub')
-    @include('partials.nav-sub', ['almacen' => $almacen])
-@stop
-
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>

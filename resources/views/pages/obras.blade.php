@@ -10,7 +10,9 @@
 
     <div class="list-group">
         @foreach($obras as $obra)
-            <a class="list-group-item" href="{{ route('context.set', [$obra->databaseName, $obra->id_obra]) }}">{{ $obra->nombre }}</a>
+            <a class="list-group-item" href="{{ route('context.set', [$obra->databaseName, $obra->id_obra]) }}">
+                {{ $obra->nombre }}
+            </a>
         @endforeach
     </div>
 @stop

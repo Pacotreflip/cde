@@ -1,9 +1,5 @@
 @extends('app')
 
-@section('nav-sub')
-    @include('partials.nav-sub', ['almacen' => $almacen])
-@stop
-
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
@@ -94,7 +90,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            {!! link_to_route('horas-mensuales.create', 'Nuevo', [$almacen->id_almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
+            {!! link_to_route('horas-mensuales.create', 'Nuevo Registro', [$almacen], ['class' => 'btn btn-sm btn-success pull-right']) !!}
             <h4>Horas Mensuales
                 <small><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Horas mensuales de los contratos" aria-hidden="true"></span></small>
             </h4>
