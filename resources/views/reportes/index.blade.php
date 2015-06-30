@@ -2,20 +2,21 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', $almacen) }}">{{ $almacen->descripcion }}</a></li>
         <li class="active">Reportes de actividad</li>
     </ol>
 
     <div>
-        {!! link_to_route('reportes.create', 'Nuevo reporte', [$almacen->id_almacen], ['class' => 'btn btn-sm btn-primary pull-right']) !!}
-        <h1>Reportes de Actividad <small>{{ $almacen->descripcion }}</small></h1>
+        {!! link_to_route('reportes.create', 'Nuevo Reporte', [$almacen], ['class' => 'btn btn-sm btn-success pull-right']) !!}
+        <h1 class="page-header">Reportes de Actividad</h1>
     </div>
 
     @if(count($reportes))
         <div class="panel panel-default">
             <ul class="list-group">
                 @foreach($reportes as $reporte)
-                    <a class="list-group-item" href="{!! route('reportes.show', [$reporte->id_almacen, $reporte->id]) !!}">
+                    <a class="list-group-item" href="{!! route('reportes.show', [$almacen, $reporte]) !!}">
                         <span>{{ $reporte->present()->fechaFormatoLocal }}</span>
 
                         @include('reportes.partials.estatus-label', compact('reporte'))
@@ -26,7 +27,7 @@
             </ul>
         </div>
     @else
-        <p class="alert alert-warning">No existen reportes de actividad registrados.</p>
+        <p class="alert alert-warning">Este almacén aun no tiene reportes de actividad.</p>
     @endif
 
     {!! $reportes->render() !!}

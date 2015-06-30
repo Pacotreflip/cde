@@ -15,7 +15,7 @@ return [
 	|
 	*/
 
-	'driver' => 'eloquent',
+	'driver' => 'intranet',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
 	|
 	*/
 
-	'model' => 'Ghi\Core\Domain\Usuarios\User',
+	'model' => Ghi\Domain\Core\Usuarios\User::class,
 
 	/*
 	|--------------------------------------------------------------------------

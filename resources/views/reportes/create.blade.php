@@ -2,16 +2,17 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('reportes.almacenes') }}">Almacenes</a></li>
-        <li><a href="{{ route('reportes.index', [$almacen->id_almacen]) }}">Reportes de actividad</a></li>
+        <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $almacen->descripcion }}</a></li>
+        <li><a href="{{ route('reportes.index', [$almacen]) }}">Reportes de actividad</a></li>
         <li class="active">Inicio de actividades</li>
     </ol>
 
-    <h1>Inicio de Actividades</h1>
+    <h1 class="page-header">Inicio de Actividades</h1>
 
     @include('partials.errors')
 
-    {!! Form::open(['route' => ['reportes.store', $almacen->id_almacen]] ) !!}
+    {!! Form::open(['route' => ['reportes.store', $almacen]] ) !!}
 
         <div class="row">
             <div class="col-sm-6">
@@ -57,9 +58,10 @@
          </div>
 
         <div class="form-group">
-            {!! link_to_route('reportes.index', 'Cancelar', [$almacen->id_almacen], ['class' => 'btn btn-danger']) !!}
+            {!! link_to_route('reportes.index', 'Cancelar', [$almacen], ['class' => 'btn btn-danger']) !!}
             {!! Form::submit('Guardar', ['class' => 'btn btn-success']) !!}
         </div>
+
     {!! Form::close() !!}
 @stop
 

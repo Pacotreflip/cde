@@ -16,12 +16,12 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ $periodo->present()->horasEfectivas }}</td>
-                <td>{{ $periodo->present()->horasReparacionMayor }}</td>
-                <td>{{ $periodo->present()->horasReparacionMenor }}</td>
-                <td>{{ $periodo->present()->horasMantenimiento }}</td>
-                <td>{{ $periodo->present()->horasOcio }}</td>
-                <td>{{ $periodo->present()->totalHoras }}
+                <td>{{ $conciliacion->present()->horas_efectivas }}</td>
+                <td>{{ $conciliacion->present()->horas_reparacion_mayor }}</td>
+                <td>{{ $conciliacion->present()->horas_reparacion_menor }}</td>
+                <td>{{ $conciliacion->present()->horas_mantenimiento }}</td>
+                <td>{{ $conciliacion->present()->horas_ocio }}</td>
+                <td>{{ $conciliacion->present()->suma_horas }}
                 </td>
             </tr>
         </tbody>

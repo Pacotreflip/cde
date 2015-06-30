@@ -1,6 +1,6 @@
 <li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        {{ $user->present()->nombreCompleto }} <span class="caret"></span>
+        {{ Auth::user()->present()->nombreCompleto }} <span class="caret"></span>
     </a>
 
     <ul class="dropdown-menu" role="menu">

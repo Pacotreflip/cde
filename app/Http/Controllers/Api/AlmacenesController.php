@@ -1,0 +1,51 @@
+<?php
+
+namespace Ghi\Http\Controllers\Api;
+
+use Ghi\Maquinaria\Api\AlmacenTransformer;
+use Ghi\Core\App\ApiController;
+use Ghi\Core\App\Facades\Fractal;
+use Ghi\SharedKernel\Contracts\EquipoRepository;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
+
+class AlmacenesController extends ApiController
+{
+    /**
+     * @var EquipoRepository
+     */
+    private $equipoRepository;
+
+    public function __construct(EquipoRepository $equipoRepository)
+    {
+        $this->equipoRepository = $equipoRepository;
+    }
+
+    /**
+     * Muestra una lista de los equipos (almacenes de maquinaria)
+     * de una obra
+     * @return mixed
+     */
+    public function lists()
+    {
+        $equipos = $this->equipoRepository->getAll();
+
+        $resource = new Collection($equipos, new AlmacenTransformer);
+
+        return Fractal::createData($resource)->toJson();
+    }
+
+    /**
+     * Muestra un equipo
+     * @param $id
+     * @return mixed
+     */
+    public function show($id)
+    {
+        $equipo = $this->equipoRepository->findById($id);
+
+        $resource = new Item($equipo, new AlmacenTransformer);
+
+        return Fractal::createData($resource)->toJson();
+    }
+}

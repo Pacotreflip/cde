@@ -3,8 +3,8 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class DatabaseSeeder extends Seeder {
-
+class DatabaseSeeder extends Seeder
+{
     private $tables = [
 //        'maquinaria.periodos_conciliacion',
 //        'maquinaria.reportes_operacion',
@@ -21,6 +21,12 @@ class DatabaseSeeder extends Seeder {
 //        'dbo.unidades',
 //        'dbo.usuarios',
 //        'dbo.obras',
+    ];
+
+    private $truncate = [
+        'maquinaria.categorias',
+        'maquinaria.propiedades',
+        'maquinaria.tipos_hora',
     ];
 
     private $tablesWithAutoId = [
@@ -47,7 +53,7 @@ class DatabaseSeeder extends Seeder {
     {
         Model::unguard();
 
-//        $this->cleanDatabaseCadeco();
+        $this->cleanDatabaseCadeco();
 
 //        $this->call('ObrasTableSeeder');
 //        $this->call('UsuariosCadecoTableSeeder');
@@ -58,8 +64,12 @@ class DatabaseSeeder extends Seeder {
 //        $this->call('ConceptosTableSeeder');
 //        $this->call('RentasTableSeeder');
         $this->call('TiposHoraTableSeeder');
+        $this->call('CategoriasTableSeeder');
+        $this->call('PropiedadesTableSeeder');
 //        $this->call('ReportesOperacionTableSeeder');
 //		$this->call('ConciliacionesTableSeeder');
+
+        Model::reguard();
     }
 
     /**
@@ -67,19 +77,16 @@ class DatabaseSeeder extends Seeder {
      */
     protected function cleanDatabaseCadeco()
     {
-        foreach ($this->tables as $table)
-        {
+        foreach ($this->truncate as $table) {
             DB::statement("ALTER TABLE {$table} NOCHECK CONSTRAINT all;");
 
             DB::table($table)->delete();
 
-            if(in_array($table, $this->tablesWithAutoId))
-            {
+            if (in_array($table, $this->tablesWithAutoId)) {
                 DB::statement("DBCC CHECKIDENT('{$table}', RESEED, 0);");
             }
 
             DB::statement("ALTER TABLE {$table} WITH CHECK CHECK CONSTRAINT all;");
         }
     }
-
 }
