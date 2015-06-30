@@ -19,8 +19,9 @@
                 <!-- Fecha Form Input -->
                 <div class="form-group">
                     {!! Form::label('fecha', 'Fecha:') !!}
-                    <div class="input-group date">
-                        {!! Form::input('date','fecha', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa', 'required'])!!}
+                    <div class="input-group">
+                        {!! Form::input('date', 'fecha', date('Y-m-d'),
+                            ['class' => 'form-control pad', 'placeholder' => 'dd-mm-aaaa', 'required'])!!}
                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                     </div>
                 </div>
@@ -32,7 +33,7 @@
                 <!-- Horometro Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('horometro_inicial', 'Horometro Inicial:') !!}
-                    {!! Form::text('horometro_inicial', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('horometro_inicial', null, ['class' => 'form-control decimal', 'placeholder' => '0']) !!}
                 </div>
             </div>
 
@@ -40,7 +41,7 @@
                 <!-- Kilometraje Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('kilometraje_inicial', 'Kilometraje Inicial:') !!}
-                    {!! Form::text('kilometraje_inicial', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('kilometraje_inicial', null, ['class' => 'form-control decimal', 'placeholder' => '0']) !!}
                 </div>
             </div>
         </div>
@@ -67,10 +68,26 @@
 
 @section('scripts')
     <script>
-    $('.dp').datepicker({
-        format: "dd-mm-yyyy",
-        language: "es",
-        autoclose: true
-    });
+        if ( ! Modernizr.inputtypes.date) {
+            $('.pad').pickadate({
+                format: 'dd/mm/yyyy',
+                formatSubmit: 'yyyy-mm-dd',
+                hiddenName: true,
+                selectYears: true,
+                selectMonths: true,
+                labelMonthNext: 'Vaya al mes siguiente',
+                labelMonthPrev: 'Vaya al mes anterior',
+                labelMonthSelect: 'Elija un mes de la lista',
+                labelYearSelect: 'Elija un año de la lista'
+            });
+        }
+
+        $('input.decimal').inputmask('decimal', {
+            autoGroup: true,
+            groupSeparator: ',',
+            allowMinus: true,
+            rightAlign: false,
+            removeMaskOnSubmit: true
+        });
     </script>
 @stop

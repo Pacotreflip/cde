@@ -24,6 +24,7 @@ class AlmacenesController extends Controller
 
     /**
      * @param AlmacenMaquinariaRepository $repository
+     * @param MaterialRepository $materialRepository
      */
     public function __construct(
         AlmacenMaquinariaRepository $repository,

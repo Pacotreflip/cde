@@ -30,7 +30,7 @@
                 <!-- Horometro Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('horometro_inicial', 'Horometro Inicial:') !!}
-                    {!! Form::text('horometro_inicial', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('horometro_inicial', null, ['class' => 'form-control decimal']) !!}
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                 <!-- Kilometraje Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('kilometraje_inicial', 'Kilometraje Inicial:') !!}
-                    {!! Form::text('kilometraje_inicial', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('kilometraje_inicial', null, ['class' => 'form-control decimal']) !!}
                 </div>
             </div>
         </div>
@@ -106,4 +106,16 @@
         </div>
 
     {!! Form::close() !!}
+@stop
+
+@section('scripts')
+    <script>
+        $('input.decimal').inputmask('decimal', {
+            autoGroup: true,
+            groupSeparator: ',',
+            allowMinus: true,
+            rightAlign: false,
+            removeMaskOnSubmit: true
+        });
+    </script>
 @stop

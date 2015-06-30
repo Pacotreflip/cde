@@ -1,13 +1,24 @@
 @import "vendor/bower_components/bootstrap/less/bootstrap";
+@import "vendor/bower_components/roboto-fontface/roboto-fontface";
 @import "vendor/bower_components/font-awesome/less/font-awesome";
-@import "vendor/bower_components/bootstrap-datepicker/less/datepicker3";
+@import "vendor/bower_components/jasny-bootstrap/less/jasny-bootstrap";
+@import "vendor/bower_components/pickadate/lib/themes-source/base";
+@import "vendor/bower_components/pickadate/lib/themes-source/base.date.less";
+@import "vendor/bower_components/pickadate/lib/themes-source/default";
+@import "vendor/bower_components/pickadate/lib/themes-source/default.date.less";
 @import "vendor/bower_components/typeahead.js-bootstrap3.less/typeahead";
 @import "partials/navigation";
 
+// Font Awesome overrides
+@fa-font-path:   "../fonts/fontawesome";
+
+// Roboto Font overrides
+@roboto-font-path: "../fonts/roboto/";
+
+// Bootstrap overrides
 @btn-font-weight: 300;
-@font-family-sans-serif: "Roboto", Helvetica, Arial, sans-serif;
+@font-family-sans-serif: "Roboto-Light", Helvetica, Arial, sans-serif;
 @icon-font-path: "../fonts/bootstrap/";
-@fa-font-path: "../fonts/font-awesome";
 
 body {
   margin-top: 70px;

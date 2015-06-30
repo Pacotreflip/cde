@@ -15,9 +15,8 @@ class ReportarActividadRequest extends Request
     {
         return [
             'tipo_hora' => 'required|integer',
-            'cantidad' => 'required|numeric|max:24|min:1',
+            'cantidad' => 'required|numeric|max:24|min:0.1',
             'id_concepto' => 'required_if:tipo_hora,1',
-            'hora_inicial' => ''
         ];
     }
 

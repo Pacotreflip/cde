@@ -21,7 +21,9 @@
 
                         @include('reportes.partials.estatus-label', compact('reporte'))
 
-                        <span class="badge">{{ $reporte->present()->sumaHoras }}</span>
+                        <span class="badge" data-toggle="tooltip" data-placement="top" title="Cantidad de horas reportadas en esta fecha" aria-hidden="true">
+                            {{ $reporte->present()->sumaHoras }}
+                        </span>
                     </a>
                 @endforeach
             </ul>

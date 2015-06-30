@@ -1,9 +1,5 @@
 @extends('app')
 
-@section('nav-sub')
-    @include('partials.nav-sub', ['almacen' => $almacen])
-@stop
-
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
@@ -23,7 +19,11 @@
         <div class="form-group">
             {!! Form::label('inicio_vigencia', 'Vigente a Partir de:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::input('date', 'inicio_vigencia', date('Y-m-d'), ['class' => 'form-control']) !!}
+                <div class="input-group">
+                    {!! Form::input('date', 'inicio_vigencia', date('Y-m-d'),
+                        ['class' => 'form-control pad', 'placeholder' => 'dd-mm-aaaa', 'required']) !!}
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                </div>
             </div>
         </div>
 
@@ -31,7 +31,7 @@
         <div class="form-group">
             {!! Form::label('horas_contrato', 'Horas de Contrato:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::text('horas_contrato', null, ['class' => 'form-control']) !!}
+                {!! Form::text('horas_contrato', null, ['class' => 'form-control integer', 'placeholder' => '0']) !!}
             </div>
         </div>
 
@@ -39,7 +39,7 @@
         <div class="form-group">
             {!! Form::label('horas_operacion', 'Horas de Operacion:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::text('horas_operacion', null, ['class' => 'form-control']) !!}
+                {!! Form::text('horas_operacion', null, ['class' => 'form-control integer', 'placeholder' => '0']) !!}
             </div>
         </div>
 
@@ -47,7 +47,7 @@
         <div class="form-group">
             {!! Form::label('horas_programa', 'Horas de Programa:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::text('horas_programa', null, ['class' => 'form-control']) !!}
+                {!! Form::text('horas_programa', null, ['class' => 'form-control integer', 'placeholder' => '0']) !!}
             </div>
         </div>
 
@@ -55,7 +55,7 @@
         <div class="form-group">
             {!! Form::label('observaciones', 'Observaciones:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::textarea('observaciones', null, ['class' => 'form-control', 'rows' => 3]) !!}
+                {!! Form::textarea('observaciones', null, ['class' => 'form-control integer', 'rows' => 3, 'placeholder' => '0']) !!}
             </div>
         </div>
 
@@ -66,4 +66,29 @@
         </div>
 
     {!! Form::close() !!}
+@stop
+
+@section('scripts')
+    <script>
+        if ( ! Modernizr.inputtypes.date) {
+            $('.pad').pickadate({
+                format: 'dd/mm/yyyy',
+                formatSubmit: 'yyyy-mm-dd',
+                hiddenName: true,
+                selectYears: true,
+                selectMonths: true,
+                labelMonthNext: 'Vaya al mes siguiente',
+                labelMonthPrev: 'Vaya al mes anterior',
+                labelMonthSelect: 'Elija un mes de la lista',
+                labelYearSelect: 'Elija un año de la lista'
+            });
+        }
+
+        $('input.integer').inputmask('integer', {
+            autoGroup: true,
+            groupSeparator: ',',
+            rightAlign: false,
+            removeMaskOnSubmit: true
+        });
+    </script>
 @stop
