@@ -13,6 +13,6 @@ class LocaleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        setlocale(LC_TIME, 'es_MX.UTF8');
+        setlocale(LC_TIME, 'es_MX.UTF8', 'Spanish_Spain.1252');
     }
 }
