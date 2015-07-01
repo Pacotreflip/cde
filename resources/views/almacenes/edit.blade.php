@@ -3,7 +3,7 @@
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
-        <li><a href="{{ route('almacenes.show', [$almacen->id_almacen]) }}">{{ $almacen->descripcion }}</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $almacen->descripcion }}</a></li>
         <li class="active">Modificar almacén</li>
     </ol>
 
@@ -11,7 +11,8 @@
 
     @include('partials.errors')
 
-    {!! Form::model($almacen, ['route' => ['almacenes.update', $almacen->id_almacen], 'method' => 'PATCH']) !!}
+    {!! Form::model($almacen, ['route' => ['almacenes.update', $almacen], 'method' => 'PATCH']) !!}
+
         <div class="row">
             <div class="col-md-3">
                 <!-- Numero Economico Form Input -->
@@ -31,10 +32,10 @@
 
         <!-- Material Form Input -->
         <div class="form-group">
-            {!! Form::label('id_material', 'Material:') !!}
+            {!! Form::label('material', 'Material:') !!}
             {!! Form::select('id_material', $materiales, null, ['class' => 'form-control']) !!}
-            {{--            {!! Form::text('material', null, ['class' => 'form-control', 'placeholder' => 'Digite nombre del insumo']) !!}--}}
-            {{--            {!! Form::hidden('id_material', null, ['class' => 'form-control', 'id' => 'id_material']) !!}--}}
+            {{--{!! Form::text('material', $almacen->material->descripcion, ['class' => 'form-control', 'placeholder' => 'Escriba el nombre del insumo']) !!}--}}
+            {{--{!! Form::hidden('id_material', null, ['class' => 'form-control', 'id' => 'id_material']) !!}--}}
         </div>
 
         <div class="row">

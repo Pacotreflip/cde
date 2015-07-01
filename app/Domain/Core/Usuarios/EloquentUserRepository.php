@@ -5,6 +5,8 @@ namespace Ghi\Domain\Core\Usuarios;
 use Ghi\Domain\Core\BaseDatosCadeco;
 use Ghi\Domain\Core\Obras\Obra;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
 class EloquentUserRepository implements UserRepository
@@ -67,7 +69,7 @@ class EloquentUserRepository implements UserRepository
     {
         $obrasUsuario = new Collection();
 
-        $basesDatos = BaseDatosCadeco::where('activa', true)->get();
+        $basesDatos = BaseDatosCadeco::where('activa', true)->orderBy('nombre')->get();
 
         foreach ($basesDatos as $bd) {
             $this->config->set('database.connections.cadeco.database', $bd->nombre);
@@ -75,6 +77,10 @@ class EloquentUserRepository implements UserRepository
             $usuarioCadeco = $this->getUsuarioCadeco($idUsuario);
 
             $obras = $this->getObrasUsuario($usuarioCadeco);
+
+//            if (count($obras)) {
+//                $obras->sortBy('nombre');
+//            }
 
             foreach ($obras as $obra) {
                 $obra->databaseName = $bd->nombre;
@@ -85,7 +91,14 @@ class EloquentUserRepository implements UserRepository
             \DB::disconnect('cadeco');
         }
 
-        return $obrasUsuario->sortBy('nombre');
+            $perPage = 10;
+            $currentPage = Paginator::resolveCurrentPage();
+            $currentPage = $currentPage ? $currentPage : 1;
+            $offset = ($currentPage * $perPage) - $perPage;
+
+            $paginator = new LengthAwarePaginator($obrasUsuario->slice($offset, $perPage), $obrasUsuario->count(), $perPage);
+
+            return $paginator;
     }
 
     /**
@@ -101,9 +114,9 @@ class EloquentUserRepository implements UserRepository
         }
 
         if ($usuarioCadeco->tieneAccesoATodasLasObras()) {
-            return Obra::all();
+            return Obra::orderBy('nombre')->get();
         }
 
-        return $usuarioCadeco->obras;
+        return $usuarioCadeco->obras()->orderBy('nombre')->get();
     }
 }

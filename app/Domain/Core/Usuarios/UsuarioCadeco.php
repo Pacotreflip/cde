@@ -50,10 +50,6 @@ class UsuarioCadeco extends Model
      */
     public function obras()
     {
-        if ($this->tieneAccesoATodasLasObras()) {
-            return Obra::all();
-        }
-
         return $this->belongsToMany(Obra::class, 'usuarios_obras', 'usuario', 'id_obra');
     }
 

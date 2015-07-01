@@ -1,18 +1,20 @@
 @extends('app')
 
 @section('content')
-    <div class="alert alert-info alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>Hola!</strong> Actualmente solo tienes acceso a estas obras.
-    </div>
+    <h1 class="page-header">Obras</h1>
 
-    <h1>Obras</h1>
-
-    <div class="list-group">
-        @foreach($obras as $obra)
-            <a class="list-group-item" href="{{ route('context.set', [$obra->databaseName, $obra->id_obra]) }}">
-                {{ $obra->nombre }}
-            </a>
+    <ul class="list-group">
+        @foreach($obras->groupBy('databaseName') as $baseDatos => $obrasBd)
+            <li class="list-group-item disabled">
+                <i class="fa fa-database fa-fw"></i> <b>{{ $baseDatos }}</b>
+            </li>
+            @foreach($obrasBd as $obra)
+                <a class="list-group-item" href="{{ route('context.set', [$obra->databaseName, $obra]) }}">
+                    {{ mb_strtoupper($obra->nombre) }}
+                </a>
+            @endforeach
         @endforeach
-    </div>
+    </ul>
+
+    {!! $obras->render() !!}
 @stop

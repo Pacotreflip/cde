@@ -34,6 +34,7 @@ class PagesController extends Controller
     public function obras(UserRepository $repository)
     {
         $obras = $repository->getObras(auth()->id());
+        $obras->setPath('obras');
 
         return view('pages.obras')->withObras($obras);
     }
