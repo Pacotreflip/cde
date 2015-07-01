@@ -18,6 +18,9 @@ class HorasMensualesController extends Controller
      */
     public function __construct(AlmacenMaquinariaRepository $maquinariaRepository)
     {
+        $this->middleware('auth');
+        $this->middleware('context');
+
         $this->maquinariaRepository = $maquinariaRepository;
     }
 
