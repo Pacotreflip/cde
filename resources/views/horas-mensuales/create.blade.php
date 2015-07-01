@@ -55,7 +55,7 @@
         <div class="form-group">
             {!! Form::label('observaciones', 'Observaciones:', ['class' => 'col-sm-2 control-label']) !!}
             <div class="col-sm-4">
-                {!! Form::textarea('observaciones', null, ['class' => 'form-control integer', 'rows' => 3, 'placeholder' => '0']) !!}
+                {!! Form::textarea('observaciones', null, ['class' => 'form-control integer', 'rows' => 3]) !!}
             </div>
         </div>
 
