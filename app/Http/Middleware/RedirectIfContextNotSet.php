@@ -7,7 +7,6 @@ use Flash;
 use Ghi\Domain\Core\Context;
 use Illuminate\Contracts\Config\Repository;
 use Redirect;
-use Illuminate\Support\Facades\URL;
 
 class RedirectIfContextNotSet
 {
@@ -50,7 +49,7 @@ class RedirectIfContextNotSet
         if ($this->context->notEstablished()) {
             Flash::error('Lo sentimos, debe seleccionar una obra para ver esta información!');
 
-            return Redirect::guest(URL::route('pages.obras'));
+            return redirect()->guest(route('pages.obras'));
         }
 
         $this->setContext();

@@ -35,19 +35,19 @@
                         </tr>
                         <tr>
                             <th>Horometro Inicial</th>
-                            <th>{{ $reporte->horometro_inicial }}</th>
+                            <th class="decimal">{{ $reporte->horometro_inicial }}</th>
                         </tr>
                         <tr>
                             <th>Horometro Final</th>
-                            <th>{{ $reporte->horometro_final }}</th>
+                            <th class="decimal">{{ $reporte->horometro_final }}</th>
                         </tr>
                         <tr>
                             <th>Kilometraje Inicial</th>
-                            <td>{{ $reporte->kilometraje_inicial }}</td>
+                            <td class="decimal">{{ $reporte->kilometraje_inicial }}</td>
                         </tr>
                         <tr>
                             <th>Kilometraje Final</th>
-                            <td>{{ $reporte->kilometraje_final }}</td>
+                            <td class="decimal">{{ $reporte->kilometraje_final }}</td>
                         </tr>
                         <tr>
                             <th>Operador</th>
@@ -56,6 +56,10 @@
                         <tr>
                             <th>Creado por</th>
                             <td>{{ $reporte->creado_por }}</td>
+                        </tr>
+                        <tr>
+                            <th>Observaciones</th>
+                            <td>{{ $reporte->observaciones }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -92,4 +96,17 @@
         {!! Form::close() !!}
     @endif
     <br/>
+@stop
+
+@section('scripts')
+    @parent()
+    <script>
+        $('.decimal').inputmask('decimal', {
+            autoGroup: true,
+            groupSeparator: ',',
+            allowMinus: true,
+            rightAlign: false,
+            removeMaskOnSubmit: true
+        });
+    </script>
 @stop
