@@ -24,7 +24,7 @@
                 </td>
                 <td>{{ $actividad->present()->horaInicial }}</td>
                 <td>{{ $actividad->present()->horaFinal }}</td>
-                <td>{{ $actividad->cantidad }}</td>
+                <td class="decimal">{{ $actividad->cantidad }}</td>
                 <td>
                     @if ($actividad->destino)
                         <span data-toggle="tooltip" data-placement="top" title="{{ $actividad->destino->present()->descripcion }}" aria-hidden="true">

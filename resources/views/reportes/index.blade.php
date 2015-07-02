@@ -17,7 +17,7 @@
             <ul class="list-group">
                 @foreach($reportes as $reporte)
                     <a class="list-group-item" href="{!! route('reportes.show', [$almacen, $reporte]) !!}">
-                        <span>{{ $reporte->present()->fechaFormatoLocal }}</span>
+                        <span><b>{{ $reporte->present()->fechaFormatoLocal }}</b></span>
 
                         @include('reportes.partials.estatus-label', compact('reporte'))
 

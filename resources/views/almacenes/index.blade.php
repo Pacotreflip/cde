@@ -1,10 +1,6 @@
 @extends('app')
 
 @section('content')
-    <ol class="breadcrumb">
-        <li class="active">Almacenes</li>
-    </ol>
-
     <h1 class="page-header">Almacenes de Maquinaria</h1>
 
     @if(count($almacenes))
