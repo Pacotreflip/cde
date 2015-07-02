@@ -42,7 +42,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      * @param int $howMany
      * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
      */
-    public function getAllPaginated($howMany = 50)
+    public function getAllPaginated($howMany = 30)
     {
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
@@ -132,10 +132,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      */
     public function getCategoriasList()
     {
-        return Categoria::all()
-            ->sortBy('descripcion')
-            ->lists('descripcion', 'id')
-            ->all();
+        return Categoria::sortBy('descripcion')->lists('descripcion', 'id')->all();
     }
 
     /**
@@ -156,9 +153,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      */
     public function getPropiedadesList()
     {
-        return Propiedad::all()
-            ->lists('descripcion', 'id')
-            ->all();
+        return Propiedad::lists('descripcion', 'id')->all();
     }
 
     /**

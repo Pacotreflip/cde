@@ -55,7 +55,7 @@
                         </tr>
                         <tr>
                             <th>Creado por</th>
-                            <td>{{ $reporte->creadoPor->usuario }}</td>
+                            <td>{{ $reporte->creado_por }}</td>
                         </tr>
                     </tbody>
                 </table>

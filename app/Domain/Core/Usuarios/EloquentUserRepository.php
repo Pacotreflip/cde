@@ -78,10 +78,6 @@ class EloquentUserRepository implements UserRepository
 
             $obras = $this->getObrasUsuario($usuarioCadeco);
 
-//            if (count($obras)) {
-//                $obras->sortBy('nombre');
-//            }
-
             foreach ($obras as $obra) {
                 $obra->databaseName = $bd->nombre;
 
