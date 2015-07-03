@@ -3,9 +3,12 @@
 namespace Ghi\Domain\Almacenes;
 
 use Illuminate\Database\Eloquent\Model;
+use Laracasts\Presenter\PresentableTrait;
 
 class HoraMensual extends Model
 {
+    use PresentableTrait;
+
     /**
      * @var string
      */
@@ -27,4 +30,14 @@ class HoraMensual extends Model
         'observaciones',
         'creado_por'
     ];
+
+    /**
+     * @var array
+     */
+    protected $dates = ['inicio_vigencia'];
+    
+    /**
+     * @var
+     */
+    protected $presenter = HoraMensualPresenter::class;
 }

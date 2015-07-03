@@ -88,7 +88,7 @@
         </table>
     </div>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" id="horas-mensuales">
         <div class="panel-heading">
             {!! link_to_route('horas-mensuales.create', 'Nuevo Registro', [$almacen], ['class' => 'btn btn-sm btn-success pull-right']) !!}
             <h4>Horas Mensuales

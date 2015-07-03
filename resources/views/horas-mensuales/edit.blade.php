@@ -4,24 +4,25 @@
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
         <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $almacen->descripcion }}</a></li>
-        <li class="active">Registro de horas mensuales</li>
+        <li class="active">Horas Mensuales</li>
+        <li>{{ $horas->present()->inicio_vigencia_local }}</li>
     </ol>
 
-    <h1 class="page-header">Registro de Horas Mensuales</h1>
+    <h1 class="page-header">Modificar Horas Mensuales</h1>
 
     <br/>
 
     @include('partials.errors')
 
-    {!! Form::open(['route' => ['horas-mensuales.store', $almacen], 'method' => 'POST', 'class' => 'form-horizontal']) !!}
+    {!! Form::model($horas, ['route' => ['horas-mensuales.update', $almacen, $horas], 'method' => 'PATCH', 'class' => 'form-horizontal']) !!}
 
-        @include('horas-mensuales.partials.form-fields')
+    @include('horas-mensuales.partials.form-fields')
 
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-4">
-                {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
-            </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-4">
+            {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
         </div>
+    </div>
 
     {!! Form::close() !!}
 @stop

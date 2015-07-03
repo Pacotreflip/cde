@@ -21,6 +21,12 @@
                     {!! Form::password('clave', ['class' => 'form-control', 'required']) !!}
                 </div>
 
+                <div class="checkbox">
+                    <label>
+                        {!! Form::checkbox('remember_me', true) !!} Recordar mi sesión en este equipo
+                    </label>
+                </div>
+
                 <div class="form-group">
                     {!! Form::submit('Iniciar sesión', ['class' => 'btn btn-primary']) !!}
                 </div>

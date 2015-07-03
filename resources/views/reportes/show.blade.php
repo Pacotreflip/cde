@@ -99,7 +99,7 @@
 @stop
 
 @section('scripts')
-    @parent()
+    @parent
     <script>
         $('.decimal').inputmask('decimal', {
             autoGroup: true,

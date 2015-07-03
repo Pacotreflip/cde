@@ -3,7 +3,7 @@
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('almacenes.index') }}">Almacenes</a></li>
-        <li><a href="{{ route('reportes.show', [$almacen]) }}">{{ $reporte->almacen->descripcion }}</a></li>
+        <li><a href="{{ route('almacenes.show', [$almacen]) }}">{{ $reporte->almacen->descripcion }}</a></li>
         <li><a href="{{ route('reportes.index', [$almacen]) }}">Reportes de actividad</a></li>
         <li><a href="{{ route('reportes.show', [$almacen, $reporte]) }}">{{ $reporte->present()->fecha }}</a></li>
         <li class="active">Reportar actividades</li>
@@ -97,7 +97,7 @@
         }, {
             source: function(query, process)
             {
-                $.getJSON('/api/conceptos', {search: query, medible: 1}, function(json) {
+                $.getJSON('/api/conceptos', {search: query}, function(json) {
                     var conceptos = [];
 
                     $.each(json.data, function(i, concepto) {

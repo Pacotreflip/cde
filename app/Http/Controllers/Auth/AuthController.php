@@ -83,14 +83,14 @@ class AuthController extends Controller
 
         $credentials = $request->only('usuario', 'clave');
 
-        if (auth()->attempt($credentials, $request->has('remember'))) {
+        if (auth()->attempt($credentials, $request->has('remember_me'))) {
             flash("Bienvenido " . auth()->user()->nombre . "!");
 
             return redirect($this->redirectPath());
         }
 
         return redirect($this->loginPath())
-            ->withInput($request->only('usuario', 'remember'))
+            ->withInput($request->only('usuario', 'remember_me'))
             ->withErrors([
                 'usuario' => $this->getFailedLoginMessage(),
             ]);

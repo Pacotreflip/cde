@@ -24,7 +24,7 @@ class CreateHorasMensualesTable extends Migration
             $table->string('modificado_por', 16)->nullable();
             $table->timestamps();
 
-            $table->unique('id_almacen', 'inicio_vigencia', 'UQ_horas_mensuales');
+            $table->unique(['id_almacen', 'inicio_vigencia'], 'UQ_horas_mensuales');
 
             $table->foreign('id_almacen', 'FK_horas_mensuales_almacenes')
                 ->references('id_almacen')
