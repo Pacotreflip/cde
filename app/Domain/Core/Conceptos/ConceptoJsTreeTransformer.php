@@ -13,11 +13,11 @@ class ConceptoJsTreeTransformer extends TransformerAbstract
     public function transform(Concepto $concepto)
     {
         return [
-            'id' => $concepto->id_concepto,
-            'nivel' => $concepto->nivel,
-            'text' => $concepto->clave_concepto ? $concepto->clave_concepto.' - '.$concepto->descripcion : $concepto->descripcion,
+            'id'       => $concepto->id_concepto,
+            'nivel'    => $concepto->nivel,
+            'text'     => $concepto->clave_concepto ? $concepto->clave_concepto.' - '.$concepto->descripcion : $concepto->descripcion,
             'children' => $concepto->tieneDescendientes(),
-            'type' => $concepto->esMaterial() ? 'material' : ($concepto->esMedible() ? 'medible' : 'concepto'),
+            'type'     => $concepto->esMaterial() ? 'material' : ($concepto->esMedible() ? 'medible' : 'concepto'),
         ];
     }
 }
