@@ -85,11 +85,6 @@ class ActividadesController extends Controller
 
             if ($request->has('id_concepto')) {
                 $concepto = $this->conceptoRepository->getById($request->get('id_concepto'));
-
-                if (! $concepto->esMedible()) {
-                    throw new ConceptoNoEsMedibleException;
-                }
-
                 $actividad->destino()->associate($concepto);
             }
 

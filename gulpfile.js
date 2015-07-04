@@ -16,6 +16,9 @@ elixir(function(mix) {
         .copy('vendor/bower_components/bootstrap/fonts', 'public/fonts/bootstrap')
         .copy('vendor/bower_components/font-awesome/fonts', 'public/fonts/fontawesome')
         .copy('vendor/bower_components/roboto-fontface/fonts', 'public/fonts/roboto')
+        .copy('vendor/bower_components/jstree/src/themes/default/32px.png', 'public/img')
+        .copy('vendor/bower_components/jstree/src/themes/default/40px.png', 'public/img')
+        .copy('vendor/bower_components/jstree/src/themes/default/throbber.gif', 'public/img')
         .scripts([
             'jquery/dist/jquery.js',
             'bootstrap/dist/js/bootstrap.js',
@@ -27,5 +30,6 @@ elixir(function(mix) {
             'pickadate/lib/picker.time.js',
             'pickadate/lib/translations/es_ES.js',
             'typeahead.js/dist/typeahead.jquery.js',
+            'jstree/dist/jstree.js'
         ], 'public/js/app.js', 'vendor/bower_components')
 });

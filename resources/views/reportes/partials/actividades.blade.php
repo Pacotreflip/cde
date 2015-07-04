@@ -40,9 +40,10 @@
                 <td class="text-center">
                 @unless($reporte->cerrado)
                     {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
-
-                        {!! Form::submit('Eliminar', ['class' => 'btn btn-xs btn-danger']) !!}
-
+                        <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
+                                data-placement="top" title="Eliminar" aria-hidden="true">
+                            <i class="fa fa-times"></i>
+                        </button>
                     {!! Form::close() !!}
                 @endunless
                 </td>

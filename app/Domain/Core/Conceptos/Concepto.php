@@ -42,8 +42,13 @@ class Concepto extends Model
      */
     public $timestamps = false;
 
+    protected $casts = [
+        'id_concepto' => 'integer'
+    ];
+
     /**
      * Indica si el concepto es medible
+     *
      * @return bool
      */
     public function esMedible()
@@ -51,11 +56,12 @@ class Concepto extends Model
         if ($this->concepto_medible == 3 || $this->concepto_medible == 1) {
             return true;
         }
-
         return false;
     }
 
     /**
+     * Indica si este concepto es un material
+     *
      * @return bool
      */
     public function esMaterial()
@@ -63,7 +69,19 @@ class Concepto extends Model
         if ($this->id_material) {
             return true;
         }
-
         return false;
+    }
+
+    /**
+     * Indica si este concepto tiene descendientes
+     *
+     * @return bool
+     */
+    public function tieneDescendientes()
+    {
+        return static::where('id_obra', $this->id_obra)
+            ->where('nivel', '<>', $this->nivel)
+            ->whereRaw("LEFT(nivel, LEN('{$this->nivel}')) = '{$this->nivel}'")
+            ->exists();
     }
 }

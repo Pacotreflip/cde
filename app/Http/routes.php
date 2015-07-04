@@ -42,7 +42,7 @@ get('auth/logout', [
     'uses' => 'Auth\AuthController@getLogout'
 ]);
 
-Route::group(['prefix' => 'api'], function()
+Route::group(['prefix' => 'api', 'as' => 'api.'], function()
 {
 ////    \TenantContext::setConnectionName('SAO1814_DEVELOP');
 ////    \TenantContext::setTenantId(1);
@@ -58,6 +58,8 @@ Route::group(['prefix' => 'api'], function()
 //    get('conceptos/{id}', 'Api\ConceptosController@show');
 //
     get('conceptos', 'Api\ConceptosController@lists');
+    get('conceptos/jstree', 'Api\ConceptosJsTreeController@getRoot');
+    get('conceptos/{id}/jstree', 'Api\ConceptosJsTreeController@getNode');
 });
 
 
