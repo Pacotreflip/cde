@@ -82,7 +82,7 @@ interface AlmacenMaquinariaRepository
      *
      * @param $idAlmacen
      * @param array $data
-     * @return mixed
+     * @return HoraMensual
      */
     public function registraHorasMensuales($idAlmacen, array $data);
 }

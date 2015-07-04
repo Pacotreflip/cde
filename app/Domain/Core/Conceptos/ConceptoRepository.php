@@ -9,10 +9,10 @@ interface ConceptoRepository
     /**
      * Obtiene un concepto por su id
      *
-     * @param $idConcepto
+     * @param $id
      * @return Concepto
      */
-    public function getById($idConcepto);
+    public function getById($id);
 
     /**
      * Obtiene todos los conceptos de una obra
@@ -24,37 +24,33 @@ interface ConceptoRepository
     /**
      * Obtiene los descendientes de un concepto
      *
-     * @param $idObra
-     * @param $idConcepto
+     * @param $id
      * @return Collection|Concepto
      */
-    public function getDescendantsOf($idObra, $idConcepto);
+    public function getDescendantsOf($id);
 
     /**
      * Obtiene los conceptos raiz del presupuesto de obra
      *
-     * @param $idObra
      * @return Collection|Concepto
      */
-    public function getRootLevels($idObra);
+    public function getRootLevels();
 
     /**
      * Obtiene los ancestros de un concepto
      *
-     * @param $idObra
-     * @param $idConcepto
-     * @return Collection|Concepto
+     * @param $id
+     * @return Concepto|Collection
      */
-    public function getAncestorsOf($idObra, $idConcepto);
+    public function getAncestorsOf($id);
 
     /**
      * Obtiene una lista de todos los niveles del presupuesto de obra
      * hasta llegar a los niveles de conceptos medibles
      *
-     * @param $idObra
      * @return array
      */
-    public function getConceptosList($idObra);
+    public function getConceptosList();
 
     /**
      * Obtiene todos los conceptos que son medibles/facturables

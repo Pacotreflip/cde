@@ -34,13 +34,13 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     /**
      * Obtiene un concepto por su id
      *
-     * @param $idConcepto
+     * @param $id
      * @return Concepto
      */
-    public function getById($idConcepto)
+    public function getById($id)
     {
         return Concepto::where('id_obra', $this->context->getId())
-            ->where('id_concepto', $idConcepto)
+            ->where('id_concepto', $id)
             ->firstOrFail();
     }
 
@@ -59,17 +59,18 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     /**
      * Obtiene los descendientes de un concepto
      *
-     * @param $idObra
-     * @param $idConcepto
+     * @param $id
      * @return Collection|Concepto
      */
-    public function getDescendantsOf($idObra, $idConcepto)
+    public function getDescendantsOf($id)
     {
-        if (is_null($idConcepto)) {
-            return $this->getRootLevels($idObra);
+        $idObra = $this->context->getId();
+
+        if (is_null($id)) {
+            return $this->getRootLevels();
         }
 
-        $concepto = $this->getById($idObra, $idConcepto);
+        $concepto = $this->getById($id);
 
         $numNivel = $this->nivelParser->calculaProfundidad($concepto->nivel) + 1;
 
@@ -83,13 +84,13 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     /**
      * Obtiene los ancestros de un concepto
      *
-     * @param $idObra
-     * @param $idConcepto
+     * @param $id
      * @return Collection|Concepto
      */
-    public function getAncestorsOf($idObra, $idConcepto)
+    public function getAncestorsOf($id)
     {
-        $concepto = $this->getById($idObra, $idConcepto);
+        $idObra = $this->context->getId();
+        $concepto = $this->getById($id);
 
         $niveles = $this->nivelParser->extraeNiveles($concepto->nivel);
 
@@ -107,11 +108,12 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     /**
      * Obtiene los conceptos raiz del presupuesto de obra
      *
-     * @param $idObra
      * @return Collection|Concepto
      */
-    public function getRootLevels($idObra)
+    public function getRootLevels()
     {
+        $idObra = $this->context->getId();
+
         return Concepto::where('id_obra', $idObra)
             ->whereRaw('LEN(nivel) = 4')
             ->orderBy('nivel')
@@ -122,13 +124,12 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
      * Obtiene una lista de todos los niveles del presupuesto de obra
      * hasta llegar a los niveles de conceptos medibles
      *
-     * @param $idObra
      * @return array
      */
-    public function getConceptosList($idObra)
+    public function getConceptosList()
     {
         return Concepto::selectRaw("id_obra, id_material, nivel, id_concepto, REPLICATE(' | ', LEN(nivel)/4) + '->' + descripcion as descripcion")
-            ->whereIdObra($idObra)
+            ->whereIdObra($this->context->getId())
             ->whereNull('id_material')
             ->whereExists(function ($query) {
                 $query->select(\DB::raw(1))

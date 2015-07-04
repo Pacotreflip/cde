@@ -42,7 +42,7 @@ get('auth/logout', [
     'uses' => 'Auth\AuthController@getLogout'
 ]);
 
-Route::group(['prefix' => 'api'], function()
+Route::group(['prefix' => 'api', 'as' => 'api.'], function()
 {
 ////    \TenantContext::setConnectionName('SAO1814_DEVELOP');
 ////    \TenantContext::setTenantId(1);
@@ -58,6 +58,8 @@ Route::group(['prefix' => 'api'], function()
 //    get('conceptos/{id}', 'Api\ConceptosController@show');
 //
     get('conceptos', 'Api\ConceptosController@lists');
+    get('conceptos/jstree', 'Api\ConceptosJsTreeController@getRoot');
+    get('conceptos/{id}/jstree', 'Api\ConceptosJsTreeController@getNode');
 });
 
 
@@ -98,24 +100,34 @@ patch('almacenes/{id}', [
  * Horas Mensuales
  */
 
-get('almacenes/{id}/horas-mensuales', [
+get('almacenes/{idAlmacen}/horas-mensuales', [
     'as' => 'horas-mensuales.index',
     'uses' => 'Almacenes\HorasMensualesController@index',
 ]);
 
-get('almacenes/{id}/horas-mensuales/nuevo', [
+get('almacenes/{idAlmacen}/horas-mensuales/nuevo', [
     'as' => 'horas-mensuales.create',
     'uses' => 'Almacenes\HorasMensualesController@create',
 ]);
 
-post('almacenes/{id}/horas-mensuales', [
+post('almacenes/{idAlmacen}/horas-mensuales', [
     'as' => 'horas-mensuales.store',
     'uses' => 'Almacenes\HorasMensualesController@store',
 ]);
 
+get('almacenes/{idAlmacen}/horas-mensuales/{id}/modificar', [
+    'as' => 'horas-mensuales.edit',
+    'uses' => 'Almacenes\HorasMensualesController@edit',
+]);
+
 patch('almacenes/{idAlmacen}/horas-mensuales/{id}', [
-    'as' => 'horas-mensuales.index',
+    'as' => 'horas-mensuales.update',
     'uses' => 'Almacenes\HorasMensualesController@update',
+]);
+
+delete('almacenes/{idAlmacen}/horas-mensuales/{id}', [
+    'as' => 'horas-mensuales.delete',
+    'uses' => 'Almacenes\HorasMensualesController@destroy',
 ]);
 
 

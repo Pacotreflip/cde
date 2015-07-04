@@ -26,7 +26,9 @@
                 @if (Auth::check())
                     @include('partials.nav-user')
                 @else
-                    <li>{!! link_to_route('auth.login', 'Iniciar Sesión') !!}</li>
+                    <li>
+                        <a href="{{ route('auth.login') }}"><i class="fa fa-sign-in fa-fw"></i> Iniciar Sesión</a>
+                    </li>
                 @endif
             </ul>
         </div>
