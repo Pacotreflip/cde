@@ -17,7 +17,7 @@ class AddIdPropiedadFieldToAlmacenesTable extends Migration
 
             $table->foreign('id_propiedad', 'FK_almacenes_propiedades')
                 ->references('id')
-                ->on('maquinaria.propiedades');
+                ->on('Maquinaria.propiedades');
         });
     }
 

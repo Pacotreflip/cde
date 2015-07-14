@@ -3,7 +3,7 @@
 namespace Ghi\Providers;
 
 use Ghi\Auth\IntranetUserAuthProvider;
-use Ghi\Domain\Core\Usuarios\User;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,12 +12,14 @@ class IntranetAuthServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application services.
      *
-     * @return void
+     * @param Repository $config
      */
-    public function boot()
+    public function boot(Repository $config)
     {
-        Auth::extend('intranet', function($app) {
-            return new IntranetUserAuthProvider(User::class);
+        $model = $config->get('auth.model');
+
+        Auth::extend('intranet', function ($app) use ($model) {
+            return new IntranetUserAuthProvider($model);
         });
     }
 

@@ -29,14 +29,12 @@
 
     <script>
         $('#flash-overlay-modal').modal();
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 
-    @section('scripts')
-        <script>
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            })
-        </script>
-    @show
+    @yield('scripts')
 </body>
 </html>

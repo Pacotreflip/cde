@@ -17,7 +17,7 @@ class AddIdCategoriaFieldToAlmacenesTable extends Migration
 
             $table->foreign('id_categoria', 'FK_almacenes_categorias')
                 ->references('id')
-                ->on('maquinaria.categorias');
+                ->on('Maquinaria.categorias');
         });
     }
 

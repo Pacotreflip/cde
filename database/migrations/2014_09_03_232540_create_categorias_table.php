@@ -12,7 +12,7 @@ class CreateCategoriasTable extends Migration
      */
     public function up()
     {
-        Schema::create('maquinaria.categorias', function (Blueprint $table) {
+        Schema::create('Maquinaria.categorias', function (Blueprint $table) {
             $table->increments('id');
             $table->string('descripcion')->unique();
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateCategoriasTable extends Migration
      */
     public function down()
     {
-        Schema::drop('maquinaria.categorias');
+        Schema::drop('Maquinaria.categorias');
     }
 }
