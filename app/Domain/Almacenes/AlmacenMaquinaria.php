@@ -18,7 +18,7 @@ class AlmacenMaquinaria extends Almacen
     protected $presenter = AlmacenMaquinariaPresenter::class;
 
     /**
-     * Categoria del equipo
+     * Categoria de este almacen
      *
      * @return mixed
      */
@@ -28,7 +28,7 @@ class AlmacenMaquinaria extends Almacen
     }
 
     /**
-     * Propiedad del equipo
+     * Propiedad de este almacen
      *
      * @return mixed
      */

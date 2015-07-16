@@ -7,7 +7,9 @@
         <li class="active">Modificar almacén</li>
     </ol>
 
-    <h1 class="page-header">Modificar Almacén</h1>
+    <h1 class="page-header">
+        <i class="fa fa-pencil"></i> Modificar Almacén
+    </h1>
 
     @include('partials.errors')
 
@@ -56,7 +58,7 @@
         </div>
 
         <div class="form-group">
-            {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
+            {!! Form::submit('Guardar cambios', ['class' => 'btn btn-primary']) !!}
         </div>
     {!! Form::close() !!}
 @stop

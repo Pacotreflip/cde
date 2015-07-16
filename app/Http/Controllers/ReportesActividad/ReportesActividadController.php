@@ -40,14 +40,14 @@ class ReportesActividadController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @return Response
      */
-    public function index($idAlmacen)
+    public function index($id_almacen)
     {
-        $reportes = $this->reporteRepository->getByIdAlmacenPaginated($idAlmacen);
+        $reportes = $this->reporteRepository->getByIdAlmacenPaginated($id_almacen);
 
-        $almacen = $this->almacenRepository->getById($idAlmacen);
+        $almacen = $this->almacenRepository->getById($id_almacen);
 
         return view('reportes.index', compact('almacen', 'reportes'));
     }
@@ -55,63 +55,50 @@ class ReportesActividadController extends Controller
     /**
      * Muestra un formulario para crear un nuevo reporte de actividades
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @return Response
      */
-    public function create($idAlmacen)
+    public function create($id_almacen)
     {
-        $almacen = $this->almacenRepository->getById($idAlmacen);
+        $almacen = $this->almacenRepository->getById($id_almacen);
 
         return view('reportes.create', compact('almacen'));
     }
 
-
     /**
      * Almacena un nuevo reporte de actividades
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param InicioActividadesRequest $request
      * @return Response
      * @throws ReglaNegocioException
      */
-    public function store($idAlmacen, InicioActividadesRequest $request)
+    public function store($id_almacen, InicioActividadesRequest $request)
     {
-        try {
-            if ($this->reporteRepository->existeEnFecha($idAlmacen, $request->get('fecha'))) {
-                throw new ReglaNegocioException('El reporte de actividades para la fecha indicada ya existe');
-            }
+        $almacen = $this->almacenRepository->getById($id_almacen);
+        $except = [];
 
-            $almacen = $this->almacenRepository->getById($idAlmacen);
-
-            $except = [];
-
-            if (! $request->has('horometro_inicial')) {
-                $except[] = 'horometro_inicial';
-            }
-
-            if (! $request->has('kilometraje_inicial')) {
-                $except[] = 'kilometraje_inicial';
-            }
-
-            if (! $request->has('operador')) {
-                $except[] = 'operador';
-            }
-
-            $reporte = new ReporteActividad($request->except($except));
-
-            $reporte->almacen()->associate($almacen);
-            $reporte->creadoPor()->associate(auth()->user());
-
-            $reporte->save();
-        } catch (ReglaNegocioException $e) {
-            return redirect()->back()->withErrors($e->getMessage())->withInput();
+        if (! $request->has('horometro_inicial')) {
+            $except[] = 'horometro_inicial';
         }
+
+        if (! $request->has('kilometraje_inicial')) {
+            $except[] = 'kilometraje_inicial';
+        }
+
+        if (! $request->has('operador')) {
+            $except[] = 'operador';
+        }
+
+        $reporte = new ReporteActividad($request->except($except));
+        $reporte->almacen()->associate($almacen);
+        $reporte->creadoPor()->associate(auth()->user());
+        $this->reporteRepository->store($reporte);
 
         flash()->success('El reporte de actividades fue generado. Ahora puede reportar las actividades');
 
-        return redirect()->route('reportes.show', [$idAlmacen, $reporte->id]);
+        return redirect()->route('reportes.show', [$id_almacen, $reporte]);
     }
-
 
     /**
      * Muestra un reporte de actividades.
@@ -130,97 +117,82 @@ class ReportesActividadController extends Controller
             ->withReporte($reporte);
     }
 
-
     /**
      * Muestra un formulario para modificar el reporte de actividades.
      *
-     * @param $idAlmacen
-     * @param $idReporte
+     * @param $id_almacen
+     * @param $id
      * @return Response
      */
-    public function edit($idAlmacen, $idReporte)
+    public function edit($id_almacen, $id)
     {
-        $almacen = $this->almacenRepository->getById($idAlmacen);
-        $reporte = $this->reporteRepository->getById($idReporte);
+        $almacen = $this->almacenRepository->getById($id_almacen);
+        $reporte = $this->reporteRepository->getById($id);
 
         return view('reportes.edit')
             ->withAlmacen($almacen)
             ->withReporte($reporte);
     }
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param $idAlmacen
-     * @param $idReporte
+     * @param $id_almacen
+     * @param $id
      * @param Request $request
      * @throws \ReglaNegocioException
      * @return Response
      */
-    public function update($idAlmacen, $idReporte, Request $request)
+    public function update($id_almacen, $id, Request $request)
     {
-        $reporte = $this->reporteRepository->getById($idReporte);
+        $reporte = $this->reporteRepository->getById($id);
 
-        try {
-            if ($reporte->cerrado) {
-                throw new ReglaNegocioException('Este reporte no puede ser modificado por que ya esta cerrado.');
-            }
-
-            if ($request->has('cerrar')) {
-                $reporte->horometro_final = $request->get('horometro_final');
-                $reporte->kilometraje_final = $request->get('kilometraje_final');
-                $reporte->operador = $request->get('operador');
-                $reporte->observaciones = $request->get('observaciones');
-                $reporte->cerrar();
-            }
-
-            $reporte->update($request->all());
-        } catch (ReglaNegocioException $e) {
-            return redirect()->back()->withErrors($e->getMessage())->withInput();
+        if ($request->has('aprobar')) {
+            $reporte->horometro_final   = $request->get('horometro_final');
+            $reporte->kilometraje_final = $request->get('kilometraje_final');
+            $reporte->operador          = $request->get('operador');
+            $reporte->observaciones     = $request->get('observaciones');
+            $reporte->aprobar();
         }
+
+        $reporte->fill($request->all());
+        $this->reporteRepository->update($reporte);
 
         flash()->success('Los cambios fueron guardados.');
 
-        return redirect()->route('reportes.show', [$idAlmacen, $idReporte]);
+        return redirect()->route('reportes.show', [$id_almacen, $id]);
     }
 
-
     /**
-     * @param $idAlmacen
-     * @param $idReporte
+     * @param $id_almacen
+     * @param $id
      * @return mixed
      */
-    public function cierre($idAlmacen, $idReporte)
+    public function aprobar($id_almacen, $id)
     {
-        $almacen = $this->almacenRepository->getById($idAlmacen);
-        $reporte = $this->reporteRepository->getById($idReporte);
+        $almacen = $this->almacenRepository->getById($id_almacen);
+        $reporte = $this->reporteRepository->getById($id);
 
-        return view('reportes.cierre')
+        return view('reportes.aprobar')
             ->withAlmacen($almacen)
             ->withReporte($reporte);
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param $idAlmacen
-     * @param $idReporte
+     * @param $id_almacen
+     * @param $id
      * @return Response
      */
-    public function destroy($idAlmacen, $idReporte)
+    public function destroy($id_almacen, $id)
     {
-        try {
-            $this->reporteRepository->borraReporte($idReporte);
-        } catch (ReglaNegocioException $e) {
-            flash()->error($e->getMessage());
+        $reporte = $this->reporteRepository->getById($id);
 
-            return redirect()->back();
-        }
+        $this->reporteRepository->delete($reporte);
 
         flash('El reporte fue eliminado.');
 
-        return redirect()->route('reportes.index', [$idAlmacen]);
+        return redirect()->route('reportes.index', [$id_almacen]);
     }
 }

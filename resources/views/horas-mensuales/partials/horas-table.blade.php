@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($horas as $hora)
+        @foreach($almacen->horasMensuales as $hora)
             <tr>
                 <td>
                     <a href="{{ route('horas-mensuales.edit', [$almacen, $hora]) }}">{{ $hora->present()->inicio_vigencia_local }}</a>

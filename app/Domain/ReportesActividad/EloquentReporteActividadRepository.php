@@ -2,10 +2,9 @@
 
 namespace Ghi\Domain\ReportesActividad;
 
-use Ghi\Domain\Almacenes\HoraMensual;
 use Ghi\Domain\Core\BaseRepository;
-use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
-use Ghi\SharedKernel\Models\Equipo;
+use Ghi\Domain\ReportesActividad\Exceptions\ReporteDeOperacionYaExisteException;
+use Ghi\Domain\ReportesActividad\Exceptions\ReporteOperacionAprobadoException;
 
 class EloquentReporteActividadRepository extends BaseRepository implements ReporteActividadRepository
 {
@@ -24,12 +23,12 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * Obtiene los reportes de horas de un almacen
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @return \Illuminate\Database\Eloquent\Collection|ReporteActividad
      */
-    public function getByIdAlmacen($idAlmacen)
+    public function getByIdAlmacen($id_almacen)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $id_almacen)
             ->orderBy('fecha', 'desc')
             ->get();
     }
@@ -37,27 +36,27 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * Obtiene los reportes de horas de un almacen paginados
      *
-     * @param $idAlmacen
-     * @param int $howMany
+     * @param $id_almacen
+     * @param int $how_many
      * @return \Illuminate\Database\Eloquent\Collection|ReporteActividad
      */
-    public function getByIdAlmacenPaginated($idAlmacen, $howMany = 30)
+    public function getByIdAlmacenPaginated($id_almacen, $how_many = 30)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $id_almacen)
             ->orderBy('fecha', 'desc')
-            ->paginate($howMany);
+            ->paginate($how_many);
     }
 
     /**
      * Busca un reporte de operacion por fecha
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param $fecha
      * @return ReporteActividad
      */
-    public function getByFecha($idAlmacen, $fecha)
+    public function getByFecha($id_almacen, $fecha)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $id_almacen)
             ->where('fecha', $fecha)
             ->firstOrFail();
     }
@@ -65,28 +64,28 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * Obtiene los reportes de operacion de un equipo en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return \Illuminate\Database\Eloquent\Collection|ReporteActividad
      */
-    public function getByPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getByPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
-            ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
+        return ReporteActividad::where('id_almacen', $id_almacen)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->get();
     }
 
     /**
-     * Indica si existe un reporte de operacion en la fecha indicada
+     * Indica si un reporte de operacion existe en la fecha indicada
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param $fecha
      * @return bool
      */
-    public function existeEnFecha($idAlmacen, $fecha)
+    public function existeEnFecha($id_almacen, $fecha)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
+        return ReporteActividad::where('id_almacen', $id_almacen)
             ->where('fecha', $fecha)
             ->exists();
     }
@@ -94,40 +93,46 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * Indica si existen horas por conciliar de un almacen en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @throws \Ghi\Domain\Conciliacion\Exceptions\NoExisteOperacionPorConciliarEnPeriodoException
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     * @throws \Ghi\Domain\Conciliacion\Exceptions\NoExisteOperacionAprobadaEnPeriodoException
      * @return bool
      */
-    public function existenHorasPorConciliarEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function existenReportesPorConciliarEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
-            ->where('conciliado', false)
-            ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
+        return ReporteActividad::where('id_almacen', $id_almacen)
+//            ->where('aprobado', false)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->exists();
     }
 
     /**
      * Persiste un reporte de operacion
      *
-     * @param ReporteActividad $operacion
+     * @param ReporteActividad $reporte
      * @return ReporteActividad
      */
-    public function save(ReporteActividad $operacion)
+    public function save(ReporteActividad $reporte)
     {
-        $operacion->save();
+        $reporte->save();
 
-        return $operacion;
+        return $reporte;
     }
 
     /**
-     * Elimina un reporte de operacion
+     * Elimina un reporte de actividades
      *
      * @param ReporteActividad $reporte
+     * @throws ReporteOperacionAprobadoException
+     * @throws \Exception
      */
     public function delete(ReporteActividad $reporte)
     {
+        if ($reporte->aprobado) {
+            throw new ReporteOperacionAprobadoException;
+        }
+
         $reporte->delete();
     }
 
@@ -139,9 +144,7 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
      */
     public function deleteHora(ReporteActividad $reporte, $idHora)
     {
-        $hora = $reporte->horas()
-            ->where('id', '=', $idHora)
-            ->firstOrfail();
+        $hora = $reporte->horas()->where('id', '=', $idHora)->firstOrfail();
 
         $hora->delete();
     }
@@ -157,149 +160,145 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     }
 
     /**
-     * Obtiene las horas de contrato vigentes en un periodo
-     *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @return float
-     */
-    public function getHorasContratoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
-    {
-        return HoraMensual::where('id_almacen', $idAlmacen)
-            ->whereBetween('inicio_vigencia', [$fechaInicial, $fechaFinal])
-            ->orderBy('inicio_vigencia', 'DESC')
-            ->firstOrFail()
-            ->horas_contrato;
-    }
-
-    /**
      * Obtiene la suma total de horas reportadas en un periodo por tipo de hora
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @param $tipoHora
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     * @param $tipo_hora
      * @return float
      */
-    public function sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, $tipoHora)
+    public function sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, $tipo_hora)
     {
-        return Actividad::whereHas('reporte', function ($query) use ($idAlmacen, $fechaInicial, $fechaFinal) {
-                $query->where('id_almacen', $idAlmacen)
-                    ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
-                    ->where('conciliado', false);
+        return Actividad::whereHas('reporte', function ($query) use ($id_almacen, $fecha_inicial, $fecha_final) {
+                $query->where('id_almacen', $id_almacen)
+                    ->whereBetween('fecha', [$fecha_inicial, $fecha_final]);
+//                    ->where('aprobado', false);
             })
-            ->where('id_tipo_hora', $tipoHora)
+            ->where('id_tipo_hora', $tipo_hora)
             ->sum('cantidad');
     }
 
     /**
      * Obtiene la suma total de horas efectivas reportadas en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function sumaHorasEfectivasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function sumaHorasEfectivasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return $this->sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, HoraTipo::EFECTIVA);
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::EFECTIVA);
     }
 
     /**
      * Obtiene la suma total de horas reparacion menor reportadas en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function sumaHorasReparacionMenorPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function sumaHorasReparacionMenorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return $this->sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, HoraTipo::REPARACION_MENOR);
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::REPARACION_MENOR);
     }
 
     /**
      * Obtiene la suma total de horas reparacion mayor reportadas en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function sumaHorasReparacionMayorPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function sumaHorasReparacionMayorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return $this->sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, HoraTipo::REPARACION_MAYOR);
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::REPARACION_MAYOR);
     }
 
     /**
      * Obtiene la suma total de horas mantenimiento reportadas en un periodo de tiempo
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     *
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function sumaHorasMantenimientoPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function sumaHorasMantenimientoPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return $this->sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, HoraTipo::MANTENIMIENTO);
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::MANTENIMIENTO);
     }
 
     /**
      * Obtiene la suma total de horas ocio reportadas en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function sumaHorasOcioPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function sumaHorasOcioPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return $this->sumaHorasPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal, HoraTipo::OCIO);
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::OCIO);
+    }
+
+    /**
+     * Obtiene la suma total de horas traslado reportadas en un periodo de tiempo
+     *
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     * @return float
+     */
+    public function sumaHorasTrasladoPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
+    {
+        return $this->sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, HoraTipo::TRASLADO);
     }
 
     /**
      * Obtiene horometro inicial de un periodo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function getHorometroIncialPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getHorometroIncialPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
-            ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
+        return ReporteActividad::where('id_almacen', $id_almacen)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->min('horometro_inicial');
     }
 
     /**
      * Obtiene el horometro final de un periodo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function getHorometroFinalPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getHorometroFinalPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
-            ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
+        return ReporteActividad::where('id_almacen', $id_almacen)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->max('horometro_final');
     }
 
     /**
      * Obtiene el numero total de horas horometro de un periodo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function getHorasHorometroPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getHorasHorometroPorPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        $horometroIncial = $this->getHorometroIncialPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
-
-        $horometroFinal = $this->getHorometroFinalPorPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
+        $horometroIncial = $this->getHorometroIncialPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        $horometroFinal = $this->getHorometroFinalPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
         if ($horometroFinal <= 0) {
             return 0;
@@ -311,45 +310,51 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * Obtiene el numero de dias que tienen operacion en un periodo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return float
      */
-    public function diasConOperacionEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function diasConOperacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        return ReporteActividad::where('id_almacen', $idAlmacen)
-            ->whereBetween('fecha', [$fechaInicial, $fechaFinal])
+        return ReporteActividad::where('id_almacen', $id_almacen)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->count();
     }
 
     /**
-     * Obtiene las horas efectivas de un reporte de operacion
+     * Persiste los cambios de un reporte en el almacenamiento
      *
-     * @param $id
-     * @return float
+     * @param ReporteActividad $reporte
+     * @return ReporteActividad
+     * @throws ReporteOperacionAprobadoException
      */
-    public function getHorasEfectivas($id)
+    public function update(ReporteActividad $reporte)
     {
-        return Actividad::where('id_reporte', $id)
-            ->whereIn('id_tipo_hora', [HoraTipo::EFECTIVA, HoraTipo::OCIO, HoraTipo::REPARACION_MAYOR])
-            ->get();
+        if ($reporte->aprobado) {
+            throw new ReporteOperacionAprobadoException;
+        }
+
+        $reporte->save();
+
+        return $reporte;
     }
 
     /**
-     * Borra un reporte de actividades
+     * Crea un nuevo reporte y lo almacena
      *
-     * @param $id
-     * @throws \Ghi\Domain\Core\Exceptions\ReglaNegocioException
+     * @param ReporteActividad $reporte
+     * @return ReporteActividad
+     * @throws ReporteDeOperacionYaExisteException
      */
-    public function borraReporte($id)
+    public function store(ReporteActividad $reporte)
     {
-        $reporte = $this->getById($id);
-
-        if ($reporte->cerrado) {
-            throw new ReglaNegocioException('Este reporte no puede ser modificado por que ya esta cerrado.');
+        if ($this->existeEnFecha($reporte->id_almacen, $reporte->fecha)) {
+            throw new ReporteDeOperacionYaExisteException;
         }
 
-        $reporte->delete();
+        $reporte->save();
+
+        return $reporte;
     }
 }

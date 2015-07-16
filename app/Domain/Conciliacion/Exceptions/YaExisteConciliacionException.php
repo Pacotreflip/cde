@@ -6,5 +6,5 @@ use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 
 class YaExisteConciliacionException extends ReglaNegocioException
 {
-    protected $message = 'Ya existe una conciliacion que cubre parcial o totalmente este periodo.';
+    protected $message = 'Ya existe una conciliación que cubre parcial o totalmente este periodo.';
 }

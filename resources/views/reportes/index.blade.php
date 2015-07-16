@@ -8,8 +8,9 @@
     </ol>
 
     <div>
-        {!! link_to_route('reportes.create', 'Nuevo Reporte', [$almacen], ['class' => 'btn btn-sm btn-success pull-right']) !!}
-        <h1 class="page-header">Reportes de Actividad</h1>
+        <a href="{{ route('reportes.create', [$almacen]) }}" class="btn btn-sm btn-success pull-right"><i class="fa fa-plus"></i> Nuevo Reporte</a>
+        <h1 class="page-header">
+            <i class="fa fa-list-ul"></i> Reportes de Actividad</h1>
     </div>
 
     @if(count($reportes))

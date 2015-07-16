@@ -8,27 +8,30 @@
         <li class="active">{{ $reporte->present()->fecha }}</li>
     </ol>
 
-    <h1 class="page-header">Reporte de Actividades</h1>
+    <h1 class="page-header">
+        <i class="fa fa-calendar"></i> Reporte de Actividades
+        <span class="text-danger">{{ $reporte->present()->fechaFormatoLocal }}</span>
+    </h1>
 
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    @if (! $reporte->cerrado)
+                    @unless ($reporte->aprobado)
                         <div class="pull-right">
-                            {!! link_to_route('reportes.edit', 'Modificar este reporte', [$almacen, $reporte], ['class' => 'btn btn-sm btn-primary']) !!}
-                            {!! link_to_route('reportes.cierre', 'Cerrar este reporte', [$almacen, $reporte], ['class' => 'btn btn-sm btn-warning']) !!}
+                            <a href="{{ route('reportes.edit', [$almacen, $reporte]) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-fw fa-edit"></i> Modificar este reporte
+                            </a>
+                            <a href="{{ route('reportes.aprobar', [$almacen, $reporte]) }}" class="btn btn-sm btn-warning">
+                                <i class="fa fa-fw fa-check"></i> Aprobar este reporte
+                            </a>
                         </div>
-                    @endif
+                    @endunless
                     <h4>Datos Generales</h4>
                 </div>
 
                 <table class="table table-condensed table-bordered">
                     <tbody>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>{{ $reporte->present()->fecha }}</th>
-                        </tr>
                         <tr>
                             <th>Estado</th>
                             <th>@include('reportes.partials.estatus-label', compact('reporte'))</th>
@@ -67,46 +70,30 @@
         </div>
     </div>
 
-    <br/>
-
     <div>
-        @unless($reporte->cerrado)
-            <p>
-                {!! link_to_route('actividades.create', 'Reportar Actividades', [$almacen, $reporte],
-                    ['class' => 'btn btn-sm btn-success pull-right']) !!}
-            </p>
+        @unless ($reporte->aprobado)
+            <a href="{{ route('actividades.create', [$almacen, $reporte]) }}" class="btn btn-sm btn-success pull-right">
+                <i class="fa fa-fw fa-clock-o"></i> Reportar Actividades
+            </a>
         @endunless
-        <h3 class="page-header" id="actividades-reportadas">Actividades Reportadas</h3>
+        <h2 class="page-header" id="actividades-reportadas"><i class="fa fa-clock-o"></i> Actividades Reportadas</h2>
     </div>
 
-    @if(count($reporte->actividades))
-        <div class="panel panel-default">
-                @include('reportes.partials.actividades')
-        </div>
+    @if (count($reporte->actividades))
+        @include('reportes.partials.actividades')
     @else
         <p class="alert alert-warning">Este reporte aun no tiene actividades reportadas.</p>
     @endif
 
-    @if (! $reporte->cerrado)
+    @unless ($reporte->aprobado)
+        <hr>
         {!! Form::open(['route' => ['reportes.destroy', $almacen, $reporte], 'method' => 'DELETE']) !!}
-
-        @if (! $reporte->conciliado)
-            {!! Form::submit('Eliminar este reporte', ['class' => 'btn btn-sm btn-danger']) !!}
-        @endif
+            @unless ($reporte->conciliado)
+                <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fa fa-times"></i> Eliminar este reporte
+                </button>
+            @endunless
         {!! Form::close() !!}
-    @endif
+    @endunless
     <br/>
-@stop
-
-@section('scripts')
-    @parent
-    <script>
-        $('.decimal').inputmask('decimal', {
-            autoGroup: true,
-            groupSeparator: ',',
-            allowMinus: true,
-            rightAlign: false,
-            removeMaskOnSubmit: true
-        });
-    </script>
 @stop

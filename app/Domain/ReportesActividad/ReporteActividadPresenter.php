@@ -47,10 +47,14 @@ class ReporteActividadPresenter extends Presenter
      */
     public function estatusLabel()
     {
-        if ($this->entity->cerrado) {
-            return 'CERRADO';
+        if ($this->aprobado) {
+            return 'APROBADO';
         }
 
-        return 'PENDIENTE';
+        if ($this->conciliado) {
+            return 'CONCILIADO';
+        }
+
+        return 'CAPTURADO';
     }
 }

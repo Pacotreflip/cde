@@ -11,6 +11,7 @@ class HoraTipo
     const REPARACION_MAYOR = 3;
     const MANTENIMIENTO = 4;
     const OCIO = 5;
+    const TRASLADO = 6;
 
     private $idTipoHora;
 

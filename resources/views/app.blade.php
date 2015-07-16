@@ -32,7 +32,23 @@
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-        })
+
+            $('input.decimal').inputmask('decimal', {
+                autoGroup: true,
+                groupSeparator: ',',
+                allowMinus: true,
+                rightAlign: false,
+                removeMaskOnSubmit: true
+            });
+
+            $('input.integer').inputmask('integer', {
+                autoGroup: true,
+                groupSeparator: ',',
+                allowMinus: true,
+                rightAlign: false,
+                removeMaskOnSubmit: true
+            });
+        });
     </script>
 
     @yield('scripts')

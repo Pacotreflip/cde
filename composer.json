@@ -4,7 +4,6 @@
     "keywords": ["hermes", "sao", "ghi", "maquinaria", "grupohi"],
 	"license": "MIT",
 	"type": "project",
-    "version": "0.0.7",
     "homepage": "http://www.grupohi.mx",
     "authors": [
       {
