@@ -22,30 +22,30 @@ interface AlmacenMaquinariaRepository
     /**
      * Obtiene todos los almacenes de una obra paginados
      *
-     * @param int $howMany
+     * @param int $how_many
      * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
      */
-    public function getAllPaginated($howMany = 30);
+    public function getAllPaginated($how_many = 30);
 
     /**
      * Busca los almacenes de una empresa a traves de las entradas de equipo
      *
-     * @param $idEmpresa
+     * @param $id_empresa
      * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
      */
-    public function getByIdEmpresa($idEmpresa);
+    public function getByIdEmpresa($id_empresa);
 
     /**
      * Obtiene la maquina que entro en un almacen y que esta activa en un periodo de tiempo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return AlmacenMaquinaria
      *
      * @throws \Ghi\Domain\Core\Exceptions\ReglaNegocioException
      */
-    public function getEquipoActivoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
+    public function getEquipoActivoEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
     /**
      * Obtiene una categoria por su id
@@ -80,9 +80,9 @@ interface AlmacenMaquinariaRepository
     /**
      * Crea un registro de horas mensuales para el almacen
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param array $data
      * @return HoraMensual
      */
-    public function registraHorasMensuales($idAlmacen, array $data);
+    public function registraHorasMensuales($id_almacen, array $data);
 }

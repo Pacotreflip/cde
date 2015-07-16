@@ -20,9 +20,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     private $filterFields = ['concepto_medible', 'clave'];
 
     /**
-     * @param Context $context
-     * @param Repository $config
-     * @param NivelParser $nivelParser
+     * {@inheritdoc}
      */
     public function __construct(Context $context, Repository $config, NivelParser $nivelParser)
     {
@@ -32,10 +30,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene un concepto por su id
-     *
-     * @param $id
-     * @return Concepto
+     * {@inheritdoc}
      */
     public function getById($id)
     {
@@ -45,9 +40,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene todos los conceptos de una obra
-     *
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function getAll()
     {
@@ -57,10 +50,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene los descendientes de un concepto
-     *
-     * @param $id
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function getDescendantsOf($id)
     {
@@ -82,10 +72,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene los ancestros de un concepto
-     *
-     * @param $id
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function getAncestorsOf($id)
     {
@@ -106,9 +93,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene los conceptos raiz del presupuesto de obra
-     *
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function getRootLevels()
     {
@@ -121,10 +106,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene una lista de todos los niveles del presupuesto de obra
-     * hasta llegar a los niveles de conceptos medibles
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getConceptosList()
     {
@@ -145,10 +127,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Obtiene todos los conceptos que son medibles/facturables
-     *
-     * @return mixed
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function getMedibles()
     {
@@ -159,11 +138,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * Realiza una busqueda por descripcion o clave
-     *
-     * @param $search
-     * @param array $filters
-     * @return Collection|Concepto
+     * {@inheritdoc}
      */
     public function search($search, array $filters)
     {
@@ -183,8 +158,7 @@ class EloquentConceptoRepository extends BaseRepository implements ConceptoRepos
     }
 
     /**
-     * @param array $filters
-     * @return array
+     * {@inheritdoc}
      */
     private function parseFilters(array $filters)
     {

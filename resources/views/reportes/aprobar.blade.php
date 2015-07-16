@@ -19,8 +19,6 @@
 
     {!! Form::model($reporte, ['route' => ['reportes.update', $almacen, $reporte], 'method' => 'PATCH']) !!}
 
-        {!! Form::hidden('cerrar', true) !!}
-
         <div class="row">
             <div class="col-sm-6">
                 <!-- Horometro Inicial Form Input -->
@@ -66,22 +64,12 @@
             {!! Form::textarea('observaciones', null, ['class' => 'form-control', 'rows' => 3]) !!}
         </div>
 
+        {!! Form::hidden('aprobar', true) !!}
+
         <div class="form-group">
             {!! link_to_route('reportes.show', 'Cancelar', [$almacen, $reporte], ['class' => 'btn btn-danger']) !!}
-            {!! Form::submit('Cerrar Reporte', ['class' => 'btn btn-success']) !!}
+            {!! Form::submit('Aprobar Reporte', ['class' => 'btn btn-success']) !!}
         </div>
 
     {!! Form::close() !!}
-@stop
-
-@section('scripts')
-    <script>
-        $('input.decimal').inputmask('decimal', {
-            autoGroup: true,
-            groupSeparator: ',',
-            allowMinus: true,
-            rightAlign: false,
-            removeMaskOnSubmit: true
-        });
-    </script>
 @stop

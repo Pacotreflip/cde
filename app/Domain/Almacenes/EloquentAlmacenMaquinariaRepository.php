@@ -8,11 +8,7 @@ use Ghi\Domain\Core\Transaccion;
 class EloquentAlmacenMaquinariaRepository extends BaseRepository implements AlmacenMaquinariaRepository
 {
     /**
-     * Obtiene un almacen por su id, incluyendo los
-     * equipos que han entrado
-     *
-     * @param $id
-     * @return AlmacenMaquinaria
+     * {@inheritdoc}
      */
     public function getById($id)
     {
@@ -24,9 +20,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene todos los almacenes de una obra
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
     public function getAll()
     {
@@ -37,43 +31,34 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene todos los almacenes de una obra paginados
-     *
-     * @param int $howMany
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
-    public function getAllPaginated($howMany = 30)
+    public function getAllPaginated($how_many = 30)
     {
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
             ->orderBy('descripcion', 'asc')
-            ->paginate($howMany);
+            ->paginate($how_many);
     }
 
     /**
-     * Obtiene los ids de transaccion de las entradas de equipo de una empresa
-     *
-     * @param $idEmpresa
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getIdsEntradaEquipo($idEmpresa)
+    protected function getIdsEntradaEquipo($id_empresa)
     {
         return Transaccion::where('id_obra', $this->context->getId())
             ->entradaEquipo()
-            ->where('id_empresa', $idEmpresa)
+            ->where('id_empresa', $id_empresa)
             ->lists('id_transaccion')
             ->all();
     }
 
     /**
-     * Busca los almacenes de una empresa a traves de las entradas de equipo
-     *
-     * @param $idEmpresa
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
-    public function getByIdEmpresa($idEmpresa)
+    public function getByIdEmpresa($id_empresa)
     {
-        $idsEntradaEquipo = $this->getIdsEntradaEquipo($idEmpresa);
+        $idsEntradaEquipo = $this->getIdsEntradaEquipo($id_empresa);
 
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
@@ -85,23 +70,16 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene la maquina que entro en un almacen y que esta activa
-     * en un periodo de tiempo
-     *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @return AlmacenMaquinaria
-     * @throws ReglaNegocioException
+     * {@inheritdoc}
      */
-    public function getEquipoActivoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getEquipoActivoEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)
     {
-        $maquina =  AlmacenMaquinaria::where('id_almacen', $idAlmacen)
+        $maquina =  AlmacenMaquinaria::where('id_almacen', $id_almacen)
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
-            ->where(function ($query) use ($fechaInicial, $fechaFinal) {
-                $query->where('fecha_desde', '<=', $fechaInicial)
-                    ->where(function ($query) use ($fechaFinal) {
-                        $query->where('fecha_hasta', '>=', $fechaFinal)
+            ->where(function ($query) use ($fecha_inicial, $fecha_final) {
+                $query->where('fecha_desde', '<=', $fecha_inicial)
+                    ->where(function ($query) use ($fecha_final) {
+                        $query->where('fecha_hasta', '>=', $fecha_final)
                             ->orWhereNull('fecha_hasta');
                     });
             })
@@ -115,10 +93,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene una categoria por su id
-     *
-     * @param $id
-     * @return Categoria
+     * {@inheritdoc}
      */
     public function getCategoriaById($id)
     {
@@ -126,20 +101,15 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene las categorias en forma de lista
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getCategoriasList()
     {
-        return Categoria::sortBy('descripcion')->lists('descripcion', 'id')->all();
+        return Categoria::orderBy('descripcion')->lists('descripcion', 'id')->all();
     }
 
     /**
-     * Obtiene una propiedad por su id
-     *
-     * @param $id
-     * @return Propiedad
+     * {@inheritdoc}
      */
     public function getPropiedadById($id)
     {
@@ -147,9 +117,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene los tipos de propiedad en gorma de lista
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getPropiedadesList()
     {
@@ -157,15 +125,11 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Crea un registro de horas mensuales para el almacen
-     *
-     * @param $idAlmacen
-     * @param array $data
-     * @return HoraMensual
+     * {@inheritdoc}
      */
-    public function registraHorasMensuales($idAlmacen, array $data)
+    public function registraHorasMensuales($id_almacen, array $data)
     {
-        $almacen = $this->getById($idAlmacen);
+        $almacen = $this->getById($id_almacen);
 
         $horaMensual = new HoraMensual($data);
 

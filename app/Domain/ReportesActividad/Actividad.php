@@ -19,24 +19,24 @@ class Actividad extends Model
     /**
      * @var string
      */
-    protected $table = 'maquinaria.actividades';
+    protected $table = 'Maquinaria.actividades';
 
     /**
      * @var array
      */
     protected $fillable = [
         'cantidad',
-        'con_cargo',
-        'observaciones',
+        'con_cargo_empresa',
         'hora_inicial',
         'hora_final',
+        'observaciones',
     ];
 
     /**
      * @var array
      */
     protected $casts = [
-        'con_cargo' => 'boolean',
+        'con_cargo_empresa' => 'boolean',
     ];
 
     /**

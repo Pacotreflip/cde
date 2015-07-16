@@ -3,7 +3,7 @@
 @section('content')
     <ol class="breadcrumb">
         <li><a href="{{ route('conciliacion.proveedores') }}">Proveedores</a></li>
-        <li><a href="{{ route('conciliacion.almacenes', [$empresa->id_empresa]) }}">{{ $empresa->razon_social }}</a></li>
+        <li><a href="{{ route('conciliacion.almacenes', [$empresa]) }}">{{ $empresa->razon_social }}</a></li>
         <li class="active">{{ $almacen->descripcion }}</li>
     </ol>
 
@@ -13,7 +13,8 @@
 
     @include('partials.errors')
 
-    {!! Form::open() !!}
+    {!! Form::open(['route' => ['conciliacion.store', $empresa, $almacen], 'method' => 'POST']) !!}
+
         <div class="row">
             <div class="col-sm-6">
                 <!-- Fecha Inicial Form Input -->
@@ -22,6 +23,7 @@
                     {!! Form::input('date', 'fecha_inicial', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
                 </div>
             </div>
+
             <div class="col-sm-6">
                 <!-- Fecha Final Form Input -->
                 <div class="form-group">
@@ -38,7 +40,8 @@
         </div>
         
         <div class="form-group">
-            {!! Form::submit('Conciliar', ['class' => 'btn btn-success']) !!}
+            {!! Form::submit('Conciliar', ['class' => 'btn btn-primary']) !!}
         </div>
+
     {!! Form::close() !!}
 @stop

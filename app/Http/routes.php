@@ -166,12 +166,12 @@ Route::group(['prefix' => 'almacenes/{id}/'], function()
         'uses' => 'ReportesActividad\ReportesActividadController@update'
     ]);
 
-    get('reporte-actividades/{idReporte}/cierre', [
-        'as' => 'reportes.cierre',
-        'uses' => 'ReportesActividad\ReportesActividadController@cierre'
+    get('reporte-actividades/{idReporte}/aprobar', [
+        'as' => 'reportes.aprobar',
+        'uses' => 'ReportesActividad\ReportesActividadController@aprobar'
     ]);
 
-    put('reporte-actividades/{idReporte}/cierre', [
+    patch('reporte-actividades/{idReporte}/cierre', [
         'as' => 'reportes.cierre',
         'uses' => 'ReportesActividad\ReportesActividadController@cerrarReporte'
     ]);
@@ -208,12 +208,12 @@ Route::group(['prefix' => 'almacenes/{id}/'], function()
  */
 get('conciliacion/', [
     'as' => 'conciliacion.proveedores',
-    'uses' => 'Conciliacion\ConciliacionesController@proveedores'
+    'uses' => 'Conciliacion\ConciliacionesController@showProveedores'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes', [
     'as' => 'conciliacion.almacenes',
-    'uses' => 'Conciliacion\ConciliacionesController@almacenes'
+    'uses' => 'Conciliacion\ConciliacionesController@showAlmacenes'
 ]);
 
 get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
@@ -221,12 +221,12 @@ get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'uses' => 'Conciliacion\ConciliacionesController@index'
 ]);
 
-get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
+get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/conciliar', [
     'as' => 'conciliacion.conciliar',
     'uses' => 'Conciliacion\ConciliacionesController@create'
 ]);
 
-post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
+post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'as' => 'conciliacion.store',
     'uses' => 'Conciliacion\ConciliacionesController@store'
 ]);
@@ -236,9 +236,14 @@ get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'uses' => 'Conciliacion\ConciliacionesController@edit'
 ]);
 
-put('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
+patch('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.update',
     'uses' => 'Conciliacion\ConciliacionesController@update'
 ]);
 
-\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');
+delete('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
+    'as' => 'conciliacion.delete',
+    'uses' => 'Conciliacion\ConciliacionesController@destroy'
+]);
+
+//\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

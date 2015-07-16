@@ -7,6 +7,7 @@ use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Core\Conceptos\ConceptoRepository;
 use Ghi\Domain\ReportesActividad\Actividad;
 use Ghi\Domain\ReportesActividad\Exceptions\ConceptoNoEsMedibleException;
+use Ghi\Domain\ReportesActividad\HoraTipo;
 use Ghi\Domain\ReportesActividad\ReporteActividadRepository;
 use Ghi\Http\Requests\ReportesActividad\ReportarActividadRequest;
 use Ghi\Domain\ReportesActividad\Commands\ReportarHorasCommand;
@@ -51,34 +52,32 @@ class ActividadesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param $idAlmacen
-     * @param $idReporte
+     * @param $id_almacen
+     * @param $id
      * @return Response
      */
-    public function create($idAlmacen, $idReporte)
+    public function create($id_almacen, $id)
     {
-        $almacen = $this->almacenRepository->getById($idAlmacen);
-        $tiposHora = $this->reporteRepository->getTiposHoraList();
-        $reporte = $this->reporteRepository->getById($idReporte);
+        $almacen    = $this->almacenRepository->getById($id_almacen);
+        $tipos_hora  = $this->reporteRepository->getTiposHoraList();
+        $reporte    = $this->reporteRepository->getById($id);
 
-        return view('actividades.create', compact('reporte', 'tiposHora', 'almacen'));
+        return view('actividades.create', compact('reporte', 'tipos_hora', 'almacen'));
     }
 
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param $idAlmacen
-     * @param $idReporte
      * @param ReportarActividadRequest $request
+     * @param $id_almacen
+     * @param $id
      * @return Response
      * @throws ConceptoNoEsMedibleException
      */
-    public function store($idAlmacen, $idReporte, ReportarActividadRequest $request)
+    public function store(ReportarActividadRequest $request, $id_almacen, $id)
     {
-        try {
-            $reporte = $this->reporteRepository->getById($idReporte);
-
+            $reporte = $this->reporteRepository->getById($id);
             $actividad = new Actividad($request->all());
             $actividad->id_tipo_hora = $request->get('tipo_hora');
             $actividad->creadoPor()->associate(auth()->user());
@@ -88,14 +87,15 @@ class ActividadesController extends Controller
                 $actividad->destino()->associate($concepto);
             }
 
+            if ($actividad->id_tipo_hora == HoraTipo::REPARACION_MAYOR && ! $request->has('con_cargo_empresa')) {
+                $actividad->con_cargo_empresa = false;
+            }
+
             $actividad->reportarEn($reporte);
-        } catch (ReglaNegocioException $e) {
-            return redirect()->back()->withErrors($e->getMessage())->withInput();
-        }
 
         flash()->success('La actividad fue agregada al reporte.');
 
-        return redirect()->route('reportes.show', [$idAlmacen, $idReporte, '#actividades-reportadas']);
+        return redirect()->route('reportes.show', [$id_almacen, $id, '#actividades-reportadas']);
     }
 
 

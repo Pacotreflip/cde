@@ -55,51 +55,6 @@
             {!! Form::textarea('observaciones', null, ['class' => 'form-control', 'rows' => 3]) !!}
         </div>
 
-        {{--<h2>Actividades reportadas</h2>--}}
-
-        {{--<div class="panel panel-default">--}}
-            {{--<table class="table table-striped table-bordered">--}}
-                {{--<thead>--}}
-                    {{--<tr>--}}
-                        {{--<th>Tipo</th>--}}
-                        {{--<th>Cantidad</th>--}}
-                        {{--<th>Actividad</th>--}}
-                        {{--<th>Con cargo</th>--}}
-                        {{--<th>Observaciones</th>--}}
-                        {{--<th></th>--}}
-                    {{--</tr>--}}
-                {{--</thead>--}}
-                {{--<tbody>--}}
-                    {{--@foreach($reporte->actividades as $actividad)--}}
-                        {{--<tr>--}}
-                            {{--<td>{{ $actividad->tipoHora->descripcion }}</td>--}}
-                            {{--<td>--}}
-                                {{--{!! Form::text("actividades[$actividad->id][cantidad]", $actividad->cantidad, ['class' => 'form-control']) !!}--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--@if ($actividad->concepto)--}}
-                                    {{--{{ $actividad->concepto->present()->descripcionConClave }}--}}
-                                {{--@endif--}}
-                            {{--</td>--}}
-                            {{--<td class="text-center">--}}
-                                {{--@if ($actividad->con_cargo)--}}
-                                    {{--{!! Form::checkbox("actividades[$actividad->id][con_cargo]", 1, true) !!}--}}
-                                {{--@else--}}
-                                    {{--{!! Form::checkbox("actividades[$actividad->id][con_cargo]", 1) !!}--}}
-                                {{--@endif--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--{!! Form::textarea("actividades[$actividad->id][observaciones]", $actividad->observaciones, ['class' => 'form-control', 'rows' => 2]) !!}--}}
-                            {{--</td>--}}
-                            {{--<td class="text-center">--}}
-                                {{--{!! Form::checkbox("actividades[$actividad->id][borrar]", 1) !!}--}}
-                            {{--</td>--}}
-                        {{--</tr>--}}
-                    {{--@endforeach--}}
-                {{--</tbody>--}}
-            {{--</table>--}}
-        {{--</div>--}}
-
         <div class="form-group">
             {!! link_to_route('reportes.show', 'Cancelar', [$almacen, $reporte], ['class' => 'btn btn-md btn-danger']) !!}
             {!! Form::submit('Guardar', ['class' => 'btn btn-md btn-primary']) !!}

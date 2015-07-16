@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th>Tipo</th>
-            <th>Con Cargo</th>
+            <th>Con Cargo a Empresa</th>
             <th>Hora Inicio</th>
             <th>Hora Término</th>
             <th>Cantidad</th>
@@ -16,10 +16,8 @@
             <tr>
                 <td>{{ $actividad->tipoHora->descripcion }}</td>
                 <td class="text-center">
-                    @if($actividad->con_cargo)
+                    @if($actividad->con_cargo_empresa)
                         <span class="glyphicon glyphicon-ok"></span>
-                    @else
-                        <span class="glyphicon glyphicon-remove"></span>
                     @endif
                 </td>
                 <td>{{ $actividad->present()->horaInicial }}</td>
@@ -38,10 +36,10 @@
                     </span>
                 </td>
                 <td class="text-center">
-                @unless($reporte->cerrado)
+                @unless($reporte->aprobado)
                     {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
                         <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
-                                data-placement="top" title="Eliminar" aria-hidden="true">
+                                data-placement="top" title="Eliminar esta actividad" aria-hidden="true">
                             <i class="fa fa-times"></i>
                         </button>
                     {!! Form::close() !!}

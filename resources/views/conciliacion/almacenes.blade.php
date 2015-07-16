@@ -6,9 +6,9 @@
         <li>{{ $empresa->razon_social }}</li>
     </ol>
 
-    <h1 class="page-header">Almacenes</h1>
+    <h1 class="page-header"><i class="fa fa-archive"></i> Almacenes</h1>
 
-    <div class="panel panel-success">
+    <div class="panel panel-default">
         <ul class="list-group">
             @forelse($almacenes as $almacen)
                 {!! link_to_route('conciliacion.index', $almacen->descripcion, [$empresa->id_empresa, $almacen->id_almacen], ['class' => 'list-group-item']) !!}
