@@ -20,21 +20,3 @@ $factory->define(Ghi\Domain\Core\Usuarios\User::class, function ($faker) {
         'remember_token' => str_random(10),
     ];
 });
-
-$factory->define(Ghi\Domain\Almacenes\Propiedad::class, function ($faker) {
-    return [
-        'descripcion' => $faker->word,
-    ];
-});
-
-$factory->define(Ghi\Domain\Almacenes\Clasificacion::class, function ($faker) {
-    return [
-        'descripcion' => $faker->word,
-    ];
-});
-
-$factory->define(Ghi\Domain\ReportesActividad\TipoHora::class, function ($faker) {
-    return [
-        'descripcion' => $faker->word,
-    ];
-});

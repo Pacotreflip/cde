@@ -190,8 +190,10 @@ class GeneraConciliacion
         }
 
         $contrato = HoraMensual::where('id_almacen', $this->id_almacen)
-            ->where('inicio_vigencia', '<=', $this->fecha_inicial)
-            ->orWhere('inicio_vigencia', '<=', $this->fecha_final)
+            ->where(function($q) {
+                $q->where('inicio_vigencia', '<=', $this->fecha_inicial)
+                    ->orWhere('inicio_vigencia', '<=', $this->fecha_final);
+            })
             ->orderBy('inicio_vigencia', 'DESC')
             ->first();
 
