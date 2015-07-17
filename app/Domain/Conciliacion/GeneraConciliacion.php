@@ -28,6 +28,21 @@ class GeneraConciliacion
     private $calculadora;
 
     /**
+     * @var
+     */
+    protected $fecha_inicial;
+
+    /**
+     * @var
+     */
+    protected $fecha_final;
+
+    /**
+     * @var
+     */
+    protected $id_almacen;
+
+    /**
      * GeneraConciliacion constructor.
      *
      * @param ReporteActividadRepository $reporteRepository
@@ -60,6 +75,10 @@ class GeneraConciliacion
      */
     public function generar($id_empresa, $id_almacen, $fecha_inicial, $fecha_final, $observaciones = "")
     {
+        $this->id_almacen    = $id_almacen;
+        $this->fecha_inicial = $fecha_inicial;
+        $this->fecha_final   = $fecha_final;
+
         if ($this->repository->existeConciliacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)) {
             throw new YaExisteConciliacionException;
         }
@@ -68,16 +87,16 @@ class GeneraConciliacion
             throw new NoExisteOperacionAprobadaEnPeriodoException;
         }
 
-        $contrato = $this->getContratoVigente($id_almacen, $fecha_inicial, $fecha_final);
-
+        $contrato                = $this->getContratoVigente();
         $horas_contrato          = $contrato->horas_contrato;
         $dias_con_operacion      = $this->reporteRepository->diasConOperacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_efectivas         = $this->getHorasEfectivas($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_reparacion_mayor  = $this->getHorasReparacionMayor($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_reparacion_menor  = $this->getHorasReparacionMenor($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_mantenimiento     = $this->getHorasMantenimiento($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_ocio              = $this->getHorasOcio($id_almacen, $fecha_inicial, $fecha_final);
-        $horas_traslado          = $this->getHorasTraslado($id_almacen, $fecha_inicial, $fecha_final);
+        $horas_efectivas         = $this->getHorasEfectivas();
+        $horas_reparacion_mayor  = $this->getHorasReparacionMayor();
+        $horas_reparacion_mayor_con_cargo = $this->getHorasReparacionMayorConCargo();
+        $horas_reparacion_menor  = $this->getHorasReparacionMenor();
+        $horas_mantenimiento     = $this->getHorasMantenimiento();
+        $horas_ocio              = $this->getHorasOcio();
+        $horas_traslado          = $this->getHorasTraslado();
         $horometro_inicial       = $this->reporteRepository->getHorometroIncialPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
         $horometro_final         = $this->reporteRepository->getHorometroFinalPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
         $horas_horometro         = $this->reporteRepository->getHorasHorometroPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
@@ -89,7 +108,8 @@ class GeneraConciliacion
             $conciliacion->fecha_final,
             $horas_contrato,
             $horas_efectivas,
-            $horas_reparacion_mayor
+            $horas_reparacion_mayor,
+            $horas_reparacion_mayor_con_cargo
         );
 
         $conciliacion->dias_con_operacion           = $dias_con_operacion;
@@ -98,6 +118,7 @@ class GeneraConciliacion
         $conciliacion->horas_a_conciliar            = $this->calculadora->getHorasConciliar();
         $conciliacion->horas_efectivas              = $horas_efectivas;
         $conciliacion->horas_reparacion_mayor       = $horas_reparacion_mayor;
+        $conciliacion->horas_reparacion_mayor_con_cargo = $horas_reparacion_mayor_con_cargo;
         $conciliacion->horas_reparacion_menor       = $horas_reparacion_menor;
         $conciliacion->horas_mantenimiento          = $horas_mantenimiento;
         $conciliacion->horas_ocio                   = $horas_ocio;
@@ -117,100 +138,66 @@ class GeneraConciliacion
         return $conciliacion;
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return int
-     */
-    private function getHorasEfectivas($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasEfectivas()
     {
-        return (int) $this->reporteRepository->sumaHorasEfectivasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasEfectivasPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return int
-     */
-    private function getHorasReparacionMayor($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasReparacionMayor()
     {
-        return (int) $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return int
-     */
-    private function getHorasReparacionMenor($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasReparacionMayorConCargo()
     {
-        return (int) $this->reporteRepository->sumaHorasReparacionMenorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final, true);
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return float
-     */
-    private function getHorasMantenimiento($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasReparacionMenor()
     {
-        return (int) $this->reporteRepository->sumaHorasMantenimientoPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasReparacionMenorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return float
-     */
-    private function getHorasOcio($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasMantenimiento()
     {
-        return (int) $this->reporteRepository->sumaHorasOcioPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasMantenimientoPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
-    /**
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return float
-     */
-    private function getHorasTraslado($id_almacen, $fecha_inicial, $fecha_final)
+    private function getHorasOcio()
     {
-        return (int) $this->reporteRepository->sumaHorasTrasladoPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+        return (int) $this->reporteRepository->sumaHorasOcioPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
+    }
+
+    private function getHorasTraslado()
+    {
+        return (int) $this->reporteRepository->sumaHorasTrasladoPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
     /**
      * Obtiene el registro de las horas mensuales vigentes para un equipo
      *
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
      * @return mixed
      * @throws ReglaNegocioException
      */
-    private function getContratoVigente($id_almacen, $fecha_inicial, $fecha_final)
+    private function getContratoVigente()
     {
-        $numeroContratos = HoraMensual::where('id_almacen', $id_almacen)
-            ->whereBetween('inicio_vigencia', [$fecha_inicial, $fecha_final])
+        $numeroContratos = HoraMensual::where('id_almacen', $this->id_almacen)
+            ->whereBetween('inicio_vigencia', [$this->fecha_inicial, $this->fecha_final])
             ->count();
 
         if ($numeroContratos > 1) {
             throw new PeriodoConMultiplesContratosException;
         }
 
-        if ($numeroContratos == 0) {
-            throw new SinHorasContratoEnPeriodoException;
-        }
-
-        $contrato = HoraMensual::where('id_almacen', $id_almacen)
-            ->where('inicio_vigencia', '<=', $fecha_inicial)
-            ->orWhere('inicio_vigencia', '<=', $fecha_final)
+        $contrato = HoraMensual::where('id_almacen', $this->id_almacen)
+            ->where('inicio_vigencia', '<=', $this->fecha_inicial)
+            ->orWhere('inicio_vigencia', '<=', $this->fecha_final)
             ->orderBy('inicio_vigencia', 'DESC')
             ->first();
+
+        if (! $contrato) {
+            throw new SinHorasContratoEnPeriodoException;
+        }
 
         return $contrato;
     }

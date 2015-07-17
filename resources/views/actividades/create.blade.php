@@ -32,6 +32,13 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label>Turno:</label>
+            <label class="radio-inline">{!! Form::radio('turno', 1) !!} Primero</label>
+            <label class="radio-inline">{!! Form::radio('turno', 2) !!} Segundo</label>
+            <label class="radio-inline">{!! Form::radio('turno', 3) !!} Tercero</label>
+        </div>
+
         <div class="row">
             <div class="col-sm-6">
                 <!-- Hora Inicial Form Input -->

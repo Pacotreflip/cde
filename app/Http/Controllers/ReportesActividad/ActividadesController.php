@@ -7,7 +7,7 @@ use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Core\Conceptos\ConceptoRepository;
 use Ghi\Domain\ReportesActividad\Actividad;
 use Ghi\Domain\ReportesActividad\Exceptions\ConceptoNoEsMedibleException;
-use Ghi\Domain\ReportesActividad\HoraTipo;
+use Ghi\Domain\ReportesActividad\TipoHora;
 use Ghi\Domain\ReportesActividad\ReporteActividadRepository;
 use Ghi\Http\Requests\ReportesActividad\ReportarActividadRequest;
 use Ghi\Domain\ReportesActividad\Commands\ReportarHorasCommand;
@@ -43,14 +43,14 @@ class ActividadesController extends Controller
         $this->middleware('auth');
         $this->middleware('context');
 
-        $this->reporteRepository = $reporteRepository;
+        $this->reporteRepository  = $reporteRepository;
         $this->conceptoRepository = $conceptoRepository;
-        $this->almacenRepository = $almacenRepository;
+        $this->almacenRepository  = $almacenRepository;
     }
 
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra un formulario para crear un registro de actividades.
      *
      * @param $id_almacen
      * @param $id
@@ -59,7 +59,7 @@ class ActividadesController extends Controller
     public function create($id_almacen, $id)
     {
         $almacen    = $this->almacenRepository->getById($id_almacen);
-        $tipos_hora  = $this->reporteRepository->getTiposHoraList();
+        $tipos_hora = $this->reporteRepository->getTiposHoraList();
         $reporte    = $this->reporteRepository->getById($id);
 
         return view('actividades.create', compact('reporte', 'tipos_hora', 'almacen'));
@@ -67,58 +67,62 @@ class ActividadesController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un registro de actividades.
      *
      * @param ReportarActividadRequest $request
      * @param $id_almacen
-     * @param $id
+     * @param $id_reporte
      * @return Response
      * @throws ConceptoNoEsMedibleException
      */
-    public function store(ReportarActividadRequest $request, $id_almacen, $id)
+    public function store(ReportarActividadRequest $request, $id_almacen, $id_reporte)
     {
-            $reporte = $this->reporteRepository->getById($id);
-            $actividad = new Actividad($request->all());
-            $actividad->id_tipo_hora = $request->get('tipo_hora');
-            $actividad->creadoPor()->associate(auth()->user());
+        $reporte = $this->reporteRepository->getById($id_reporte);
+        $except = [];
 
-            if ($request->has('id_concepto')) {
-                $concepto = $this->conceptoRepository->getById($request->get('id_concepto'));
-                $actividad->destino()->associate($concepto);
-            }
+        if (! $request->has('hora_inicial')) {
+            $except[] = 'hora_inicial';
+        }
 
-            if ($actividad->id_tipo_hora == HoraTipo::REPARACION_MAYOR && ! $request->has('con_cargo_empresa')) {
-                $actividad->con_cargo_empresa = false;
-            }
+        if (! $request->has('hora_final')) {
+            $except[] = 'hora_final';
+        }
 
-            $actividad->reportarEn($reporte);
+        $actividad = new Actividad($request->except($except));
+        $actividad->tipo_hora = $request->get('tipo_hora');
+
+        if ($request->has('id_concepto')) {
+            $concepto = $this->conceptoRepository->getById($request->get('id_concepto'));
+            $actividad->destino()->associate($concepto);
+        }
+
+        // Cuando son horas de reparacion mayor por default se marcan como sin cargo a la empresa
+        if ($request->get('tipo_hora') === TipoHora::REPARACION_MAYOR && ! $request->has('con_cargo_empresa')) {
+            $actividad->con_cargo_empresa = false;
+        }
+
+        $actividad->creadoPor()->associate(auth()->user());
+        $actividad->reportarEn($reporte);
 
         flash()->success('La actividad fue agregada al reporte.');
 
-        return redirect()->route('reportes.show', [$id_almacen, $id, '#actividades-reportadas']);
+        return redirect()->route('reportes.show', [$id_almacen, $id_reporte, '#actividades-reportadas']);
     }
 
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param $idAlmacen
-     * @param $idReporte
-     * @param $idActividad
+     * @param $id_almacen
+     * @param $id_reporte
+     * @param $id
      * @return Response
      */
-    public function destroy($idAlmacen, $idReporte, $idActividad)
+    public function destroy($id_almacen, $id_reporte, $id)
     {
-        $reporte = $this->reporteRepository->getById($idReporte);
+        $reporte = $this->reporteRepository->getById($id_reporte);
+        $this->reporteRepository->deleteHora($reporte, $id);
 
-        if ($reporte->cerrado) {
-            flash()->error('Este reporte no puede ser modificado');
-
-            return redirect()->back();
-        }
-
-        $reporte->actividades()->find($idActividad)->delete();
-
-        return redirect()->route('reportes.show', [$idAlmacen, $idReporte]);
+        return redirect()->route('reportes.show', [$id_almacen, $id_reporte]);
     }
 }

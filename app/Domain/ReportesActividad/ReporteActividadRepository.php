@@ -5,13 +5,12 @@ namespace Ghi\Domain\ReportesActividad;
 interface ReporteActividadRepository
 {
     /**
-     * Obtiene un reporte de operacion por su id
+     * Obtiene un reporte de actividades por su id
      *
      * @param $id
      * @return ReporteActividad
      */
     public function getById($id);
-
 
     /**
      * Obtiene los reportes de horas de un almacen
@@ -20,7 +19,6 @@ interface ReporteActividadRepository
      * @return \Illuminate\Database\Eloquent\Collection|ReporteActividad
      */
     public function getByIdAlmacen($id_almacen);
-
 
     /**
      * Obtiene los reportes de horas de un almacen paginados
@@ -31,7 +29,6 @@ interface ReporteActividadRepository
      */
     public function getByIdAlmacenPaginated($id_almacen, $how_many = 30);
 
-
     /**
      * Busca un reporte de operacion por fecha
      *
@@ -40,7 +37,6 @@ interface ReporteActividadRepository
      * @return ReporteActividad
      */
     public function getByFecha($id_almacen, $fecha);
-
 
     /**
      * Obtiene los reportes de operacion de un equipo en un periodo de tiempo
@@ -52,7 +48,6 @@ interface ReporteActividadRepository
      */
     public function getByPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
-
     /**
      * Indica si un reporte de operacion existe en la fecha indicada
      *
@@ -61,7 +56,6 @@ interface ReporteActividadRepository
      * @return bool
      */
     public function existeEnFecha($id_almacen, $fecha);
-
 
     /**
      * Indica si existen horas por conciliar de un almacen en un periodo de tiempo
@@ -74,34 +68,30 @@ interface ReporteActividadRepository
      */
     public function existenReportesPorConciliarEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
-
     /**
      * Persiste un reporte de operacion
      *
      * @param ReporteActividad $reporte
-     * @return bool
+     * @return ReporteActividad
      */
     public function save(ReporteActividad $reporte);
-
 
     /**
      * Elimina un reporte de actividades
      *
      * @param ReporteActividad $reporte
      * @throws ReporteOperacionAprobadoException
-     * @throws \Exception
      */
     public function delete(ReporteActividad $reporte);
 
-
     /**
-     * Elimina un registro de horas del reporte de operacion
+     * Elimina un registro de actividad de un reporte
      *
      * @param ReporteActividad $reporte
-     * @param $idHora
+     * @param $id
+     * @throws ReporteOperacionAprobadoException
      */
-    public function deleteHora(ReporteActividad $reporte, $idHora);
-
+    public function deleteHora(ReporteActividad $reporte, $id);
 
     /**
      * Obtiene los tipos de hora en formato de lista (id, descripcion)
@@ -109,7 +99,6 @@ interface ReporteActividadRepository
      * @return array
      */
     public function getTiposHoraList();
-
 
     /**
      * Obtiene la suma total de horas reportadas en un periodo por tipo de hora
@@ -121,7 +110,6 @@ interface ReporteActividadRepository
      * @return float
      */
     public function sumaHorasPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, $tipo_hora);
-
 
     /**
      * Obtiene la suma total de horas efectivas reportadas en un periodo de tiempo
@@ -149,9 +137,10 @@ interface ReporteActividadRepository
      * @param $id_almacen
      * @param $fecha_inicial
      * @param $fecha_final
+     * @param bool $con_cargo
      * @return float
      */
-    public function sumaHorasReparacionMayorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final);
+    public function sumaHorasReparacionMayorPorPeriodo($id_almacen, $fecha_inicial, $fecha_final, $con_cargo = false);
 
     /**
      * Obtiene la suma total de horas mantenimiento reportadas en un periodo de tiempo
@@ -222,15 +211,6 @@ interface ReporteActividadRepository
      * @return float
      */
     public function diasConOperacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
-
-    /**
-     * Persiste los cambios de un reporte en el almacenamiento
-     *
-     * @param ReporteActividad $reporte
-     * @return ReporteActividad
-     * @throws ReporteOperacionAprobadoException
-     */
-    public function update(ReporteActividad $reporte);
 
     /**
      * Crea un nuevo reporte y lo almacena

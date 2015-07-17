@@ -42,7 +42,7 @@ class Handler extends ExceptionHandler
 	public function render($request, Exception $e)
 	{
         if ($e instanceof ModelNotFoundException) {
-            flash()->error('El solicitado no fue localizado');
+            flash()->error('El recurso solicitado no fue localizado');
             return redirect('/');
         } elseif ($e instanceof ReglaNegocioException) {
             flash()->error($e->getMessage());

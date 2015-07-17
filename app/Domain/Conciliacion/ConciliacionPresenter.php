@@ -24,8 +24,8 @@ class ConciliacionPresenter extends Presenter
      */
     public function statusLabel()
     {
-        if ($this->cerrada) {
-            return '<span class="label label-success">Cerrado</span>';
+        if ($this->aprobada) {
+            return '<span class="label label-success">APROBADA</span>';
         }
     }
 

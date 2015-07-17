@@ -7,9 +7,9 @@
         <li class="active">{{ $conciliacion->present()->periodo }}</li>
     </ol>
 
-    <div class="col-sm-12">
-        <h1 class="page-header"><i class="fa fa-calculator"></i> Conciliación</h1>
+    <h1 class="page-header"><span class="fa fa-fw fa-calculator"></span> Conciliación</h1>
 
+    <div class="col-sm-12">
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -38,19 +38,19 @@
         </div>
 
         <div class="row">
-            @include('conciliacion.partials.operacion-reportada')
+            @include('conciliacion.partials.operacion')
         </div>
 
         <div class="row">
             @include('partials.errors')
-            @include('conciliacion.partials.horas-a-conciliar')
+            @include('conciliacion.partials.propuesta')
 
-            @unless ($conciliacion->cerrada)
+            @unless ($conciliacion->aprobada)
                 <hr>
                 {!! Form::open(['route' => ['conciliacion.delete', $empresa, $almacen, $conciliacion], 'method' => 'DELETE']) !!}
                     <div class="form-group">
                         <button class="btn btn-danger" type="submit">
-                            <i class="fa fa-fw fa-times"></i>Eliminar esta conciliación
+                            <span class="fa fa-fw fa-times"></span> Eliminar esta conciliación
                         </button>
                     </div>
                 {!! Form::close() !!}

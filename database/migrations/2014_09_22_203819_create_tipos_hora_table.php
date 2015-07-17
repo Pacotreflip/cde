@@ -12,11 +12,11 @@ class CreateTiposHoraTable extends Migration
      */
     public function up()
     {
-        Schema::create('Maquinaria.tipos_hora', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('descripcion', 50);
-            $table->timestamps();
-        });
+//        Schema::create('Maquinaria.tipos_hora', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('descripcion', 50);
+//            $table->timestamps();
+//        });
     }
 
 

@@ -97,46 +97,14 @@ class Conciliacion extends Model
     }
 
     /**
-     * Cierra el periodo de conciliacion
+     * Aprueba esta conciliación
      *
-     * @throws ReglaNegocioException
+     * @return $this
      */
-    public function cerrar()
+    public function aprobar()
     {
-        if ($this->cerrada) {
-            return;
-        }
-
-        // validar que:
-        // horas reparacion conciliadas no sean mayor al total de horas reparacion mayor
-
-        $this->cerrada = true;
+        $this->aprobada = true;
 
         return $this;
-    }
-
-    /**
-     * Calcula el numero de dias de la conciliacion
-     *
-     * @return float
-     */
-    public function diasConciliacion()
-    {
-        return $this->fecha_inicial->diffInDays($this->fecha_final);
-    }
-
-    /**
-     * Calcula el total de horas de operacion del periodo
-     *
-     * @return float
-     */
-    public function getTotalHoras()
-    {
-        return $this->horas_efectivas +
-            $this->horas_reparacion_mayor +
-            $this->horas_reparacion_menor +
-            $this->horas_mantenimiento +
-            $this->horas_ocio +
-            $this->horas_traslado;
     }
 }

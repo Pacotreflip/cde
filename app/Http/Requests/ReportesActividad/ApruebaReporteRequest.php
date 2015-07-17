@@ -4,7 +4,7 @@ namespace Ghi\Http\Requests\ReportesActividad;
 
 use Ghi\Http\Requests\Request;
 
-class CierraReporteOperacionequest extends Request
+class ApruebaReporteRequest extends Request
 {
     /**
      * Get the validation rules that apply to the request.

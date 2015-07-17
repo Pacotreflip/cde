@@ -5,26 +5,34 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <th>Horas A Pagar por Contrato</th>
+                    <th>A Pagar por Contrato</th>
                     <td class="text-right">{{ $conciliacion->horas_contrato }}</td>
                 </tr>
                 <tr>
-                    <th>Horas A Conciliar del Periodo ({{ $conciliacion->present()->dias_conciliados }})</th>
+                    <th>A Conciliar del Periodo ({{ $conciliacion->present()->dias_conciliados }})</th>
                     <td class="text-right">{{ $conciliacion->horas_a_conciliar }}</td>
                 </tr>
                 <tr>
-                    <th>Horas Reparación Mayor</th>
+                    <th>Reparación Mayor <span class="pull-right text-danger">(-)</span></th>
                     <td class="text-right">{{ $conciliacion->horas_reparacion_mayor }}</td>
                 </tr>
-                <tr>
-                    <th>Horas Reparación Mayor Con Cargo a Empresa</th>
-                    <td class="text-right">0</td>
-                </tr>
-                <tr>
-                    <th>Horas Pagables</th>
-                    <th class="text-right">{{ $conciliacion->horas_pagables }}</th>
-                </tr>
                 <tr class="active">
+                    <th>Diferencia Base Pagable</th>
+                    <th class="text-right">{{ $conciliacion->horas_a_conciliar - $conciliacion->horas_reparacion_mayor }}</th>
+                </tr>
+                <tr>
+                    <th>Efectivas <span class="pull-right text-success">(+)</span></th>
+                    <td class="text-right">{{ $conciliacion->horas_efectivas_conciliadas }}</td>
+                </tr>
+                <tr>
+                    <th>Ocio <span class="pull-right text-success">(+)</span></th>
+                    <td class="text-right">{{ $conciliacion->horas_ocio_conciliadas }}</td>
+                </tr>
+                <tr>
+                    <th>Reparación Mayor Con Cargo a Empresa <span class="pull-right text-success">(+)</span></th>
+                    <td class="text-right">{{ $conciliacion->horas_reparacion_mayor_con_cargo }}</td>
+                </tr>
+                <tr class="success">
                     <th class="text-right"><b>Total de Horas a Pagar:</b></th>
                     <th class="text-right">
                         <b>
@@ -50,7 +58,7 @@
                             <h3 class="panel-title">EFECTIVAS</h3>
                         </div>
 
-                        @unless ($conciliacion->cerrada)
+                        @unless ($conciliacion->aprobada)
                             <!-- Horas Efectivas Conciliadas Form Input -->
                             {!! Form::text('horas_efectivas_conciliadas', null, ['class' => 'form-control input-lg integer']) !!}
                         @else
@@ -67,7 +75,7 @@
                             <h3 class="panel-title">OCIO</h3>
                         </div>
 
-                        @unless ($conciliacion->cerrada)
+                        @unless ($conciliacion->aprobada)
                             <!-- Horas Ocio Conciliadas Form Input -->
                             {!! Form::text('horas_ocio_conciliadas', null, ['class' => 'form-control input-lg integer']) !!}
                         @else
@@ -84,7 +92,7 @@
                             <h3 class="panel-title">REPARACIÓN</h3>
                         </div>
 
-                        @unless ($conciliacion->cerrada)
+                        @unless ($conciliacion->aprobada)
                             <!-- Horas Ocio Conciliadas Form Input -->
                             {!! Form::text('horas_reparacion_conciliadas', null, ['class' => 'form-control input-lg integer']) !!}
                         @else
@@ -96,14 +104,14 @@
                 </div>
             </div>
             <div class="row">
-                @unless ($conciliacion->cerrada)
+                @unless ($conciliacion->aprobada)
                     <div class="form-group text-center">
                         <div class="form-group">
                             <button class="btn btn-success" type="submit">
-                                <i class="fa fa-fw fa-check"></i>Cerrar conciliación
+                                <i class="fa fa-fw fa-check"></i> Aprobar conciliación
                             </button>
                         </div>
-                        {!! Form::hidden('cerrar', true) !!}
+                        {!! Form::hidden('aprobar', true) !!}
                     </div>
                 @endunless
             </div>

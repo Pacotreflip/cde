@@ -7,7 +7,7 @@ use Ghi\Domain\Almacenes\AlmacenMaquinaria;
 use Ghi\Domain\Core\Usuarios\User;
 use Ghi\Domain\ReportesActividad\Events\ReporteHorasSeHaRegistrado;
 use Ghi\Domain\ReportesActividad\Exceptions\LimiteDeHorasSuperadoException;
-use Ghi\Domain\ReportesActividad\Exceptions\ReporteOperacionAprobadoException;
+use Ghi\Domain\ReportesActividad\Exceptions\ReporteAprobadoException;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
@@ -44,7 +44,12 @@ class ReporteActividad extends Model
     /**
      * @var array
      */
-    protected $casts = [];
+    protected $casts = [
+        'aprobado' => 'bool',
+        'conciliado' => 'bool',
+        'horometro_inicial' => 'float',
+        'kilometraje_inicial' => 'int',
+    ];
 
     /**
      * @var array
@@ -102,12 +107,12 @@ class ReporteActividad extends Model
     /**
      * @return $this
      * @throws ReglaNegocioException
-     * @throws ReporteOperacionAprobadoException
+     * @throws ReporteAprobadoException
      */
     public function aprobar()
     {
         if ($this->aprobado) {
-            throw new ReporteOperacionAprobadoException;
+            throw new ReporteAprobadoException;
         }
 
         if ($this->horometro_inicial && $this->horometro_inicial > $this->horometro_final) {

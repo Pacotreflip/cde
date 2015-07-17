@@ -4,12 +4,11 @@
     <ol class="breadcrumb">
         <li><a href="{{ route('conciliacion.proveedores') }}">Proveedores</a></li>
         <li><a href="{{ route('conciliacion.almacenes', [$empresa]) }}">{{ $empresa->razon_social }}</a></li>
-        <li class="active">{{ $almacen->descripcion }}</li>
+        <li>{!! link_to_route('conciliacion.index', $almacen->descripcion, [$empresa, $almacen]) !!}</li>
+        <li class="active">Conciliar</li>
     </ol>
 
-    <div class="page-header">
-        <h2>Nueva Conciliación</h2>
-    </div>
+    <h1 class="page-header">Nueva Conciliación</h1>
 
     @include('partials.errors')
 

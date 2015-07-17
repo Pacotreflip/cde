@@ -156,7 +156,7 @@ class ReportesActividadController extends Controller
         }
 
         $reporte->fill($request->all());
-        $this->reporteRepository->update($reporte);
+        $this->reporteRepository->save($reporte);
 
         flash()->success('Los cambios fueron guardados.');
 

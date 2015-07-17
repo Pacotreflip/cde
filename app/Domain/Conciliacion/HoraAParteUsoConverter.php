@@ -5,7 +5,7 @@ namespace Ghi\Domain\Conciliacion;
 use Ghi\Conciliacion\Domain\Rentas\ContratoRenta;
 use Ghi\Conciliacion\Domain\Rentas\ItemParteUso;
 use Ghi\Domain\ReportesActividad\Hora;
-use Ghi\Domain\ReportesActividad\HoraTipo;
+use Ghi\Domain\ReportesActividad\TipoHora;
 use Ghi\SharedKernel\Models\Maquina;
 
 class HoraAParteUsoConverter
@@ -40,15 +40,15 @@ class HoraAParteUsoConverter
      */
     protected function convierteTipoHora($tipoHora)
     {
-        if ($tipoHora == HoraTipo::EFECTIVA) {
+        if ($tipoHora == TipoHora::EFECTIVA) {
             return ItemParteUso::TIPO_HORA_TRABAJADA;
         }
 
-        if ($tipoHora == HoraTipo::OCIO || $tipoHora == HoraTipo::REPARACION_MENOR || $tipoHora == HoraTipo::MANTENIMIENTO) {
+        if ($tipoHora == TipoHora::OCIO || $tipoHora == TipoHora::REPARACION_MENOR || $tipoHora == TipoHora::MANTENIMIENTO) {
             return ItemParteUso::TIPO_HORA_ESPERA;
         }
 
-        if ($tipoHora == HoraTipo::REPARACION_MAYOR) {
+        if ($tipoHora == TipoHora::REPARACION_MAYOR) {
             return ItemParteUso::TIPO_HORA_REPARACION;
         }
 

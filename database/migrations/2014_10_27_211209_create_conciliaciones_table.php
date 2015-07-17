@@ -25,6 +25,7 @@ class CreateConciliacionesTable extends Migration
             $table->smallInteger('horas_pagables');
             $table->smallInteger('horas_efectivas');
             $table->smallInteger('horas_reparacion_mayor');
+            $table->smallInteger('horas_reparacion_mayor_con_cargo');
             $table->smallInteger('horas_reparacion_menor');
             $table->smallInteger('horas_mantenimiento');
             $table->smallInteger('horas_ocio');
@@ -35,7 +36,7 @@ class CreateConciliacionesTable extends Migration
             $table->smallInteger('horas_efectivas_conciliadas')->default(0);
             $table->smallInteger('horas_reparacion_conciliadas')->default(0);
             $table->smallInteger('horas_ocio_conciliadas')->default(0);
-            $table->boolean('cerrada')->default(false);
+            $table->boolean('aprobada')->default(false);
             $table->text('observaciones')->default('');
             $table->string('creado_por', 16);
             $table->timestamps();

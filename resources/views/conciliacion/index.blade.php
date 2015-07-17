@@ -11,7 +11,7 @@
         <a href="{{ route('conciliacion.conciliar', [$empresa, $almacen]) }}" class="btn btn-sm btn-success pull-right">
             <i class="fa fa-fw fa-plus"></i> Nueva Conciliación
         </a>
-        <h1 class="page-header"><i class="fa fa-calculator"></i> Conciliaciones</h1>
+        <h1 class="page-header"><i class="fa fa-fw fa-calculator"></i> Conciliaciones</h1>
     </div>
 
     <div class="panel panel-default">

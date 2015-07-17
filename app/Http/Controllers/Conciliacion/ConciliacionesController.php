@@ -160,22 +160,30 @@ class ConciliacionesController extends Controller
             ->withConciliacion($conciliacion);
     }
 
-
+    /**
+     * Persiste los cambios hechos a una conciliacion
+     *
+     * @param ActualizaConciliacionRequest $request
+     * @param $id_empresa
+     * @param $id_almacen
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(ActualizaConciliacionRequest $request, $id_empresa, $id_almacen, $id)
     {
-        $conciliacion     = $this->repository->getById($id);
+        $conciliacion = $this->repository->getById($id);
 
         $conciliacion->horas_efectivas_conciliadas  = $request->get('horas_efectivas_conciliadas');
         $conciliacion->horas_ocio_conciliadas       = $request->get('horas_ocio_conciliadas');
         $conciliacion->horas_reparacion_conciliadas = $request->get('horas_reparacion_conciliadas');
 
-        if ($request->get('cerrar')) {
-            $conciliacion->cerrar();
+        if ($request->get('aprobar')) {
+            $conciliacion->aprobar();
         }
 
         $this->repository->save($conciliacion);
 
-        flash()->success('La conciliación fue actualizada.');
+        flash()->success('Los cambios fueron guardados');
 
         return redirect()->route('conciliacion.edit', [$id_empresa, $id_almacen, $id]);
     }

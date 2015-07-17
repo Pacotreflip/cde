@@ -11,9 +11,9 @@ class CalculadoraCosto
     protected $dias_conciliacion;
     protected $horas_conciliar;
     protected $horas_pagables;
-    protected $horas_efectivas;
-    protected $horas_ocio;
-    protected $horas_reparacion;
+    protected $horas_efectivas = 0;
+    protected $horas_ocio = 0;
+    protected $horas_reparacion = 0;
 
     /**
      * @param Carbon $fecha_inicial
