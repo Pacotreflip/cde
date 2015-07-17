@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePropiedadesTable extends Migration
+class AddPropiedadFieldToAlmacenesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,10 @@ class CreatePropiedadesTable extends Migration
      */
     public function up()
     {
-        Schema::create('Maquinaria.propiedades', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('descripcion')->unique();
-            $table->timestamps();
+        Schema::table('almacenes', function (Blueprint $table) {
+            $table->string('propiedad', 50)->nullable();
         });
     }
-
 
     /**
      * Reverse the migrations.
@@ -27,6 +24,8 @@ class CreatePropiedadesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Maquinaria.propiedades');
+        Schema::table('almacenes', function (Blueprint $table) {
+            $table->dropColumn('propiedad');
+        });
     }
 }

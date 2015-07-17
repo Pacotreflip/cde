@@ -1,9 +1,7 @@
 @extends('app')
 
 @section('content')
-    <h1 class="page-header">
-        <i class="fa fa-list-ul"></i> Almacenes de Maquinaria
-    </h1>
+    <h1 class="page-header"><span class="fa fa-fw fa-list-ul"></span> Almacenes de Maquinaria</h1>
 
     @if(count($almacenes))
         <div class="panel-default">

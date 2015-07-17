@@ -14,9 +14,10 @@ class ActualizaAlmacenMaquinariaRequest extends Request
     public function rules()
     {
         return [
-            'descripcion' => 'required',
-            'id_propiedad' => 'integer',
-            'id_categoria' => 'integer',
+            'numero_economico' => 'required',
+            'descripcion'   => 'required',
+            'propiedad'     => 'required|string',
+            'clasificacion' => 'required|string',
         ];
     }
 

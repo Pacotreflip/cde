@@ -27,7 +27,7 @@ $factory->define(Ghi\Domain\Almacenes\Propiedad::class, function ($faker) {
     ];
 });
 
-$factory->define(Ghi\Domain\Almacenes\Categoria::class, function ($faker) {
+$factory->define(Ghi\Domain\Almacenes\Clasificacion::class, function ($faker) {
     return [
         'descripcion' => $faker->word,
     ];

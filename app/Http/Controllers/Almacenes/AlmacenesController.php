@@ -56,16 +56,15 @@ class AlmacenesController extends Controller
      */
     public function create()
     {
-        $opcionDefault = [null => 'Seleccione una opción'];
-
-        $materiales = $opcionDefault + $this->materialRepository->getByTipoMaquinariaList();
-        $propiedades = $opcionDefault + $this->repository->getPropiedadesList();
-        $categorias = $opcionDefault + $this->repository->getCategoriasList();
+        $opcionDefault   = [null => 'Seleccione una opción'];
+        $materiales      = $opcionDefault + $this->materialRepository->getByTipoMaquinariaList();
+        $propiedades     = $opcionDefault + $this->repository->getPropiedadesList();
+        $clasificaciones = $opcionDefault + $this->repository->getClasificacionesList();
 
         return view('almacenes.create')
             ->withMateriales($materiales)
             ->withPropiedades($propiedades)
-            ->withCategorias($categorias);
+            ->withClasificaciones($clasificaciones);
     }
 
     /**
@@ -79,20 +78,24 @@ class AlmacenesController extends Controller
         $almacen = new AlmacenMaquinaria($request->all());
 
         $material = $this->materialRepository->getById($request->get('id_material'));
-        $categoria = $this->repository->getCategoriaById($request->get('id_categoria'));
-        $propiedad = $this->repository->getPropiedadById($request->get('id_propiedad'));
+
+        if ($request->has('propiedad')) {
+            $almacen->propiedad = $request->get('propiedad');
+        }
+
+        if ($request->has('clasificacion')) {
+            $almacen->clasificacion = $request->get('clasificacion');
+        }
 
         $almacen->id_obra = Context::getId();
         $almacen->tipo_almacen = AlmacenMaquinaria::TIPO_MAQUINARIA_CONTROL_INSUMOS;
         $almacen->material()->associate($material);
-        $almacen->categoria()->associate($categoria);
-        $almacen->propiedad()->associate($propiedad);
 
         $almacen->save();
 
         flash()->success('Un nuevo almacén fué registrado.');
 
-        return redirect()->route('almacenes.show', [$almacen->id_almacen]);
+        return redirect()->route('almacenes.show', [$almacen]);
     }
 
     /**
@@ -119,38 +122,34 @@ class AlmacenesController extends Controller
         $almacen = $this->repository->getById($id);
 
         $opcionDefault = [null => 'Seleccione una opción'];
-
-        $materiales = $opcionDefault + $this->materialRepository->getByTipoMaquinariaList();
-        $propiedades = $opcionDefault + $this->repository->getPropiedadesList();
-        $categorias = $opcionDefault + $this->repository->getCategoriasList();
+        $materiales      = $opcionDefault + $this->materialRepository->getByTipoMaquinariaList();
+        $propiedades     = $opcionDefault + $this->repository->getPropiedadesList();
+        $clasificaciones = $opcionDefault + $this->repository->getClasificacionesList();
 
         return view('almacenes.edit')
             ->withAlmacen($almacen)
             ->withMateriales($materiales)
             ->withPropiedades($propiedades)
-            ->withCategorias($categorias);
+            ->withClasificaciones($clasificaciones);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     * @param ActualizaAlmacenMaquinariaRequest $request
      * @return Response
      */
     public function update($id, ActualizaAlmacenMaquinariaRequest $request)
     {
         $almacen = $this->repository->getById($id);
 
-        if ($request->has('id_propiedad')) {
-            $propiedad = $this->repository->getPropiedadById($request->get('id_propiedad'));
-
-            $almacen->propiedad()->associate($propiedad);
+        if ($request->has('propiedad')) {
+            $almacen->propiedad = $request->get('propiedad');
         }
 
-        if ($request->has('id_categoria')) {
-            $categoria = $this->repository->getCategoriaById($request->get('id_categoria'));
-
-            $almacen->categoria()->associate($categoria);
+        if ($request->has('categoria')) {
+            $almacen->categoria = $request->get('categoria');
         }
 
         $almacen->update($request->only([

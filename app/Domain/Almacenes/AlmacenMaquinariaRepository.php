@@ -48,27 +48,11 @@ interface AlmacenMaquinariaRepository
     public function getEquipoActivoEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
     /**
-     * Obtiene una categoria por su id
-     *
-     * @param $id
-     * @return Categoria
-     */
-    public function getCategoriaById($id);
-
-    /**
      * Obtiene las categorias en forma de lista
      *
      * @return array
      */
-    public function getCategoriasList();
-
-    /**
-     * Obtiene una propiedad por su id
-     *
-     * @param $id
-     * @return Propiedad
-     */
-    public function getPropiedadById($id);
+    public function getClasificacionesList();
 
     /**
      * Obtiene los tipos de propiedad en gorma de lista

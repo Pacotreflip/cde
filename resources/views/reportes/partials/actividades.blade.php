@@ -16,7 +16,7 @@
             <tr>
                 <td>
                     {{ $actividad->tipo_hora }}
-                    @if($actividad->con_cargo_empresa)
+                    @if ($actividad->con_cargo_empresa)
                         <i class="fa fa-fw fa-money" data-toggle="tooltip" data-placement="top"
                            title="Estas horas se pagan al proveedor" aria-hidden="true"></i>
                     @endif
@@ -40,7 +40,7 @@
                     </span>
                 </td>
                 <td class="text-center">
-                    @unless($reporte->aprobado)
+                    @unless ($reporte->aprobado)
                         {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
                             <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
                                     data-placement="top" title="Eliminar esta actividad" aria-hidden="true">

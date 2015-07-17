@@ -17,8 +17,8 @@ class RegistraAlmacenMaquinariaRequest extends Request
             'numero_economico' => 'required',
             'descripcion' => 'required',
             'id_material' => 'required|integer',
-            'id_propiedad' => 'required|integer',
-            'id_categoria' => 'required|integer'
+            'propiedad' => 'required',
+            'clasificacion' => 'required'
         ];
     }
 

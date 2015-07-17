@@ -95,25 +95,13 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     /**
      * {@inheritdoc}
      */
-    public function getCategoriaById($id)
+    public function getClasificacionesList()
     {
-        return Categoria::findOrFail($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCategoriasList()
-    {
-        return Categoria::orderBy('descripcion')->lists('descripcion', 'id')->all();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPropiedadById($id)
-    {
-        return Propiedad::findOrFail($id);
+        return [
+            Clasificacion::MAYOR      => new Clasificacion(Clasificacion::MAYOR),
+            Clasificacion::MENOR      => new Clasificacion(Clasificacion::MENOR),
+            Clasificacion::TRANSPORTE => new Clasificacion(Clasificacion::TRANSPORTE),
+        ];
     }
 
     /**
@@ -121,7 +109,11 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      */
     public function getPropiedadesList()
     {
-        return Propiedad::lists('descripcion', 'id')->all();
+        return [
+            Propiedad::PROPIO   => new Propiedad(Propiedad::PROPIO),
+            Propiedad::TERCEROS => new Propiedad(Propiedad::TERCEROS),
+            Propiedad::SOCIEDAD => new Propiedad(Propiedad::SOCIEDAD),
+        ];
     }
 
     /**

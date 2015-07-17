@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddIdPropiedadFieldToAlmacenesTable extends Migration
+class AddClasificacionFieldToAlmacenesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,7 @@ class AddIdPropiedadFieldToAlmacenesTable extends Migration
     public function up()
     {
         Schema::table('almacenes', function (Blueprint $table) {
-            $table->unsignedInteger('id_propiedad')->nullable();
-
-            $table->foreign('id_propiedad', 'FK_almacenes_propiedades')
-                ->references('id')
-                ->on('Maquinaria.propiedades');
+            $table->string('clasificacion', 50)->nullable();
         });
     }
 
@@ -30,9 +26,7 @@ class AddIdPropiedadFieldToAlmacenesTable extends Migration
     public function down()
     {
         Schema::table('almacenes', function (Blueprint $table) {
-            $table->dropForeign('FK_almacenes_propiedades');
-
-            $table->dropColumn('id_propiedad');
+            $table->dropColumn('clasificacion');
         });
     }
 }

@@ -9,7 +9,7 @@
     </ol>
 
     <h1 class="page-header">
-        <i class="fa fa-calendar"></i> Reporte de Actividades
+        <span class="fa fa-calendar"></span> Reporte de Actividades
         <span class="text-danger">{{ $reporte->present()->fechaFormatoLocal }}</span>
     </h1>
 
@@ -20,10 +20,10 @@
                     @unless ($reporte->aprobado)
                         <div class="pull-right">
                             <a href="{{ route('reportes.edit', [$almacen, $reporte]) }}" class="btn btn-sm btn-primary">
-                                <i class="fa fa-fw fa-edit"></i> Modificar este reporte
+                                <span class="fa fa-fw fa-edit"></span> Modificar este reporte
                             </a>
                             <a href="{{ route('reportes.aprobar', [$almacen, $reporte]) }}" class="btn btn-sm btn-warning">
-                                <i class="fa fa-fw fa-check"></i> Aprobar este reporte
+                                <span class="fa fa-fw fa-check"></span> Aprobar este reporte
                             </a>
                         </div>
                     @endunless
