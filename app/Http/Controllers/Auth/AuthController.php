@@ -3,6 +3,7 @@
 namespace Ghi\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Validator;
 use Ghi\Http\Controllers\Controller;
@@ -20,7 +21,7 @@ class AuthController extends Controller
 	|
 	*/
 
-    use AuthenticatesAndRegistersUsers;
+    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     /**
      * @var string
@@ -35,7 +36,6 @@ class AuthController extends Controller
      */
 	public function __construct()
 	{
-
 		$this->middleware('guest', ['except' => 'getLogout']);
     }
 

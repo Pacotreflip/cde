@@ -37,6 +37,7 @@ class CreateConciliacionesTable extends Migration
             $table->smallInteger('horas_reparacion_conciliadas')->default(0);
             $table->smallInteger('horas_ocio_conciliadas')->default(0);
             $table->boolean('aprobada')->default(false);
+            $table->boolean('costo_aplicado')->default(false);
             $table->text('observaciones')->default('');
             $table->string('creado_por', 16);
             $table->timestamps();

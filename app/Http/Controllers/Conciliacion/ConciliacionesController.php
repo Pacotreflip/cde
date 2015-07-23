@@ -4,12 +4,13 @@ namespace Ghi\Http\Controllers\Conciliacion;
 
 use Ghi\Domain\Almacenes\AlmacenMaquinariaRepository;
 use Ghi\Domain\Conciliacion\ConciliacionRepository;
+use Ghi\Domain\Conciliacion\Exceptions\YaExisteConciliacionException;
 use Ghi\Domain\Conciliacion\GeneraConciliacion;
 use Ghi\Domain\Core\EmpresaRepository;
+use Ghi\Events\ConciliacionFueAprobada;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Http\Requests\Conciliacion\ActualizaConciliacionRequest;
 use Ghi\Http\Requests\Conciliacion\RegistraConciliacionRequest;
-use Illuminate\Http\Request;
 
 class ConciliacionesController extends Controller
 {
@@ -27,16 +28,22 @@ class ConciliacionesController extends Controller
      * @var ConciliacionRepository
      */
     private $repository;
+    /**
+     * @var GeneraConciliacion
+     */
+    private $generador;
 
     /**
      * @param EmpresaRepository $empresaRepository
      * @param AlmacenMaquinariaRepository $almacenRepository
      * @param ConciliacionRepository $conciliacionRepository
+     * @param GeneraConciliacion $generador
      */
     public function __construct(
         EmpresaRepository $empresaRepository,
         AlmacenMaquinariaRepository $almacenRepository,
-        ConciliacionRepository $conciliacionRepository
+        ConciliacionRepository $conciliacionRepository,
+        GeneraConciliacion $generador
     )
     {
         $this->middleware('auth');
@@ -45,6 +52,7 @@ class ConciliacionesController extends Controller
         $this->empresaRepository = $empresaRepository;
         $this->almacenRepository = $almacenRepository;
         $this->repository = $conciliacionRepository;
+        $this->generador = $generador;
     }
 
 
@@ -69,7 +77,7 @@ class ConciliacionesController extends Controller
      */
     public function showAlmacenes($id_empresa)
     {
-        $empresa = $this->empresaRepository->getById($id_empresa);
+        $empresa   = $this->empresaRepository->getById($id_empresa);
         $almacenes = $this->almacenRepository->getByIdEmpresa($id_empresa);
 
         return view('conciliacion.almacenes')
@@ -81,15 +89,15 @@ class ConciliacionesController extends Controller
     /**
      * Muestra una lista de conciliaciones de un almacen
      *
-     * @param $idEmpresa
-     * @param $idAlmacen
+     * @param $id_empresa
+     * @param $id_almacen
      * @return
      */
-    public function index($idEmpresa, $idAlmacen)
+    public function index($id_empresa, $id_almacen)
     {
-        $conciliaciones = $this->repository->getByAlmacen($idAlmacen);
-        $empresa = $this->empresaRepository->getById($idEmpresa);
-        $almacen = $this->almacenRepository->getById($idAlmacen);
+        $conciliaciones = $this->repository->getByAlmacen($id_almacen);
+        $empresa        = $this->empresaRepository->getById($id_empresa);
+        $almacen        = $this->almacenRepository->getById($id_almacen);
 
         return view('conciliacion.index')
             ->withConciliaciones($conciliaciones)
@@ -101,14 +109,14 @@ class ConciliacionesController extends Controller
     /**
      * Muestra un formulario para conciliar un nuevo periodo
      *
-     * @param $idEmpresa
-     * @param $idAlmacen
+     * @param $id_empresa
+     * @param $id_almacen
      * @return $this
      */
-    public function create($idEmpresa, $idAlmacen)
+    public function create($id_empresa, $id_almacen)
     {
-        $empresa = $this->empresaRepository->getById($idEmpresa);
-        $almacen = $this->almacenRepository->getById($idAlmacen);
+        $empresa = $this->empresaRepository->getById($id_empresa);
+        $almacen = $this->almacenRepository->getById($id_almacen);
 
         return view('conciliacion.create')
             ->withEmpresa($empresa)
@@ -120,20 +128,24 @@ class ConciliacionesController extends Controller
      * Almacena una nueva conciliacion
      *
      * @param RegistraConciliacionRequest $request
-     * @param GeneraConciliacion $generador
      * @param $id_empresa
      * @param $id_almacen
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Ghi\Domain\Conciliacion\NoExisteOperacionAprobadaEnPeriodoException
-     * @throws \Ghi\Domain\Conciliacion\YaExisteConciliacionException
+     * @throws YaExisteConciliacionException
+     * @throws \Ghi\Domain\Conciliacion\Exceptions\NoExisteOperacionAprobadaEnPeriodoException
      */
-    public function store(RegistraConciliacionRequest $request, GeneraConciliacion $generador, $id_empresa, $id_almacen)
+    public function store(RegistraConciliacionRequest $request, $id_empresa, $id_almacen)
     {
         $fecha_inicial = $request->get('fecha_inicial');
         $fecha_final   = $request->get('fecha_final');
         $observaciones = $request->get('observaciones');
 
-        $conciliacion = $generador->generar($id_empresa, $id_almacen, $fecha_inicial, $fecha_final, $observaciones);
+        if ($this->repository->existeConciliacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)) {
+            throw new YaExisteConciliacionException;
+        }
+
+        $conciliacion = $this->generador->generar($id_empresa, $id_almacen, $fecha_inicial, $fecha_final, $observaciones);
+
         $this->repository->save($conciliacion);
 
         return redirect()->route('conciliacion.edit', [$id_empresa, $id_almacen, $conciliacion]);
@@ -147,6 +159,7 @@ class ConciliacionesController extends Controller
      * @param $id_almacen
      * @param $id
      * @return mixed
+     * @throws \Ghi\Domain\Conciliacion\Exceptions\NoExisteOperacionAprobadaEnPeriodoException
      */
     public function edit($id_empresa, $id_almacen, $id)
     {
@@ -154,9 +167,19 @@ class ConciliacionesController extends Controller
         $almacen      = $this->almacenRepository->getById($id_almacen);
         $conciliacion = $this->repository->getById($id);
 
+        if (! $conciliacion->aprobada) {
+            $conciliacion = $this->generador->generar(
+                $id_empresa,
+                $id_almacen,
+                $conciliacion->fecha_inicial,
+                $conciliacion->fecha_final
+            );
+        }
+
         return view('conciliacion.edit')
             ->withEmpresa($empresa)
             ->withAlmacen($almacen)
+            ->with('id', $id)
             ->withConciliacion($conciliacion);
     }
 
@@ -173,12 +196,19 @@ class ConciliacionesController extends Controller
     {
         $conciliacion = $this->repository->getById($id);
 
-        $conciliacion->horas_efectivas_conciliadas  = $request->get('horas_efectivas_conciliadas');
-        $conciliacion->horas_ocio_conciliadas       = $request->get('horas_ocio_conciliadas');
-        $conciliacion->horas_reparacion_conciliadas = $request->get('horas_reparacion_conciliadas');
-
         if ($request->get('aprobar')) {
+            $nuevaConciliacion = $this->generador->generar(
+                $id_empresa,
+                $id_almacen,
+                $conciliacion->fecha_inicial,
+                $conciliacion->fecha_final
+            );
+            $conciliacion->fill($nuevaConciliacion->getAttributes());
+            $conciliacion->horas_efectivas_conciliadas  = $request->get('horas_efectivas_conciliadas');
+            $conciliacion->horas_ocio_conciliadas       = $request->get('horas_ocio_conciliadas');
+            $conciliacion->horas_reparacion_conciliadas = $request->get('horas_reparacion_conciliadas');
             $conciliacion->aprobar();
+            event(new ConciliacionFueAprobada($conciliacion));
         }
 
         $this->repository->save($conciliacion);
@@ -187,7 +217,6 @@ class ConciliacionesController extends Controller
 
         return redirect()->route('conciliacion.edit', [$id_empresa, $id_almacen, $id]);
     }
-
 
     /**
      * Elimina una conciliacion

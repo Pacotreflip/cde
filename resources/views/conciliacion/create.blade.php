@@ -19,7 +19,8 @@
                 <!-- Fecha Inicial Form Input -->
                 <div class="form-group">
                     {!! Form::label('fecha_inicial', 'Fecha Inicial:') !!}
-                    {!! Form::input('date', 'fecha_inicial', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
+                    {!! Form::date('fecha_inicial', date('Y-m-d'),
+                        ['class' => 'form-control pad', 'placeholder' => 'dd-mm-aaaa', 'data-value' => date('Y-m-d')]) !!}
                 </div>
             </div>
 
@@ -27,7 +28,8 @@
                 <!-- Fecha Final Form Input -->
                 <div class="form-group">
                     {!! Form::label('fecha_final', 'Fecha Final:') !!}
-                    {!! Form::input('date', 'fecha_final', date('Y-m-d'), ['class' => 'form-control', 'placeholder' => 'dd-mm-aaaa']) !!}
+                    {!! Form::date('fecha_final', date('Y-m-d'),
+                        ['class' => 'form-control pad', 'placeholder' => 'dd-mm-aaaa', 'data-value' => date('Y-m-d')]) !!}
                 </div>
             </div>
         </div>
@@ -43,4 +45,22 @@
         </div>
 
     {!! Form::close() !!}
+@stop
+
+@section('scripts')
+    <script>
+        if (! Modernizr.inputtypes.date) {
+            $('.pad').pickadate({
+                format: 'dd/mm/yyyy',
+                formatSubmit: 'yyyy-mm-dd',
+                hiddenName: true,
+                selectYears: true,
+                selectMonths: true,
+                labelMonthNext: 'Vaya al mes siguiente',
+                labelMonthPrev: 'Vaya al mes anterior',
+                labelMonthSelect: 'Elija un mes de la lista',
+                labelYearSelect: 'Elija un año de la lista'
+            });
+        }
+    </script>
 @stop

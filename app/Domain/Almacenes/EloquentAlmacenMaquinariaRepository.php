@@ -3,6 +3,9 @@
 namespace Ghi\Domain\Almacenes;
 
 use Ghi\Domain\Core\BaseRepository;
+use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
+use Ghi\Domain\Core\Inventario;
+use Ghi\Domain\Core\Item;
 use Ghi\Domain\Core\Transaccion;
 
 class EloquentAlmacenMaquinariaRepository extends BaseRepository implements AlmacenMaquinariaRepository
@@ -72,29 +75,6 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     /**
      * {@inheritdoc}
      */
-    public function getEquipoActivoEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)
-    {
-        $maquina =  AlmacenMaquinaria::where('id_almacen', $id_almacen)
-            ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
-            ->where(function ($query) use ($fecha_inicial, $fecha_final) {
-                $query->where('fecha_desde', '<=', $fecha_inicial)
-                    ->where(function ($query) use ($fecha_final) {
-                        $query->where('fecha_hasta', '>=', $fecha_final)
-                            ->orWhereNull('fecha_hasta');
-                    });
-            })
-            ->first();
-
-        if (! $maquina) {
-            throw new ReglaNegocioException('No existe una maquina activa en el periodo indicado para este almacen.');
-        }
-
-        return $maquina;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getClasificacionesList()
     {
         return [
@@ -122,11 +102,64 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     public function registraHorasMensuales($id_almacen, array $data)
     {
         $almacen = $this->getById($id_almacen);
-
         $horaMensual = new HoraMensual($data);
-
         $almacen->horasMensuales()->save($horaMensual);
 
         return $horaMensual;
+    }
+
+    protected function getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        return Inventario::where('id_almacen', $id_almacen)
+            ->whereNotNull('referencia')
+            ->where(function ($query) use ($fecha_inicial, $fecha_final) {
+                $query->where('fecha_desde', '<=', $fecha_inicial)
+                    ->where(function ($query) use ($fecha_final) {
+                        $query->where('fecha_hasta', '>=', $fecha_final)
+                            ->orWhereNull('fecha_hasta');
+                    });
+            })
+            ->whereHas('item.transaccion', function ($query) use ($id_empresa) {
+                // El registro en el inventario debe tener un item relacionado con
+                // una transaccion de entrada de equipo de la empresa
+                $query->where('id_empresa', $id_empresa);
+            })
+            ->orderBy('fecha_desde', 'DESC')
+            ->lists('id_item')
+            ->first();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        $id_item = $this->getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+
+        $equipo = Inventario::where('id_almacen', $id_almacen)
+            ->whereNotNull('referencia')
+            ->where('id_item', $id_item)
+            ->first();
+
+        if (! $equipo) {
+            throw new ReglaNegocioException('No existe un equipo activo en el periodo indicado para esta empresa.');
+        }
+        return $equipo;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContratoVigente($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        $id_item = $this->getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+
+        $item_entrada = Item::where('id_item', $id_item)->first();
+        $item_renta = $item_entrada->itemAntecedente;
+
+        if (! $item_renta) {
+            throw new ReglaNegocioException('No existe un contrato de renta para este periodo.');
+        }
+        return $item_renta;
     }
 }

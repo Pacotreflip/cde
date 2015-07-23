@@ -19,6 +19,7 @@ elixir(function(mix) {
         .copy('vendor/bower_components/jstree/src/themes/default/32px.png', 'public/img')
         .copy('vendor/bower_components/jstree/src/themes/default/40px.png', 'public/img')
         .copy('vendor/bower_components/jstree/src/themes/default/throbber.gif', 'public/img')
+        .copy('vendor/caouecs/laravel4-lang/es', 'resources/lang/es')
         .scripts([
             'jquery/dist/jquery.js',
             'bootstrap/dist/js/bootstrap.js',

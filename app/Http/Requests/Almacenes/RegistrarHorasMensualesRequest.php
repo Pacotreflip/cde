@@ -25,7 +25,7 @@ class RegistrarHorasMensualesRequest extends Request
     public function rules()
     {
         return [
-            'inicio_vigencia' => 'date|required|unique:cadeco.Maquinaria.horas_mensuales,inicio_vigencia,'.$this->route('id').',id,id_almacen,'. $this->route('idAlmacen'),
+            'inicio_vigencia' => 'date|required|unique:cadeco.Maquinaria.horas_mensuales,inicio_vigencia,'.$this->route('id').',id,id_almacen,'. $this->route('id_almacen'),
             'horas_contrato' => 'integer|required',
             'horas_operacion' => 'integer',
             'horas_programa' => 'integer'

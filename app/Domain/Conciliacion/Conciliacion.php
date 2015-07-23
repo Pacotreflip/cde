@@ -31,7 +31,25 @@ class Conciliacion extends Model
     /**
      * @var array
      */
-    protected $fillable = ['fecha_inicial', 'fecha_final', 'observaciones'];
+    protected $fillable = [
+        'fecha_inicial',
+        'fecha_final',
+        'observaciones',
+        'dias_con_operacion',
+        'horas_contrato',
+        'horas_a_conciliar',
+        'horas_pagables',
+        'horas_efectivas',
+        'horas_reparacion_mayor',
+        'horas_reparacion_mayor_con_cargo',
+        'horas_reparacion_menor',
+        'horas_mantenimiento',
+        'horas_ocio',
+        'horas_traslado',
+        'horometro_inicial',
+        'horometro_final',
+        'horas_horometro'
+    ];
 
     /**
      * @var array
@@ -106,5 +124,15 @@ class Conciliacion extends Model
         $this->aprobada = true;
 
         return $this;
+    }
+
+    /**
+     * Numero de dias conciliados del periodo
+     *
+     * @return mixed
+     */
+    public function diasConciliados()
+    {
+        return $this->fecha_inicial->diffInDays($this->fecha_final->addDay());
     }
 }

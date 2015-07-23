@@ -2,13 +2,7 @@
 
 namespace Ghi\Domain\Conciliacion;
 
-use Ghi\Conciliacion\Domain\Rentas\ContratoRenta;
-use Ghi\Conciliacion\Domain\Rentas\ItemParteUso;
-use Ghi\Domain\ReportesActividad\Hora;
-use Ghi\Domain\ReportesActividad\TipoHora;
-use Ghi\SharedKernel\Models\Maquina;
-
-class HoraAParteUsoConverter
+class ActividadAParteUsoConverter
 {
     /**
      * @param Hora $hora
@@ -16,7 +10,7 @@ class HoraAParteUsoConverter
      * @param Maquina $maquina
      * @return array
      */
-    public function convert(Hora $hora, ContratoRenta $contrato, Maquina $maquina)
+    public function convert(Actividad $hora, ContratoRenta $contrato, Maquina $maquina)
     {
         $item = new ItemParteUso([
             'id_almacen'  => $hora->id_almacen,

@@ -19,8 +19,7 @@
             @foreach($conciliaciones as $conciliacion)
                 <a class="list-group-item" href="{!! route('conciliacion.edit', [$empresa, $almacen, $conciliacion]) !!}">
                     <span>{{ $conciliacion->present()->periodo }}</span>
-
-                    {!! $conciliacion->present()->statusLabel !!}
+                    @include('conciliacion.partials.estatus-label')
                 </a>
             @endforeach
         </ul>

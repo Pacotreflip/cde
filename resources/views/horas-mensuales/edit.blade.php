@@ -29,23 +29,18 @@
 
 @section('scripts')
     <script>
-        $('.pad').pickadate({
-            format: 'dd/mm/yyyy',
-            formatSubmit: 'yyyy-mm-dd',
-            hiddenName: true,
-            selectYears: true,
-            selectMonths: true,
-            labelMonthNext: 'Vaya al mes siguiente',
-            labelMonthPrev: 'Vaya al mes anterior',
-            labelMonthSelect: 'Elija un mes de la lista',
-            labelYearSelect: 'Elija un año de la lista'
-        });
-
-        $('input.integer').inputmask('integer', {
-            autoGroup: true,
-            groupSeparator: ',',
-            rightAlign: false,
-            removeMaskOnSubmit: true
-        });
+        if (! Modernizr.inputtypes.date) {
+            $('.pad').pickadate({
+                format: 'dd/mm/yyyy',
+                formatSubmit: 'yyyy-mm-dd',
+                hiddenName: true,
+                selectYears: true,
+                selectMonths: true,
+                labelMonthNext: 'Vaya al mes siguiente',
+                labelMonthPrev: 'Vaya al mes anterior',
+                labelMonthSelect: 'Elija un mes de la lista',
+                labelYearSelect: 'Elija un año de la lista'
+            });
+        }
     </script>
 @stop

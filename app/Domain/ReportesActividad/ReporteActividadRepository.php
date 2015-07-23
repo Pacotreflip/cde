@@ -49,6 +49,16 @@ interface ReporteActividadRepository
     public function getByPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
     /**
+     * Obtiene reportes de actividad aprobados en un periodo
+     *
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     * @return mixed
+     */
+    public function getAprobados($id_almacen, $fecha_inicial, $fecha_final);
+
+    /**
      * Indica si un reporte de operacion existe en la fecha indicada
      *
      * @param $id_almacen

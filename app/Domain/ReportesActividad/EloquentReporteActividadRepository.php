@@ -60,6 +60,17 @@ class EloquentReporteActividadRepository extends BaseRepository implements Repor
     /**
      * {@inheritdoc}
      */
+    public function getAprobados($id_almacen, $fecha_inicial, $fecha_final)
+    {
+        return ReporteActividad::where('id_almacen', $id_almacen)
+            ->where('aprobado', true)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
+            ->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function existeEnFecha($id_almacen, $fecha)
     {
         return ReporteActividad::where('id_almacen', $id_almacen)

@@ -1,9 +1,11 @@
-<?php namespace Ghi\SharedKernel\Models;
+<?php
+
+namespace Ghi\Domain\Core;
 
 use Carbon\Carbon;
 
-trait ComentarioTransaccionTrait {
-
+trait ComentarioTransaccionTrait
+{
     /**
      * @param $usuario
      * @return string
@@ -12,5 +14,4 @@ trait ComentarioTransaccionTrait {
     {
         return 'I;' . Carbon::now()->format('d-m-Y h:m') . ';' . $usuario . '|';
     }
-
 }

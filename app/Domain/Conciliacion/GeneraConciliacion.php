@@ -3,10 +3,10 @@
 namespace Ghi\Domain\Conciliacion;
 
 use Ghi\Domain\Almacenes\HoraMensual;
+use Ghi\Domain\Conciliacion\Contracts\CalculadoraCosto;
 use Ghi\Domain\Conciliacion\Exceptions\NoExisteOperacionAprobadaEnPeriodoException;
 use Ghi\Domain\Conciliacion\Exceptions\PeriodoConMultiplesContratosException;
 use Ghi\Domain\Conciliacion\Exceptions\SinHorasContratoEnPeriodoException;
-use Ghi\Domain\Conciliacion\Exceptions\YaExisteConciliacionException;
 use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\ReportesActividad\ReporteActividadRepository;
 
@@ -23,9 +23,9 @@ class GeneraConciliacion
     private $repository;
 
     /**
-     * @var CalculadoraCosto
+     * @var CalculadoraCostoDefault
      */
-    private $calculadora;
+    private $calculadoraCosto;
 
     /**
      * @var
@@ -47,17 +47,17 @@ class GeneraConciliacion
      *
      * @param ReporteActividadRepository $reporteRepository
      * @param ConciliacionRepository $repository
-     * @param CalculadoraCosto $calculadora
+     * @param CalculadoraCosto $calculadoraCosto
      */
     public function __construct(
         ReporteActividadRepository $reporteRepository,
         ConciliacionRepository $repository,
-        CalculadoraCosto $calculadora
+        CalculadoraCosto $calculadoraCosto
     )
     {
         $this->reporteRepository = $reporteRepository;
         $this->repository = $repository;
-        $this->calculadora = $calculadora;
+        $this->calculadoraCosto = $calculadoraCosto;
     }
 
     /**
@@ -71,17 +71,12 @@ class GeneraConciliacion
      * @return Conciliacion
      * @throws NoExisteOperacionAprobadaEnPeriodoException
      * @throws ReglaNegocioException
-     * @throws YaExisteConciliacionException
      */
     public function generar($id_empresa, $id_almacen, $fecha_inicial, $fecha_final, $observaciones = "")
     {
         $this->id_almacen    = $id_almacen;
         $this->fecha_inicial = $fecha_inicial;
         $this->fecha_final   = $fecha_final;
-
-        if ($this->repository->existeConciliacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)) {
-            throw new YaExisteConciliacionException;
-        }
 
         if (! $this->reporteRepository->existenReportesPorConciliarEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)) {
             throw new NoExisteOperacionAprobadaEnPeriodoException;
@@ -103,7 +98,7 @@ class GeneraConciliacion
 
         $conciliacion = new Conciliacion(compact('fecha_inicial', 'fecha_final', 'observaciones'));
 
-        $this->calculadora->calcula(
+        $this->calculadoraCosto->calcula(
             $conciliacion->fecha_inicial,
             $conciliacion->fecha_final,
             $horas_contrato,
@@ -114,8 +109,8 @@ class GeneraConciliacion
 
         $conciliacion->dias_con_operacion           = $dias_con_operacion;
         $conciliacion->horas_contrato               = $horas_contrato;
-        $conciliacion->factor_contrato_periodo      = $this->calculadora->getFactorHorasPorDia();
-        $conciliacion->horas_a_conciliar            = $this->calculadora->getHorasConciliar();
+        $conciliacion->factor_contrato_periodo      = $this->calculadoraCosto->getFactorHorasPorDia();
+        $conciliacion->horas_a_conciliar            = $this->calculadoraCosto->getHorasConciliar();
         $conciliacion->horas_efectivas              = $horas_efectivas;
         $conciliacion->horas_reparacion_mayor       = $horas_reparacion_mayor;
         $conciliacion->horas_reparacion_mayor_con_cargo = $horas_reparacion_mayor_con_cargo;
@@ -126,10 +121,10 @@ class GeneraConciliacion
         $conciliacion->horometro_inicial            = $horometro_inicial;
         $conciliacion->horometro_final              = $horometro_final;
         $conciliacion->horas_horometro              = $horas_horometro;
-        $conciliacion->horas_pagables               = $this->calculadora->getHorasPagables();
+        $conciliacion->horas_pagables               = $this->calculadoraCosto->getHorasPagables();
         $conciliacion->horas_efectivas_conciliadas  = $horas_efectivas;
-        $conciliacion->horas_ocio_conciliadas       = $this->calculadora->getHorasOcio();
-        $conciliacion->horas_reparacion_conciliadas = $this->calculadora->getHorasReparacion();
+        $conciliacion->horas_ocio_conciliadas       = $this->calculadoraCosto->getHorasOcio();
+        $conciliacion->horas_reparacion_conciliadas = $this->calculadoraCosto->getHorasReparacion();
         $conciliacion->id_empresa                   = $id_empresa;
         $conciliacion->id_almacen                   = $id_almacen;
         $usuario                                    = auth()->user()->usuarioCadeco;

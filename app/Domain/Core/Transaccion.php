@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaccion extends Model
 {
-    const TIPO_ENTRADA_EQUIPO = 33;
+    const TIPO_ENTRADA_EQUIPO     = 33;
     const OPCIONES_ENTRADA_EQUIPO = 8;
 
     /**

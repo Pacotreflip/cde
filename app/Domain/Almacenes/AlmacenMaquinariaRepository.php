@@ -2,6 +2,8 @@
 
 namespace Ghi\Domain\Almacenes;
 
+use Ghi\Domain\Core\Inventario;
+
 interface AlmacenMaquinariaRepository
 {
     /**
@@ -36,18 +38,6 @@ interface AlmacenMaquinariaRepository
     public function getByIdEmpresa($id_empresa);
 
     /**
-     * Obtiene la maquina que entro en un almacen y que esta activa en un periodo de tiempo
-     *
-     * @param $id_almacen
-     * @param $fecha_inicial
-     * @param $fecha_final
-     * @return AlmacenMaquinaria
-     *
-     * @throws \Ghi\Domain\Core\Exceptions\ReglaNegocioException
-     */
-    public function getEquipoActivoEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
-
-    /**
      * Obtiene las categorias en forma de lista
      *
      * @return array
@@ -69,4 +59,25 @@ interface AlmacenMaquinariaRepository
      * @return HoraMensual
      */
     public function registraHorasMensuales($id_almacen, array $data);
+
+    /**
+     * Obtiene el equipo que entro en un almacen y que esta activo en un periodo de tiempo
+     *
+     * @param $id_empresa
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     * @return Inventario
+     */
+    public function getEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+
+    /**
+     * Obtiene el contrato vigente de un equipo en un periodo
+     *
+     * @param $id_empresa
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
+     */
+    public function getContratoVigente($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
 }

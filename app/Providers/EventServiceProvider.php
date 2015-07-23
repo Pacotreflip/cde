@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Ghi\Events\SomeEvent' => [
-            'Ghi\Listeners\EventListener',
+        'Ghi\Events\ConciliacionFueAprobada' => [
+            'Ghi\Listeners\EnviaCostoSao',
         ],
     ];
 

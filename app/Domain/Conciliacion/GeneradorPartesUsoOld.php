@@ -10,7 +10,7 @@ use Ghi\Domain\ReportesActividad\ReporteActividadRepository;
 use Ghi\SharedKernel\Contracts\EquipoRepository;
 use Laracasts\Commander\Events\EventListener;
 
-class GeneradorPartesUso extends EventListener
+class GeneradorPartesUsoOld extends EventListener
 {
     /**
      * @var
@@ -36,7 +36,7 @@ class GeneradorPartesUso extends EventListener
     private $periodoRepository;
 
     /**
-     * @var HoraAParteUsoConverter
+     * @var ActividadAParteUsoConverter
      */
     private $converter;
 
@@ -53,14 +53,14 @@ class GeneradorPartesUso extends EventListener
     /**
      * @param ConciliacionRepository $periodoRepository
      * @param ReporteActividadRepository $operacionRepository
-     * @param HoraAParteUsoConverter $converter
+     * @param ActividadAParteUsoConverter $converter
      * @param ContratoRentaRepository $contratoRentaRepository
      * @param EquipoRepository $equipoRepository
      */
     public function __construct(
         ConciliacionRepository $periodoRepository,
         ReporteActividadRepository $operacionRepository,
-        HoraAParteUsoConverter $converter,
+        ActividadAParteUsoConverter $converter,
         ContratoRentaRepository $contratoRentaRepository,
         EquipoRepository $equipoRepository
     ) {

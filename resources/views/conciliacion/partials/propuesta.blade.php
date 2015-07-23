@@ -1,4 +1,4 @@
-<h3 class="page-header"><i class="fa fa-list-alt"></i> Propuesta de Horas a Pagar (costo)</h3>
+<h3 class="page-header"><span class="fa fa-list-alt"></span> Propuesta de Horas a Pagar (costo)</h3>
 
 <div class="row">
     <div class="col-sm-6">
@@ -11,6 +11,10 @@
                 <tr>
                     <th>A Conciliar del Periodo ({{ $conciliacion->present()->dias_conciliados }})</th>
                     <td class="text-right">{{ $conciliacion->horas_a_conciliar }}</td>
+                </tr>
+                <tr>
+                    <th>Reparación Mayor Con Cargo a Empresa</th>
+                    <td class="text-right">{{ $conciliacion->horas_reparacion_mayor_con_cargo }}</td>
                 </tr>
                 <tr>
                     <th>Reparación Mayor <span class="pull-right text-danger">(-)</span></th>
@@ -27,10 +31,6 @@
                 <tr>
                     <th>Ocio <span class="pull-right text-success">(+)</span></th>
                     <td class="text-right">{{ $conciliacion->horas_ocio_conciliadas }}</td>
-                </tr>
-                <tr>
-                    <th>Reparación Mayor Con Cargo a Empresa <span class="pull-right text-success">(+)</span></th>
-                    <td class="text-right">{{ $conciliacion->horas_reparacion_mayor_con_cargo }}</td>
                 </tr>
                 <tr class="success">
                     <th class="text-right"><b>Total de Horas a Pagar:</b></th>
@@ -49,7 +49,7 @@
     </div>
 
     <div class="col-sm-6">
-        {!! Form::model($conciliacion, ['route' => ['conciliacion.update', $empresa, $almacen, $conciliacion],
+        {!! Form::model($conciliacion, ['route' => ['conciliacion.update', $empresa, $almacen, $id],
             'method' => 'PATCH']) !!}
             <div class="row">
                 <div class="col-xs-4">
@@ -108,13 +108,25 @@
                     <div class="form-group text-center">
                         <div class="form-group">
                             <button class="btn btn-success" type="submit">
-                                <i class="fa fa-fw fa-check"></i> Aprobar conciliación
+                                <span class="fa fa-fw fa-check"></span> Aprobar conciliación
                             </button>
                         </div>
                         {!! Form::hidden('aprobar', true) !!}
                     </div>
                 @endunless
             </div>
+
+            @if ($conciliacion->aprobada)
+                @unless ($conciliacion->costo_aplicado)
+                    <div class="alert alert-warning">
+                        <span class="h3"><span class="fa fa-fw fa-refresh fa-spin"></span> Aplicando costo en cadeco.</span>
+                    </div>
+                @else
+                    <div class="alert alert-success">
+                        <span class="h3"><span class="fa fa-fw fa-check"></span> El costo fue aplicado.</span>
+                    </div>
+                @endunless
+            @endif
         {!! Form::close() !!}
     </div>
 </div>

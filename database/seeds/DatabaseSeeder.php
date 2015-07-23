@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call('AlmacenesTableSeeder');
 //        $this->call('ConceptosTableSeeder');
 //        $this->call('RentasTableSeeder');
-//        $this->call('ReportesOperacionTableSeeder');
+        $this->call('ReportesOperacionTableSeeder');
 //		$this->call('ConciliacionesTableSeeder');
 
         Model::reguard();

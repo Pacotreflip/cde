@@ -29,12 +29,12 @@ class HorasMensualesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @return Response
      */
-    public function create($idAlmacen)
+    public function create($id_almacen)
     {
-        $almacen = $this->maquinariaRepository->getById($idAlmacen);
+        $almacen = $this->maquinariaRepository->getById($id_almacen);
 
         return view('horas-mensuales.create')
             ->withAlmacen($almacen)
@@ -44,30 +44,30 @@ class HorasMensualesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param RegistrarHorasMensualesRequest $request
      * @return Response
      */
-    public function store($idAlmacen, RegistrarHorasMensualesRequest $request)
+    public function store($id_almacen, RegistrarHorasMensualesRequest $request)
     {
         $data = $request->all();
         $data['creado_por'] = auth()->user()->usuario;
 
-        $horaMensual = $this->maquinariaRepository->registraHorasMensuales($idAlmacen, $data);
+        $horaMensual = $this->maquinariaRepository->registraHorasMensuales($id_almacen, $data);
 
         flash()->success('Un nuevo registro de horas mensuales fue creado.');
 
-        return redirect()->route('almacenes.show', [$idAlmacen, '#horas-mensuales']);
+        return redirect()->route('almacenes.show', [$id_almacen, '#horas-mensuales']);
     }
 
     /**
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param $id
      * @return Response
      */
-    public function edit($idAlmacen, $id)
+    public function edit($id_almacen, $id)
     {
-        $almacen = $this->maquinariaRepository->getById($idAlmacen);
+        $almacen = $this->maquinariaRepository->getById($id_almacen);
         $horas = HoraMensual::findOrFail($id);
 
         return view('horas-mensuales.edit')
@@ -76,12 +76,12 @@ class HorasMensualesController extends Controller
     }
 
     /**
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param $id
      * @param RegistrarHorasMensualesRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($idAlmacen, $id, RegistrarHorasMensualesRequest $request)
+    public function update($id_almacen, $id, RegistrarHorasMensualesRequest $request)
     {
         $horas = HoraMensual::findOrFail($id);
 
@@ -89,21 +89,21 @@ class HorasMensualesController extends Controller
 
         flash('Los cambios fueron guardados');
 
-        return redirect()->route('almacenes.show', [$idAlmacen, '#horas-mensuales']);
+        return redirect()->route('almacenes.show', [$id_almacen, '#horas-mensuales']);
     }
 
     /**
-     * @param $idAlmacen
+     * @param $id_almacen
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($idAlmacen, $id)
+    public function destroy($id_almacen, $id)
     {
         $hora = HoraMensual::findOrFail($id);
         $hora->delete();
 
         flash('El registro fue eliminado.');
 
-        return redirect()->route('almacenes.show', [$idAlmacen, '#horas-mensuales']);
+        return redirect()->route('almacenes.show', [$id_almacen, '#horas-mensuales']);
     }
 }

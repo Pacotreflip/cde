@@ -45,10 +45,10 @@ class ReporteActividad extends Model
      * @var array
      */
     protected $casts = [
-        'aprobado' => 'bool',
-        'conciliado' => 'bool',
+        'aprobado' => 'boolean',
+        'conciliado' => 'boolean',
         'horometro_inicial' => 'float',
-        'kilometraje_inicial' => 'int',
+        'kilometraje_inicial' => 'integer',
     ];
 
     /**

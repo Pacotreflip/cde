@@ -48,7 +48,7 @@
 
             @unless ($conciliacion->aprobada)
                 <hr>
-                {!! Form::open(['route' => ['conciliacion.delete', $empresa, $almacen, $conciliacion], 'method' => 'DELETE']) !!}
+                {!! Form::open(['route' => ['conciliacion.delete', $empresa, $almacen, $id], 'method' => 'DELETE']) !!}
                     <div class="form-group">
                         <button class="btn btn-danger" type="submit">
                             <span class="fa fa-fw fa-times"></span> Eliminar esta conciliación

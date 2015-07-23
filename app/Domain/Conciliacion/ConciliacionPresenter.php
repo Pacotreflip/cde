@@ -36,7 +36,7 @@ class ConciliacionPresenter extends Presenter
      */
     public function dias_conciliados()
     {
-        $dias = $this->entity->fecha_inicial->diffInDays($this->entity->fecha_final->addDay());
+        $dias = $this->entity->diasConciliados();
 
         $plural = str_plural('dia', $dias);
 
