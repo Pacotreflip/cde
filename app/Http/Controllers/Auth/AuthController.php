@@ -2,8 +2,8 @@
 
 namespace Ghi\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
-use Illuminate\Http\Request;
+use Ghi\IntranetAuth\AuthenticatesIntranetUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Validator;
 use Ghi\Http\Controllers\Controller;
 
@@ -20,7 +20,7 @@ class AuthController extends Controller
 	|
 	*/
 
-    use AuthenticatesAndRegistersUsers;
+    use AuthenticatesIntranetUsers, ThrottlesLogins;
 
     /**
      * @var string
@@ -35,7 +35,6 @@ class AuthController extends Controller
      */
 	public function __construct()
 	{
-
 		$this->middleware('guest', ['except' => 'getLogout']);
     }
 
@@ -68,55 +67,4 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
         ]);
     }
-
-	/**
-	 * Handle a login request to the application.
-	 *
-	 * @param  Request $request
-	 * @return Response
-	 */
-	public function postLogin(Request $request)
-	{
-        $this->validate($request, [
-            'usuario' => 'required', 'clave' => 'required',
-        ]);
-
-        $credentials = $request->only('usuario', 'clave');
-
-        if (auth()->attempt($credentials, $request->has('remember_me'))) {
-            flash("Bienvenido " . auth()->user()->nombre . "!");
-
-            return redirect($this->redirectPath());
-        }
-
-        return redirect($this->loginPath())
-            ->withInput($request->only('usuario', 'remember_me'))
-            ->withErrors([
-                'usuario' => $this->getFailedLoginMessage(),
-            ]);
-	}
-
-    /**
-     * Get the failed login message.
-     *
-     * @return string
-     */
-    protected function getFailedLoginMessage()
-    {
-        return 'El nombre de usuario o contraseña son invalidos.';
-    }
-
-	/**
-	 * Log the user out of the application.
-	 *
-	 * @return Response
-	 */
-	public function getLogout()
-	{
-		auth()->logout();
-
-		session()->flush();
-
-		return redirect('/');
-	}
 }

@@ -4,6 +4,7 @@ namespace Ghi\Domain\Core\Usuarios;
 
 use Ghi\Domain\Core\BaseDatosCadeco;
 use Ghi\Domain\Core\Obras\Obra;
+use Ghi\Core\Models\User;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
