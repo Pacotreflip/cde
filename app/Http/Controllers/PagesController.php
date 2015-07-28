@@ -3,7 +3,6 @@
 namespace Ghi\Http\Controllers;
 
 use Auth;
-use Ghi\Domain\Core\Facades\Context;
 use Ghi\Domain\Core\Usuarios\UserRepository;
 
 class PagesController extends Controller
