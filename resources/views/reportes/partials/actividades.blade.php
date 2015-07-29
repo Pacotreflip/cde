@@ -2,9 +2,9 @@
     <thead>
         <tr>
             <th>Tipo</th>
-            <th>Con Cargo</th>
-            <th>Hora Inicio</th>
-            <th>Hora Término</th>
+            <th>Turno</th>
+            <th><i class="fa fa-clock-o"></i> Inicio</th>
+            <th><i class="fa fa-clock-o"></i> Término</th>
             <th>Cantidad</th>
             <th>Actividad</th>
             <th>Observaciones</th>
@@ -14,38 +14,40 @@
     <tbody>
         @foreach($reporte->actividades as $actividad)
             <tr>
-                <td>{{ $actividad->tipoHora->descripcion }}</td>
-                <td class="text-center">
-                    @if($actividad->con_cargo)
-                        <span class="glyphicon glyphicon-ok"></span>
-                    @else
-                        <span class="glyphicon glyphicon-remove"></span>
+                <td>
+                    {{ $actividad->tipo_hora }}
+                    @if ($actividad->con_cargo_empresa)
+                        <i class="fa fa-fw fa-money" data-toggle="tooltip" data-placement="top"
+                           title="Estas horas se pagan al proveedor" aria-hidden="true"></i>
                     @endif
                 </td>
+                <td class="text-center">{{ $actividad->turno }}</td>
                 <td>{{ $actividad->present()->horaInicial }}</td>
                 <td>{{ $actividad->present()->horaFinal }}</td>
                 <td class="decimal">{{ $actividad->cantidad }}</td>
                 <td>
                     @if ($actividad->destino)
-                        <span data-toggle="tooltip" data-placement="top" title="{{ $actividad->destino->present()->descripcion }}" aria-hidden="true">
+                        <span data-toggle="tooltip" data-placement="top"
+                              title="{{ $actividad->destino->present()->descripcion }}" aria-hidden="true">
                             {{ str_limit($actividad->destino->present()->descripcion, 40) }}
                         </span>
                     @endif
                 </td>
                 <td>
-                    <span data-toggle="tooltip" data-placement="top" title="{{ $actividad->observaciones }}" aria-hidden="true">
+                    <span data-toggle="tooltip" data-placement="top"
+                          title="{{ $actividad->observaciones }}" aria-hidden="true">
                         {{ str_limit($actividad->observaciones, 20) }}
                     </span>
                 </td>
                 <td class="text-center">
-                @unless($reporte->cerrado)
-                    {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
-                        <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
-                                data-placement="top" title="Eliminar" aria-hidden="true">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    {!! Form::close() !!}
-                @endunless
+                    @unless ($reporte->aprobado)
+                        {!! Form::open(['route' => ['actividades.delete', $almacen, $reporte, $actividad], 'method' => 'DELETE']) !!}
+                            <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
+                                    data-placement="top" title="Eliminar esta actividad" aria-hidden="true">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        {!! Form::close() !!}
+                    @endunless
                 </td>
             </tr>
         @endforeach

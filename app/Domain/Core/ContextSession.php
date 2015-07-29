@@ -56,7 +56,7 @@ class ContextSession implements Context
      */
     public function setObra(Obra $obra)
     {
-        $this->session->pull('obra', $obra);
+        $this->session->put('obra', $obra);
     }
 
     /**

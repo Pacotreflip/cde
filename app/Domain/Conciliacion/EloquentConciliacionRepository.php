@@ -2,16 +2,12 @@
 
 namespace Ghi\Domain\Conciliacion;
 
-use Ghi\Domain\Conciliacion\Exceptions\YaExisteConciliacionException;
 use Ghi\Domain\Core\BaseRepository;
 
 class EloquentConciliacionRepository extends BaseRepository implements ConciliacionRepository
 {
     /**
-     * Obtiene una conciliacion por su id
-     *
-     * @param $id
-     * @return Conciliacion
+     * {@inheritdoc}
      */
     public function getById($id)
     {
@@ -19,21 +15,35 @@ class EloquentConciliacionRepository extends BaseRepository implements Conciliac
     }
 
     /**
-     * Obtiene las conciliaciones de un almacen
-     *
-     * @param $idAlmacen
-     * @return \Illuminate\Database\Eloquent\Collection|Conciliacion
+     * {@inheritdoc}
      */
-    public function getByAlmacen($idAlmacen)
+    public function getByAlmacen($id_almacen)
     {
-        return Conciliacion::where('id_almacen', $idAlmacen)
+        return Conciliacion::where('id_almacen', $id_almacen)
             ->orderBy('fecha_inicial', 'desc')
             ->get();
     }
 
     /**
-     * @param Conciliacion $conciliacion
-     * @return Conciliacion
+     * {@inheritdoc}
+     */
+    public function existeConciliacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final)
+    {
+        return Conciliacion::where('id_almacen', $id_almacen)
+            ->where(function ($query) use ($fecha_inicial, $fecha_final) {
+                $query->where(function ($query) use ($fecha_inicial) {
+                    $query->where('fecha_inicial', '<=', $fecha_inicial)
+                    ->where('fecha_final', '>=', $fecha_inicial);
+                })
+                ->orWhere(function ($query) use ($fecha_final) {
+                    $query->where('fecha_inicial', '<=', $fecha_final)
+                        ->where('fecha_final', '>=', $fecha_final);
+                });
+            })->exists();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function save(Conciliacion $conciliacion)
     {
@@ -43,26 +53,10 @@ class EloquentConciliacionRepository extends BaseRepository implements Conciliac
     }
 
     /**
-     * Identifica si una conciliacion ya existe dentro de un periodo
-     *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @throws YaExisteConciliacionException
-     * @return bool
+     * {@inheritdoc}
      */
-    public function existeConciliacionEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function delete(Conciliacion $conciliacion)
     {
-        return Conciliacion::where('id_almacen', $idAlmacen)
-            ->where(function ($query) use ($fechaInicial, $fechaFinal) {
-                $query->where(function ($query) use ($fechaInicial) {
-                    $query->where('fecha_inicial', '<=', $fechaInicial)
-                    ->where('fecha_final', '>=', $fechaInicial);
-                })
-                ->orWhere(function ($query) use ($fechaFinal) {
-                    $query->where('fecha_inicial', '<=', $fechaFinal)
-                        ->where('fecha_final', '>=', $fechaFinal);
-                });
-            })->exists();
+        $conciliacion->delete();
     }
 }

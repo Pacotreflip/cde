@@ -35,6 +35,15 @@ class HoraMensual extends Model
      * @var array
      */
     protected $dates = ['inicio_vigencia'];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'horas_contrato'  => 'int',
+        'horas_operacion' => 'int',
+        'horas_programa'  => 'int',
+    ];
     
     /**
      * @var

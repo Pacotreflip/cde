@@ -21,7 +21,7 @@ class CreateReportesActividadTable extends Migration
             $table->integer('kilometraje_inicial')->default(0);
             $table->integer('kilometraje_final')->default(0);
             $table->string('operador', 50)->nullable();
-            $table->boolean('cerrado')->default(false);
+            $table->boolean('aprobado')->default(false);
             $table->boolean('conciliado')->default(false);
             $table->text('observaciones')->default('');
             $table->string('creado_por', 16);

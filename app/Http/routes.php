@@ -3,18 +3,18 @@
 /**
  * Paginas
  */
-get('/', [
+Route::get('/', [
     'as' => 'pages.home',
     'uses' => 'PagesController@home'
 ]);
 
-get('/obras', [
+Route::get('/obras', [
     'before' => 'auth',
     'as' => 'pages.obras',
     'uses' => 'PagesController@obras'
 ]);
 
-get('/context/{databaseName}/{idObra}', [
+Route::get('/context/{databaseName}/{idObra}', [
     'as' => 'context.set',
     'uses' => 'ContextController@set',
 ])
@@ -27,17 +27,17 @@ get('/context/{databaseName}/{idObra}', [
 /**
  * Autenticacion
  */
-get('auth/login', [
+Route::get('auth/login', [
     'as' => 'auth.login',
     'uses' => 'Auth\AuthController@getLogin'
 ]);
 
-post('auth/login', [
+Route::post('auth/login', [
     'as' => 'auth.login',
     'uses' => 'Auth\AuthController@postLogin'
 ]);
 
-get('auth/logout', [
+Route::get('auth/logout', [
     'as' => 'auth.logout',
     'uses' => 'Auth\AuthController@getLogout'
 ]);
@@ -57,41 +57,41 @@ Route::group(['prefix' => 'api', 'as' => 'api.'], function()
 //
 //    get('conceptos/{id}', 'Api\ConceptosController@show');
 //
-    get('conceptos', 'Api\ConceptosController@lists');
-    get('conceptos/jstree', 'Api\ConceptosJsTreeController@getRoot');
-    get('conceptos/{id}/jstree', 'Api\ConceptosJsTreeController@getNode');
+    Route::get('conceptos', 'Api\ConceptosController@lists');
+    Route::get('conceptos/jstree', 'Api\ConceptosJsTreeController@getRoot');
+    Route::get('conceptos/{id}/jstree', 'Api\ConceptosJsTreeController@getNode');
 });
 
 
 /**
  * Almacenes
  */
-get('almacenes', [
+Route::get('almacenes', [
     'as' => 'almacenes.index',
     'uses' => 'Almacenes\AlmacenesController@index',
 ]);
 
-get('almacenes/nuevo', [
+Route::get('almacenes/nuevo', [
     'as' => 'almacenes.create',
     'uses' => 'Almacenes\AlmacenesController@create',
 ]);
 
-get('almacenes/{id}', [
+Route::get('almacenes/{id}', [
     'as' => 'almacenes.show',
     'uses' => 'Almacenes\AlmacenesController@show',
 ])->where('id', '[0-9]+');
 
-post('almacenes', [
+Route::post('almacenes', [
     'as' => 'almacenes.store',
     'uses' => 'Almacenes\AlmacenesController@store',
 ]);
 
-get('almacenes/{id}/modificar', [
+Route::get('almacenes/{id}/modificar', [
     'as' => 'almacenes.edit',
     'uses' => 'Almacenes\AlmacenesController@edit',
 ]);
 
-patch('almacenes/{id}', [
+Route::patch('almacenes/{id}', [
     'as' => 'almacenes.update',
     'uses' => 'Almacenes\AlmacenesController@update',
 ]);
@@ -100,32 +100,32 @@ patch('almacenes/{id}', [
  * Horas Mensuales
  */
 
-get('almacenes/{idAlmacen}/horas-mensuales', [
+Route::get('almacenes/{id_almacen}/horas-mensuales', [
     'as' => 'horas-mensuales.index',
     'uses' => 'Almacenes\HorasMensualesController@index',
 ]);
 
-get('almacenes/{idAlmacen}/horas-mensuales/nuevo', [
+Route::get('almacenes/{id_almacen}/horas-mensuales/nuevo', [
     'as' => 'horas-mensuales.create',
     'uses' => 'Almacenes\HorasMensualesController@create',
 ]);
 
-post('almacenes/{idAlmacen}/horas-mensuales', [
+Route::post('almacenes/{id_almacen}/horas-mensuales', [
     'as' => 'horas-mensuales.store',
     'uses' => 'Almacenes\HorasMensualesController@store',
 ]);
 
-get('almacenes/{idAlmacen}/horas-mensuales/{id}/modificar', [
+Route::get('almacenes/{id_almacen}/horas-mensuales/{id}/modificar', [
     'as' => 'horas-mensuales.edit',
     'uses' => 'Almacenes\HorasMensualesController@edit',
 ]);
 
-patch('almacenes/{idAlmacen}/horas-mensuales/{id}', [
+Route::patch('almacenes/{id_almacen}/horas-mensuales/{id}', [
     'as' => 'horas-mensuales.update',
     'uses' => 'Almacenes\HorasMensualesController@update',
 ]);
 
-delete('almacenes/{idAlmacen}/horas-mensuales/{id}', [
+Route::delete('almacenes/{id_almacen}/horas-mensuales/{id}', [
     'as' => 'horas-mensuales.delete',
     'uses' => 'Almacenes\HorasMensualesController@destroy',
 ]);
@@ -136,67 +136,65 @@ delete('almacenes/{idAlmacen}/horas-mensuales/{id}', [
  */
 Route::group(['prefix' => 'almacenes/{id}/'], function()
 {
-    get('reporte-actividades', [
+    Route::get('reporte-actividades', [
         'as' => 'reportes.index',
         'uses' => 'ReportesActividad\ReportesActividadController@index'
     ]);
 
-    get('reporte-actividades/iniciar', [
+    Route::get('reporte-actividades/iniciar', [
         'as' => 'reportes.create',
         'uses' => 'ReportesActividad\ReportesActividadController@create'
     ]);
 
-    post('reporte-actividades', [
+    Route::post('reporte-actividades', [
         'as' => 'reportes.store',
         'uses' => 'ReportesActividad\ReportesActividadController@store'
     ]);
 
-    get('reporte-actividades/{idReporte}', [
+    Route::get('reporte-actividades/{idReporte}', [
         'as' => 'reportes.show',
         'uses' => 'ReportesActividad\ReportesActividadController@show'
     ]);
 
-    get('reporte-actividades/{idReporte}/modificar', [
+    Route::get('reporte-actividades/{idReporte}/modificar', [
         'as' => 'reportes.edit',
         'uses' => 'ReportesActividad\ReportesActividadController@edit'
     ]);
 
-    patch('reporte-actividades/{idReporte}', [
+    Route::patch('reporte-actividades/{idReporte}', [
         'as' => 'reportes.update',
         'uses' => 'ReportesActividad\ReportesActividadController@update'
     ]);
 
-    get('reporte-actividades/{idReporte}/cierre', [
-        'as' => 'reportes.cierre',
-        'uses' => 'ReportesActividad\ReportesActividadController@cierre'
+    Route::get('reporte-actividades/{idReporte}/aprobar', [
+        'as' => 'reportes.aprobar',
+        'uses' => 'ReportesActividad\ReportesActividadController@aprobar'
     ]);
 
-    put('reporte-actividades/{idReporte}/cierre', [
+    Route::patch('reporte-actividades/{idReporte}/cierre', [
         'as' => 'reportes.cierre',
         'uses' => 'ReportesActividad\ReportesActividadController@cerrarReporte'
     ]);
 
-    delete('reporte-actividades/{idReporte}', [
+    Route::delete('reporte-actividades/{idReporte}', [
         'as' => 'reportes.destroy',
         'uses' => 'ReportesActividad\ReportesActividadController@destroy'
     ]);
 
-
     /**
      * Actividades del Reporte
      */
-
-    get('reporte-actividades/{idReporte}/actividades/reportar', [
+    Route::get('reporte-actividades/{idReporte}/actividades/reportar', [
         'as' => 'actividades.create',
         'uses' => 'ReportesActividad\ActividadesController@create'
     ]);
 
-    post('reporte-actividades/{idReporte}/actividades', [
+    Route::post('reporte-actividades/{idReporte}/actividades', [
         'as' => 'actividades.store',
         'uses' => 'ReportesActividad\ActividadesController@store'
     ]);
 
-    delete('reporte-actividades/{idReporte}/actividades/{idActividad}', [
+    Route::delete('reporte-actividades/{idReporte}/actividades/{idActividad}', [
         'as' => 'actividades.delete',
         'uses' => 'ReportesActividad\ActividadesController@destroy'
     ]);
@@ -206,39 +204,44 @@ Route::group(['prefix' => 'almacenes/{id}/'], function()
 /**
  * Conciliacion de Operacion
  */
-get('conciliacion/', [
+Route::get('conciliacion/', [
     'as' => 'conciliacion.proveedores',
-    'uses' => 'Conciliacion\ConciliacionesController@proveedores'
+    'uses' => 'Conciliacion\ConciliacionesController@showProveedores'
 ]);
 
-get('conciliacion/{idEmpresa}/almacenes', [
+Route::get('conciliacion/{idEmpresa}/almacenes', [
     'as' => 'conciliacion.almacenes',
-    'uses' => 'Conciliacion\ConciliacionesController@almacenes'
+    'uses' => 'Conciliacion\ConciliacionesController@showAlmacenes'
 ]);
 
-get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
+Route::get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'as' => 'conciliacion.index',
     'uses' => 'Conciliacion\ConciliacionesController@index'
 ]);
 
-get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
+Route::get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/conciliar', [
     'as' => 'conciliacion.conciliar',
     'uses' => 'Conciliacion\ConciliacionesController@create'
 ]);
 
-post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliar', [
+Route::post('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones', [
     'as' => 'conciliacion.store',
     'uses' => 'Conciliacion\ConciliacionesController@store'
 ]);
 
-get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
+Route::get('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.edit',
     'uses' => 'Conciliacion\ConciliacionesController@edit'
 ]);
 
-put('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
+Route::patch('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
     'as' => 'conciliacion.update',
     'uses' => 'Conciliacion\ConciliacionesController@update'
 ]);
 
-\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');
+delete('conciliacion/{idEmpresa}/almacenes/{idAlmacen}/conciliaciones/{id}', [
+    'as' => 'conciliacion.delete',
+    'uses' => 'Conciliacion\ConciliacionesController@destroy'
+]);
+
+//\Event::listen('Ghi.*', 'Ghi\Conciliacion\Domain\GeneradorPartesUso');

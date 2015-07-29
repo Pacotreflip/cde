@@ -24,9 +24,6 @@ class DatabaseSeeder extends Seeder
     ];
 
     private $truncate = [
-        'maquinaria.categorias',
-        'maquinaria.propiedades',
-        'maquinaria.tipos_hora',
     ];
 
     private $tablesWithAutoId = [
@@ -63,10 +60,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call('AlmacenesTableSeeder');
 //        $this->call('ConceptosTableSeeder');
 //        $this->call('RentasTableSeeder');
-        $this->call('TiposHoraTableSeeder');
-        $this->call('CategoriasTableSeeder');
-        $this->call('PropiedadesTableSeeder');
-//        $this->call('ReportesOperacionTableSeeder');
+        $this->call('ReportesOperacionTableSeeder');
 //		$this->call('ConciliacionesTableSeeder');
 
         Model::reguard();

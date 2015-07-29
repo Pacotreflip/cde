@@ -2,12 +2,12 @@
 
 namespace Ghi\Domain\ReportesActividad;
 
+use Ghi\Core\Models\User;
 use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Almacenes\AlmacenMaquinaria;
-use Ghi\Domain\Core\Usuarios\User;
 use Ghi\Domain\ReportesActividad\Events\ReporteHorasSeHaRegistrado;
 use Ghi\Domain\ReportesActividad\Exceptions\LimiteDeHorasSuperadoException;
-use Ghi\Domain\ReportesActividad\Exceptions\ReporteOperacionCerradoException;
+use Ghi\Domain\ReportesActividad\Exceptions\ReporteAprobadoException;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
@@ -18,7 +18,7 @@ class ReporteActividad extends Model
     /**
      * Numero limite de horas que pueden ser reportadas en un dia
      */
-    const LIMITE_HORAS_DIA = 24;
+    const LIMITE_HORAS_POR_DIA  = 24;
 
     /**
      * @var string
@@ -28,7 +28,7 @@ class ReporteActividad extends Model
     /**
      * @var string
      */
-    protected $table = 'maquinaria.reportes_actividad';
+    protected $table = 'Maquinaria.reportes_actividad';
 
     /**
      * @var array
@@ -45,8 +45,10 @@ class ReporteActividad extends Model
      * @var array
      */
     protected $casts = [
-        'cerrado' => 'boolean',
+        'aprobado' => 'boolean',
         'conciliado' => 'boolean',
+        'horometro_inicial' => 'float',
+        'kilometraje_inicial' => 'integer',
     ];
 
     /**
@@ -90,16 +92,6 @@ class ReporteActividad extends Model
     }
 
     /**
-     * Crea un reporte de actividades
-     *
-     * @return static
-     */
-    public static function registrar(array $data)
-    {
-        return new static($data);
-    }
-
-    /**
      * Identifica si las horas diarias limite del reporte son superadas al reportar mas actividades
      *
      * @param $cantidad
@@ -107,7 +99,7 @@ class ReporteActividad extends Model
      */
     public function superaLimiteHorasDiarias($cantidad)
     {
-        if ($this->actividades->sum('cantidad') + $cantidad > static::LIMITE_HORAS_DIA) {
+        if ($this->actividades->sum('cantidad') + $cantidad > static::LIMITE_HORAS_POR_DIA) {
             throw (new LimiteDeHorasSuperadoException)->setHorasActuales($this->actividades->sum('cantidad'));
         }
     }
@@ -115,12 +107,12 @@ class ReporteActividad extends Model
     /**
      * @return $this
      * @throws ReglaNegocioException
-     * @throws ReporteOperacionCerradoException
+     * @throws ReporteAprobadoException
      */
-    public function cerrar()
+    public function aprobar()
     {
-        if ($this->cerrado) {
-            throw new ReporteOperacionCerradoException;
+        if ($this->aprobado) {
+            throw new ReporteAprobadoException;
         }
 
         if ($this->horometro_inicial && $this->horometro_inicial > $this->horometro_final) {
@@ -135,10 +127,18 @@ class ReporteActividad extends Model
             throw new ReglaNegocioException('El reporte no contiene actividades reportadas.');
         }
 
-        $this->cerrado = true;
-
-        $this->save();
+        $this->aprobado = true;
 
         return $this;
+    }
+
+    /**
+     * Indica si el reporte contiene actividades de reparacion mayor
+     *
+     * @return boolean
+     */
+    public function tieneHorasReparacionMayor()
+    {
+        return $this->actividades()->where('tipo_hora', TipoHora::REPARACION_MAYOR)->exists();
     }
 }

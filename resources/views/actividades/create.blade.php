@@ -20,7 +20,7 @@
                 <!-- Tipo Hora Form Input -->
                 <div class="form-group">
                     {!! Form::label('tipo_hora', 'Tipo de Hora:') !!}
-                    {!! Form::select('tipo_hora', $tiposHora, null, ['class' => 'form-control']) !!}
+                    {!! Form::select('tipo_hora', $tipos_hora, null, ['class' => 'form-control']) !!}
                 </div>
             </div>
             <div class="col-sm-6">
@@ -30,6 +30,13 @@
                     {!! Form::text('cantidad', null, ['class' => 'form-control decimal', 'placeholder' => '0']) !!}
                 </div>
             </div>
+        </div>
+
+        <div class="form-group">
+            <label>Turno:</label>
+            <label class="radio-inline">{!! Form::radio('turno', 1) !!} Primero</label>
+            <label class="radio-inline">{!! Form::radio('turno', 2) !!} Segundo</label>
+            <label class="radio-inline">{!! Form::radio('turno', 3) !!} Tercero</label>
         </div>
 
         <div class="row">
@@ -54,16 +61,16 @@
             {!! Form::label('actividad', 'Actividad:') !!}
             <div class="input-group">
                 {!! Form::text('actividad', null, ['class' => 'form-control', 'placeholder' => 'Digite clave o nombre de actividad destino']) !!}
-                <div type="button" data-toggle="modal" data-target="#myModal" class="input-group-addon btn">
-                    <i class="fa fa-fw fa-sitemap"></i>
-                </div>
+                    <div type="button" data-toggle="modal" data-target="#myModal" class="input-group-addon btn">
+                        <i class="fa fa-fw fa-sitemap"></i>
+                    </div>
                 {!! Form::hidden('id_concepto', null, ['class' => 'form-control', 'id' => 'id_concepto']) !!}
             </div>
         </div>
 
         <div class="form-group">
             <div class="checkbox">
-                <label>{!! Form::checkbox('con_cargo', 1); !!} Con cargo al proveedor?</label>
+                <label>{!! Form::checkbox('con_cargo_empresa', 1); !!} Con cargo a la empresa?</label>
             </div>
         </div>
 
@@ -103,14 +110,6 @@
 
 @section('scripts')
     <script>
-        $('input.decimal').inputmask('decimal', {
-            autoGroup: true,
-            groupSeparator: ',',
-            allowMinus: true,
-            rightAlign: false,
-            removeMaskOnSubmit: true
-        });
-
         if (! Modernizr.inputtypes.time) {
             $('input.time').inputmask('hh:mm', {
                 rightAlign: false

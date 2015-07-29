@@ -2,6 +2,7 @@
 
 namespace Ghi\Http\Requests\Almacenes;
 
+use Ghi\Domain\Core\Facades\Context;
 use Ghi\Http\Requests\Request;
 
 class ActualizaAlmacenMaquinariaRequest extends Request
@@ -13,10 +14,13 @@ class ActualizaAlmacenMaquinariaRequest extends Request
      */
     public function rules()
     {
+        $id_obra = Context::getId();
+
         return [
-            'descripcion' => 'required',
-            'id_propiedad' => 'integer',
-            'id_categoria' => 'integer',
+            'numero_economico' => 'required|unique:cadeco.almacenes,numero_economico,'.$this->route('id').',id_almacen,id_obra,'.$id_obra,
+            'descripcion'      => 'required',
+            'propiedad'        => 'required|string',
+            'clasificacion'    => 'required|string',
         ];
     }
 

@@ -14,7 +14,6 @@ class ReporteActividadPresenter extends Presenter
     public function sumaHoras()
     {
         $count = $this->actividades->sum('cantidad');
-
         $plural = str_plural('Hr', $count);
 
         return $this->actividades->sum('cantidad') . " " . $plural;
@@ -45,12 +44,15 @@ class ReporteActividadPresenter extends Presenter
      *
      * @return string
      */
-    public function estatusLabel()
+    public function textoEstado()
     {
-        if ($this->entity->cerrado) {
-            return 'CERRADO';
+        if ($this->aprobado) {
+            return 'Aprobado';
+        }
+        if ($this->conciliado) {
+            return 'Conciliado';
         }
 
-        return 'PENDIENTE';
+        return 'Capturado';
     }
 }

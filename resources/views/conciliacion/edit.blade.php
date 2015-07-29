@@ -2,64 +2,60 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li>{!! link_to_route('conciliacion.almacenes', $conciliacion->empresa->razon_social, [$conciliacion->id_empresa]) !!}</li>
-        <li>{!! link_to_route('conciliacion.index', $conciliacion->almacen->descripcion, [$conciliacion->id_empresa, $conciliacion->id_almacen]) !!}</li>
+        <li><a href="{{ route('conciliacion.proveedores') }}">Proveedores</a></li>
+        <li>{!! link_to_route('conciliacion.almacenes', $empresa->razon_social, [$empresa]) !!}</li>
+        <li>{!! link_to_route('conciliacion.index', $almacen->descripcion, [$empresa, $almacen]) !!}</li>
         <li class="active">{{ $conciliacion->present()->periodo }}</li>
     </ol>
 
+    <h1 class="page-header"><span class="fa fa-fw fa-calculator"></span> Conciliación</h1>
+
     <div class="col-sm-12">
-
-        <div class="page-header">
-            <h1>Conciliación {!! $conciliacion->present()->statusLabel !!}</h1>
-        </div>
-
         <div class="row">
-            <div class="panel panel-info">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-sm-6">
-                            Proveedor: <strong>{{ $conciliacion->empresa->razon_social }}</strong>
-                        </div>
-                        <div class="col-sm-3">
-                            Dias del periodo: <strong>{{ $conciliacion->present()->dias_conciliados }}</strong>
-                        </div>
-                        <div class="col-sm-3">
-                            Dias con operación: <strong>{{ $conciliacion->present()->dias_con_operacion }}</strong>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            Periodo: <strong>{{ $conciliacion->present()->periodo }}</strong>
+                        <div class="col-sm-12">
+                            <h3 class="text-center"><b>{{ $empresa->razon_social }}</b></h3>
+                            <h4 class="text-center"><b>{{ $almacen->descripcion }}</b></h4>
                         </div>
                     </div>
                 </div>
 
                 <div class="panel-body">
-                    <p>Almacén en conciliación: <strong>{{ $conciliacion->almacen->descripcion }}</strong></p>
-                    <p>Horas del contrato vigente en periodo: <strong>{{ $conciliacion->present()->horas_contrato }}</strong></p>
-                    @if ( ! $conciliacion->operacionEstaCompleta())
-                        <div class="alert alert-warning">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
-                            La operacion no esta completa para este periodo. Las partes de uso no seran generadas.
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4><b>Periodo:</b> {{ $conciliacion->present()->periodo }}</h4>
                         </div>
-                    @endif
+                        <div class="col-sm-3">
+                            <h4><b>Dias del periodo:</b> {{ $conciliacion->present()->dias_conciliados }}</h4>
+                        </div>
+                        <div class="col-sm-3">
+                            <h4><b>Dias con actividad:</b> {{ $conciliacion->present()->dias_con_operacion }}</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            @include('conciliacion.partials.operacion-reportada')
+            @include('conciliacion.partials.operacion')
         </div>
 
         <div class="row">
-            @include('conciliacion.partials.horometros')
-        </div>
+            @include('partials.errors')
+            @include('conciliacion.partials.propuesta')
 
-        <div class="row">
-            @include('conciliacion.partials.horas-a-conciliar')
-
-            @include('conciliacion.partials.distribucion-horas')
+            @unless ($conciliacion->aprobada)
+                <hr>
+                {!! Form::open(['route' => ['conciliacion.delete', $empresa, $almacen, $id], 'method' => 'DELETE']) !!}
+                    <div class="form-group">
+                        <button class="btn btn-danger" type="submit">
+                            <span class="fa fa-fw fa-times"></span> Eliminar esta conciliación
+                        </button>
+                    </div>
+                {!! Form::close() !!}
+            @endunless
         </div>
     </div>
 @stop

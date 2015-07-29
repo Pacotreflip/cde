@@ -35,4 +35,14 @@ class Item extends Model
     {
         return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
     }
+
+    /**
+     * Item antecedente de este item
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function itemAntecedente()
+    {
+        return $this->belongsTo(Item::class, 'item_antecedente', 'id_item');
+    }
 }

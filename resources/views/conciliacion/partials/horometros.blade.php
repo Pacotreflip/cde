@@ -1,9 +1,9 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        Horometros
+        <h4>Horometros</h4>
     </div>
 
-    <table class="table">
+    <table class="table table-condensed table-bordered">
         <thead>
             <tr>
                 <th>Inicial</th>

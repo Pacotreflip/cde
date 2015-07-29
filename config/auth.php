@@ -15,7 +15,7 @@ return [
 	|
 	*/
 
-	'driver' => 'intranet',
+	'driver' => 'ghi-intranet',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
 	|
 	*/
 
-	'model' => Ghi\Domain\Core\Usuarios\User::class,
+	'model' => Ghi\Core\Models\User::class,
 
 	/*
 	|--------------------------------------------------------------------------

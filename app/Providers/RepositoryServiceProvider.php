@@ -25,8 +25,8 @@ class RepositoryServiceProvider extends ServiceProvider
     private function bindCoreRepositories()
     {
         $this->app->bind(
-            \Ghi\Domain\Core\Usuarios\UserRepository::class,
-            \Ghi\Domain\Core\Usuarios\EloquentUserRepository::class
+            \Ghi\Core\Contracts\UserRepository::class,
+            \Ghi\Core\Repositories\EloquentUserRepository::class
         );
 
         $this->app->bind(

@@ -32,7 +32,7 @@ class RegistroAlmacenCommandHandler implements CommandHandler
     public function handle($command)
     {
         $material = Material::findOrFail($command->material);
-        $categoria = Categoria::findOrFail($command->categoria);
+        $categoria = Clasificacion::findOrFail($command->categoria);
         $propiedad = Propiedad::findOrFail($command->propiedad);
 
         $almacen = Almacen::registro(

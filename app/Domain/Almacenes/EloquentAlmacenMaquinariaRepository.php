@@ -3,16 +3,15 @@
 namespace Ghi\Domain\Almacenes;
 
 use Ghi\Domain\Core\BaseRepository;
+use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
+use Ghi\Domain\Core\Inventario;
+use Ghi\Domain\Core\Item;
 use Ghi\Domain\Core\Transaccion;
 
 class EloquentAlmacenMaquinariaRepository extends BaseRepository implements AlmacenMaquinariaRepository
 {
     /**
-     * Obtiene un almacen por su id, incluyendo los
-     * equipos que han entrado
-     *
-     * @param $id
-     * @return AlmacenMaquinaria
+     * {@inheritdoc}
      */
     public function getById($id)
     {
@@ -24,9 +23,7 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene todos los almacenes de una obra
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
     public function getAll()
     {
@@ -37,43 +34,34 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene todos los almacenes de una obra paginados
-     *
-     * @param int $howMany
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
-    public function getAllPaginated($howMany = 30)
+    public function getAllPaginated($how_many = 30)
     {
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
             ->orderBy('descripcion', 'asc')
-            ->paginate($howMany);
+            ->paginate($how_many);
     }
 
     /**
-     * Obtiene los ids de transaccion de las entradas de equipo de una empresa
-     *
-     * @param $idEmpresa
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getIdsEntradaEquipo($idEmpresa)
+    protected function getIdsEntradaEquipo($id_empresa)
     {
         return Transaccion::where('id_obra', $this->context->getId())
             ->entradaEquipo()
-            ->where('id_empresa', $idEmpresa)
+            ->where('id_empresa', $id_empresa)
             ->lists('id_transaccion')
             ->all();
     }
 
     /**
-     * Busca los almacenes de una empresa a traves de las entradas de equipo
-     *
-     * @param $idEmpresa
-     * @return \Illuminate\Database\Eloquent\Collection|AlmacenMaquinaria
+     * {@inheritdoc}
      */
-    public function getByIdEmpresa($idEmpresa)
+    public function getByIdEmpresa($id_empresa)
     {
-        $idsEntradaEquipo = $this->getIdsEntradaEquipo($idEmpresa);
+        $idsEntradaEquipo = $this->getIdsEntradaEquipo($id_empresa);
 
         return AlmacenMaquinaria::where('id_obra', $this->context->getId())
             ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
@@ -85,92 +73,93 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
     }
 
     /**
-     * Obtiene la maquina que entro en un almacen y que esta activa
-     * en un periodo de tiempo
-     *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
-     * @return AlmacenMaquinaria
-     * @throws ReglaNegocioException
+     * {@inheritdoc}
      */
-    public function getEquipoActivoEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal)
+    public function getClasificacionesList()
     {
-        $maquina =  AlmacenMaquinaria::where('id_almacen', $idAlmacen)
-            ->whereIn('tipo_almacen', [Almacen::TIPO_MAQUINARIA, Almacen::TIPO_MAQUINARIA_CONTROL_INSUMOS])
-            ->where(function ($query) use ($fechaInicial, $fechaFinal) {
-                $query->where('fecha_desde', '<=', $fechaInicial)
-                    ->where(function ($query) use ($fechaFinal) {
-                        $query->where('fecha_hasta', '>=', $fechaFinal)
-                            ->orWhereNull('fecha_hasta');
-                    });
-            })
-            ->first();
-
-        if (! $maquina) {
-            throw new ReglaNegocioException('No existe una maquina activa en el periodo indicado para este almacen.');
-        }
-
-        return $maquina;
+        return [
+            Clasificacion::MAYOR      => new Clasificacion(Clasificacion::MAYOR),
+            Clasificacion::MENOR      => new Clasificacion(Clasificacion::MENOR),
+            Clasificacion::TRANSPORTE => new Clasificacion(Clasificacion::TRANSPORTE),
+        ];
     }
 
     /**
-     * Obtiene una categoria por su id
-     *
-     * @param $id
-     * @return Categoria
-     */
-    public function getCategoriaById($id)
-    {
-        return Categoria::findOrFail($id);
-    }
-
-    /**
-     * Obtiene las categorias en forma de lista
-     *
-     * @return array
-     */
-    public function getCategoriasList()
-    {
-        return Categoria::sortBy('descripcion')->lists('descripcion', 'id')->all();
-    }
-
-    /**
-     * Obtiene una propiedad por su id
-     *
-     * @param $id
-     * @return Propiedad
-     */
-    public function getPropiedadById($id)
-    {
-        return Propiedad::findOrFail($id);
-    }
-
-    /**
-     * Obtiene los tipos de propiedad en gorma de lista
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getPropiedadesList()
     {
-        return Propiedad::lists('descripcion', 'id')->all();
+        return [
+            Propiedad::PROPIO   => new Propiedad(Propiedad::PROPIO),
+            Propiedad::TERCEROS => new Propiedad(Propiedad::TERCEROS),
+            Propiedad::SOCIEDAD => new Propiedad(Propiedad::SOCIEDAD),
+        ];
     }
 
     /**
-     * Crea un registro de horas mensuales para el almacen
-     *
-     * @param $idAlmacen
-     * @param array $data
-     * @return HoraMensual
+     * {@inheritdoc}
      */
-    public function registraHorasMensuales($idAlmacen, array $data)
+    public function registraHorasMensuales($id_almacen, array $data)
     {
-        $almacen = $this->getById($idAlmacen);
-
+        $almacen = $this->getById($id_almacen);
         $horaMensual = new HoraMensual($data);
-
         $almacen->horasMensuales()->save($horaMensual);
 
         return $horaMensual;
+    }
+
+    protected function getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        return Inventario::where('id_almacen', $id_almacen)
+            ->whereNotNull('referencia')
+            ->where(function ($query) use ($fecha_inicial, $fecha_final) {
+                $query->where('fecha_desde', '<=', $fecha_inicial)
+                    ->where(function ($query) use ($fecha_final) {
+                        $query->where('fecha_hasta', '>=', $fecha_final)
+                            ->orWhereNull('fecha_hasta');
+                    });
+            })
+            ->whereHas('item.transaccion', function ($query) use ($id_empresa) {
+                // El registro en el inventario debe tener un item relacionado con
+                // una transaccion de entrada de equipo de la empresa
+                $query->where('id_empresa', $id_empresa);
+            })
+            ->orderBy('fecha_desde', 'DESC')
+            ->lists('id_item')
+            ->first();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        $id_item = $this->getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+
+        $equipo = Inventario::where('id_almacen', $id_almacen)
+            ->whereNotNull('referencia')
+            ->where('id_item', $id_item)
+            ->first();
+
+        if (! $equipo) {
+            throw new ReglaNegocioException('No existe un equipo activo en el periodo indicado para esta empresa.');
+        }
+        return $equipo;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContratoVigente($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
+    {
+        $id_item = $this->getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+
+        $item_entrada = Item::where('id_item', $id_item)->first();
+        $item_renta = $item_entrada->itemAntecedente;
+
+        if (! $item_renta) {
+            throw new ReglaNegocioException('No existe un contrato de renta para este periodo.');
+        }
+        return $item_renta;
     }
 }

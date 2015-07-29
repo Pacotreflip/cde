@@ -32,9 +32,11 @@ class EloquentEmpresaRepository extends BaseRepository implements EmpresaReposit
      *
      * @return Collection|Empresa
      */
-    public function getWithEntradasEquipo()
+    public function getProveedoresMaquinaria()
     {
-        return Empresa::has('entradasEquipo')
+        return Empresa::whereHas('entradasEquipo', function ($query) {
+            $query->where('id_obra', $this->context->getId());
+        })
             ->orderBy('razon_social')
             ->get();
     }

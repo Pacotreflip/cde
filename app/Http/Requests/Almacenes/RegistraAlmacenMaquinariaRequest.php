@@ -2,6 +2,7 @@
 
 namespace Ghi\Http\Requests\Almacenes;
 
+use Ghi\Domain\Core\Facades\Context;
 use Ghi\Http\Requests\Request;
 
 class RegistraAlmacenMaquinariaRequest extends Request
@@ -13,12 +14,14 @@ class RegistraAlmacenMaquinariaRequest extends Request
      */
     public function rules()
     {
+        $id_obra = Context::getId();
+
         return [
-            'numero_economico' => 'required',
-            'descripcion' => 'required',
-            'id_material' => 'required|integer',
-            'id_propiedad' => 'required|integer',
-            'id_categoria' => 'required|integer'
+            'numero_economico' => 'required|unique:cadeco.almacenes,numero_economico,null,id_almacen,id_obra,'.$id_obra,
+            'descripcion'      => 'required',
+            'id_material'      => 'required|integer',
+            'propiedad'        => 'required',
+            'clasificacion'    => 'required'
         ];
     }
 

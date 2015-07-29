@@ -2,8 +2,8 @@
 
 namespace Ghi\Domain\ReportesActividad;
 
+use Ghi\Core\Models\User;
 use Ghi\Domain\Core\Conceptos\Concepto;
-use Ghi\Domain\Core\Usuarios\User;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
@@ -19,30 +19,41 @@ class Actividad extends Model
     /**
      * @var string
      */
-    protected $table = 'maquinaria.actividades';
+    protected $table = 'Maquinaria.actividades';
 
     /**
      * @var array
      */
     protected $fillable = [
         'cantidad',
-        'con_cargo',
-        'observaciones',
+        'con_cargo_empresa',
         'hora_inicial',
         'hora_final',
+        'observaciones',
+        'turno',
     ];
 
     /**
      * @var array
      */
     protected $casts = [
-        'con_cargo' => 'boolean',
+        'con_cargo_empresa' => 'boolean',
     ];
 
     /**
      * @var
      */
     protected $presenter = ActividadPresenter::class;
+
+    public function getTipoHoraAttribute($value)
+    {
+        return new TipoHora($value);
+    }
+    
+    public function setTipoHoraAttribute($value)
+    {
+        $this->attributes['tipo_hora'] = (new TipoHora($value))->getCodigo();
+    }
 
     /**
      * Reporte de actividades al que pertenece la actividad actual
@@ -55,17 +66,6 @@ class Actividad extends Model
     }
 
     /**
-     * Tipo de hora de la actividad actual
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function tipoHora()
-    {
-        return $this->belongsTo(TipoHora::class, 'id_tipo_hora');
-    }
-
-
-    /**
      * Concepto destino de la actividad
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -74,7 +74,6 @@ class Actividad extends Model
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
-
 
     /**
      * Usuario que reporto la actividad
@@ -86,7 +85,6 @@ class Actividad extends Model
         return $this->belongsTo(User::class, 'creado_por', 'usuario');
     }
 
-
     /**
      * @param ReporteActividad $reporte
      *
@@ -97,13 +95,5 @@ class Actividad extends Model
         $reporte->superaLimiteHorasDiarias($this->cantidad);
 
         return $reporte->actividades()->save($this);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function tieneDestino()
-    {
-        return (boolean) $this->concepto;
     }
 }

@@ -39,17 +39,17 @@
 
         <div class="row">
             <div class="col-md-6">
-                <!-- Categoria Form Input -->
+                <!-- Clasificación Form Input -->
                 <div class="form-group">
-                    {!! Form::label('id_categoria', 'Categoria:') !!}
-                    {!! Form::select('id_categoria', $categorias, null, ['class' => 'form-control']) !!}
+                    {!! Form::label('clasificacion', 'Clasificación:') !!}
+                    {!! Form::select('clasificacion', $clasificaciones, null, ['class' => 'form-control']) !!}
                 </div>
             </div>
             <div class="col-md-6">
                 <!-- Propiedad Form Input -->
                 <div class="form-group">
-                    {!! Form::label('id_propiedad', 'Propiedad:') !!}
-                    {!! Form::select('id_propiedad', $propiedades, null, ['class' => 'form-control']) !!}
+                    {!! Form::label('propiedad', 'Propiedad:') !!}
+                    {!! Form::select('propiedad', $propiedades, null, ['class' => 'form-control']) !!}
                 </div>
             </div>
         </div>

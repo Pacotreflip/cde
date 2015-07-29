@@ -3,9 +3,9 @@
     {!! Form::label('inicio_vigencia', 'Vigente a Partir de:', ['class' => 'col-sm-2 control-label']) !!}
     <div class="col-sm-4">
         <div class="input-group">
-            {!! Form::text('inicio_vigencia', null,
+            {!! Form::date('inicio_vigencia', $horas ? $horas->present()->inicio_vigencia : date('Y-m-d'),
                 ['class' => 'form-control pad', 'placeholder' => 'dd-mm-aaaa', 'required',
-                    'data-value' => $horas ? $horas->present()->inicio_vigencia : '']) !!}
+                    'data-value' => $horas ? $horas->present()->inicio_vigencia_local : date('d-m-Y')]) !!}
             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
         </div>
     </div>

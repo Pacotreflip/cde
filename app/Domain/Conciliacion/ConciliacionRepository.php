@@ -15,24 +15,34 @@ interface ConciliacionRepository
     /**
      * Obtiene las conciliaciones de un almacen
      *
-     * @param $idAlmacen
+     * @param $id_almacen
      * @return \Illuminate\Database\Eloquent\Collection|Conciliacion
      */
-    public function getByAlmacen($idAlmacen);
+    public function getByAlmacen($id_almacen);
 
     /**
      * Identifica si una conciliacion ya existe dentro de un periodo
      *
-     * @param $idAlmacen
-     * @param $fechaInicial
-     * @param $fechaFinal
+     * @param $id_almacen
+     * @param $fecha_inicial
+     * @param $fecha_final
      * @return bool
      */
-    public function existeConciliacionEnPeriodo($idAlmacen, $fechaInicial, $fechaFinal);
+    public function existeConciliacionEnPeriodo($id_almacen, $fecha_inicial, $fecha_final);
 
     /**
+     * Persiste los cambios de una conciliacion
+     *
      * @param Conciliacion $conciliacion
      * @return Conciliacion
      */
     public function save(Conciliacion $conciliacion);
+
+    /**
+     * Elimina una conciliacion
+     *
+     * @param Conciliacion $conciliacion
+     * @return void
+     */
+    public function delete(Conciliacion $conciliacion);
 }

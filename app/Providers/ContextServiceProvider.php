@@ -18,9 +18,6 @@ class ContextServiceProvider extends ServiceProvider
             \Ghi\Domain\Core\ContextSession::class
         );
 
-        $this->app->singleton('ghi.context', function()
-        {
-            return $this->app->make(\Ghi\Domain\Core\ContextSession::class);
-        });
+        $this->app->singleton('ghi.context', \Ghi\Domain\Core\ContextSession::class);
     }
 }

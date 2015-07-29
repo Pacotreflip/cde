@@ -60,7 +60,7 @@
 
         <div class="form-group">
             {!! link_to_route('reportes.index', 'Cancelar', [$almacen], ['class' => 'btn btn-danger']) !!}
-            {!! Form::submit('Guardar', ['class' => 'btn btn-success']) !!}
+            {!! Form::submit('Guardar', ['class' => 'btn btn-primary']) !!}
         </div>
 
     {!! Form::close() !!}

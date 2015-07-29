@@ -26,5 +26,5 @@ interface EmpresaRepository
      *
      * @return Collection|Empresa
      */
-    public function getWithEntradasEquipo();
+    public function getProveedoresMaquinaria();
 }

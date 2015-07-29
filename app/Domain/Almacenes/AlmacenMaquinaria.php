@@ -17,24 +17,30 @@ class AlmacenMaquinaria extends Almacen
      */
     protected $presenter = AlmacenMaquinariaPresenter::class;
 
-    /**
-     * Categoria del equipo
-     *
-     * @return mixed
-     */
-    public function categoria()
+    public function getPropiedadAttribute($value)
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria', 'id');
+        if (is_null($value)) {
+            return $value;
+        }
+        return new Propiedad($value);
     }
 
-    /**
-     * Propiedad del equipo
-     *
-     * @return mixed
-     */
-    public function propiedad()
+    public function setPropiedadAttribute($value)
     {
-        return $this->belongsTo(Propiedad::class, 'id_propiedad', 'id');
+        $this->attributes['propiedad'] = new Propiedad($value);
+    }
+
+    public function getClasificacionAttribute($value)
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+        return new Clasificacion($value);
+    }
+
+    public function setClasificacionAttribute($value)
+    {
+        $this->attributes['clasificacion'] = new Clasificacion($value);
     }
 
     /**
