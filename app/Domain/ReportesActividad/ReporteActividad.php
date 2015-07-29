@@ -2,9 +2,9 @@
 
 namespace Ghi\Domain\ReportesActividad;
 
+use Ghi\Core\Models\User;
 use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Almacenes\AlmacenMaquinaria;
-use Ghi\Domain\Core\Usuarios\User;
 use Ghi\Domain\ReportesActividad\Events\ReporteHorasSeHaRegistrado;
 use Ghi\Domain\ReportesActividad\Exceptions\LimiteDeHorasSuperadoException;
 use Ghi\Domain\ReportesActividad\Exceptions\ReporteAprobadoException;
@@ -130,5 +130,15 @@ class ReporteActividad extends Model
         $this->aprobado = true;
 
         return $this;
+    }
+
+    /**
+     * Indica si el reporte contiene actividades de reparacion mayor
+     *
+     * @return boolean
+     */
+    public function tieneHorasReparacionMayor()
+    {
+        return $this->actividades()->where('tipo_hora', TipoHora::REPARACION_MAYOR)->exists();
     }
 }

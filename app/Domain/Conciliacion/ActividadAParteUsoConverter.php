@@ -4,22 +4,23 @@ namespace Ghi\Domain\Conciliacion;
 
 class ActividadAParteUsoConverter
 {
+
     /**
-     * @param Hora $hora
+     * @param Actividad $actividad
      * @param ContratoRenta $contrato
      * @param Maquina $maquina
      * @return array
      */
-    public function convert(Actividad $hora, ContratoRenta $contrato, Maquina $maquina)
+    public function convert(Actividad $actividad, ContratoRenta $contrato, Maquina $maquina)
     {
         $item = new ItemParteUso([
-            'id_almacen'  => $hora->id_almacen,
-            'id_concepto' => $hora->id_concepto,
-            'unidad'      => $hora->tieneDestino() ? $hora->concepto->unidad : null,
-            'numero'      => $this->convierteTipoHora($hora->id_tipo_hora),
-            'cantidad'    => $hora->cantidad,
+            'id_almacen'  => $actividad->id_almacen,
+            'id_concepto' => $actividad->id_concepto,
+            'unidad'      => $actividad->tieneDestino() ? $actividad->concepto->unidad : null,
+            'numero'      => $this->convierteTipoHora($actividad->id_tipo_hora),
+            'cantidad'    => $actividad->cantidad,
             'precio_unitario' => $contrato->precio_unitario,
-            'importe' => $hora->cantidad * $contrato->precio_unitario,
+            'importe' => $actividad->cantidad * $contrato->precio_unitario,
             'anticipo' => $contrato->anticipo,
             'id_material' => $maquina->id_material,
             'referencia' => $maquina->referencia,

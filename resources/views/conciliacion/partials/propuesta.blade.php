@@ -20,7 +20,7 @@
                     <th>Reparación Mayor <span class="pull-right text-danger">(-)</span></th>
                     <td class="text-right">{{ $conciliacion->horas_reparacion_mayor }}</td>
                 </tr>
-                <tr class="active">
+                <tr class="active h4">
                     <th>Diferencia Base Pagable</th>
                     <th class="text-right">{{ $conciliacion->horas_a_conciliar - $conciliacion->horas_reparacion_mayor }}</th>
                 </tr>
@@ -32,7 +32,11 @@
                     <th>Ocio <span class="pull-right text-success">(+)</span></th>
                     <td class="text-right">{{ $conciliacion->horas_ocio_conciliadas }}</td>
                 </tr>
-                <tr class="success">
+                <tr>
+                    <th>Reparación <span class="pull-right text-success">(+)</span></th>
+                    <td class="text-right">{{ $conciliacion->horas_reparacion_conciliadas }}</td>
+                </tr>
+                <tr class="active h4">
                     <th class="text-right"><b>Total de Horas a Pagar:</b></th>
                     <th class="text-right">
                         <b>
@@ -93,7 +97,7 @@
                         </div>
 
                         @unless ($conciliacion->aprobada)
-                            <!-- Horas Ocio Conciliadas Form Input -->
+                            <!-- Horas Reparacion Conciliadas Form Input -->
                             {!! Form::text('horas_reparacion_conciliadas', null, ['class' => 'form-control input-lg integer']) !!}
                         @else
                             <div class="panel-body text-center">
@@ -103,6 +107,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 @unless ($conciliacion->aprobada)
                     <div class="form-group text-center">

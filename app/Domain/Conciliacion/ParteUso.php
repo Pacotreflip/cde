@@ -10,6 +10,7 @@ class ParteUso extends Transaccion
     use ComentarioTransaccionTrait;
 
     const TIPO_TRANSACCION = 36;
+    const OPCIONES = 0;
 
     /**
      * @var array
@@ -55,7 +56,8 @@ class ParteUso extends Transaccion
         ]);
 
         $parte_uso->tipo_transaccion = static::TIPO_TRANSACCION;
-        $parte_uso->comentario = $parte_uso->getComentarioRegistro($usuario);
+        $parte_uso->opciones         = static::OPCIONES;
+        $parte_uso->comentario       = $parte_uso->getComentarioRegistro($usuario);
 
         return $parte_uso;
     }

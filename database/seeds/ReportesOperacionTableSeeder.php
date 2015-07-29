@@ -15,7 +15,7 @@ class ReportesOperacionTableSeeder extends Seeder
         $faker = Faker::create();
 
         $conceptosMediblesIds = Concepto::where('id_obra', 1)
-            ->where('concepto_medible', 3)
+            ->whereIn('concepto_medible', [Concepto::CONCEPTO_MEDIBLE, Concepto::CONCEPTO_FACTURABLE])
             ->lists('id_concepto')->all();
 
         foreach (AlmacenMaquinaria::where('id_obra', 1)->where('tipo_almacen', 2)->get() as $almacen) {

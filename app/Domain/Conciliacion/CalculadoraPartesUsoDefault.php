@@ -22,12 +22,12 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
     /**
      * @var int
      */
-    protected $horasEfectivas  = 0;
+    protected $horasEfectivas = 0;
 
     /**
      * @var int
      */
-    protected $horasOcio       = 0;
+    protected $horasOcio = 0;
 
     /**
      * @var int
@@ -37,7 +37,7 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
     /**
      * @var int
      */
-    protected $ocioPorDia      = 0;
+    protected $ocioPorDia = 0;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -125,12 +125,14 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
 
         $horas = $this->getHorasEfectivas($reporte);
 
-        if ($this->horasReparacion > 0) {
-            $horas[] = $this->generaHorasReparacion($reporte);
-        }
-
         if ($this->horasOcio > 0) {
             $horas[] = $this->generaHorasOcio($reporte);
+        }
+
+        if ($this->horasReparacion > 0) {
+            if ($reporte->tieneHorasReparacionMayor()) {
+                $horas[] = $this->generaHorasReparacion($reporte);
+            }
         }
 
         $parteUso['horas'] = $horas;
@@ -172,14 +174,14 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
     private function generaHorasReparacion(ReporteActividad $reporte)
     {
         $cantidad = $reporte->actividades()->where('tipo_hora', TipoHora::REPARACION_MAYOR)->sum('cantidad');
-        $horas = ['tipo' => TipoHora::REPARACION_MAYOR, 'cantidad' => $cantidad];
+        $horas    = ['tipo' => TipoHora::REPARACION_MAYOR, 'cantidad' => $cantidad];
         $this->horasReparacion -= $cantidad;
 
         return $horas;
     }
 
     /**
-     * Obtiene las horas de reparacion mayor de un reporte
+     * Obtiene las horas de ocio de un reporte
      *
      * @param ReporteActividad $reporte
      * @return array

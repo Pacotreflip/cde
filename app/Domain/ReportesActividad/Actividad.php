@@ -2,8 +2,8 @@
 
 namespace Ghi\Domain\ReportesActividad;
 
+use Ghi\Core\Models\User;
 use Ghi\Domain\Core\Conceptos\Concepto;
-use Ghi\Domain\Core\Usuarios\User;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 

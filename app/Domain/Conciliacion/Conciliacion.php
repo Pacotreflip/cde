@@ -3,9 +3,8 @@
 namespace Ghi\Domain\Conciliacion;
 
 use Ghi\Domain\Almacenes\AlmacenMaquinaria;
-use Ghi\Domain\Core\Exceptions\ReglaNegocioException;
 use Ghi\Domain\Core\Empresa;
-use Ghi\Domain\Core\Usuarios\UsuarioCadeco;
+use Ghi\Core\Models\UsuarioCadeco;
 use Illuminate\Database\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 

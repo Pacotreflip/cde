@@ -140,6 +140,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Laracasts\Generators\GeneratorsServiceProvider::class,
+        Overtrue\LaravelLang\TranslationServiceProvider::class,
 
 		/*
 		 * Application Service Providers...
@@ -154,7 +155,6 @@ return [
         Ghi\Providers\ContextServiceProvider::class,
         Ghi\Providers\ComposerServiceProvider::class,
         Ghi\Providers\FractalServiceProvider::class,
-
     ],
 
 	/*
