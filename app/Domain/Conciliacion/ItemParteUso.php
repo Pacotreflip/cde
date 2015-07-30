@@ -20,6 +20,10 @@ class ItemParteUso extends Item
         'unidad',
         'numero',
         'cantidad',
+        'referencia',
+        'anticipo',
+        'id_material',
+        'precio_unitario',
     ];
 
     /**
@@ -30,5 +34,15 @@ class ItemParteUso extends Item
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    /**
+     * Indica si este item aplica para costo
+     *
+     * @return bool
+     */
+    public function aplicaParaCosto()
+    {
+        return $this->numero == ItemParteUso::TRABAJADA || $this->numero == ItemParteUso::ESPERA;
     }
 }

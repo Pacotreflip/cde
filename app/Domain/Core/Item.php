@@ -27,6 +27,16 @@ class Item extends Model
     public $timestamps = false;
 
     /**
+     * @var array
+     */
+    public $casts = [
+        'numero' => 'int',
+        'cantidad' => 'float',
+        'importe' => 'float',
+        'precio_unitario' => 'float',
+        'anticipo' => 'float'
+    ];
+    /**
      * Transaccion relacionada con este item
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
