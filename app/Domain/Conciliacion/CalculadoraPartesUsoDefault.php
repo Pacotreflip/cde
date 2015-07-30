@@ -76,8 +76,7 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
             $parteUso = $this->generaDistribucion($reporte);
             $this->partesUso->push($parteUso);
         }
-//        dd($this->partesUso);
-//        dd($this->horasEfectivas, $this->horasOcio, $this->horasReparacion);
+
         return $this->partesUso;
     }
 
@@ -189,6 +188,11 @@ class CalculadoraPartesUsoDefault implements CalculadoraPartesUso
     private function generaHorasOcio(ReporteActividad $reporte)
     {
         $cantidad = $this->ocioPorDia + $reporte->actividades()->where('tipo_hora', TipoHora::OCIO)->sum('cantidad');
+
+        if ($this->horasOcio < $cantidad) {
+            $cantidad = $this->horasOcio;
+        }
+
         $horas = ['tipo' => TipoHora::OCIO, 'cantidad' => $cantidad];
         $this->horasOcio -= $cantidad;
 
