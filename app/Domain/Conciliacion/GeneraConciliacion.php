@@ -133,36 +133,57 @@ class GeneraConciliacion
         return $conciliacion;
     }
 
+    /**
+     * @return int
+     */
     private function getHorasEfectivas()
     {
         return (int) $this->reporteRepository->sumaHorasEfectivasPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasReparacionMayor()
     {
         return (int) $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasReparacionMayorConCargo()
     {
         return (int) $this->reporteRepository->sumaHorasReparacionMayorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final, true);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasReparacionMenor()
     {
         return (int) $this->reporteRepository->sumaHorasReparacionMenorPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasMantenimiento()
     {
         return (int) $this->reporteRepository->sumaHorasMantenimientoPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasOcio()
     {
         return (int) $this->reporteRepository->sumaHorasOcioPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);
     }
 
+    /**
+     * @return int
+     */
     private function getHorasTraslado()
     {
         return (int) $this->reporteRepository->sumaHorasTrasladoPorPeriodo($this->id_almacen, $this->fecha_inicial, $this->fecha_final);

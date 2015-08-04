@@ -20,6 +20,7 @@ class AplicaCostoCadeco
      * @var CalculadoraPartesUso
      */
     private $calculadoraPartesUso;
+
     /**
      * @var AlmacenMaquinariaRepository
      */
@@ -127,7 +128,8 @@ class AplicaCostoCadeco
      * @param array $horas
      * @return ParteUso
      */
-    private function creaParteUso($id_obra, $id_empresa, $id_almacen, $fecha, array $horas = []) {
+    private function creaParteUso($id_obra, $id_empresa, $id_almacen, $fecha, array $horas = [])
+    {
         $equipo    = $this->almacenRepository->getEquipoActivo($id_empresa, $id_almacen, $fecha, $fecha);
         $contrato  = $this->almacenRepository->getContratoVigente($id_empresa, $id_almacen, $fecha, $fecha);
         $items     = [];
