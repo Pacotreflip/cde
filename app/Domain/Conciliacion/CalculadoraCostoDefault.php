@@ -1,4 +1,5 @@
 <?php
+
 namespace Ghi\Domain\Conciliacion;
 
 use Carbon\Carbon;
@@ -31,8 +32,7 @@ class CalculadoraCostoDefault implements CalculadoraCosto
         $horas_efectivas,
         $horas_reparacion_mayor = 0,
         $horas_reparacion_mayor_cargo_empresa = 0
-    )
-    {
+    ) {
         $this->horas_efectivas      = $horas_efectivas;
         $this->factor_horas_por_dia = $this->calculaFactorDiario($horas_contrato);
         $this->dias_conciliacion    = $this->calculaDiasConciliacion($fecha_inicial, $fecha_final);

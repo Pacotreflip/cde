@@ -44,8 +44,7 @@ class ConciliacionesController extends Controller
         AlmacenMaquinariaRepository $almacenRepository,
         ConciliacionRepository $conciliacionRepository,
         GeneraConciliacion $generador
-    )
-    {
+    ) {
         $this->middleware('auth');
         $this->middleware('context');
 
@@ -54,7 +53,6 @@ class ConciliacionesController extends Controller
         $this->repository = $conciliacionRepository;
         $this->generador = $generador;
     }
-
 
     /**
      * Muestra una lista de empresas que rentan maquinaria
@@ -67,7 +65,6 @@ class ConciliacionesController extends Controller
 
         return view('conciliacion.proveedores')->withProveedores($proveedores);
     }
-
 
     /**
      * Muestra una lista de almacenes relacionados con una empresa
@@ -84,7 +81,6 @@ class ConciliacionesController extends Controller
             ->withAlmacenes($almacenes)
             ->withEmpresa($empresa);
     }
-
 
     /**
      * Muestra una lista de conciliaciones de un almacen
@@ -105,7 +101,6 @@ class ConciliacionesController extends Controller
             ->withAlmacen($almacen);
     }
 
-
     /**
      * Muestra un formulario para conciliar un nuevo periodo
      *
@@ -122,7 +117,6 @@ class ConciliacionesController extends Controller
             ->withEmpresa($empresa)
             ->withAlmacen($almacen);
     }
-
 
     /**
      * Almacena una nueva conciliacion
@@ -150,7 +144,6 @@ class ConciliacionesController extends Controller
 
         return redirect()->route('conciliacion.edit', [$id_empresa, $id_almacen, $conciliacion]);
     }
-
 
     /**
      * Muestra un formulario para modificar una conciliacion

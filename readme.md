@@ -1,6 +1,6 @@
 ## GHI SAO Maquinaria
 
-Esta aplicacion permite llevar el control y conciliacion de la operacion de maquinaria.
+Esta aplicacion permite administrar el reporte y conciliacion de la operacion de maquinaria.
 
 ## How to install
 

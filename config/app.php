@@ -138,9 +138,9 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         Collective\Html\HtmlServiceProvider::class,
+        Overtrue\LaravelLang\TranslationServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Laracasts\Generators\GeneratorsServiceProvider::class,
-        Overtrue\LaravelLang\TranslationServiceProvider::class,
 
 		/*
 		 * Application Service Providers...
@@ -150,10 +150,8 @@ return [
 		Ghi\Providers\RouteServiceProvider::class,
 
         Ghi\IntranetAuth\IntranetAuthServiceProvider::class,
-		Ghi\Providers\LocaleServiceProvider::class,
 		Ghi\Providers\RepositoryServiceProvider::class,
         Ghi\Providers\ContextServiceProvider::class,
-        Ghi\Providers\ComposerServiceProvider::class,
         Ghi\Providers\FractalServiceProvider::class,
     ],
 
