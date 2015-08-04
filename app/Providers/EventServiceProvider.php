@@ -14,7 +14,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'Ghi\Events\ConciliacionFueAprobada' => [
-            'Ghi\Listeners\EnviaCostoSao',
+            'Ghi\Listeners\AplicaCostoCadeco',
         ],
     ];
 

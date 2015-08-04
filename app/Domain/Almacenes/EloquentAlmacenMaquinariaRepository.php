@@ -152,10 +152,10 @@ class EloquentAlmacenMaquinariaRepository extends BaseRepository implements Alma
      */
     public function getContratoVigente($id_empresa, $id_almacen, $fecha_inicial, $fecha_final)
     {
-        $id_item = $this->getIdItemEntradaEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
+        $equipo = $this->getEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
 
-        $item_entrada = Item::where('id_item', $id_item)->first();
-        $item_renta = $item_entrada->itemAntecedente;
+        $item_entrada = $equipo->item;
+        $item_renta   = $item_entrada->itemAntecedente;
 
         if (! $item_renta) {
             throw new ReglaNegocioException('No existe un contrato de renta para este periodo.');

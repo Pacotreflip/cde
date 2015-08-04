@@ -14,12 +14,13 @@ use Ghi\Events\ConciliacionFueAprobada;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EnviaCostoSao
+class AplicaCostoCadeco
 {
     /**
      * @var CalculadoraPartesUso
      */
     private $calculadoraPartesUso;
+
     /**
      * @var AlmacenMaquinariaRepository
      */
@@ -55,11 +56,8 @@ class EnviaCostoSao
         $id_almacen    = $conciliacion->id_almacen;
         $fecha_inicial = $conciliacion->fecha_inicial;
         $fecha_final   = $conciliacion->fecha_final;
-        $usuario       = auth()->user()->usuario;
         $equipo        = $this->almacenRepository->getEquipoActivo($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
-        $contrato      = $this->almacenRepository->getContratoVigente($id_empresa, $id_almacen, $fecha_inicial, $fecha_final);
 
-        // Validar que la parte de uso en la fecha no exista en cadeco
         if ($this->existenPartesUsoEnCadeco($id_almacen, $fecha_inicial, $fecha_final)) {
             throw new ReglaNegocioException('Ya existen partes de uso registradas en cadeco para este periodo.');
         }
@@ -68,40 +66,12 @@ class EnviaCostoSao
             DB::connection('cadeco')->beginTransaction();
 
             foreach ($partes as $parte) {
-                $items = [];
-                $parte_uso = ParteUso::crear($id_obra, $parte['fecha'], $id_almacen, $usuario);
-                $parte_uso->save();
-
-                // Convertir a horas de cadeco
-                // Aplicar precio de acuerdo al contrato de renta
-                // Aplicar al equipo activo en el periodo de la conciliacion
-                foreach ($parte['horas'] as $hora) {
-                    $item = new ItemParteUso([
-                        'id_almacen'      => $id_almacen,
-                        'cantidad'        => $hora['cantidad'],
-                        'numero'          => $this->getTipoHoraCadeco($hora['tipo']),
-                        'precio_unitario' => $contrato->precio_unitario,
-                        'importe'         => $hora['cantidad'] * $contrato->precio_unitario,
-                        'anticipo'        => $contrato->anticipo,
-                        'id_material'     => $equipo->id_material,
-                        'referencia'      => $equipo->referencia,
-                    ]);
-
-                    if ($hora['tipo'] == TipoHora::EFECTIVA) {
-                        $concepto = Concepto::findOrFail($hora['id_concepto']);
-                        $item->concepto()->associate($concepto);
-                        $item->unidad = $concepto->unidad;
-                    }
-
-                    $items[] = $item;
-                }
-
-                $parte_uso->items()->saveMany($items);
+                $parte_uso = $this->creaParteUso($id_obra, $id_empresa, $id_almacen, $parte['fecha'], $parte['horas']);
             }
+
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
-
             throw $e;
         }
 
@@ -146,5 +116,61 @@ class EnviaCostoSao
             ->where('id_almacen', $id_almacen)
             ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
             ->exists();
+    }
+
+    /**
+     * Crea una nueva parte de uso en cadeco
+     *
+     * @param $id_obra
+     * @param $id_empresa
+     * @param $id_almacen
+     * @param $fecha
+     * @param array $horas
+     * @return ParteUso
+     */
+    private function creaParteUso($id_obra, $id_empresa, $id_almacen, $fecha, array $horas = [])
+    {
+        $equipo    = $this->almacenRepository->getEquipoActivo($id_empresa, $id_almacen, $fecha, $fecha);
+        $contrato  = $this->almacenRepository->getContratoVigente($id_empresa, $id_almacen, $fecha, $fecha);
+        $items     = [];
+
+        // Convertir a horas de cadeco
+        // Aplicar precio de acuerdo al contrato de renta
+        // Aplicar al equipo activo en el periodo de la conciliacion
+        foreach ($horas as $hora) {
+            $item                  = new ItemParteUso;
+            $item->id_almacen      = $id_almacen;
+            $item->cantidad        = $hora['cantidad'];
+            $item->numero          = $this->getTipoHoraCadeco($hora['tipo']);
+            $item->id_material     = $equipo->id_material;
+            $item->referencia      = $equipo->referencia;
+            $item->precio_unitario = $contrato->precio_unitario;
+            $item->anticipo        = $contrato->anticipo;
+
+            if ($item->aplicaParaCosto()) {
+                $item->importe       = $hora['cantidad'] * $contrato->precio_unitario;
+                $equipo->monto_total = $equipo->monto_total + $item->importe;
+                $equipo->cantidad    = $equipo->cantidad + $item->cantidad;
+            }
+
+            if ($item->numero == ItemParteUso::ESPERA) {
+                $equipo->saldo = $equipo->saldo + $item->cantidad;
+            }
+
+            if ($item->numero == ItemParteUso::TRABAJADA) {
+                $concepto = Concepto::findOrFail($hora['id_concepto']);
+                $item->concepto()->associate($concepto);
+                $item->unidad = $concepto->unidad;
+            }
+
+            $items[] = $item;
+        }
+
+        $parte_uso = ParteUso::crear($id_obra, $fecha, $id_almacen, auth()->user()->usuario);
+        $parte_uso->save();
+        $parte_uso->items()->saveMany($items);
+        $equipo->save();
+
+        return $parte_uso;
     }
 }
