@@ -148,8 +148,12 @@ class AlmacenesController extends Controller
             $almacen->propiedad = $request->get('propiedad');
         }
 
-        if ($request->has('categoria')) {
-            $almacen->categoria = $request->get('categoria');
+        if ($request->has('clasificacion')) {
+            $almacen->clasificacion = $request->get('clasificacion');
+        }
+
+        if ($request->has('id_material')) {
+            $almacen->id_material = $request->get('id_material');
         }
 
         $almacen->update($request->only([
