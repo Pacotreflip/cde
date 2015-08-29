@@ -52,7 +52,19 @@ return [
             'prefix'   => '',
         ],
 
-        'mysql' => [
+        'igh' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_INTRANET', 'localhost'),
+            'database'  => env('DB_DATABASE_INTRANET', 'forge'),
+            'username'  => env('DB_USERNAME_INTRANET', 'forge'),
+            'password'  => env('DB_PASSWORD_INTRANET', ''),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
+
+        'equipamiento' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
             'database'  => env('DB_DATABASE', 'forge'),

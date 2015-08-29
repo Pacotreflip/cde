@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace Ghi\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

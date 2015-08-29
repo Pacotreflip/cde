@@ -1,0 +1,8 @@
+{
+  "name": "ghi/control-equipamiento",
+  "dependencies": {
+    "bootstrap-sass": "bootstrap-sass-official#~3.3.5",
+    "font-awesome": "~4.4.0",
+    "roboto-fontface": "~0.4.3"
+  }
+}
