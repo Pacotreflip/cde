@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ route('pages.home') }}">
+            <a class="navbar-brand" href="/">
                 <figure class="nav-company pull-left">
                     <img src="{{ asset('img/company-icon.png') }}" alt="Grupo Hermes Infraestructura"/>
                 </figure>
@@ -16,7 +16,7 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            @if(Auth::check())
+            @if($signedIn)
                 <ul class="nav navbar-nav">
                     @include('partials.nav-app')
                 </ul>

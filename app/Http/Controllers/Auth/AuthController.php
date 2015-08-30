@@ -24,6 +24,9 @@ class AuthController extends Controller
 
     use AuthenticatesIntranetUsers, ThrottlesLogins;
 
+    /**
+     * @var string
+     */
     protected $redirectPath = '/';
 
     /**
@@ -34,6 +37,8 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'getLogout']);
+
+        parent::__construct();
     }
 
     /**

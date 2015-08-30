@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(Ghi\User::class, function (Faker\Generator $faker) {
+$factory->define(Ghi\Core\Models\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
