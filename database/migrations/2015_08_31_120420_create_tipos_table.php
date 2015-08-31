@@ -17,6 +17,8 @@ class CreateTiposTable extends Migration
             $table->string('nombre', 100);
             $table->text('descripcion')->default('');
             $table->timestamps();
+
+            $table->unique(['nombre']);
         });
     }
 
