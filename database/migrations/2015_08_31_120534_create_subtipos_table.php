@@ -14,6 +14,8 @@ class CreateSubtiposTable extends Migration
     {
         Schema::create('subtipos', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('tipo_id')->index();
+            $table->foreign('tipo_id')->references('id')->on('tipos')->onDelete('cascade');
             $table->string('nombre', 100);
             $table->text('descripcion')->default('');
             $table->timestamps();
