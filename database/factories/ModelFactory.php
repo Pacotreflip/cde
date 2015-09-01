@@ -33,3 +33,11 @@ $factory->define(Ghi\Subtipo::class, function (\Faker\Generator $faker) {
         'descripcion' => $faker->paragraph,
     ];
 });
+
+$factory->define(Ghi\Area::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => implode(' ', $faker->words),
+        'clave'  => $faker->citySuffix,
+        'descripcion' => $faker->paragraph,
+    ];
+});
