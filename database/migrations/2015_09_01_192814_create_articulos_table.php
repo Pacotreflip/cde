@@ -16,8 +16,8 @@ class CreateArticulosTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('clasificador_id')->index();
             $table->string('nombre', 500);
-            $table->text('descripcion')->default('');
             $table->string('numero_parte', 50)->default('');
+            $table->text('descripcion')->default('');
             $table->string('ficha_tecnica')->default();
             $table->timestamps();
 

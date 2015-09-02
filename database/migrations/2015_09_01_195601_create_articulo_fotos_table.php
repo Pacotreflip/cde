@@ -14,7 +14,15 @@ class CreateArticuloFotosTable extends Migration
     {
         Schema::create('articulo_fotos', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('articulo_id')->index();
+            $table->string('nombre');
+            $table->string('path');
             $table->timestamps();
+
+            $table->foreign('articulo_id')
+                ->references('id')
+                ->on('articulos')
+                ->onDelete('cascade');
         });
     }
 
