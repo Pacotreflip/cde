@@ -12,11 +12,12 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss')
-        .copy('vendor/bower_components/font-awesome/fonts', 'public/fonts/font-awesome')
+    mix.less('app.less')
         .copy('vendor/bower_components/roboto-fontface/fonts', 'public/fonts/roboto')
+        .copy('vendor/bower_components/font-awesome/fonts', 'public/fonts/font-awesome')
         .scripts([
             'jquery/dist/jquery.js',
-            'bootstrap-sass/assets/javascripts/bootstrap.js'
+            'bootstrap/dist/js/bootstrap.js',
+            'jasny-bootstrap/js/rowlink.js',
         ], 'public/js/app.js', 'vendor/bower_components');
 });

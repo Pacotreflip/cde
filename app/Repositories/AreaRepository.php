@@ -3,78 +3,96 @@
 namespace Ghi\Repositories;
 
 use Ghi\Area;
+use Ghi\Subtipo;
 use Illuminate\Support\Facades\DB;
 
 class AreaRepository
 {
+    /**
+     * Obtiene un area por su id
+     *
+     * @param $id
+     * @return mixed
+     */
     public function getById($id)
     {
         return Area::findOrFail($id);
     }
 
+    /**
+     * Obtiene la estructura completa de areas
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function getAll()
     {
-        return Area::all();
+        return Area::defaultOrder()->withDepth()->get();
     }
 
     /**
-     * @param $nivel
-     * @return mixed
-     */
-    protected function getIdsByNivelProfundidad($nivel)
-    {
-        return DB::connection('equipamiento')->table('areas')
-            ->select(DB::raw('areas.id'))
-            ->leftJoin('areas as parent', 'areas.lft', 'BETWEEN', DB::raw('parent.lft and parent.rgt'))
-            ->groupBy('areas.nombre')
-            ->having(DB::raw('COUNT(1) - 1'), '=', $nivel)
-            ->orderBy('areas.lft')
-            ->lists('id');
-    }
-
-    protected function getIdsDescendientesDe($id)
-    {
-        dd(DB::connection('equipamiento')->table('areas')
-            ->select(DB::raw('areas.id'))
-            ->leftJoin('areas as parent', 'areas.lft', 'BETWEEN', DB::raw('parent.lft and parent.rgt'))
-            ->whereNotNull('parent.id')
-            ->where('parent.id', $id)
-            ->where('areas.id', '<>', $id)
-            ->orderBy('areas.lft')
-            ->toSQL());
-        return DB::connection('equipamiento')->table('areas')
-            ->select(DB::raw('areas.id'))
-            ->leftJoin('areas as parent', 'areas.lft', 'BETWEEN', DB::raw('parent.lft and parent.rgt'))
-            ->whereNotNull('parent.id')
-            ->where('parent.id', $id)
-            ->where('areas.id', '<>', $id)
-            ->orderBy('areas.lft')
-            ->lists('id');
-    }
-
-    /**
-     * @return mixed
+     * Obtiene las areas que son raiz
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getNivelesRaiz()
     {
-        $ids = $this->getIdsByNivelProfundidad(0);
-
-        return Area::whereIn('id', $ids)
-            ->orderBy('lft')
-            ->get();
+        return Area::whereIsRoot()->defaultOrder()->get();
     }
 
     /**
-     * Obtiene las areas descendientes de otra area
+     * Obtiene una lista de subtipos como un arreglo
      *
-     * @param $id
-     * @return mixed
+     * @return array
      */
-    public function getDescendientesDe($id)
+    public function getListaSubtipos()
     {
-        $ids = $this->getIdsDescendientesDe($id);
+        $subtipos = SubTipo::with(['tipo'])->orderBy('nombre')->get();
 
-        return Area::whereIn('id', $ids)->get();
+        $lista = [null => 'No Aplica'];
+        foreach ($subtipos->sortBy(['tipo.nombre', 'nombre']) as $subtipo) {
+            $lista[$subtipo->id] = $subtipo->tipo->nombre." - ".$subtipo->nombre;
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Obtiene una lista de areas como un arreglo
+     *
+     * @return array
+     */
+    public function getListaAreas()
+    {
+        $areas = $this->getAll();
+
+        $lista = [null => 'Inicio'];
+        foreach ($areas as $area) {
+            $lista[$area->id] = str_repeat('- ', $area->depth).' '.$area->nombre;
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Elimina un area
+     *
+     * @param Area $area
+     * @return bool
+     */
+    public function delete(Area $area)
+    {
+        return $area->delete();
+    }
+
+    /**
+     * Guarda los cambios de un area
+     *
+     * @param Area $area
+     * @return bool|mixed
+     */
+    public function save(Area $area)
+    {
+        return $area->save();
     }
 
     public function agregaNivelDentro(Area $area = null)
@@ -96,4 +114,32 @@ class AreaRepository
     {
 
     }
+
+    /**
+     * Obtiene las areas descendientes de otra area
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function getDescendientesDe($id)
+    {
+        $ids = $this->getIdsDescendientesDe($id);
+
+        return Area::whereIn('id', $ids)->get();
+    }
+
+    //    /**
+//     * @param $nivel
+//     * @return mixed
+//     */
+//    protected function getIdsByNivelProfundidad($nivel)
+//    {
+//        return DB::connection('equipamiento')->table('areas')
+//            ->select(DB::raw('areas.id'))
+//            ->leftJoin('areas as parent', 'areas.lft', 'BETWEEN', DB::raw('parent.lft and parent.rgt'))
+//            ->groupBy('areas.nombre')
+//            ->having(DB::raw('COUNT(1) - 1'), '=', $nivel)
+//            ->orderBy('areas.lft')
+//            ->lists('id');
+//    }
 }

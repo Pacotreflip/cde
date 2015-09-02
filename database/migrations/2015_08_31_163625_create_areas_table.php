@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Kalnoy\Nestedset\NestedSet;
 
 class CreateAreasTable extends Migration
 {
@@ -18,8 +19,7 @@ class CreateAreasTable extends Migration
             $table->string('nombre', 100);
             $table->string('clave', 50)->nullable();
             $table->text('descripcion')->default('');
-            $table->unsignedInteger('lft');
-            $table->unsignedInteger('rgt');
+            NestedSet::columns($table);
             $table->timestamps();
         });
     }

@@ -20,14 +20,14 @@ $factory->define(Ghi\Core\Models\User::class, function (Faker\Generator $faker) 
     ];
 });
 
-$factory->define(Ghi\Tipo::class, function (\Faker\Generator $faker) {
+$factory->define(Ghi\Tipo::class, function (Faker\Generator $faker) {
     return [
         'nombre' => $faker->toUpper($faker->streetName),
         'descripcion' => $faker->paragraph,
     ];
 });
 
-$factory->define(Ghi\Subtipo::class, function (\Faker\Generator $faker) {
+$factory->define(Ghi\Subtipo::class, function (Faker\Generator $faker) {
     return [
         'nombre' => implode(' ', $faker->words()),
         'descripcion' => $faker->paragraph,

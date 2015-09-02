@@ -1,12 +1,24 @@
 @extends('layout')
 
 @section('content')
-    <h1>Areas</h1>
+    <h1>Areas
+        <a href="{{ route('areas.create', Request::has('area') ? ['dentro_de' => Request::get('area')] : []) }}"
+           class="btn btn-success pull-right"><i class="fa fa-plus"></i> Nueva Area</a>
+    </h1>
     <hr>
 
-    <ul class="list-group">
-        @foreach($areas as $area)
-            <a href="{{ route('areas.index', ['area='.$area->id]) }}" class="list-group-item">{{ $area->nombre }}</a>
-        @endforeach
-    </ul>
+    @include('areas.partials.breadcrumb')
+
+    <table class="table table-hover rowlink" data-link="row">
+        <tbody>
+            @foreach($descendientes as $descendiente)
+                <tr>
+                    <td>
+                        <a href="{{ route('areas.index', ['area='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
+                        <a href="{{ route('areas.edit', [$descendiente]) }}" class="pull-right"><i class="fa fa-fw fa-pencil text-primary"></i></a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 @stop

@@ -1,7 +1,7 @@
 <?php
 
 // Rutas de paginas...
-Route::get('/', 'PagesController@home');
+Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 
 // Rutas de autenticacion...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -27,6 +27,6 @@ Route::delete('tipos/{tipo_id}/subtipos/{subtipo_id}', ['as' => 'subtipos.delete
 Route::get('areas', ['as' => 'areas.index', 'uses' => 'AreasController@index']);
 Route::get('areas/nueva', ['as' => 'areas.create', 'uses' => 'AreasController@create']);
 Route::post('areas', ['as' => 'areas.store', 'uses' => 'AreasController@store']);
-Route::get('areas/{id}/modificar', ['as' => 'areas.edit', 'uses' => 'AreasController@edit']);
+Route::get('areas/{id}', ['as' => 'areas.edit', 'uses' => 'AreasController@edit']);
 Route::patch('areas/{id}', ['as' => 'areas.update', 'uses' => 'AreasController@update']);
 Route::delete('areas/{id}', ['as' => 'areas.delete', 'uses' => 'AreasController@destroy']);
