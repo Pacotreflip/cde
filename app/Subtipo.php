@@ -23,6 +23,6 @@ class Subtipo extends Model
      */
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class);
+        return $this->belongsTo(Tipo::class, 'tipo_id', 'id');
     }
 }

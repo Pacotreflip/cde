@@ -4,7 +4,7 @@
     </a>
     <ul class="dropdown-menu" role="menu">
         <li><a href="{{ route('tipos.index') }}">Tipos y Subtipos de Area</a></li>
-        <li><a href="">Areas</a></li>
+        <li><a href="{{ route('areas.index') }}">Areas</a></li>
         <li><a href="">Unidades</a></li>
         <li><a href="">Articulos</a></li>
     </ul>

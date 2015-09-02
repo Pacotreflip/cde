@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b20c925e154171b60bb567bbf2cc4efa",
+    "hash": "c2b8f8945484d0f8102c3c2a6c7f7fda",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -445,6 +445,52 @@
                 "tokenizer"
             ],
             "time": "2015-03-11 20:06:43"
+        },
+        {
+            "name": "kalnoy/nestedset",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lazychaser/laravel-nestedset.git",
+                "reference": "a4cbbe7469c188a8d9376ff0519b8cbd129622a4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/a4cbbe7469c188a8d9376ff0519b8cbd129622a4",
+                "reference": "a4cbbe7469c188a8d9376ff0519b8cbd129622a4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=4.1,<5.2.0",
+                "illuminate/events": ">=4.1,<5.2.0",
+                "illuminate/support": ">=4.1,<5.2.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kalnoy\\Nestedset\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Kalnoy",
+                    "email": "lazychaser@gmail.com"
+                }
+            ],
+            "description": "Nested Set Model for Laravel 4",
+            "keywords": [
+                "database",
+                "hierarchy",
+                "laravel",
+                "nested sets",
+                "nsm"
+            ],
+            "time": "2015-08-05 14:00:48"
         },
         {
             "name": "laracasts/flash",
