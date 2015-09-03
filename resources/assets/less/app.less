@@ -2,6 +2,7 @@
 @import "vendor/bower_components/jasny-bootstrap/less/jasny-bootstrap";
 @import "vendor/bower_components/roboto-fontface/css/roboto-fontface";
 @import "vendor/bower_components/font-awesome/less/font-awesome";
+@import (inline) "vendor/bower_components/dropzone/dist/dropzone.css";
 
 @import "partials/variables";
 @import "partials/nav";
@@ -9,4 +10,21 @@
 
 body {
   margin-top: 70px;
+}
+
+.dropzone {
+    border: 2px dashed rgba(122, 192, 66, 0.5);
+}
+
+.dropzone .dz-message {
+    font-weight: 400;
+    font-size: 1.2em;
+}
+
+.gallery__image {
+    margin-bottom: 1em;
+}
+
+.gallery__image img {
+    max-width:  100%;
 }

@@ -17,6 +17,7 @@ class CreateArticuloFotosTable extends Migration
             $table->unsignedInteger('articulo_id')->index();
             $table->string('nombre');
             $table->string('path');
+            $table->string('thumbnail_path');
             $table->timestamps();
 
             $table->foreign('articulo_id')

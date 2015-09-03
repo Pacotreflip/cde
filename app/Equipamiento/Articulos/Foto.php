@@ -2,6 +2,7 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
+use Intervention\Image\Facades\Image;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -15,6 +16,13 @@ class Foto extends Model
     protected $connection = 'equipamiento';
 
     /**
+     * Nombre de la tabla
+     *
+     * @var string
+     */
+    protected $table = 'articulo_fotos';
+
+    /**
      * Campos que se pueden asignar masivamente
      *
      * @var array
@@ -26,7 +34,7 @@ class Foto extends Model
      *
      * @var string
      */
-    protected $directorioBase = '/articulos/fotos';
+    protected $directorioBase = '/articulo/fotos';
 
     /**
      * Articulo relacionado con esta fotografia
@@ -42,9 +50,9 @@ class Foto extends Model
      * Crea una nueva imagen con un nombre
      *
      * @param $nombre
-     * @return mixed
+     * @return $this
      */
-    public function conNombre($nombre)
+    public static function conNombre($nombre)
     {
         return (new static)->guardarComo($nombre);
     }
@@ -58,7 +66,8 @@ class Foto extends Model
     protected function guardarComo($nombre)
     {
         $this->nombre = sprintf("%s-%s", time(), $nombre);
-        $this->path   = sprintf("%s/%s", $this->directorioBase, $nombre);
+        $this->path   = sprintf("%s/%s", $this->directorioBase, $this->nombre);
+        $this->thumbnail_path = sprintf("%s/tn-%s", $this->directorioBase, $this->nombre);
 
         return $this;
     }
@@ -67,9 +76,29 @@ class Foto extends Model
      * Mueve el archivo al directorio base con el nombre de la foto
      *
      * @param UploadedFile $file
+     * @return $this
      */
     public function mover(UploadedFile $file)
     {
-        $file->move($this->directorioBase, $this->nombre);
+        $file->move(public_path() . $this->directorioBase, $this->nombre);
+        
+        $this->creaThumbnail($file);
+
+        return $this;
+    }
+
+    /**
+     * Crea un thumbnail de esta foto
+     *
+     * @param UploadedFile $file
+     * @return $this
+     */
+    public function creaThumbnail(UploadedFile $file)
+    {
+        Image::make(public_path() . $this->path)
+            ->resize(200, 200)
+            ->save(public_path() . $this->thumbnail_path);
+
+        return $this;
     }
 }

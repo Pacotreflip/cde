@@ -3,6 +3,7 @@
 namespace Ghi\Equipamiento\Articulos;
 
 use Illuminate\Database\Eloquent\Model;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Articulo extends Model
 {
@@ -21,11 +22,64 @@ class Articulo extends Model
     protected $fillable = ['nombre', 'numero_parte', 'descripcion'];
 
     /**
+     * Directorio base de almacenamiento de la ficha tecnica
+     * 
+     * @var string
+     */
+    protected $directorioBase = '/articulo/fichas';
+
+    /**
+     * Clasificador al que pertenece este articulo
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clasificador()
+    {
+        return $this->belongsTo(Clasificador::class);
+    }
+
+    /**
+     * Fotos que tiene este articulo
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function fotos()
     {
         return $this->hasMany(Foto::class);
+    }
+
+    /**
+     * Asocia este articulo con un clasificador
+     *
+     * @param Clasificador $clasificador
+     * @return Model
+     */
+    public function asociaConClasificador(Clasificador $clasificador)
+    {
+        return $this->clasificador()->associate($clasificador);
+    }
+
+    /**
+     * Asocia este articulo con una unidad
+     *
+     * @param Unidad $unidad
+     * @return Model
+     */
+    public function asociaConUnidad(Unidad $unidad)
+    {
+        return $this->unidad = $unidad->codigo;
+    }
+
+    /**
+     * Almacena la ficha tecnica a este articulo
+     *
+     * @param UploadedFile $file
+     */
+    public function agregaFichaTecnica(UploadedFile $file)
+    {
+        $this->ficha_tecnica_nombre = sprintf("%s-%s", time(), $file->getClientOriginalName());
+        $this->ficha_tecnica_path = sprintf("%s/%s", $this->directorioBase, $this->ficha_tecnica_nombre);
+        $file->move(public_path() . $this->directorioBase, $this->ficha_tecnica_nombre);
     }
 
     /**

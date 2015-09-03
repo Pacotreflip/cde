@@ -16,15 +16,22 @@ class CreateArticulosTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('clasificador_id')->index();
             $table->string('nombre', 500);
+            $table->string('unidad', 20);
             $table->string('numero_parte', 50)->default('');
             $table->text('descripcion')->default('');
-            $table->string('ficha_tecnica')->default();
+            $table->string('ficha_tecnica_nombre')->default('');
+            $table->string('ficha_tecnica_path')->default('');
             $table->timestamps();
 
             $table->foreign('clasificador_id')
                 ->references('id')
                 ->on('articulo_clasificadores')
                 ->onDelete('cascade');
+
+            $table->foreign('unidad')
+                ->references('codigo')
+                ->on('unidades')
+                ->onDelte('cascade');
         });
     }
 

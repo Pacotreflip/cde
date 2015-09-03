@@ -4,7 +4,7 @@ namespace Ghi\Equipamiento\Articulos;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Clasificador extends Model
+class Unidad extends Model
 {
     /**
      * Conexion default de base de datos
@@ -18,11 +18,17 @@ class Clasificador extends Model
      *
      * @var string
      */
-    protected $table = 'articulo_clasificadores';
+    protected $table = 'unidades';
+
+    /**
+     * @var string
+     */
+    protected $primaryKey = 'codigo';
 
     /**
      * Campos que se pueden asignar masivamente
+     *
      * @var array
      */
-    protected $fillable = ['nombre'];
+    protected $fillable = ['codigo'];
 }

@@ -19,5 +19,6 @@ elixir(function(mix) {
             'jquery/dist/jquery.js',
             'bootstrap/dist/js/bootstrap.js',
             'jasny-bootstrap/js/rowlink.js',
+            'dropzone/dist/dropzone.js',
         ], 'public/js/app.js', 'vendor/bower_components');
 });

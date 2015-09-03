@@ -30,3 +30,13 @@ Route::post('areas', ['as' => 'areas.store', 'uses' => 'AreasController@store'])
 Route::get('areas/{id}', ['as' => 'areas.edit', 'uses' => 'AreasController@edit']);
 Route::patch('areas/{id}', ['as' => 'areas.update', 'uses' => 'AreasController@update']);
 Route::delete('areas/{id}', ['as' => 'areas.delete', 'uses' => 'AreasController@destroy']);
+
+// Rutas de articulos...
+Route::get('articulos', ['as' => 'articulos.index', 'uses' => 'ArticulosController@index']);
+Route::get('articulos/nuevo', ['as' => 'articulos.create', 'uses' => 'ArticulosController@create']);
+Route::post('articulos', ['as' => 'articulos.store', 'uses' => 'ArticulosController@store']);
+Route::get('articulos/{id}', ['as' => 'articulos.edit', 'uses' => 'ArticulosController@edit']);
+Route::patch('articulos/{id}', ['as' => 'articulos.update', 'uses' => 'ArticulosController@update']);
+Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'ArticulosController@agregaFoto']);
+
+

@@ -5,11 +5,10 @@
     <ul class="dropdown-menu" role="menu">
         <li><a href="{{ route('tipos.index') }}">Tipos y Subtipos de Area</a></li>
         <li><a href="{{ route('areas.index') }}">Areas</a></li>
-        <li><a href="">Unidades</a></li>
-        <li><a href="">Articulos</a></li>
+        <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
     </ul>
 </li>
-<li><a href="#">Asignación de Requerimientos</a></li>
+{{--<li><a href="#">Asignación de Requerimientos</a></li>--}}
 {{--<li><a href="#">Adquisición</a></li>--}}
 {{--<li><a href="#">Recepción</a></li>--}}
 {{--<li><a href="#">Transferencias</a></li>--}}

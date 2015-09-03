@@ -41,3 +41,15 @@ $factory->define(Ghi\Area::class, function (Faker\Generator $faker) {
         'descripcion' => $faker->paragraph,
     ];
 });
+
+$factory->define(Ghi\Equipamiento\Articulos\Unidad::class, function (Faker\Generator $faker) {
+    return [
+        'codigo' => $faker->currencyCode,
+    ];
+});
+
+$factory->define(Ghi\Equipamiento\Articulos\Clasificador::class, function(Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->sentence,
+    ];
+});
