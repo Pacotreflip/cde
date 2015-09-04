@@ -147,6 +147,7 @@ return [
         Ghi\Providers\AppServiceProvider::class,
         Ghi\Providers\EventServiceProvider::class,
         Ghi\Providers\RouteServiceProvider::class,
+        Ghi\Providers\ContextServiceProvider::class,
 
     ],
 
@@ -198,6 +199,7 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Flash'     => Laracasts\Flash\Flash::class,
+        'Context'   => Ghi\Core\Facades\Context::class,
 
     ],
 

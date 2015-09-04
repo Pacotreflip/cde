@@ -76,6 +76,24 @@ return [
             'strict'    => false,
         ],
 
+        'generales' => [
+            'driver'   => 'sqlsrv',
+            'host'     => env('DB_HOST_GENERALES', 'localhost'),
+            'database' => env('DB_DATABASE_GENERALES', 'forge'),
+            'username' => env('DB_USERNAME_GENERALES', 'forge'),
+            'password' => env('DB_PASSWORD_GENERALES', ''),
+            'prefix'   => '',
+        ],
+
+        'cadeco' => [
+            'driver'   => 'sqlsrv',
+            'host'     => env('DB_HOST_CADECO', 'localhost'),
+            'database' => env('DB_DATABASE_CADECO', 'forge'),
+            'username' => env('DB_USERNAME_CADECO', 'forge'),
+            'password' => env('DB_PASSWORD_CADECO', ''),
+            'prefix'   => '',
+        ],
+
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

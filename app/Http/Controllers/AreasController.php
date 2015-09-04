@@ -3,10 +3,9 @@
 namespace Ghi\Http\Controllers;
 
 use Ghi\Area;
-use Illuminate\Http\Request;
-
 use Ghi\Http\Requests;
 use Ghi\Repositories\AreaRepository;
+use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 
 class AreasController extends Controller
@@ -24,6 +23,8 @@ class AreasController extends Controller
     public function __construct(AreaRepository $areas)
     {
         $this->middleware('auth');
+        $this->middleware('context');
+        
         $this->areas = $areas;
         parent::__construct();
     }
