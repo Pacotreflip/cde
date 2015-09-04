@@ -29,4 +29,30 @@ class Area extends Node
     {
         return $this->belongsTo(Subtipo::class, 'subtipo_id');
     }
+
+    /**
+     * Mueve esta area dentro de otra
+     *
+     * @param Area $parent
+     * @return Area
+     */
+    public function moverA(Area $parent)
+    {
+        if (! $this->isChildOf($parent)) {
+            $this->appendTo($parent);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asigna el subtipo a esta area
+     *
+     * @param Subtipo $subtipo
+     * @return Area
+     */
+    public function asignaSubtipo(Subtipo $subtipo)
+    {
+        return $this->subtipo()->associate($subtipo);
+    }
 }
