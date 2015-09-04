@@ -2,6 +2,11 @@
 
 // Rutas de paginas...
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
+Route::get('obras/', ['as' => 'obras', 'uses' => 'PagesController@obras']);
+
+// Rutas de contexto
+Route::get('/context/{databaseName}/{idObra}', ['as' => 'context.set', 'uses' => 'ContextController@set'])
+    ->where(['databaseName' => '[aA-zZ0-9_-]+', 'idObra' => '[0-9]+']);
 
 // Rutas de autenticacion...
 Route::get('auth/login', 'Auth\AuthController@getLogin');

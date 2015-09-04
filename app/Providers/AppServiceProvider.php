@@ -2,6 +2,7 @@
 
 namespace Ghi\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        View::composer('partials.nav', \Ghi\Http\Composers\ObraComposer::class);
     }
 
     /**
@@ -23,6 +24,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        setlocale(LC_TIME, 'es_MX.UTF8', 'Spanish_Spain.1252');
+
+        // if ($this->app->environment() == 'local') {
+        //     $this->app->register(\Laracasts\Generators\GeneratorsServiceProvider::class);
+        // }
+
+        $this->app->bind(
+            \Ghi\Core\Contracts\ObraRepository::class,
+            \Ghi\Core\Repositories\EloquentObraRepository::class
+        );
+
+        $this->app->bind(
+            \Ghi\Core\Contracts\UserRepository::class,
+            \Ghi\Core\Repositories\EloquentUserRepository::class
+        );
     }
 }
