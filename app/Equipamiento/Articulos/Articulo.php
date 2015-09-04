@@ -52,9 +52,9 @@ class Articulo extends Model
      * Asocia este articulo con un clasificador
      *
      * @param Clasificador $clasificador
-     * @return Model
+     * @return Articulo
      */
-    public function asociaConClasificador(Clasificador $clasificador)
+    public function asignaClasificador(Clasificador $clasificador)
     {
         return $this->clasificador()->associate($clasificador);
     }
@@ -63,9 +63,9 @@ class Articulo extends Model
      * Asocia este articulo con una unidad
      *
      * @param Unidad $unidad
-     * @return Model
+     * @return Articulo
      */
-    public function asociaConUnidad(Unidad $unidad)
+    public function asignaUnidad(Unidad $unidad)
     {
         return $this->unidad = $unidad->codigo;
     }
@@ -86,7 +86,7 @@ class Articulo extends Model
      * Agrega una foto a este articulo
      *
      * @param Foto $foto
-     * @return Model
+     * @return Articulo
      */
     public function agregaFoto(Foto $foto)
     {

@@ -49,7 +49,7 @@ class Foto extends Model
     /**
      * Crea una nueva imagen con un nombre
      *
-     * @param $nombre
+     * @param string $nombre
      * @return $this
      */
     public static function conNombre($nombre)

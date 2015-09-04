@@ -41,8 +41,8 @@
 
 <!-- Dentro de que otra area se crearan? Form Input -->
 <div class="form-group">
-    {!! Form::label('area_id', 'Dentro de que otra area estaran?') !!}
-    {!! Form::select('area_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
+    {!! Form::label('parent_id', 'Dentro de que otra area estaran?') !!}
+    {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
 </div>
 <hr>
 

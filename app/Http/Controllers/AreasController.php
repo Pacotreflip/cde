@@ -3,11 +3,11 @@
 namespace Ghi\Http\Controllers;
 
 use Ghi\Area;
-use Illuminate\Http\Request;
-
+use Ghi\Subtipo;
 use Ghi\Http\Requests;
-use Ghi\Repositories\AreaRepository;
 use Laracasts\Flash\Flash;
+use Illuminate\Http\Request;
+use Ghi\Repositories\AreaRepository;
 
 class AreasController extends Controller
 {
@@ -76,22 +76,30 @@ class AreasController extends Controller
      */
     public function store(Requests\CreateAreaRequest $request)
     {
-        $contenedora = Area::find($request->get('area_id'));
-
-        $rango = $request->get('rango_inicial');
+        $rango   = $request->get('rango_inicial');
+        $subtipo = Subtipo::find($request->get('subtipo_id'));
+        $parent  = Area::find($request->get('parent_id'));
 
         for ($i = 1; $i <= $request->get('cantidad', 1); $i++) {
-            $area = Area::create([
+            $area = new Area([
                 'nombre'      => $request->get('nombre').' '.$rango,
                 'clave'       => $request->get('clave'),
                 'descripcion' => $request->get('descripcion'),
-            ], $contenedora);
-            $area->subtipo_id = $request->get('subtipo_id', null);
+            ]);
+
+            if ($subtipo) {
+                $area->asignaSubtipo($subtipo);
+            }
+
+            if ($parent) {
+                $area->moverA($parent);
+            }
+
             $this->areas->save($area);
             $rango++;
         }
 
-        return redirect()->route('areas.index', $contenedora ? ['area' => $contenedora->id] : []);
+        return redirect()->route('areas.index', $parent ? ['area' => $parent->id] : []);
     }
 
     /**
@@ -121,13 +129,20 @@ class AreasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $area = $this->areas->getById($id);
-        $area->fill($request->all());
-        $area->subtipo_id = $request->get('subtipo_id', null);
+        $area    = $this->areas->getById($id);
+        $parent  = Area::find($request->get('parent_id'));
+        $subtipo = Subtipo::find($request->get('subtipo_id'));
 
-        if ($area->parent_id != $request->get('parent_id')) {
-            $area->parent_id = $request->get('parent_id');
+        $area->fill($request->all());
+
+        if ($subtipo) {
+            $area->asignaSubtipo($subtipo);
         }
+        
+        if ($parent) {
+            $area->moverA($parent);
+        }
+
         $this->areas->save($area);
 
         Flash::success('Los cambios fueron guardados.');

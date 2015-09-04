@@ -13,69 +13,25 @@ use Ghi\Http\Requests\AgregaFotoRequest;
 use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
+use Ghi\Equipamiento\Articulos\ArticuloRepository;
 
 class ArticulosController extends Controller
 {
-    public function __construct()
+    /**
+     *
+     * @var ArticuloRepository
+     */
+    protected $articulos;
+
+    /**
+     * @param ArticuloRepository $articulos
+     */
+    public function __construct(ArticuloRepository $articulos)
     {
         $this->middleware('auth');
+        $this->articulos = $articulos;
+
         parent::__construct();
-    }
-    /**
-     * Obtiene todos los articulos paginados
-     *
-     * @param int $howMany
-     * @return mixed
-     */
-    protected function getAllPaginated($howMany = 30)
-    {
-        return Articulo::orderBy('nombre')->paginate($howMany);
-    }
-
-    /**
-     * Busca un articulo por su id
-     *
-     * @return Articulo
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function getById($id)
-    {
-        return Articulo::findOrFail($id);
-    }
-
-    /**
-     * Busqueda de articulos
-     *
-     * @param $busqueda
-     * @param int $howMany
-     * @return mixed
-     */
-    protected function buscar($busqueda, $howMany = 30)
-    {
-        return Articulo::where('nombre', 'LIKE', '%'.$busqueda.'%')
-            ->orWhere('numero_parte', 'LIKE', '%'.$busqueda.'%')
-            ->orWhere('descripcion', 'LIKE', '%'.$busqueda.'%')
-            ->paginate($howMany);
-    }
-
-    /**
-     * Obtiene una lista de unidades como arreglo
-     *
-     * @return array
-     */
-    public function getListaUnidades()
-    {
-        return Unidad::orderBy('codigo')->lists('codigo', 'codigo')->all();
-    }
-
-    /**
-     * Obtiene una lista de clasificadores como arreglo
-     *
-     * @return array
-     */
-    public function getListaClasificadores()
-    {
-        return Clasificador::orderBy('nombre')->lists('nombre', 'id')->all();
     }
 
     /**
@@ -87,9 +43,9 @@ class ArticulosController extends Controller
     public function index(Request $request)
     {
         if ($request->has('busqueda')) {
-            $articulos = $this->buscar($request->get('busqueda'));
+            $articulos = $this->articulos->buscar($request->get('busqueda'));
         } else {
-            $articulos = $this->getAllPaginated();
+            $articulos = $this->articulos->getAllPaginated();
         }
 
         return view('articulos.index')
@@ -104,8 +60,8 @@ class ArticulosController extends Controller
     public function create()
     {
         $deafult_option = [null => 'Seleccione una opcion'];
-        $clasificadores = $default_option + $this->getListaClasificadores();
-        $unidades = $default_option + $this->getListaunidades();
+        $clasificadores = $deafult_option + $this->articulos->getListaClasificadores();
+        $unidades = $deafult_option + $this->articulos->getListaunidades();
 
         return view('articulos.create')
             ->withClasificadores($clasificadores)
@@ -138,9 +94,9 @@ class ArticulosController extends Controller
             $articulo->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
 
-        $articulo->asociaConUnidad($unidad);
-        $articulo->asociaConClasificador($clasificador);
-        $articulo->save();
+        $articulo->asignaUnidad($unidad);
+        $articulo->asignaClasificador($clasificador);
+        $this->articulos->save($articulo);
 
         Flash::success('El articulo fue agregado');
 
@@ -155,7 +111,7 @@ class ArticulosController extends Controller
      */
     public function agregaFoto(AgregaFotoRequest $request, $id)
     {
-        $articulo = $this->getById($id);
+        $articulo = $this->articulos->getById($id);
 
         $file = $request->file('foto');
         $foto = Foto::conNombre($file->getClientOriginalName())->mover($file);
@@ -174,9 +130,9 @@ class ArticulosController extends Controller
      */
     public function edit($id)
     {
-        $articulo = $this->getById($id);
-        $unidades = $this->getListaUnidades();
-        $clasificadores = $this->getListaClasificadores();
+        $articulo       = $this->articulos->getById($id);
+        $unidades       = $this->articulos->getListaUnidades();
+        $clasificadores = $this->articulos->getListaClasificadores();
 
         return view('articulos.edit')
             ->withArticulo($articulo)
@@ -193,17 +149,19 @@ class ArticulosController extends Controller
      */
     public function update(UpdateArticuloRequest $request, $id)
     {
-        $articulo = $this->getById($id);
+        $articulo     = $this->articulos->getById($id);
+        $unidad       = Unidad::findOrFail($request->get('unidad'));
+        $clasificador = CLasificador::findOrFail($request->get('clasificador_id'));
 
         $articulo->fill($request->all());
-        $articulo->unidad = $request->get('unidad');
-        $articulo->clasificador_id = $request->get('clasificador_id');
+        $articulo->asignaUnidad($unidad);
+        $articulo->asignaClasificador($clasificador);
 
         if ($request->hasFile('ficha_tecnica')) {
             $articulo->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
 
-        $articulo->save();
+        $this->articulos->save($articulo);
 
         Flash::success('Los cambios fueron guardados');
 
