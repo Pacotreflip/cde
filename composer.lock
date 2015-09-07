@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "caouecs/laravel4-lang",
-            "version": "2.0.15",
+            "version": "2.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/caouecs/Laravel-lang.git",
-                "reference": "9637b9e8222c7e0445f7c0aa43a74a19f1bd676d"
+                "reference": "5017ede80171779a152afbc0bd7a3ec90bbb3755"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/caouecs/Laravel-lang/zipball/9637b9e8222c7e0445f7c0aa43a74a19f1bd676d",
-                "reference": "9637b9e8222c7e0445f7c0aa43a74a19f1bd676d",
+                "url": "https://api.github.com/repos/caouecs/Laravel-lang/zipball/5017ede80171779a152afbc0bd7a3ec90bbb3755",
+                "reference": "5017ede80171779a152afbc0bd7a3ec90bbb3755",
                 "shasum": ""
             },
             "suggest": {
@@ -41,7 +41,7 @@
                 "laravel",
                 "lpm"
             ],
-            "time": "2015-08-24 14:28:56"
+            "time": "2015-08-31 07:16:52"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -255,16 +255,16 @@
         },
         {
             "name": "ghi/core-domain",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Grupo-Hermes-Infraestructura/core.git",
-                "reference": "b88517152256f38ef46a90dedda05eab3eb3c611"
+                "reference": "620011ac9f3ce1d5f0892f1e18863bfe26479c15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/core/zipball/b88517152256f38ef46a90dedda05eab3eb3c611",
-                "reference": "b88517152256f38ef46a90dedda05eab3eb3c611",
+                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/core/zipball/620011ac9f3ce1d5f0892f1e18863bfe26479c15",
+                "reference": "620011ac9f3ce1d5f0892f1e18863bfe26479c15",
                 "shasum": ""
             },
             "require": {
@@ -293,7 +293,7 @@
                 "ghi",
                 "laravel"
             ],
-            "time": "2015-09-04 17:37:50"
+            "time": "2015-09-04 19:08:58"
         },
         {
             "name": "ghi/laravel-intranet-auth",

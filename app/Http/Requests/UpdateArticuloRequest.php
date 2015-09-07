@@ -24,9 +24,10 @@ class UpdateArticuloRequest extends Request
     public function rules()
     {
         return [
-            'nombre'          => 'required|unique:equipamiento.articulos,nombre,' . $this->route('id') . ',',
+            'descripcion'     => 'required|max:255|unique:cadeco.materiales,descripcion,' . $this->route('id') . ',id_material',
             'unidad'          => 'required',
-            'clasificador_id' => 'required',
+            // 'clasificador_id' => 'required',
+            'id_familia'         => 'required',
             'ficha_tecnica'   => 'mimes:pdf',
         ];
     }

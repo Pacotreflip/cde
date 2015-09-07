@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticuloClasificadoresTable extends Migration
+class CreateEquipamientoSchema extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,7 @@ class CreateArticuloClasificadoresTable extends Migration
      */
     public function up()
     {
-        Schema::create('articulo_clasificadores', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('nombre');
-            $table->timestamps();
-        });
+        \DB::statement('CREATE SCHEMA Equipamiento AUTHORIZATION dbo;');
     }
 
     /**
@@ -26,6 +22,6 @@ class CreateArticuloClasificadoresTable extends Migration
      */
     public function down()
     {
-        Schema::drop('articulo_clasificadores');
+        \DB::statement('DROP SCHEMA Equipamiento;');
     }
 }

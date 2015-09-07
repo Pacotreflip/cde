@@ -3,10 +3,11 @@
 namespace Ghi\Exceptions;
 
 use Exception;
+use Ghi\Core\Exceptions\ReglaNegocioException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,7 +45,10 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof ModelNotFoundException) {
             flash()->error('El recurso buscado no fue encontrado.');
-            return redirect()->home();
+            return back();
+        } elseif ($e instanceof ReglaNegocioException) {
+            flash()->error($e->getMessage());
+            return back();
         }
 
         return parent::render($request, $e);

@@ -11,14 +11,14 @@ class Clasificador extends Model
      *
      * @var string
      */
-    protected $connection = 'equipamiento';
+    protected $connection = 'cadeco';
 
     /**
      * Nombre de la tabla
      *
      * @var string
      */
-    protected $table = 'articulo_clasificadores';
+    protected $table = 'Equipamiento.material_clasificadores';
 
     /**
      * Campos que se pueden asignar masivamente

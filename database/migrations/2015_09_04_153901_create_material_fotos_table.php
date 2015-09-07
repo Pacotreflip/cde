@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticuloFotosTable extends Migration
+class CreateMaterialFotosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,17 +12,17 @@ class CreateArticuloFotosTable extends Migration
      */
     public function up()
     {
-        Schema::create('articulo_fotos', function (Blueprint $table) {
+        Schema::create('Equipamiento.material_fotos', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('articulo_id')->index();
+            $table->unsignedInteger('id_material')->index();
             $table->string('nombre');
             $table->string('path');
             $table->string('thumbnail_path');
             $table->timestamps();
 
-            $table->foreign('articulo_id')
-                ->references('id')
-                ->on('articulos')
+            $table->foreign('id_material')
+                ->references('id_material')
+                ->on('materiales')
                 ->onDelete('cascade');
         });
     }
@@ -34,6 +34,6 @@ class CreateArticuloFotosTable extends Migration
      */
     public function down()
     {
-        Schema::drop('articulo_fotos');
+        Schema::drop('Equipamiento.material_fotos');
     }
 }

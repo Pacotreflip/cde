@@ -13,14 +13,14 @@ class Foto extends Model
      *
      * @var string
      */
-    protected $connection = 'equipamiento';
+    protected $connection = 'cadeco';
 
     /**
      * Nombre de la tabla
      *
      * @var string
      */
-    protected $table = 'articulo_fotos';
+    protected $table = 'Equipamiento.material_fotos';
 
     /**
      * Campos que se pueden asignar masivamente
@@ -34,16 +34,16 @@ class Foto extends Model
      *
      * @var string
      */
-    protected $directorioBase = '/articulo/fotos';
+    protected $directorioBase = 'articulo/fotos';
 
     /**
      * Articulo relacionado con esta fotografia
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function articulo()
+    public function material()
     {
-        return $this->belongsTo(Articulo::class);
+        return $this->belongsTo(Material::class, 'id_material');
     }
 
     /**
@@ -80,7 +80,7 @@ class Foto extends Model
      */
     public function mover(UploadedFile $file)
     {
-        $file->move(public_path() . $this->directorioBase, $this->nombre);
+        $file->move($this->directorioBase, $this->nombre);
         
         $this->creaThumbnail($file);
 
@@ -95,9 +95,9 @@ class Foto extends Model
      */
     public function creaThumbnail(UploadedFile $file)
     {
-        Image::make(public_path() . $this->path)
+        Image::make($this->path)
             ->resize(200, 200)
-            ->save(public_path() . $this->thumbnail_path);
+            ->save($this->thumbnail_path);
 
         return $this;
     }

@@ -8,7 +8,6 @@ use Ghi\Http\Requests;
 use Ghi\Repositories\AreaRepository;
 use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
-use Illuminate\Http\Request;
 
 class AreasController extends Controller
 {

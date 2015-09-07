@@ -7,18 +7,41 @@
     <hr>
 
     <div class="search-bar">
-        {!! Form::open(['route' => ['articulos.index'], 'method' => 'GET']) !!}
+        {!! Form::model(Request::only('buscar'), ['route' => 'articulos.index', 'method' => 'GET', 'class' => 'navbar-form navbar-right']) !!}
             <div class="form-group">
-                {!! Form::text('busqueda', null, ['class' => 'form-control', 'placeholder' => 'escriba algo para buscar']) !!}
+                {!! Form::text('buscar', null, ['class' => 'form-control input-sm', 'placeholder' => 'escriba el texto a buscar...']) !!}
             </div>
+            {!! Form::submit('Buscar', ['class' => 'btn btn-sm btn-primary']) !!}
         {!! Form::close() !!}
     </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>No. Parte</th>
+                <th>Nombre</th>
+                <th>Unidad</th>
+                <th>Clasificación</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($materiales as $material)
+                <tr>
+                    <th>{{ $material->numero_parte }}</th>
+                    <td>{{ str_limit($material->descripcion, 80) }}</td>
+                    <td>{{ $material->unidad }}</td>
+                    <td></td>
+                    <td>
+                        <p data-placement="top" data-toggle="tooltip" title="Modificar">
+                            <a href="{{ route('articulos.edit', [$material]) }}" class="btn btn-primary btn-xs">
+                                <span class="fa fa-pencil"></span>
+                            </a>
+                        </p>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-    <ul class="list-group">
-        @foreach($articulos as $articulo)
-            <a href="{{ route('articulos.edit', [$articulo]) }}" class="list-group-item">{{ $articulo->nombre }}</a>
-        @endforeach
-    </ul>
-
-    {{ $articulos->render() }}
+    {!! $materiales->appends(['buscar' => Request::get('buscar')])->render() !!}
 @stop
