@@ -8,28 +8,33 @@ use Illuminate\Http\Request;
 use Ghi\Equipamiento\Articulos\Foto;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Unidad;
-use Ghi\Equipamiento\Articulos\Articulo;
+use Ghi\Equipamiento\Articulos\Factory;
+use Ghi\Equipamiento\Articulos\Familia;
+use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Http\Requests\AgregaFotoRequest;
 use Ghi\Equipamiento\Articulos\Clasificador;
+use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
-use Ghi\Equipamiento\Articulos\ArticuloRepository;
+use Ghi\Equipamiento\Articulos\MaterialRepository;
 
 class ArticulosController extends Controller
 {
     /**
      *
-     * @var ArticuloRepository
+     * @var MaterialRepository
      */
-    protected $articulos;
+    protected $materiales;
 
     /**
-     * @param ArticuloRepository $articulos
+     * @param MaterialRepository $materiales
      */
-    public function __construct(ArticuloRepository $articulos)
+    public function __construct(MaterialRepository $materiales)
     {
         $this->middleware('auth');
-        $this->articulos = $articulos;
+        $this->middleware('context');
+
+        $this->materiales = $materiales;
 
         parent::__construct();
     }
@@ -42,14 +47,14 @@ class ArticulosController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('busqueda')) {
-            $articulos = $this->articulos->buscar($request->get('busqueda'));
+        if ($request->has('buscar')) {
+            $materiales = $this->materiales->buscar($request->get('buscar'));
         } else {
-            $articulos = $this->articulos->getAllPaginated();
+            $materiales = $this->materiales->getAllPaginated();
         }
 
         return view('articulos.index')
-            ->withArticulos($articulos);
+            ->withMateriales($materiales);
     }
 
     /**
@@ -60,12 +65,16 @@ class ArticulosController extends Controller
     public function create()
     {
         $deafult_option = [null => 'Seleccione una opcion'];
-        $clasificadores = $deafult_option + $this->articulos->getListaClasificadores();
-        $unidades = $deafult_option + $this->articulos->getListaunidades();
+        $unidades = $deafult_option + $this->materiales->getListaunidades();
+        $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
+        $tipos    = $this->materiales->getListaTipoMateriales();
+        $clasificadores = [];//$deafult_option + $this->materiales->getListaClasificadores();
 
         return view('articulos.create')
             ->withClasificadores($clasificadores)
-            ->withUnidades($unidades);
+            ->withUnidades($unidades)
+            ->withFamilias($familias)
+            ->withTipos($tipos);
     }
 
     /**
@@ -74,33 +83,41 @@ class ArticulosController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(CreateArticuloRequest $request)
+    public function store(CreateArticuloRequest $request, Factory $materiales)
     {
-        $articulo = new Articulo($request->all());
-
-        if (! $request->has('unidad')) {
-            $unidad = Unidad::create(['codigo' => $request->get('nueva_unidad')]);
+        if ($request->has('nueva_unidad')) {
+            $unidad = Unidad::creaUnidad($request->get('nueva_unidad'), $request->get('nueva_unidad'));
         } else {
-            $unidad = Unidad::findOrFail($request->get('unidad'));
+            $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
         }
 
-        if (! $request->has('clasificador')) {
-            $clasificador = Clasificador::create(['nombre' => $request->get('nuevo_clasificador')]);
-        } else {
-            $clasificador = CLasificador::findOrFail($request->get('clasificador'));
+        $familia = Familia::findOrFail($request->get('id_familia'));
+
+        $material = $materiales->make(
+            $request->get('descripcion'),
+            $request->get('descripcion_larga'),
+            $request->get('numero_parte'),
+            $unidad,
+            $unidad,
+            new TipoMaterial(TipoMaterial::TIPO_MATERIALES)
+        );
+
+        if ($request->has('id_clasificador')) {
+            $clasificador = Clasificador::findOrFail($request->get('id_clasificador'));
+            $material->asignaClasificador($clasificador);
         }
 
         if ($request->hasFile('ficha_tecnica')) {
-            $articulo->agregaFichaTecnica($request->file('ficha_tecnica'));
+            $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
 
-        $articulo->asignaUnidad($unidad);
-        $articulo->asignaClasificador($clasificador);
-        $this->articulos->save($articulo);
+        $material->asignaUnidad($unidad);
+        $material->agregarEnFamilia($familia);
+        $this->materiales->save($material);
 
         Flash::success('El articulo fue agregado');
 
-        return redirect()->route('articulos.edit', [$articulo]);
+        return redirect()->route('articulos.edit', [$material]);
     }
 
     /**
@@ -111,7 +128,7 @@ class ArticulosController extends Controller
      */
     public function agregaFoto(AgregaFotoRequest $request, $id)
     {
-        $articulo = $this->articulos->getById($id);
+        $articulo = $this->materiales->getById($id);
 
         $file = $request->file('foto');
         $foto = Foto::conNombre($file->getClientOriginalName())->mover($file);
@@ -130,13 +147,15 @@ class ArticulosController extends Controller
      */
     public function edit($id)
     {
-        $articulo       = $this->articulos->getById($id);
-        $unidades       = $this->articulos->getListaUnidades();
-        $clasificadores = $this->articulos->getListaClasificadores();
+        $material       = $this->materiales->getById($id);
+        $unidades       = $this->materiales->getListaUnidades();
+        $familias       = $this->materiales->getListaFamilias($material->tipo_material);
+        $clasificadores = [];//$this->materiales->getListaClasificadores();
 
         return view('articulos.edit')
-            ->withArticulo($articulo)
+            ->withMaterial($material)
             ->withUnidades($unidades)
+            ->withFamilias($familias)
             ->withClasificadores($clasificadores);
     }
 
@@ -149,19 +168,21 @@ class ArticulosController extends Controller
      */
     public function update(UpdateArticuloRequest $request, $id)
     {
-        $articulo     = $this->articulos->getById($id);
-        $unidad       = Unidad::findOrFail($request->get('unidad'));
-        $clasificador = CLasificador::findOrFail($request->get('clasificador_id'));
+        $material     = $this->materiales->getById($id);
+        $unidad       = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
+        // $clasificador = Clasificador::findOrFail($request->get('clasificador_id'));
+        $familia = Familia::findOrFail($request->get('id_familia'));
 
-        $articulo->fill($request->all());
-        $articulo->asignaUnidad($unidad);
-        $articulo->asignaClasificador($clasificador);
+        $material->fill($request->all());
+        $material->asignaUnidad($unidad);
+        $material->agregarEnFamilia($familia);
+        // $material->asignaClasificador($clasificador);
 
         if ($request->hasFile('ficha_tecnica')) {
-            $articulo->agregaFichaTecnica($request->file('ficha_tecnica'));
+            $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
 
-        $this->articulos->save($articulo);
+        $this->materiales->save($material);
 
         Flash::success('Los cambios fueron guardados');
 

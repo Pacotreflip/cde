@@ -1,9 +1,10 @@
 <?php
 
+use Kalnoy\Nestedset\NestedSet;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTiposTable extends Migration
+class CreateAreaTiposTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +13,11 @@ class CreateTiposTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos', function (Blueprint $table) {
+        Schema::create('Equipamiento.area_tipos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre', 100);
             $table->text('descripcion')->default('');
+            NestedSet::columns($table);
             $table->timestamps();
 
             $table->unique(['nombre']);
@@ -29,6 +31,6 @@ class CreateTiposTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tipos');
+        Schema::drop('Equipamiento.area_tipos');
     }
 }

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUnidadesTable extends Migration
+class CreateMaterialClasificadoresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,10 @@ class CreateUnidadesTable extends Migration
      */
     public function up()
     {
-        Schema::create('unidades', function (Blueprint $table) {
-            $table->string('codigo', 20);
+        Schema::create('Equipamiento.material_clasificadores', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nombre');
             $table->timestamps();
-
-            $table->primary('codigo');
         });
     }
 
@@ -27,6 +26,6 @@ class CreateUnidadesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('unidades');
+        Schema::drop('Equipamiento.material_clasificadores');
     }
 }

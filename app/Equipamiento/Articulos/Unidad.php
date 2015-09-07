@@ -6,16 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Unidad extends Model
 {
-    /**
-     * Conexion default de base de datos
-     *
-     * @var string
-     */
-    protected $connection = 'equipamiento';
+    const TIPO_GENERICA = 0;
+    const TIPO_MASA_VOLUMEN = 1;
+    const TIPO_TIEMPO_GENERICA = 2;
+    const TIPO_TIEMPO_DIA = 10;
+    const TIPO_TIEMPO_HORA = 6;
+    const TIPO_USO = 3;
 
     /**
-     * Nombre de la tabla
-     *
+     * @var string
+     */
+    protected $connection = 'cadeco';
+
+    /**
      * @var string
      */
     protected $table = 'unidades';
@@ -23,12 +26,30 @@ class Unidad extends Model
     /**
      * @var string
      */
-    protected $primaryKey = 'codigo';
+    // protected $primaryKey = 'unidad';
 
     /**
-     * Campos que se pueden asignar masivamente
-     *
      * @var array
      */
-    protected $fillable = ['codigo'];
+    protected $fillable = ['unidad', 'descripcion'];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * Crea una nueva unidad
+     *
+     * @param string $unidad
+     * @param string $descripcion
+     * @return Unidad
+     */
+    public static function creaUnidad($unidad, $descripcion, $tipo = self::TIPO_GENERICA)
+    {
+        $unidad = new static(['unidad' => $unidad, 'descripcion' => $descripcion]);
+        $unidad->tipo_unidad = $tipo;
+        $unidad->save();
+        return $unidad;
+    }
 }
