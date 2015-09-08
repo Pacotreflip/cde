@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "84a02d074cee374fb49369f69b1dd988",
+    "hash": "1986e42d0d325c64a63c9f1e0bebedde",
     "packages": [
         {
             "name": "caouecs/laravel4-lang",
@@ -605,23 +605,23 @@
         },
         {
             "name": "kalnoy/nestedset",
-            "version": "v3.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lazychaser/laravel-nestedset.git",
-                "reference": "a4cbbe7469c188a8d9376ff0519b8cbd129622a4"
+                "reference": "c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/a4cbbe7469c188a8d9376ff0519b8cbd129622a4",
-                "reference": "a4cbbe7469c188a8d9376ff0519b8cbd129622a4",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450",
+                "reference": "c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": ">=4.1,<5.2.0",
-                "illuminate/events": ">=4.1,<5.2.0",
-                "illuminate/support": ">=4.1,<5.2.0",
-                "php": ">=5.4.0"
+                "illuminate/database": "~5.1.0",
+                "illuminate/events": "~5.1.0",
+                "illuminate/support": "~5.1.0",
+                "php": ">=5.5.0"
             },
             "type": "library",
             "autoload": {
@@ -647,7 +647,7 @@
                 "nested sets",
                 "nsm"
             ],
-            "time": "2015-08-05 14:00:48"
+            "time": "2015-09-08 08:58:56"
         },
         {
             "name": "laracasts/flash",
@@ -3441,7 +3441,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kalnoy/nestedset": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

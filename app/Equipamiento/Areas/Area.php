@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi;
+namespace Ghi\Equipamiento\Areas;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,12 @@ class Area extends Node
     /**
      * @var string
      */
-    protected $connection = 'equipamiento';
+    protected $connection = 'cadeco';
+
+    /**
+     * @var string
+     */
+    protected $table = 'Equipamiento.areas';
 
     /**
      * Campos afectables por asignacion masiva
@@ -31,7 +36,7 @@ class Area extends Node
     }
 
     /**
-     * Mueve esta area dentro de otra
+     * Mueve esta area dentro de otra area al final
      *
      * @param Area $parent
      * @return Area

@@ -24,7 +24,7 @@ class UpdateTipoRequest extends Request
     public function rules()
     {
         return [
-            'nombre' => 'required|unique:equipamiento.tipos,nombre,'.$this->route('id'),
+            'nombre' => 'required_without_all:move_up,move_down',
         ];
     }
 }

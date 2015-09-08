@@ -9739,6 +9739,10 @@ button.close {
   position: relative;
   top: -5px;
 }
+.table.rowlink td:not(.rowlink-skip) a.btn,
+.table .rowlink td:not(.rowlink-skip) a.btn {
+  color: white;
+}
 body {
   margin-top: 70px;
 }
