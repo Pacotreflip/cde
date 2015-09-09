@@ -5,7 +5,7 @@ namespace Ghi\Equipamiento\Areas;
 class TipoAreaRepository
 {
     /**
-     * Obtiene un tipo por su id
+     * Obtiene un tipo de area por su id
      *
      * @param int $id
      * @return Tipo

@@ -2,9 +2,10 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
+use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
 
-class Clasificador extends Model
+class Clasificador extends Node
 {
     /**
      * Conexion default de base de datos
@@ -25,4 +26,24 @@ class Clasificador extends Model
      * @var array
      */
     protected $fillable = ['nombre'];
+
+    /**
+     * Mueve este clasificador dentro de otro
+     * 
+     * @param  Clasificador|null $parent
+     * @return Clasificador
+     */
+    public function moverA($parent = null)
+    {
+        if (! $parent) {
+            $this->makeRoot();
+            return $this;
+        }
+
+        if (! $this->isChildOf($parent)) {
+            $this->appendTo($parent);
+        }
+
+        return $this;
+    }
 }

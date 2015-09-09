@@ -1,5 +1,6 @@
 <?php
 
+use Kalnoy\Nestedset\NestedSet;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -15,6 +16,7 @@ class CreateMaterialClasificadoresTable extends Migration
         Schema::create('Equipamiento.material_clasificadores', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            NestedSet::columns($table);
             $table->timestamps();
         });
     }
