@@ -29,6 +29,14 @@ Route::get('areas/{id}', ['as' => 'areas.edit', 'uses' => 'AreasController@edit'
 Route::patch('areas/{id}', ['as' => 'areas.update', 'uses' => 'AreasController@update']);
 Route::delete('areas/{id}', ['as' => 'areas.delete', 'uses' => 'AreasController@destroy']);
 
+// Rutas de clasificadores de articulos...
+Route::get('clasificadores-articulo', ['as' => 'clasificadores.index', 'uses' => 'ClasificadoresController@index']);
+Route::get('clasificadores-articulo/nuevo', ['as' => 'clasificadores.create', 'uses' => 'ClasificadoresController@create']);
+Route::post('clasificadores-articulo', ['as' => 'clasificadores.store', 'uses' => 'ClasificadoresController@store']);
+Route::get('clasificadores-articulo/{id}', ['as' => 'clasificadores.edit', 'uses' => 'ClasificadoresController@edit']);
+Route::patch('clasificadores-articulo/{id}', ['as' => 'clasificadores.update', 'uses' => 'ClasificadoresController@update']);
+Route::delete('clasificadores-articulo/{id}', ['as' => 'clasificadores.delete', 'uses' => 'ClasificadoresController@destroy']);
+
 // Rutas de articulos...
 Route::get('articulos', ['as' => 'articulos.index', 'uses' => 'ArticulosController@index']);
 Route::get('articulos/nuevo', ['as' => 'articulos.create', 'uses' => 'ArticulosController@create']);

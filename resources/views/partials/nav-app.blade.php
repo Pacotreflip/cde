@@ -15,7 +15,7 @@
         <ul class="dropdown-menu" role="menu">
             <li><a href="{{ route('tipos.index') }}">Tipos de Area</a></li>
             <li><a href="{{ route('areas.index') }}">Areas</a></li>
-            <li><a href="">Clasificadores de Articulo</a></li>
+            <li><a href="{{ route('clasificadores.index') }}">Clasificadores de Articulo</a></li>
             <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
         </ul>
     </li>

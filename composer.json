@@ -10,9 +10,9 @@
         "laravelcollective/html": "^5.1",
         "laracasts/flash": "^1.3",
         "ghi/laravel-intranet-auth": "^1.1",
-        "kalnoy/nestedset": "dev-master",
         "overtrue/laravel-lang": "^1.0",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "kalnoy/nestedset": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -15,10 +15,16 @@ class CreateAreaTiposTable extends Migration
     {
         Schema::create('Equipamiento.area_tipos', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('id_obra')->index();
             $table->string('nombre', 100);
             $table->text('descripcion')->default('');
             NestedSet::columns($table);
             $table->timestamps();
+
+            $table->foreign('id_obra')
+                ->references('id_obra')
+                ->on('obras')
+                ->onDelete('cascade');
         });
     }
 
