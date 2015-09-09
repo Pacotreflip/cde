@@ -19,8 +19,6 @@ class CreateAreaTiposTable extends Migration
             $table->text('descripcion')->default('');
             NestedSet::columns($table);
             $table->timestamps();
-
-            $table->unique(['nombre']);
         });
     }
 

@@ -6,16 +6,12 @@
         <li class="active">Nueva Area</li>
     </ol>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h1>Nueva Area</h1>
-            <hr>
+    <h1>Nueva Area</h1>
+    <hr>
+    
+    {!! Form::open(['route' => ['areas.store'], 'method' => 'POST']) !!}
+        @include('areas.partials.create-fields')
+    {!! Form::close() !!}
 
-            {!! Form::open(['route' => ['areas.store'], 'method' => 'POST']) !!}
-                @include('areas.partials.create-fields')
-            {!! Form::close() !!}
-
-            @include('partials.errors')
-        </div>
-    </div>
+    @include('partials.errors')
 @stop

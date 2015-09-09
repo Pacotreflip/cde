@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi;
+namespace Ghi\Equipamiento\Areas;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,12 @@ class Area extends Node
     /**
      * @var string
      */
-    protected $connection = 'equipamiento';
+    protected $connection = 'cadeco';
+
+    /**
+     * @var string
+     */
+    protected $table = 'Equipamiento.areas';
 
     /**
      * Campos afectables por asignacion masiva
@@ -25,13 +30,13 @@ class Area extends Node
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function subtipo()
+    public function tipo()
     {
-        return $this->belongsTo(Subtipo::class, 'subtipo_id');
+        return $this->belongsTo(Tipo::class, 'tipo_id');
     }
 
     /**
-     * Mueve esta area dentro de otra
+     * Mueve esta area dentro de otra area al final
      *
      * @param Area $parent
      * @return Area
@@ -48,11 +53,11 @@ class Area extends Node
     /**
      * Asigna el subtipo a esta area
      *
-     * @param Subtipo $subtipo
+     * @param Tipo $tipo
      * @return Area
      */
-    public function asignaSubtipo(Subtipo $subtipo)
+    public function asignaTipo(Tipo $tipo)
     {
-        return $this->subtipo()->associate($subtipo);
+        return $this->tipo()->associate($tipo);
     }
 }

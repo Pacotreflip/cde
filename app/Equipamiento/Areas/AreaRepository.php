@@ -1,9 +1,7 @@
 <?php
 
-namespace Ghi\Repositories;
+namespace Ghi\Equipamiento\Areas;
 
-use Ghi\Area;
-use Ghi\Subtipo;
 use Illuminate\Support\Facades\DB;
 
 class AreaRepository
@@ -11,7 +9,7 @@ class AreaRepository
     /**
      * Obtiene un area por su id
      *
-     * @param $id
+     * @param int $id
      * @return mixed
      */
     public function getById($id)
@@ -40,18 +38,18 @@ class AreaRepository
     }
 
     /**
-     * Obtiene una lista de subtipos como un arreglo
+     * Obtiene una lista de tipos de area como un arreglo
      *
      * @return array
      */
-    public function getListaSubtipos()
+    public function getListaTipos()
     {
-        $subtipos = SubTipo::with(['tipo'])->orderBy('nombre')->get();
+        return $tipos = Tipo::defaultOrder()->lists('nombre', 'id');
 
-        $lista = [null => 'No Aplica'];
-        foreach ($subtipos->sortBy(['tipo.nombre', 'nombre']) as $subtipo) {
-            $lista[$subtipo->id] = $subtipo->tipo->nombre." - ".$subtipo->nombre;
-        }
+        // $lista = [null => 'No Aplica'];
+        // foreach ($subtipos->sortBy(['tipo.nombre', 'nombre']) as $subtipo) {
+        //     $lista[$subtipo->id] = $subtipo->tipo->nombre." - ".$subtipo->nombre;
+        // }
 
         return $lista;
     }
@@ -95,31 +93,11 @@ class AreaRepository
         return $area->save();
     }
 
-    public function agregaNivelDentro(Area $area = null)
-    {
-
-    }
-
-    public function agregaNivel()
-    {
-
-    }
-
-    public function subeNivel(Area $area)
-    {
-
-    }
-
-    public function bajaNivel(Area $area)
-    {
-
-    }
-
     /**
      * Obtiene las areas descendientes de otra area
      *
-     * @param $id
-     * @return mixed
+     * @param int $id
+     * @return Area
      */
     public function getDescendientesDe($id)
     {
@@ -127,19 +105,4 @@ class AreaRepository
 
         return Area::whereIn('id', $ids)->get();
     }
-
-    //    /**
-//     * @param $nivel
-//     * @return mixed
-//     */
-//    protected function getIdsByNivelProfundidad($nivel)
-//    {
-//        return DB::connection('equipamiento')->table('areas')
-//            ->select(DB::raw('areas.id'))
-//            ->leftJoin('areas as parent', 'areas.lft', 'BETWEEN', DB::raw('parent.lft and parent.rgt'))
-//            ->groupBy('areas.nombre')
-//            ->having(DB::raw('COUNT(1) - 1'), '=', $nivel)
-//            ->orderBy('areas.lft')
-//            ->lists('id');
-//    }
 }
