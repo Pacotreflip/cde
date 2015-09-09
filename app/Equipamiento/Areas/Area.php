@@ -30,9 +30,9 @@ class Area extends Node
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function subtipo()
+    public function tipo()
     {
-        return $this->belongsTo(Subtipo::class, 'subtipo_id');
+        return $this->belongsTo(Tipo::class, 'tipo_id');
     }
 
     /**
@@ -53,11 +53,11 @@ class Area extends Node
     /**
      * Asigna el subtipo a esta area
      *
-     * @param Subtipo $subtipo
+     * @param Tipo $tipo
      * @return Area
      */
-    public function asignaSubtipo(Subtipo $subtipo)
+    public function asignaTipo(Tipo $tipo)
     {
-        return $this->subtipo()->associate($subtipo);
+        return $this->tipo()->associate($tipo);
     }
 }

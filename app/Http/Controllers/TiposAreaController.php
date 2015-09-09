@@ -63,7 +63,7 @@ class TiposAreaController extends Controller
      */
     public function create()
     {
-        $tipos = $this->tipos->getListaTipos();
+        $tipos = [null => 'Inicio'] + $this->tipos->getListaTipos();
 
         return view('tipos.create')
             ->withTipos($tipos);
@@ -105,8 +105,8 @@ class TiposAreaController extends Controller
      */
     public function edit($id)
     {
-        $tipo      = Tipo::findOrFail($id);
-        $tipos     = $this->tipos->getListaTipos();
+        $tipo      = $this->tipos->getById($id);
+        $tipos     = [null => 'Inicio'] + $this->tipos->getListaTipos();
         $ancestros = $tipo->getAncestors();
 
         return view('tipos.edit')
@@ -133,13 +133,11 @@ class TiposAreaController extends Controller
 
         if ($request->has('move_up')) {
             $tipo->up();
-            $tipo->save();
             return redirect()->back();
         }
 
         if ($request->has('move_down')) {
             $tipo->down();
-            $tipo->save();
             return back();
         }
 

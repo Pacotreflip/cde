@@ -21,13 +21,13 @@
     <div class="col-md-6">
         <!-- Tipo Form Input -->
         <div class="form-group">
-            {!! Form::label('subtipo_id', 'Tipo:') !!}
-            {!! Form::select('subtipo_id', $subtipos, null, ['class' => 'form-control']) !!}
+            {!! Form::label('tipo_id', 'Tipo:') !!}
+            {!! Form::select('tipo_id', $tipos, null, ['class' => 'form-control']) !!}
         </div>
 
         <!-- Dentro de que otra area se crearan? Form Input -->
         <div class="form-group">
-            {!! Form::label('parent_id', 'Area en la que se encuentra') !!}
+            {!! Form::label('parent_id', 'Se encuentra en:') !!}
             {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
         </div>
     </div>

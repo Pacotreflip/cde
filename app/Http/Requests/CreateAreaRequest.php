@@ -27,7 +27,7 @@ class CreateAreaRequest extends Request
             'nombre' => 'required',
             'cantidad' => 'integer|min:1',
             'rango_inicial' => 'integer|min:1',
-            'subtipo_id' => 'integer',
+            'tipo_id' => 'integer',
         ];
     }
 }

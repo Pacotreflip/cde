@@ -14,7 +14,7 @@
             {!! Form::submit('Buscar', ['class' => 'btn btn-sm btn-primary']) !!}
         {!! Form::close() !!}
     </div>
-    <table class="table table-striped">
+    <table class="table table-striped table-condensed">
         <thead>
             <tr>
                 <th>No. Parte</th>

@@ -9,8 +9,8 @@
 
     @include('tipos.partials.breadcrumb')
 
-    <table class="table table-striped rowlink" data-link="row">
-        <tbody>
+    <table class="table table-striped" data-link="row">
+        <tbody class="rowlink">
             @foreach($descendientes as $descendiente)
                 <tr>
                     <td>

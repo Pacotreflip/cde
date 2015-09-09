@@ -2,12 +2,13 @@
 
 namespace Ghi\Http\Controllers;
 
-use Ghi\Area;
-use Ghi\Subtipo;
 use Ghi\Http\Requests;
-use Ghi\Repositories\AreaRepository;
-use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
+use Illuminate\Http\Request;
+use Ghi\Equipamiento\Areas\Area;
+use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\TipoAreaRepository;
 
 class AreasController extends Controller
 {
@@ -15,18 +16,21 @@ class AreasController extends Controller
      * @var AreaRepository
      */
     private $areas;
+    protected $tipos;
 
     /**
      * AreasController constructor.
      *
      * @param AreaRepository $areas
      */
-    public function __construct(AreaRepository $areas)
+    public function __construct(AreaRepository $areas, TipoAreaRepository $tipos)
     {
         $this->middleware('auth');
         $this->middleware('context');
         
         $this->areas = $areas;
+        $this->tipos = $tipos;
+
         parent::__construct();
     }
 
@@ -43,7 +47,7 @@ class AreasController extends Controller
 
         if ($request->has('area')) {
             $area = $this->areas->getById($request->get('area'));
-            $descendientes = $area->children;
+            $descendientes = $area->children()->defaultOrder()->get();
             $ancestros     = $area->getAncestors();
         } else {
             $descendientes = $this->areas->getNivelesRaiz();
@@ -62,12 +66,12 @@ class AreasController extends Controller
      */
     public function create()
     {
-        $subtipos = $this->areas->getListaSubtipos();
-        $areas    = $this->areas->getListaAreas();
+        $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
+        $areas = $this->areas->getListaAreas();
 
         return view('areas.create')
             ->withAreas($areas)
-            ->withSubtipos($subtipos);
+            ->withTipos($tipos);
     }
 
     /**
@@ -78,9 +82,9 @@ class AreasController extends Controller
      */
     public function store(Requests\CreateAreaRequest $request)
     {
-        $rango   = $request->get('rango_inicial');
-        $subtipo = Subtipo::find($request->get('subtipo_id'));
-        $parent  = Area::find($request->get('parent_id'));
+        $rango  = $request->get('rango_inicial');
+        $tipo   = Tipo::find($request->get('tipo_id'));
+        $parent = Area::find($request->get('parent_id'));
 
         for ($i = 1; $i <= $request->get('cantidad', 1); $i++) {
             $area = new Area([
@@ -89,8 +93,8 @@ class AreasController extends Controller
                 'descripcion' => $request->get('descripcion'),
             ]);
 
-            if ($subtipo) {
-                $area->asignaSubtipo($subtipo);
+            if ($tipo) {
+                $area->asignaTipo($tipo);
             }
 
             if ($parent) {
@@ -112,14 +116,14 @@ class AreasController extends Controller
      */
     public function edit($id)
     {
-        $area     = $this->areas->getById($id);
-        $subtipos = $this->areas->getListaSubtipos();
-        $areas    = $this->areas->getListaAreas();
+        $area  = $this->areas->getById($id);
+        $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
+        $areas = $this->areas->getListaAreas();
 
         return view('areas.edit')
             ->withArea($area)
             ->withAreas($areas)
-            ->withSubtipos($subtipos);
+            ->withTipos($tipos);
     }
 
     /**
@@ -131,18 +135,28 @@ class AreasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $area    = $this->areas->getById($id);
-        $parent  = Area::find($request->get('parent_id'));
-        $subtipo = Subtipo::find($request->get('subtipo_id'));
+        $area   = $this->areas->getById($id);
+        $parent = Area::find($request->get('parent_id'));
+        $tipo   = Tipo::find($request->get('subtipo_id'));
 
         $area->fill($request->all());
 
-        if ($subtipo) {
-            $area->asignaSubtipo($subtipo);
+        if ($tipo) {
+            $area->asignaTipo($tipo);
         }
         
         if ($parent) {
             $area->moverA($parent);
+        }
+
+        if ($request->has('move_up')) {
+            $area->up();
+            return back();
+        }
+
+        if ($request->has('move_down')) {
+            $area->down();
+            return back();
         }
 
         $this->areas->save($area);

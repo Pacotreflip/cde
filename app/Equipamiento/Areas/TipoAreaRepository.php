@@ -45,9 +45,9 @@ class TipoAreaRepository
     {
         $tipos = $this->getAll();
 
-        $lista = [null => 'Inicio'];
+        $lista = [];
         foreach ($tipos as $tipo) {
-            $lista[$tipo->id] = str_repeat('- ', $tipo->depth).' '.$tipo->nombre;
+            $lista[$tipo->id] = str_repeat('-', $tipo->depth + 1).''.$tipo->nombre;
         }
 
         return $lista;
