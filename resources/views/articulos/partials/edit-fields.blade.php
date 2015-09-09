@@ -48,7 +48,7 @@
 <div class="form-group">
     {!! Form::label('ficha_tecnica', 'Ficha Tecnica:') !!}
         @if($material->ficha_tecnica_nombre)
-            <a href="{{ $material->ficha_tecnica_path }}" target="_blank">
+            <a href="/{{ $material->ficha_tecnica_path }}" target="_blank">
                 <i class="fa fa-fw fa-file"></i> {{ $material->ficha_tecnica_nombre }}
             </a>
         @endif

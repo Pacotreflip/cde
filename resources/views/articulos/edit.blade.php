@@ -15,6 +15,7 @@
                 @include('articulos.partials.edit-fields')
 
                 @include('partials.errors')
+                <br>
             </div>
             <div class="col-md-6 gallery">
                 @include('articulos.partials.fotos')
@@ -22,7 +23,6 @@
         </div>
     {!! Form::close() !!}
 
-    
     <hr>
 
     <form action="{{ route('articulos.fotos', [$material]) }}" 

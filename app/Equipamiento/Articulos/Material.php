@@ -49,7 +49,7 @@ class Material extends Model
      */
     public function clasificador()
     {
-        return $this->belongsTo(Clasificador::class);
+        return $this->belongsTo(Clasificador::class, 'id_clasificador');
     }
 
     /**
@@ -190,8 +190,10 @@ class Material extends Model
      */
     public function agregaFichaTecnica(UploadedFile $file)
     {
-        $this->ficha_tecnica_nombre = sprintf("%s-%s", time(), $file->getClientOriginalName());
+        $nombre = sha1(time() . '-' . $file->getClientOriginalName());
+        $extension = $file->getClientOriginalExtension();
+        $this->ficha_tecnica_nombre = "{$nombre}.{$extension}";
         $this->ficha_tecnica_path = sprintf("%s/%s", $this->directorioBase, $this->ficha_tecnica_nombre);
-        $file->move(public_path() . $this->directorioBase, $this->ficha_tecnica_nombre);
+        $file->move($this->directorioBase, $this->ficha_tecnica_nombre);
     }
 }

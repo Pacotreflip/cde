@@ -27,14 +27,12 @@ class Foto extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'path'];
+    protected $fillable = ['nombre', 'path', 'thumbnail_path'];
 
     /**
-     * Directorio base de almacenamiento de las fotografias
-     *
-     * @var string
+     * @var UploadedFile
      */
-    protected $directorioBase = 'articulo/fotos';
+    protected $file;
 
     /**
      * Articulo relacionado con esta fotografia
@@ -47,42 +45,81 @@ class Foto extends Model
     }
 
     /**
-     * Crea una nueva imagen con un nombre
-     *
-     * @param string $nombre
-     * @return $this
+     * Crea una nueva fotografia desde un archivo
+     * 
+     * @param  UploadedFile $file
+     * @return self
      */
-    public static function conNombre($nombre)
+    public static function desdeArchivo(UploadedFile $file)
     {
-        return (new static)->guardarComo($nombre);
+        $foto = new static;
+
+        $foto->file = $file;
+
+        $foto->fill([
+            'nombre' => $foto->fileName(),
+            'path'   => $foto->filePath(),
+            'thumbnail_path' => $foto->thumbnailPath(),
+        ]);
+
+        return $foto;
     }
 
     /**
-     * Asigna el nombre y directorio para la foto
-     *
-     * @param $nombre
-     * @return $this
+     * Genera el nombre del archivo
+     * 
+     * @return string
      */
-    protected function guardarComo($nombre)
+    public function fileName()
     {
-        $this->nombre = sprintf("%s-%s", time(), $nombre);
-        $this->path   = sprintf("%s/%s", $this->directorioBase, $this->nombre);
-        $this->thumbnail_path = sprintf("%s/tn-%s", $this->directorioBase, $this->nombre);
+        $name = sha1(time() . $this->file->getClientOriginalName());
 
-        return $this;
+        $extesion = $this->file->getClientOriginalExtension();
+
+        return "{$name}.{$extesion}";
+    }
+
+    /**
+     * Genera el directorio del archivo
+     * 
+     * @return string
+     */
+    public function filePath()
+    {
+        return $this->baseDir() . "/" . $this->fileName();
+    }
+
+    /**
+     * Genera el nombre del archivo thumbnail
+     * 
+     * @return string
+     */
+    public function thumbnailPath()
+    {
+        return $this->baseDir() . '/tn-' . $this->fileName();
+    }
+
+    /**
+     * Directorio base de almacenamiento de esta fotografia
+     * 
+     * @return string
+     */
+    public function baseDir()
+    {
+        return 'articulo/fotos';
     }
 
     /**
      * Mueve el archivo al directorio base con el nombre de la foto
      *
      * @param UploadedFile $file
-     * @return $this
+     * @return self
      */
-    public function mover(UploadedFile $file)
+    public function upload()
     {
-        $file->move($this->directorioBase, $this->nombre);
+        $this->file->move($this->baseDir(), $this->fileName());
         
-        $this->creaThumbnail($file);
+        $this->creaThumbnail($this->file);
 
         return $this;
     }
@@ -91,13 +128,13 @@ class Foto extends Model
      * Crea un thumbnail de esta foto
      *
      * @param UploadedFile $file
-     * @return $this
+     * @return self
      */
-    public function creaThumbnail(UploadedFile $file)
+    public function creaThumbnail()
     {
-        Image::make($this->path)
+        Image::make($this->filePath())
             ->resize(200, 200)
-            ->save($this->thumbnail_path);
+            ->save($this->thumbnailPath());
 
         return $this;
     }

@@ -17,6 +17,7 @@ use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
 use Ghi\Equipamiento\Articulos\MaterialRepository;
+use Ghi\Equipamiento\Articulos\ClasificadorRepository;
 
 class ArticulosController extends Controller
 {
@@ -25,16 +26,18 @@ class ArticulosController extends Controller
      * @var MaterialRepository
      */
     protected $materiales;
+    protected $clasificadores;
 
     /**
      * @param MaterialRepository $materiales
      */
-    public function __construct(MaterialRepository $materiales)
+    public function __construct(MaterialRepository $materiales, ClasificadorRepository $clasificadores)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->materiales = $materiales;
+        $this->clasificadores = $clasificadores;
 
         parent::__construct();
     }
@@ -68,7 +71,7 @@ class ArticulosController extends Controller
         $unidades = $deafult_option + $this->materiales->getListaunidades();
         $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
         $tipos    = $this->materiales->getListaTipoMateriales();
-        $clasificadores = [];//$deafult_option + $this->materiales->getListaClasificadores();
+        $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.create')
             ->withClasificadores($clasificadores)
@@ -103,7 +106,7 @@ class ArticulosController extends Controller
         );
 
         if ($request->has('id_clasificador')) {
-            $clasificador = Clasificador::findOrFail($request->get('id_clasificador'));
+            $clasificador = $this->clasificadores->getById($request->get('id_clasificador'));
             $material->asignaClasificador($clasificador);
         }
 
@@ -128,14 +131,11 @@ class ArticulosController extends Controller
      */
     public function agregaFoto(AgregaFotoRequest $request, $id)
     {
-        $articulo = $this->materiales->getById($id);
-
-        $file = $request->file('foto');
-        $foto = Foto::conNombre($file->getClientOriginalName())->mover($file);
-        $articulo->agregaFoto($foto);
+        $foto = Foto::desdeArchivo($request->file('foto'))->upload();
+        $this->materiales->getById($id)->agregaFoto($foto);
 
         if ($request->ajax()) {
-            return response('Foto agregada.');
+            return response($foto->thumbnailPath());
         }
     }
 
@@ -150,7 +150,7 @@ class ArticulosController extends Controller
         $material       = $this->materiales->getById($id);
         $unidades       = $this->materiales->getListaUnidades();
         $familias       = $this->materiales->getListaFamilias($material->tipo_material);
-        $clasificadores = [];//$this->materiales->getListaClasificadores();
+        $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.edit')
             ->withMaterial($material)
