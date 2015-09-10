@@ -1,6 +1,11 @@
 @extends('layout')
 
 @section('content')
+    <ol class="breadcrumb">
+        <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
+        <li class="active">Nuevo Articulo</li>
+    </ol>
+
     <h1>Nuevo Articulo</h1>
     <hr>
 

@@ -5,8 +5,8 @@ Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 Route::get('obras/', ['as' => 'obras', 'uses' => 'PagesController@obras']);
 
 // Rutas de contexto
-Route::get('/context/{databaseName}/{idObra}', ['as' => 'context.set', 'uses' => 'ContextController@set'])
-    ->where(['databaseName' => '[aA-zZ0-9_-]+', 'idObra' => '[0-9]+']);
+Route::get('/context/{databaseName}/{id_obra}', ['as' => 'context.set', 'uses' => 'ContextController@set'])
+    ->where(['databaseName' => '[aA-zZ0-9_-]+', 'id_obra' => '[0-9]+']);
 
 // Rutas de autenticacion...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -45,4 +45,10 @@ Route::get('articulos/{id}', ['as' => 'articulos.edit', 'uses' => 'ArticulosCont
 Route::patch('articulos/{id}', ['as' => 'articulos.update', 'uses' => 'ArticulosController@update']);
 Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'ArticulosController@agregaFoto']);
 
-
+// Rutas de proveedores...
+Route::get('proveedores', ['as' => 'proveedores.index', 'uses' => 'ProveedoresController@index']);
+Route::get('proveedores/nuevo', ['as' => 'proveedores.create', 'uses' => 'ProveedoresController@create']);
+Route::post('proveedores', ['as' => 'proveedores.store', 'uses' => 'ProveedoresController@store']);
+Route::get('proveedores/{id}', ['as' => 'proveedores.edit', 'uses' => 'ProveedoresController@edit']);
+Route::patch('proveedores/{id}', ['as' => 'proveedores.update', 'uses' => 'ProveedoresController@update']);
+Route::delete('proveedores/{id}', ['as' => 'proveedores.delete', 'uses' => 'ProveedoresController@destroy']);

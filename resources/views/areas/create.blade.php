@@ -2,7 +2,7 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('areas.index', ['area' => Request::get('dentro_de')]) }}">Areas</a></li>
+        <li><a href="{{ route('areas.index', Request::has('dentro_de') ? ['area' => Request::get('dentro_de')]) : [] }}">Areas</a></li>
         <li class="active">Nueva Area</li>
     </ol>
 

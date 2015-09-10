@@ -2,8 +2,8 @@
 
 @section('content')
     <ol class="breadcrumb">
-      <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
-      <li class="active">{{ $material->descripcion }}</li>
+        <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
+        <li class="active">{{ $material->descripcion }}</li>
     </ol>
 
     <h1>Articulo</h1>

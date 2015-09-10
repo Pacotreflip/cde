@@ -2,41 +2,32 @@
 
 @section('content')
     <h1>Articulos
-        <a href="{{ route('articulos.create') }}" class="btn btn-success pull-right">Agregar Articulo</a>
+        <a href="{{ route('articulos.create') }}" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Agregar Articulo</a>
     </h1>
     <hr>
 
-    <div class="search-bar">
-        {!! Form::model(Request::only('buscar'), ['route' => 'articulos.index', 'method' => 'GET', 'class' => 'navbar-form navbar-right']) !!}
-            <div class="form-group">
-                {!! Form::text('buscar', null, ['class' => 'form-control input-sm', 'placeholder' => 'escriba el texto a buscar...']) !!}
-            </div>
-            {!! Form::submit('Buscar', ['class' => 'btn btn-sm btn-primary']) !!}
-        {!! Form::close() !!}
-    </div>
-    <table class="table table-striped table-condensed">
+    @include('partials.search-form')
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>No. Parte</th>
                 <th>Nombre</th>
                 <th>Unidad</th>
                 <th>Clasificación</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach($materiales as $material)
                 <tr>
                     <th>{{ $material->numero_parte }}</th>
-                    <td>{{ str_limit($material->descripcion, 80) }}</td>
-                    <td>{{ $material->unidad }}</td>
-                    <td></td>
                     <td>
-                        <p data-placement="top" data-toggle="tooltip" title="Modificar">
-                            <a href="{{ route('articulos.edit', [$material]) }}" class="btn btn-primary btn-xs">
-                                <span class="fa fa-pencil"></span>
-                            </a>
-                        </p>
+                        <a href="{{ route('articulos.edit', [$material]) }}">{{ str_limit($material->descripcion, 70) }}</a>
+                    </td>
+                    <td>{{ $material->unidad }}</td>
+                    <td>
+                        @if($material->clasificador)
+                            {{ $material->clasificador->nombre }}
+                        @endif
                     </td>
                 </tr>
             @endforeach
