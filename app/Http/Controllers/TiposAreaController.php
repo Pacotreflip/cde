@@ -81,12 +81,28 @@ class TiposAreaController extends Controller
     public function store(CreateTipoRequest $request)
     {
         $parent = Tipo::find($request->get('parent_id'));
-
-        $tipo = Tipo::create($request->all(), $parent);
+        $tipo = $this->nuevoTipo($request->all(), $parent);
 
         Flash::success('El nuevo tipo de area fue agregado.');
 
         return redirect()->route('tipos.index', $parent ? ['tipo' => $parent->id] : []);
+    }
+
+    /**
+     * Crea un nuevo tipo de area
+     * 
+     * @param  array $data
+     * @param  Tipo|null $parent
+     * @return Tipo
+     */
+    protected function nuevoTipo($data, $parent)
+    {
+        $tipo = Tipo::nuevo($data)
+            ->enObra($this->getObraEnContexto())
+            ->dentroDe($parent);
+        $tipo->save();
+
+        return $tipo;
     }
 
     /**
@@ -121,8 +137,6 @@ class TiposAreaController extends Controller
 
         $tipo->fill($request->all());
 
-        $tipo->moverA($parent);
-
         if ($request->has('move_up')) {
             $tipo->up();
             return back();
@@ -133,6 +147,7 @@ class TiposAreaController extends Controller
             return back();
         }
 
+        $tipo->dentroDe($parent);
         $this->tipos->save($tipo);
 
         Flash::success('Los cambios fueron guardados.');
@@ -149,10 +164,16 @@ class TiposAreaController extends Controller
     public function destroy($id)
     {
         $tipo = $this->tipos->getById($id);
+        $isRoot = $tipo->isRoot();
+
+        if (! $isRoot) {
+            $parent_id = $tipo->parent->id;
+        }
+
         $this->tipos->delete($tipo);
 
         Flash::message('El tipo de area fue borrado.');
 
-        return redirect()->route('tipos.index');
+        return redirect()->route('tipos.index', $isRoot ? [] : ['tipo' => $parent_id]);
     }
 }

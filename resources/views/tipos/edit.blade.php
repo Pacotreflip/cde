@@ -19,6 +19,11 @@
             @include('partials.errors')
 
             <hr>
+            
+            <p class="alert alert-danger">
+                <i class="fa fa-fw fa-exclamation"></i><strong>Atención:</strong>
+                Al borrar este tipo de area, todos los subtipos contenidos también seran borrados.
+            </p>
 
             {!! Form::open(['route' => ['tipos.delete', $tipo], 'method' => 'DELETE']) !!}
                 <div class="form-group">

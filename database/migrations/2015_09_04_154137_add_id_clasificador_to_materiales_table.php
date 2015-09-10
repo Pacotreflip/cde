@@ -18,7 +18,7 @@ class AddIdClasificadorToMaterialesTable extends Migration
             $table->foreign('id_clasificador')
                 ->references('id')
                 ->on('Equipamiento.material_clasificadores')
-                ->onDelete('cascade');
+                ->onDelete('set null');
         });
     }
 

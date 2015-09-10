@@ -155,12 +155,18 @@ class Material extends Model
     /**
      * Asocia este articulo con un clasificador
      *
-     * @param Clasificador $clasificador
-     * @return Articulo
+     * @param Clasificador|null $clasificador
+     * @return self
      */
-    public function asignaClasificador(Clasificador $clasificador)
+    public function asignaClasificador($clasificador = null)
     {
-        return $this->clasificador()->associate($clasificador);
+        if ($clasificador instanceof Clasificador) {
+            $this->clasificador()->associate($clasificador);
+        } else {
+            $this->id_clasificador = null;
+        }
+
+        return $this;
     }
 
     /**

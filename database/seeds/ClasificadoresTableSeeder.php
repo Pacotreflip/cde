@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Ghi\Equipamiento\Articulos\Clasificador;
 
 class ClasificadoresTableSeeder extends Seeder
 {
@@ -11,6 +12,10 @@ class ClasificadoresTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Ghi\Equipamiento\Articulos\Clasificador::class, 5)->create();
+        factory(Clasificador::class, 5)->create()->each(function ($nivel1) {
+            factory(Clasificador::class, 8)->create(['parent_id' => $nivel1->id])->each(function ($nivel2) {
+                factory(Clasificador::class, 16)->create(['parent_id' => $nivel2->id]);
+            });
+        });
     }
 }

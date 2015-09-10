@@ -2,7 +2,7 @@
 
 @section('content')
     <ol class="breadcrumb">
-        <li><a href="{{ route('tipos.index', ['tipo' => Request::get('dentro_de')]) }}">Clasificadores de Articulo</a></li>
+        <li><a href="{{ route('clasificadores.index', Request::has('dentro_de') ? ['clasificador' => Request::get('dentro_de')] : []) }}">Clasificadores de Articulo</a></li>
         <li class="active">Nuevo Clasificador</li>
     </ol>
 

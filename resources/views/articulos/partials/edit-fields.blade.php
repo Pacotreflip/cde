@@ -26,7 +26,7 @@
         <!-- Familia Form Input -->
         <div class="form-group">
             {!! Form::label('id_familia', 'Familia:') !!}
-            {!! Form::select('id_familia', $familias, $material->familia()->id_material, ['class' => 'form-control']) !!}
+            {!! Form::select('id_familia', $familias, $material->familia() ? $material->familia()->id_material : null, ['class' => 'form-control']) !!}
         </div>
     </div>
     <div class="col-xs-6">

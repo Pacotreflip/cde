@@ -20,6 +20,11 @@
 
             <hr>
 
+            <p class="alert alert-danger">
+                <i class="fa fa-fw fa-exclamation"></i><strong>Atención:</strong>
+                Al borrar este clasificador, todos los subclasificadores contenidos en el también seran borrados.
+            </p>
+            
             {!! Form::open(['route' => ['clasificadores.delete', $clasificador], 'method' => 'DELETE']) !!}
                 <div class="form-group">
                     {!! Form::submit('Borrar este clasificador', ['class' => 'btn btn-danger pull-right']) !!}

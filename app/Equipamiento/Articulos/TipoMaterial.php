@@ -11,7 +11,6 @@ class TipoMaterial
     const TIPO_MAQUINARIA            = 8;
 
     /**
-     *
      * @var int
      */
     protected $tipo;
@@ -98,6 +97,6 @@ class TipoMaterial
      */
     public function __toString()
     {
-        return sprintf("%s", $this->getTipo());
+        return (string) $this->tipo;
     }
 }

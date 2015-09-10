@@ -170,13 +170,14 @@ class ArticulosController extends Controller
     {
         $material     = $this->materiales->getById($id);
         $unidad       = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
-        // $clasificador = Clasificador::findOrFail($request->get('clasificador_id'));
-        $familia = Familia::findOrFail($request->get('id_familia'));
+        $clasificador = Clasificador::find($request->get('id_clasificador'));
+        $familia      = Familia::findOrFail($request->get('id_familia'));
 
         $material->fill($request->all());
         $material->asignaUnidad($unidad);
         $material->agregarEnFamilia($familia);
-        // $material->asignaClasificador($clasificador);
+        
+        $material->asignaClasificador($clasificador);
 
         if ($request->hasFile('ficha_tecnica')) {
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));

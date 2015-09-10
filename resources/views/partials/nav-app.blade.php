@@ -17,6 +17,7 @@
             <li><a href="{{ route('areas.index') }}">Areas</a></li>
             <li><a href="{{ route('clasificadores.index') }}">Clasificadores de Articulo</a></li>
             <li><a href="{{ route('articulos.index') }}">Articulos</a></li>
+            <li><a href="{{ route('proveedores.index') }}">Proveedores</a></li>
         </ul>
     </li>
     <li><a href="#">Asignación de Requerimientos</a></li>
