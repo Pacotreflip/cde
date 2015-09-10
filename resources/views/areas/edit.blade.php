@@ -11,6 +11,11 @@
     {!! Form::close() !!}
 
     <hr>
+    
+    <p class="alert alert-danger">
+        <i class="fa fa-fw fa-exclamation"></i><strong>Atención:</strong>
+        Al borrar esta area, todas las subareas contenidas también seran borradas.
+    </p>
 
     {!! Form::open(['route' => ['areas.delete', $area], 'method' => 'DELETE']) !!}
         <div class="form-group">

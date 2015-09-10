@@ -2,8 +2,17 @@
 
 namespace Ghi\Equipamiento\Areas;
 
+use Ghi\Core\Contracts\Context;
+
 class TipoAreaRepository
 {
+    protected $context;
+
+    public function __construct(Context $context)
+    {
+        $this->context = $context;
+    }
+
     /**
      * Obtiene un tipo de area por su id
      *
@@ -23,7 +32,10 @@ class TipoAreaRepository
      */
     public function getAll()
     {
-        return Tipo::defaultOrder()->withDepth()->get();
+        return Tipo::where('id_obra', $this->context->getId())
+            ->defaultOrder()
+            ->withDepth()
+            ->get();
     }
 
     /**
@@ -33,7 +45,10 @@ class TipoAreaRepository
      */
     public function getNivelesRaiz()
     {
-        return Tipo::whereIsRoot()->defaultOrder()->get();
+        return Tipo::where('id_obra', $this->context->getId())
+            ->whereIsRoot()
+            ->defaultOrder()
+            ->get();
     }
 
     /**

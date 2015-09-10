@@ -149,9 +149,16 @@ class ClasificadoresController extends Controller
     public function destroy($id)
     {
         $clasificador = $this->clasificadores->getById($id);
+        $isRoot = $clasificador->isRoot();
+
+        if (! $isRoot) {
+            $parent_id = $clasificador->parent->id;
+        }
 
         $this->clasificadores->delete($clasificador);
 
-        return redirect()->route('clasificadores.index');
+        Flash::message('El clasificador fue borrado.');
+
+        return redirect()->route('clasificadores.index', $isRoot ? [] : ['clasificador' => $parent_id]);
     }
 }

@@ -13,6 +13,7 @@
                 <th>No. Parte</th>
                 <th>Nombre</th>
                 <th>Unidad</th>
+                <th>Familia</th>
                 <th>Clasificación</th>
             </tr>
         </thead>
@@ -24,6 +25,11 @@
                         <a href="{{ route('articulos.edit', [$material]) }}">{{ str_limit($material->descripcion, 70) }}</a>
                     </td>
                     <td>{{ $material->unidad }}</td>
+                    <td>
+                        @if($material->familia())
+                            {{ $material->familia()->descripcion }}
+                        @endif
+                    </td>
                     <td>
                         @if($material->clasificador)
                             {{ $material->clasificador->nombre }}

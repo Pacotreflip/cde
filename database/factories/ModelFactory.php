@@ -20,21 +20,14 @@ $factory->define(Ghi\Core\Models\User::class, function (Faker\Generator $faker) 
     ];
 });
 
-$factory->define(Ghi\Tipo::class, function (Faker\Generator $faker) {
+$factory->define(Ghi\Equipamiento\Areas\Tipo::class, function (Faker\Generator $faker) {
     return [
         'nombre' => $faker->toUpper($faker->streetName),
         'descripcion' => $faker->paragraph,
     ];
 });
 
-$factory->define(Ghi\Subtipo::class, function (Faker\Generator $faker) {
-    return [
-        'nombre' => implode(' ', $faker->words()),
-        'descripcion' => $faker->paragraph,
-    ];
-});
-
-$factory->define(Ghi\Area::class, function (Faker\Generator $faker) {
+$factory->define(Ghi\Equipamiento\Areas\Area::class, function (Faker\Generator $faker) {
     return [
         'nombre' => implode(' ', $faker->words),
         'clave'  => $faker->citySuffix,
@@ -50,6 +43,6 @@ $factory->define(Ghi\Equipamiento\Articulos\Unidad::class, function (Faker\Gener
 
 $factory->define(Ghi\Equipamiento\Articulos\Clasificador::class, function(Faker\Generator $faker) {
     return [
-        'nombre' => $faker->sentence,
+        'nombre' => $faker->sentence
     ];
 });

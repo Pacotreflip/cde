@@ -2,8 +2,9 @@
 
 namespace Ghi\Equipamiento\Areas;
 
-use Illuminate\Database\Eloquent\Model;
+use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Node
 {
@@ -23,12 +24,46 @@ class Tipo extends Node
     protected $fillable = ['nombre', 'descripcion'];
 
     /**
-     * Mueve este tipo dentro de otro al final
-     *
-     * @param Tipo|null $parent
-     * @return Tipo
+     * Obra relacionada con este tipo de area
+     * 
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function moverA($parent = null)
+    public function obra()
+    {
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    /**
+     * Crea un nuevo tipo de area dentro de otro
+     *
+     * @param array $data
+     * @param Tipo|null $parent
+     * @return self
+     */
+    public static function nuevo(array $data)
+    {
+        return new static($data);
+    }
+
+    /**
+     * Relaciona este tipo de area con una obra
+     * 
+     * @param  Obra   $obra
+     * @return self
+     */
+    public function enObra(Obra $obra)
+    {
+        $this->obra()->associate($obra);
+        return $this;
+    }
+
+    /**
+     * Mueve este tipo dentro de otro al final
+     * 
+     * @param  Tipo|null   $parent
+     * @return self
+     */
+    public function dentroDe($parent = null)
     {
         if (! $parent) {
             $this->makeRoot();
@@ -40,17 +75,5 @@ class Tipo extends Node
         }
 
         return $this;
-    }
-
-    /**
-     * Crea un nuevo tipo de area dentro de otro
-     *
-     * @param array $data
-     * @param Tipo|null $parent
-     * @return Tipo
-     */
-    public static function crearDentroDe(array $data, $parent = null)
-    {
-        return (new static($data))->moverA($parent);
     }
 }

@@ -26,15 +26,7 @@ class ProveedoresController extends Controller
     public function index(Request $request)
     {
         if ($request->has('buscar')) {
-            $busqueda = $request->get('buscar');
-
-            $proveedores = Proveedor::soloProveedores()
-                ->where(function ($query) use ($busqueda) {
-                    $query->where('razon_social', 'like', '%' . $busqueda . '%')
-                        ->orWhere('rfc', 'like', '%' . $busqueda . '%');
-                })
-                ->orderBy('razon_social')
-                ->paginate(30);
+            $proveedores = $this->buscar($request->get('buscar'));
         } else {
             $proveedores = Proveedor::soloProveedores()
                 ->orderBy('razon_social')->paginate(30);
@@ -45,18 +37,45 @@ class ProveedoresController extends Controller
     }
 
     /**
+     * Hace una busqueda de proveedores
+     * 
+     * @param  string $busqueda
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function buscar($busqueda)
+    {
+        return Proveedor::soloProveedores()
+                ->where(function ($query) use ($busqueda) {
+                    $query->where('razon_social', 'like', '%' . $busqueda . '%')
+                        ->orWhere('rfc', 'like', '%' . $busqueda . '%');
+                })
+                ->orderBy('razon_social')
+                ->paginate(30);
+    }
+
+    /**
+     * Lista de los tipos de proveedor disponibles
+     * 
+     * @return array
+     */
+    protected function listaTipos()
+    {
+        return [
+            Tipo::PROVEEDOR => (new Tipo(Tipo::PROVEEDOR))->getDescripcion(),
+            Tipo::PROVEEDOR_MATERIALES => (new Tipo(Tipo::PROVEEDOR_MATERIALES))->getDescripcion(),
+            Tipo::CONTRATISTA => (new Tipo(Tipo::CONTRATISTA))->getDescripcion(),
+            Tipo::PROVEEDOR_MATERIALES_CONTRATISTA => (new Tipo(Tipo::PROVEEDOR_MATERIALES_CONTRATISTA))->getDescripcion(),
+        ];
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return Response
      */
     public function create()
     {
-        $tipos = [
-            Tipo::PROVEEDOR => (new Tipo(Tipo::PROVEEDOR))->getDescripcion(),
-            Tipo::PROVEEDOR_MATERIALES => (new Tipo(Tipo::PROVEEDOR_MATERIALES))->getDescripcion(),
-            Tipo::CONTRATISTA => (new Tipo(Tipo::CONTRATISTA))->getDescripcion(),
-            Tipo::PROVEEDOR_MATERIALES_CONTRATISTA => (new Tipo(Tipo::PROVEEDOR_MATERIALES_CONTRATISTA))->getDescripcion(),
-        ];
+        $tipos = $this->listaTipos();
 
         return view('proveedores.create')
             ->withTipos($tipos);
@@ -80,17 +99,6 @@ class ProveedoresController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -99,12 +107,7 @@ class ProveedoresController extends Controller
     public function edit($id)
     {
         $proveedor = Proveedor::findOrFail($id);
-        $tipos = [
-            Tipo::PROVEEDOR => (new Tipo(Tipo::PROVEEDOR))->getDescripcion(),
-            Tipo::PROVEEDOR_MATERIALES => (new Tipo(Tipo::PROVEEDOR_MATERIALES))->getDescripcion(),
-            Tipo::CONTRATISTA => (new Tipo(Tipo::CONTRATISTA))->getDescripcion(),
-            Tipo::PROVEEDOR_MATERIALES_CONTRATISTA => (new Tipo(Tipo::PROVEEDOR_MATERIALES_CONTRATISTA))->getDescripcion(),
-        ];
+        $tipos = $this->listaTipos();
 
         return view('proveedores.edit')
             ->withProveedor($proveedor)

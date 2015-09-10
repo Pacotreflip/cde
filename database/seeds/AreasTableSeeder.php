@@ -1,7 +1,7 @@
 <?php
 
-use Ghi\Area;
 use Illuminate\Database\Seeder;
+use Ghi\Equipamiento\Areas\Area;
 
 class AreasTableSeeder extends Seeder
 {
@@ -12,12 +12,20 @@ class AreasTableSeeder extends Seeder
      */
     public function run()
     {
-//        $proyecto = factory(Area::class)->create(['nombre' => 'HOTEL SECRETS PLAYA MUJERES']);
-//
-//        $proyecto->appendNode(factory(Area::class)->make(['nombre' => 'Edificio 1']));
-//        $proyecto->appendNode(factory(Area::class)->create(['nombre' => 'Edificio 2']));
-//        $proyecto->appendNode(factory(Area::class)->create(['nombre' => 'Edificio 3']));
-//        $proyecto->appendNode(factory(Area::class)->create(['nombre' => 'Edificio 4']));
-//        $proyecto->appendNode(factory(Area::class)->create(['nombre' => 'Edificio 5']));
+        factory(Area::class, 5)->create(['id_obra' => 1])
+            ->each(function ($nivel1) {
+                factory(Area::class, 4)->create(['parent_id' => $nivel1->id, 'id_obra' => $nivel1->id_obra])
+                    ->each(function ($nivel2) {
+                        factory(Area::class, 10)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
+                });
+        });
+
+        factory(Area::class, 5)->create(['id_obra' => 2])
+            ->each(function ($nivel1) {
+                factory(Area::class, 4)->create(['parent_id' => $nivel1->id, 'id_obra' => $nivel1->id_obra])
+                    ->each(function ($nivel2) {
+                        factory(Area::class, 10)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
+                });
+        });
     }
 }

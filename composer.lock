@@ -609,12 +609,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lazychaser/laravel-nestedset.git",
-                "reference": "c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450"
+                "reference": "2d779aca90f296c3e04620ec3590172083d0dd95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450",
-                "reference": "c1c8ca95a8c850824f3657ac5d7c4c4bb90f2450",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/2d779aca90f296c3e04620ec3590172083d0dd95",
+                "reference": "2d779aca90f296c3e04620ec3590172083d0dd95",
                 "shasum": ""
             },
             "require": {
@@ -647,7 +647,7 @@
                 "nested sets",
                 "nsm"
             ],
-            "time": "2015-09-08 08:58:56"
+            "time": "2015-09-10 05:40:54"
         },
         {
             "name": "laracasts/flash",
