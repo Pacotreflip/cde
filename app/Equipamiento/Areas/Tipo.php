@@ -5,6 +5,7 @@ namespace Ghi\Equipamiento\Areas;
 use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Articulos\Material;
 
 class Tipo extends Node
 {
@@ -31,6 +32,18 @@ class Tipo extends Node
     public function obra()
     {
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    /**
+     * Materiales requeridos para este tipo de area
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function materiales()
+    {
+        return $this->belongsToMany(Material::class, 'Equipamiento.requerimientos', 'id_tipo_area', 'id_material')
+            ->orderBy('descripcion')
+            ->withPivot('cantidad');
     }
 
     /**

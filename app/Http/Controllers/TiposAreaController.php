@@ -40,21 +40,18 @@ class TiposAreaController extends Controller
      */
     public function index(Request $request)
     {
-        $tipo      = null;
-        $ancestros = [];
+        $tipo = null;
 
         if ($request->has('tipo')) {
             $tipo = $this->tipos->getById($request->get('tipo'));
             $descendientes = $tipo->children()->defaultOrder()->get();
-            $ancestros     = $tipo->getAncestors();
         } else {
             $descendientes = $this->tipos->getNivelesRaiz();
         }
 
         return view('tipos.index')
             ->withTipo($tipo)
-            ->withDescendientes($descendientes)
-            ->withAncestros($ancestros);
+            ->withDescendientes($descendientes);
 
         return view('tipos.index')->withTipos($tipos);
     }
@@ -113,13 +110,11 @@ class TiposAreaController extends Controller
      */
     public function edit($id)
     {
-        $tipo      = $this->tipos->getById($id);
-        $tipos     = [null => 'Inicio'] + $this->tipos->getListaTipos();
-        $ancestros = $tipo->getAncestors();
+        $tipo  = $this->tipos->getById($id);
+        $tipos = [null => 'Inicio'] + $this->tipos->getListaTipos();
 
         return view('tipos.edit')
             ->withTipo($tipo)
-            ->withAncestros($ancestros)
             ->withTipos($tipos);
     }
 

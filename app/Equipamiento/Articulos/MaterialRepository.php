@@ -19,16 +19,45 @@ class MaterialRepository
     }
 
     /**
+     * Obtiene todos los materiales
+     *
+     * @param array $except Ids de los materiales a excluir
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getAll($except = [])
+    {
+        return Material::soloMateriales()
+            ->whereNotIn('id_material', $except)
+            ->orderBy('descripcion')
+            ->get();
+    }
+
+    /**
      * Obtiene todos los materiales paginados
      *
      * @param int $howMany
+     * @param array $except Ids de los materiales a excluir
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllPaginated($howMany = 30)
+    public function getAllPaginated($howMany = 30, $except = [])
     {
-        return Material::whereRaw('LEN(nivel) > 4')
+        return Material::soloMateriales()
+            ->whereNotIn('id_material', $except)
             ->orderBy('descripcion')
             ->paginate($howMany);
+    }
+
+    /**
+     * Obtiene los materiales en forma de lista
+     * 
+     * @return array
+     */
+    public function getAsList()
+    {
+        return Material::soloMateriales()
+            ->orderBy('descripcion')
+            ->lists('descripcion', 'id_material')
+            ->all();
     }
 
     /**
@@ -36,11 +65,13 @@ class MaterialRepository
      *
      * @param string $busqueda Texto a buscar
      * @param int $howMany Numero de articulos por pagina
+     * @param array $except Ids de los materiales a excluir
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function buscar($busqueda, $howMany = 30)
+    public function buscar($busqueda, $howMany = 30, $except = [])
     {
-        return Material::whereRaw('LEN(nivel) > 4')
+        return Material::soloMateriales()
+            ->whereNotIn('id_material', $except)
             ->where(function ($query) use($busqueda) {
                 $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('numero_parte', 'LIKE', '%'.$busqueda.'%')
@@ -68,7 +99,8 @@ class MaterialRepository
      */
     public function getListaClasificadores()
     {
-        return Clasificador::orderBy('nombre')->lists('nombre', 'id')->all();
+        return Clasificador::orderBy('nombre')
+            ->lists('nombre', 'id')->all();
     }
 
     /**

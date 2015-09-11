@@ -3,7 +3,7 @@
         {!! Form::model(Request::only('buscar'), ['method' => 'GET', 'class' => 'form-inline']) !!}
             <div class="form-group">
                 {!! Form::text('buscar', null, ['class' => 'form-control input-sm', 
-                    'placeholder' => 'escriba el texto a buscar...']) !!}
+                    'placeholder' => 'buscar...']) !!}
             </div>
             {!! Form::submit('Buscar', ['class' => 'btn btn-sm btn-primary']) !!}
         {!! Form::close() !!}

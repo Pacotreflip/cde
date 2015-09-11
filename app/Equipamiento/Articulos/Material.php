@@ -2,6 +2,7 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
+use Ghi\Equipamiento\Areas\Tipo;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Articulos\Exceptions\FamiliaConDiferenteTipoException;
@@ -43,6 +44,16 @@ class Material extends Model
     protected $directorioBase = 'articulo/fichas';
 
     /**
+     * Scope para obtener los materiales sin familias
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSoloMateriales($query)
+    {
+        return $query->whereRaw('LEN(nivel) > 4');
+    }
+    /**
      * Clasificador al que pertenece este articulo
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -60,6 +71,16 @@ class Material extends Model
     public function fotos()
     {
         return $this->hasMany(Foto::class, 'id_material', 'id_material');
+    }
+
+    /**
+     * Tipos de area donde se requiere este material
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tiposArea()
+    {
+        return $this->belongsToMany(Tipo::class, 'Equipamiento.requerimientos', 'id_material', 'id_tipo_area');
     }
 
     /**

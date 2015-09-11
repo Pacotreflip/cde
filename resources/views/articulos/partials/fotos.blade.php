@@ -1,11 +1,11 @@
 <h3>Fotos</h3>
 <hr>
 @foreach($material->fotos->chunk(3) as $fotoset)
-    <div class="row text-center">
+    <div class="row center-block">
         @foreach($fotoset as $foto)
             <div class="col-xs-4 gallery__image">
                 <a href="/{{ $foto->path }}" target="_blank">
-                    <img src="/{{ $foto->thumbnail_path }}" alt="{{ $foto->nombre }}">
+                    <img src="/{{ $foto->thumbnail_path }}" class="img-responsive img-thumbnail" alt="{{ $foto->nombre }}">
                 </a>
             </div>
         @endforeach
