@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Control de Equipamiento - Grupo Hermes Infraestructura</title>
     <link rel="stylesheet" href="{{ asset("css/app.css") }}">
 
-</head>
-<body>
+  </head>
+  <body>
     @include('partials.nav')
 
     <div class="container">
@@ -19,5 +19,5 @@
     <script src="{{ asset("js/app.js") }}"></script>
 
     @yield('scripts')
-</body>
+  </body>
 </html>
