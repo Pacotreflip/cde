@@ -29,7 +29,7 @@ class TipoAreaRepository
      */
     public function getById($id)
     {
-        return Tipo::findOrFail($id);
+        return Tipo::with('materiales')->findOrFail($id);
     }
 
     /**

@@ -137,7 +137,7 @@ class AreasController extends Controller
     {
         $area   = $this->areas->getById($id);
         $parent = Area::find($request->get('parent_id'));
-        $tipo   = Tipo::find($request->get('subtipo_id'));
+        $tipo   = Tipo::find($request->get('tipo_id'));
 
         $area->fill($request->all());
 

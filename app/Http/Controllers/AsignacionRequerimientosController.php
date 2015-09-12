@@ -69,7 +69,7 @@ class AsignacionRequerimientosController extends Controller
     {
         $tipo = $this->tipos_area->getById($id);
         
-        $tipo->materiales()->attach($request->get('articulos'), ['cantidad' => 1]);
+        $tipo->requiereArticulo($request->get('articulos'));
 
         return redirect()->route('requerimientos.edit', [$id]);
     }
@@ -100,8 +100,8 @@ class AsignacionRequerimientosController extends Controller
         $tipo = $this->tipos_area->getById($id);
         $articulos = $request->get('articulos', []);
 
-        if ($request->has('action')) {
-            $seleccionados = array_keys($request->get('selected', []));
+        if ($request->has('action') and $request->get('action') == 'delete_selected') {
+            $seleccionados = $request->get('selected_articulos', []);
             $articulos = array_except($articulos, $seleccionados);
         }
 

@@ -16,6 +16,16 @@ class CreateRequerimientosTable extends Migration
             $table->unsignedInteger('id_tipo_area')->index();
             $table->unsignedInteger('id_material')->index();
             $table->integer('cantidad');
+
+            $table->foreign('id_tipo_area')
+                ->references('id')
+                ->on('Equipamiento.area_tipos')
+                ->onDelete('cascade');
+
+            $table->foreign('id_material')
+                ->references('id_material')
+                ->on('materiales')
+                ->onDelete('cascade');
         });
     }
 

@@ -89,4 +89,17 @@ class Tipo extends Node
 
         return $this;
     }
+
+    /**
+     * Agrega articulos requeridos a este tipo de area
+     * 
+     * @param  array|int  $material
+     * @return self
+     */
+    public function requiereArticulo($material = [])
+    {
+        $this->materiales()->attach($material, ['cantidad' => 1]);
+
+        return $this;
+    }
 }
