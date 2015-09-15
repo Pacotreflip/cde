@@ -33,6 +33,6 @@ class ContextController extends Controller
         $this->context->setId($id);
         $this->context->setDatabaseName($databaseName);
 
-        return redirect()->route('home');
+        return redirect()->route('areas.index');
     }
 }

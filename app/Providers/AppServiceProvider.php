@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('partials.nav', \Ghi\Http\Composers\ObraComposer::class);
+        View::composer('partials.nav-app', \Ghi\Http\Composers\ObraComposer::class);
     }
 
     /**

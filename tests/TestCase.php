@@ -7,7 +7,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      *
      * @var string
      */
-    protected $baseUrl = 'http://localhost';
+    protected $baseUrl = 'http://control-equipamiento.dev';
 
     /**
      * Creates the application.
@@ -21,5 +21,20 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    public function inicioSesion($usuario = 'test', $clave = 'secret')
+    {
+        $user = factory(\Ghi\Core\Models\UsuarioCadeco::class)->create([
+            'usuario' => $usuario, 'clave' => $clave
+        ]);
+
+        $this->visit('/')
+            ->seePageIs('/auth/login')
+            ->type($usuario, 'usuario')
+            ->type($clave, 'clave')
+            ->press('Iniciar sesión');
+
+        return $this;
     }
 }

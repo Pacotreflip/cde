@@ -67,8 +67,7 @@ class ArticulosController extends Controller
      */
     public function create()
     {
-        $deafult_option = [null => 'Seleccione una opcion'];
-        $unidades = $deafult_option + $this->materiales->getListaunidades();
+        $unidades = [null => 'Seleccione una opcion'] + $this->materiales->getListaunidades();
         $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
         $tipos    = $this->materiales->getListaTipoMateriales();
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
@@ -114,9 +113,8 @@ class ArticulosController extends Controller
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
 
-        $material->asignaUnidad($unidad);
         $material->agregarEnFamilia($familia);
-        $this->materiales->save($material);
+        $material->save();
 
         Flash::success('El articulo fue agregado');
 
@@ -131,7 +129,7 @@ class ArticulosController extends Controller
      */
     public function agregaFoto(AgregaFotoRequest $request, $id)
     {
-        $foto = Foto::desdeArchivo($request->file('foto'))->upload();
+        $foto = Foto::desdeArchivo($request->file('foto'));
         $this->materiales->getById($id)->agregaFoto($foto);
 
         if ($request->ajax()) {
@@ -176,7 +174,6 @@ class ArticulosController extends Controller
         $material->fill($request->all());
         $material->asignaUnidad($unidad);
         $material->agregarEnFamilia($familia);
-        
         $material->asignaClasificador($clasificador);
 
         if ($request->hasFile('ficha_tecnica')) {

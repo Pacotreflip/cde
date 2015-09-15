@@ -255,16 +255,16 @@
         },
         {
             "name": "ghi/core-domain",
-            "version": "1.0.6",
+            "version": "1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Grupo-Hermes-Infraestructura/core.git",
-                "reference": "620011ac9f3ce1d5f0892f1e18863bfe26479c15"
+                "reference": "a4f90542d9376a1217471654e84ec727c869cfb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/core/zipball/620011ac9f3ce1d5f0892f1e18863bfe26479c15",
-                "reference": "620011ac9f3ce1d5f0892f1e18863bfe26479c15",
+                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/core/zipball/a4f90542d9376a1217471654e84ec727c869cfb3",
+                "reference": "a4f90542d9376a1217471654e84ec727c869cfb3",
                 "shasum": ""
             },
             "require": {
@@ -293,20 +293,20 @@
                 "ghi",
                 "laravel"
             ],
-            "time": "2015-09-04 19:08:58"
+            "time": "2015-09-14 20:24:11"
         },
         {
             "name": "ghi/laravel-intranet-auth",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Grupo-Hermes-Infraestructura/laravel-intranet-auth.git",
-                "reference": "30bed6d065c08305ce6b58c8cf3c43b771b94dc3"
+                "reference": "7ae96930a7b5f3da0b960b82c3595b523ada0044"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/laravel-intranet-auth/zipball/30bed6d065c08305ce6b58c8cf3c43b771b94dc3",
-                "reference": "30bed6d065c08305ce6b58c8cf3c43b771b94dc3",
+                "url": "https://api.github.com/repos/Grupo-Hermes-Infraestructura/laravel-intranet-auth/zipball/7ae96930a7b5f3da0b960b82c3595b523ada0044",
+                "reference": "7ae96930a7b5f3da0b960b82c3595b523ada0044",
                 "shasum": ""
             },
             "require": {
@@ -336,7 +336,7 @@
                 "intranet",
                 "laravel"
             ],
-            "time": "2015-07-28 05:47:56"
+            "time": "2015-09-14 18:42:24"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -2646,16 +2646,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c"
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2d7c03c0e4e080901b8f33b2897b0577be18a13c",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
                 "shasum": ""
             },
             "require": {
@@ -2704,7 +2704,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-04 03:42:39"
+            "time": "2015-09-14 06:51:16"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2886,16 +2886,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.6",
+            "version": "4.8.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357"
+                "reference": "dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2246830f4a1a551c67933e4171bf2126dc29d357",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa",
+                "reference": "dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa",
                 "shasum": ""
             },
             "require": {
@@ -2954,7 +2954,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-24 04:09:38"
+            "time": "2015-09-14 06:57:22"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

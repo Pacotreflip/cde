@@ -124,7 +124,6 @@ class ProveedoresController extends Controller
     public function update(Requests\UpdateProveedorRequest $request, $id)
     {
         $proveedor = Proveedor::findOrFail($id);
-
         $proveedor->fill($request->all());
         $proveedor->tipo_empresa = new Tipo($request->get('tipo_empresa'));
         $proveedor->save();

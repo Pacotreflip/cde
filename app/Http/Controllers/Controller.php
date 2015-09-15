@@ -22,9 +22,9 @@ abstract class Controller extends BaseController
      */
     public function __construct()
     {
-        $this->user = \Auth::user();
+        $this->user = auth()->user();
         view()->share('user', $this->user);
-        view()->share('signedIn', \Auth::check());
+        view()->share('signedIn', auth()->check());
     }
 
     /**
@@ -34,7 +34,7 @@ abstract class Controller extends BaseController
      */
     protected function getIdObra()
     {
-        return Context::getId();
+        return \Context::getId();
     }
 
     /**

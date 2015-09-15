@@ -12,30 +12,30 @@ class Factory
      * @param string $numero_parte
      * @param Unidad $unidad
      * @param Unidad $unidad_compra
-     * @param TipoMaterial $tipo
+     * @param int $tipo
      * @return Material
      */
-    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, TipoMaterial $tipo)
+    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $tipo)
     {
         $material = $this->materialBase($nombre, $descripcion, $numero_parte, $unidad, $unidad_compra, $tipo);
 
-        if ((string) $tipo == TipoMaterial::TIPO_MATERIALES) {
+        if ($tipo == TipoMaterial::TIPO_MATERIALES) {
             return $this->nuevoDeTipoMaterial($material);
         }
 
-        if ((string) $tipo == TipoMaterial::TIPO_MANO_OBRA) {
+        if ($tipo == TipoMaterial::TIPO_MANO_OBRA) {
             return $this->nuevoDeTipoManoObra($material);
         }
 
-        if ((string) $tipo == TipoMaterial::TIPO_SERVICIOS) {
+        if ($tipo == TipoMaterial::TIPO_SERVICIOS) {
             return $this->nuevoDeTipoServicio($material);
         }
 
-        if ((string) $tipo == TipoMaterial::TIPO_MAQUINARIA) {
+        if ($tipo == TipoMaterial::TIPO_MAQUINARIA) {
             return $this->nuevoDeTipoMaquinaria($material);
         }
 
-        if ((string) $tipo == TipoMaterial::TIPO_HERRAMIENTA_Y_EQUIPO) {
+        if ($tipo == TipoMaterial::TIPO_HERRAMIENTA_Y_EQUIPO) {
             return $this->nuevoDeTipoHerramienta($material);
         }
     }
@@ -48,9 +48,9 @@ class Factory
      * @param string $numero_parte
      * @param Unidad $unidad
      * @param Unidad $unidad_compra
-     * @param TipoMaterial $tipo
+     * @param int $tipo
      */
-    protected function materialBase($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, TipoMaterial $tipo)
+    protected function materialBase($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $tipo)
     {
         $material = new Material([
                 'descripcion'       => $nombre,
@@ -58,11 +58,12 @@ class Factory
                 'numero_parte'      => $numero_parte,
                 'codigo_externo'    => $numero_parte,
         ]);
+
         $material->unidad        = $unidad->unidad;
         $material->unidad_compra = $unidad_compra->unidad;
         $material->equivalencia  = 1;
         $material->marca         = 1;
-        $material->tipo_material = $tipo;
+        $material->tipo_material = new TipoMaterial($tipo);
 
         return $material;
     }

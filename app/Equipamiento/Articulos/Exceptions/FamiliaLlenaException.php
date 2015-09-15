@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi\Equipamiento\Articulos;
+namespace Ghi\Equipamiento\Articulos\Exceptions;
 
 use Ghi\Core\Exceptions\ReglaNegocioException;
 

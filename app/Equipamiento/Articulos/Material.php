@@ -5,7 +5,6 @@ namespace Ghi\Equipamiento\Articulos;
 use Ghi\Equipamiento\Areas\Tipo;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Ghi\Equipamiento\Articulos\Exceptions\FamiliaConDiferenteTipoException;
 
 class Material extends Model
 {
@@ -113,7 +112,10 @@ class Material extends Model
      */
     public function getTipoMaterialAttribute($value)
     {
-        if ($value == TipoMaterial::TIPO_SERVICIOS) {
+        // Para diferenciar cuando el material es de tipo servicios y devolver el tipo correcto
+        // por la inconsistencia de que mano de obra y servicios comparten el mismo numero
+        // de tipo
+        if ($value == TipoMaterial::TIPO_MANO_OBRA and $this->attributes['marca'] == 1) {
             return new TipoMaterial(TipoMaterial::TIPO_SERVICIOS);
         }
 
@@ -125,8 +127,12 @@ class Material extends Model
      *
      * @param TipoMaterial $value
      */
-    public function setTipoMaterialAttribute(TipoMaterial $value)
+    public function setTipoMaterialAttribute($value)
     {
+        if (! $value instanceof TipoMaterial) {
+            $value = new TipoMaterial($value);
+        }
+
         $this->attributes['tipo_material'] = $value->getTipoReal();
     }
 
@@ -135,14 +141,9 @@ class Material extends Model
      *
      * @param Familia $familia
      * @return Material
-     * @throws \Ghi\Equipamiento\Articulos\Exceptions\FamiliaConDiferenteTipoException
      */
     public function agregarEnFamilia(Familia $familia)
     {
-        if ($this->tipo_material != $familia->tipo_material) {
-            throw new FamiliaConDiferenteTipoException;
-        }
-
         $familia->agregaMaterial($this);
         return $this;
     }
@@ -155,11 +156,20 @@ class Material extends Model
      */
     public function isChildrenOf(Familia $familia)
     {
-        if ($this->familia()) {
-            return $this->familia()->id_material == $familia->id_material;
-        }
+        return $this->tipo_material == $familia->tipo_material and
+                $this->nivelFamilia() == $familia->nivel;
 
         return false;
+    }
+
+    /**
+     * Obtiene el nivel de la familia asociada con este material
+     * 
+     * @return string
+     */
+    public function nivelFamilia()
+    {
+        return substr($this->nivel, 0, 4);
     }
 
     /**

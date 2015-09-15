@@ -3,7 +3,6 @@
 namespace Ghi\Equipamiento\Areas;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Kalnoy\Nestedset\Node;
 
 class Area extends Node

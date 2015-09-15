@@ -35,6 +35,19 @@ class Foto extends Model
     protected $file;
 
     /**
+     * Nombre del archivo
+     * @var string
+     */
+    protected $fileName;
+
+    protected static function boot()
+    {
+        static::creating(function ($foto) {
+            return $foto->upload();
+        });
+    }
+
+    /**
      * Articulo relacionado con esta fotografia
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -76,27 +89,29 @@ class Foto extends Model
 
         $extesion = $this->file->getClientOriginalExtension();
 
-        return "{$name}.{$extesion}";
+        $this->fileName =  "{$name}.{$extesion}";
+
+        return $this->fileName;
     }
 
     /**
-     * Genera el directorio del archivo
+     * Genera el directorio completo de la foto
      * 
      * @return string
      */
     public function filePath()
     {
-        return $this->baseDir() . "/" . $this->fileName();
+        return $this->baseDir() . "/" . $this->fileName;
     }
 
     /**
-     * Genera el nombre del archivo thumbnail
+     * Genera el directorio completo del thumbnail
      * 
      * @return string
      */
     public function thumbnailPath()
     {
-        return $this->baseDir() . '/tn-' . $this->fileName();
+        return $this->baseDir() . '/tn-' . $this->fileName;
     }
 
     /**
@@ -117,11 +132,11 @@ class Foto extends Model
      */
     public function upload()
     {
-        $this->file->move($this->baseDir(), $this->fileName());
+        $uploaded = $this->file->move($this->baseDir(), $this->fileName);
         
         $this->creaThumbnail($this->file);
 
-        return $this;
+        return $uploaded;
     }
 
     /**

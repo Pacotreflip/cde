@@ -2,14 +2,12 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
-use Ghi\Equipamiento\Articulos\Scopes\FamiliaScopeTrait;
 use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Ghi\Equipamiento\Articulos\Exceptions\FamiliaLlenaException;
+use Ghi\Equipamiento\Articulos\Exceptions\MaterialConDiferenteTipoException;
 
 class Familia extends Model
 {
-    // use FamiliaScopeTrait;
-
     const MAX_HIJOS_EN_FAMILIA = 999;
 
     /**
@@ -68,9 +66,19 @@ class Familia extends Model
      */
     protected function estaLlena()
     {
+        return $this->children()->count() >= static::MAX_HIJOS_EN_FAMILIA;
+    }
+
+    /**
+     * Obtiene los hijos de esta familia
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function children()
+    {
         return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
             ->where('tipo_material', $this->tipo_material)
-            ->count() >= static::MAX_HIJOS_EN_FAMILIA;
+            ->get();
     }
 
     /**
@@ -78,10 +86,15 @@ class Familia extends Model
      *
      * @param Material $material
      * @return Material
-     * @throws FamiliaLlenaException
+     * @throws \Ghi\Equipamiento\Articulos\Exceptions\FamiliaLlenaException
+     * @throws \Ghi\Equipamiento\Articulos\Exceptions\MaterialConDiferenteTipoException
      */
     public function agregaMaterial(Material $material)
     {
+        if ($this->tipo_material != $material->tipo_material) {
+            throw new MaterialConDiferenteTipoException;
+        }
+
         if ($material->isChildrenOf($this)) {
             return $material;
         }
@@ -99,6 +112,7 @@ class Familia extends Model
         }
 
         $material->nivel = sprintf("%s%s", $this->nivel, $this->enteroANivel($nuevo_nivel));
+        $material->save();
 
         return $material;
     }
