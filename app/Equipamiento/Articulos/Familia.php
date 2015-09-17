@@ -77,6 +77,7 @@ class Familia extends Model
     public function children()
     {
         return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
+            ->whereRaw('LEN(nivel) > 4')
             ->where('tipo_material', $this->tipo_material)
             ->get();
     }

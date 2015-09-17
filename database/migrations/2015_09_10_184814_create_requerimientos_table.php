@@ -16,6 +16,7 @@ class CreateRequerimientosTable extends Migration
             $table->unsignedInteger('id_tipo_area')->index();
             $table->unsignedInteger('id_material')->index();
             $table->integer('cantidad');
+            $table->timestamps();
 
             $table->foreign('id_tipo_area')
                 ->references('id')

@@ -79,7 +79,8 @@ class Material extends Model
      */
     public function tiposArea()
     {
-        return $this->belongsToMany(Tipo::class, 'Equipamiento.requerimientos', 'id_material', 'id_tipo_area');
+        return $this->belongsToMany(Tipo::class, 'Equipamiento.requerimientos', 'id_material', 'id_tipo_area')
+            ->withTimestamps();
     }
 
     /**

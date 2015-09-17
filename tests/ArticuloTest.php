@@ -96,7 +96,7 @@ class ArticuloTest extends TestCase
         $familia = factory(Ghi\Equipamiento\Articulos\Familia::class)->create(['nivel' => '900.']);
         $unidad = factory(Unidad::class)->create(['unidad' => 'TEST']);
 
-        $materiales = factory(Material::class, 999)->make([
+        $materiales = factory(Material::class, 1000)->make([
             'unidad' => $unidad->unidad,
             'unidad_compra' => $unidad->unidad
             ])->each(function ($material) use ($familia) {
