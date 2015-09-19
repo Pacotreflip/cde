@@ -25,8 +25,7 @@ class CreateRequerimientosTable extends Migration
 
             $table->foreign('id_material')
                 ->references('id_material')
-                ->on('materiales')
-                ->onDelete('cascade');
+                ->on('materiales');
         });
     }
 

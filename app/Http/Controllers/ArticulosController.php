@@ -5,13 +5,10 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
-use Ghi\Equipamiento\Articulos\Foto;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Unidad;
 use Ghi\Equipamiento\Articulos\Factory;
 use Ghi\Equipamiento\Articulos\Familia;
-use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Http\Requests\AgregaFotoRequest;
 use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Http\Requests\CreateArticuloRequest;
@@ -67,9 +64,9 @@ class ArticulosController extends Controller
      */
     public function create()
     {
-        $unidades = [null => 'Seleccione una opcion'] + $this->materiales->getListaunidades();
-        $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
-        $tipos    = $this->materiales->getListaTipoMateriales();
+        $unidades       = [null => 'Seleccione una opcion'] + $this->materiales->getListaunidades();
+        $familias       = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
+        $tipos          = $this->materiales->getListaTipoMateriales();
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.create')
@@ -101,7 +98,7 @@ class ArticulosController extends Controller
             $request->get('numero_parte'),
             $unidad,
             $unidad,
-            new TipoMaterial(TipoMaterial::TIPO_MATERIALES)
+            TipoMaterial::TIPO_MATERIALES
         );
 
         if ($request->has('id_clasificador')) {
@@ -119,22 +116,6 @@ class ArticulosController extends Controller
         Flash::success('El articulo fue agregado');
 
         return redirect()->route('articulos.edit', [$material]);
-    }
-
-    /**
-     * Agrega una foto a un articulo.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function agregaFoto(AgregaFotoRequest $request, $id)
-    {
-        $foto = Foto::desdeArchivo($request->file('foto'));
-        $this->materiales->getById($id)->agregaFoto($foto);
-
-        if ($request->ajax()) {
-            return response($foto->thumbnailPath());
-        }
     }
 
     /**
@@ -185,16 +166,5 @@ class ArticulosController extends Controller
         Flash::success('Los cambios fueron guardados');
 
         return back();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

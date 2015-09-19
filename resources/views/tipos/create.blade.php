@@ -4,7 +4,7 @@
   <ol class="breadcrumb">
     <li>
       <a href="{{ route('tipos.index', Request::has('dentro_de') ? 
-        ['tipo' => Request::get('dentro_de')]) : [] }}">Tipos de Área</a>
+        ['tipo' => Request::get('dentro_de')] : []) }}">Tipos de Área</a>
     </li>
     <li class="active">Nuevo Tipo</li>
   </ol>

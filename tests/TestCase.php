@@ -23,17 +23,26 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         return $app;
     }
 
-    public function inicioSesion($usuario = 'test', $clave = 'secret')
+    public function inicioSesion(array $overrides = ['clave' => 'secret'])
     {
-        $user = factory(\Ghi\Core\Models\UsuarioCadeco::class)->create([
-            'usuario' => $usuario, 'clave' => $clave
-        ]);
+        $user = factory(Ghi\Core\Models\User::class)->create($overrides);
 
         $this->visit('/')
             ->seePageIs('/auth/login')
-            ->type($usuario, 'usuario')
-            ->type($clave, 'clave')
+            ->type($user->usuario, 'usuario')
+            ->type($overrides['clave'], 'clave')
             ->press('Iniciar sesión');
+
+        return $this;
+    }
+
+    public function seleccionoObra(array $overrides = [])
+    {
+        $obra = factory(\Ghi\Core\Models\Obra::class)->create($overrides);
+
+        $this->visit('/obras')
+            ->click($obra->nombre)
+            ->seePageIs('/tipos-area');
 
         return $this;
     }
