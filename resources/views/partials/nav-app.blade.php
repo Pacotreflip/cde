@@ -20,7 +20,7 @@
         <li><a href="{{ route('proveedores.index') }}">Proveedores</a></li>
     </ul>
   </li>
-  {{--<li><a href="#">Adquisición</a></li>--}}
+  <li><a href="{{ route('adquisiciones.index') }}">Adquisiciónes</a></li>
   {{--<li><a href="#">Recepción</a></li>--}}
   {{--<li><a href="#">Transferencias</a></li>--}}
   {{--<li><a href="#">Asignación</a></li>--}}

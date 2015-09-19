@@ -43,7 +43,7 @@ Route::get('articulos/nuevo', ['as' => 'articulos.create', 'uses' => 'ArticulosC
 Route::post('articulos', ['as' => 'articulos.store', 'uses' => 'ArticulosController@store']);
 Route::get('articulos/{id}', ['as' => 'articulos.edit', 'uses' => 'ArticulosController@edit']);
 Route::patch('articulos/{id}', ['as' => 'articulos.update', 'uses' => 'ArticulosController@update']);
-Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'ArticulosController@agregaFoto']);
+Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'FotosController@agregaFoto']);
 
 // Rutas de proveedores...
 Route::get('proveedores', ['as' => 'proveedores.index', 'uses' => 'ProveedoresController@index']);
@@ -60,3 +60,10 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::post('asignacion-requerimientos', ['as' => 'requerimientos.store', 'uses' => 'AsignacionRequerimientosController@store']);
     Route::patch('asignacion-requerimientos', ['as' => 'requerimientos.update', 'uses' => 'AsignacionRequerimientosController@update']);
 });
+
+// Rutas de adquisiciones...
+Route::get('adquisiciones', ['as' => 'adquisiciones.index', 'uses' => 'AdquisicionesController@index']);
+Route::get('adquisiciones/nueva', ['as' => 'adquisiciones.create', 'uses' => 'AdquisicionesController@create']);
+Route::get('adquisiciones/{id}', ['as' => 'adquisiciones.show', 'uses' => 'AdquisicionesController@show']);
+
+

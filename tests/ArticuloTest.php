@@ -1,12 +1,13 @@
 <?php
 
-use Ghi\Equipamiento\Articulos\Unidad;
-use Ghi\Equipamiento\Articulos\Factory;
-use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Articulos\TipoMaterial;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+namespace Ghi\Equipamiento\Articulos;
 
-class ArticuloTest extends TestCase
+use Mockery as m;
+use Intervention\Image\Facades\Image;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+class ArticuloTest extends \TestCase
 {
     use \CadecoDatabaseTransactions;
 
@@ -71,7 +72,7 @@ class ArticuloTest extends TestCase
     public function test_agregar_material_en_familia()
     {
         $material = $this->nuevoMaterial();
-        $familia = factory(Ghi\Equipamiento\Articulos\Familia::class)->create(['nivel' => '700.']);
+        $familia = factory(Familia::class)->create(['nivel' => '700.']);
 
         $familia->agregaMaterial($material);
         $this->assertTrue($material->isChildrenOf($familia));
@@ -80,10 +81,10 @@ class ArticuloTest extends TestCase
     /** @test */
     public function test_lanza_excepcion_al_agregar_un_material_a_familia_con_diferente_tipo()
     {
-        $this->setExpectedException(Ghi\Equipamiento\Articulos\Exceptions\MaterialConDiferenteTipoException::class);
+        $this->setExpectedException(\Ghi\Equipamiento\Articulos\Exceptions\MaterialConDiferenteTipoException::class);
 
+        $familia = factory(Familia::class)->create(['nivel' => '800.']);
         $material = $this->nuevoMaterial(TipoMaterial::TIPO_SERVICIOS);
-        $familia = factory(Ghi\Equipamiento\Articulos\Familia::class)->create(['nivel' => '800.']);
 
         $familia->agregaMaterial($material);
     }
@@ -91,10 +92,10 @@ class ArticuloTest extends TestCase
     /** @test */
     public function test_lanza_excepcion_al_agregar_un_material_a_una_familia_llena()
     {
-        $this->setExpectedException(Ghi\Equipamiento\Articulos\Exceptions\FamiliaLlenaException::class);
+        $this->setExpectedException(\Ghi\Equipamiento\Articulos\Exceptions\FamiliaLlenaException::class);
 
-        $familia = factory(Ghi\Equipamiento\Articulos\Familia::class)->create(['nivel' => '900.']);
-        $unidad = factory(Unidad::class)->create(['unidad' => 'TEST']);
+        $familia = factory(Familia::class)->create(['nivel' => '900.']);
+        $unidad  = factory(Unidad::class)->create(['unidad' => 'TEST']);
 
         $materiales = factory(Material::class, 1000)->make([
             'unidad' => $unidad->unidad,
@@ -104,12 +105,38 @@ class ArticuloTest extends TestCase
             });
     }
 
+    /** @test */
+    public function test_agrega_fotografia_a_material()
+    {
+        $material = factory(Material::class)->create();
+
+        $file = m::mock(UploadedFile::class, [
+            'getClientOriginalName'      => 'foo',
+            'getClientOriginalExtension' => 'jpg',
+        ]);
+
+        $file->shouldReceive('move')
+            ->once()
+            ->with('articulo/fotos', 'nowfoo.jpg')
+            ->andReturn(true);
+
+        $thumbnail = m::mock(Thumbnail::class, ['make' => true]);
+
+        $thumbnail->shouldReceive('make')
+            ->once()
+            ->with('articulo/fotos/nowfoo.jpg', 'articulo/fotos/tn-nowfoo.jpg')
+            ->andReturn(true);
+
+        (new AgregaFotoAMaterial($material, $file, $thumbnail))->save();
+
+        $this->assertCount(1, $material->fotos);
+    }
 
     public function nuevoMaterial($tipo = TipoMaterial::TIPO_MATERIALES)
     {
         $factory = new Factory;
-        $material = factory(Material::class)->make(['tipo_material' => $tipo]);
         $unidad = factory(Unidad::class)->create();
+        $material = factory(Material::class)->make(['tipo_material' => $tipo, 'unidad' => $unidad->unidad]);
 
         return $factory->make(
             $material->descripcion,
@@ -120,4 +147,12 @@ class ArticuloTest extends TestCase
             $tipo
         );
     }
+}
+
+function time() {
+    return 'now';
+}
+
+function sha1($value) {
+    return $value;
 }
