@@ -15,7 +15,7 @@ class Factory
      * @param int $tipo
      * @return Material
      */
-    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $tipo)
+    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $tipo = TipoMaterial::TIPO_MATERIALES)
     {
         $material = $this->materialBase($nombre, $descripcion, $numero_parte, $unidad, $unidad_compra, $tipo);
 

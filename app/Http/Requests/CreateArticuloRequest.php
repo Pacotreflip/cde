@@ -28,8 +28,7 @@ class CreateArticuloRequest extends Request
             'unidad'             => 'required_if:nueva_unidad,null',
             'nueva_unidad'       => 'required_without:unidad|unique:cadeco.unidades,unidad',
             'ficha_tecnica'      => 'mimes:pdf',
-            'id_familia'         => 'required',
-            // 'clasificador_id' => 'required',
+            'familia'         => 'required',
         ];
     }
 }

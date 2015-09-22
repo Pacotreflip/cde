@@ -24,14 +24,33 @@ class AdquisicionesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ordenes = Transaccion::ordenesCompraMateriales()
-            ->orderBy('numero_folio', 'DESC')
-            ->paginate();
+        $ordenes = $this->buscar($request->get('buscar'));
 
         return view('adquisiciones.index')
             ->withOrdenes($ordenes);
+    }
+
+    /**
+     * Busca ordenes de compra
+     * 
+     * @param  string  $busqueda El texto a buscar
+     * @param  integer $howMany  Cuantos resultados por pagina
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function buscar($busqueda, $howMany = 15)
+    {
+        return Transaccion::ordenesCompraMateriales()
+            ->where(function ($query) use ($busqueda) {
+                $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhereHas('empresa', function ($query) use ($busqueda) {
+                        $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
+                    });
+            })
+            ->orderBy('numero_folio', 'DESC')
+            ->paginate($howMany);
     }
 
     /**
@@ -58,17 +77,6 @@ class AdquisicionesController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -83,17 +91,6 @@ class AdquisicionesController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -101,17 +98,6 @@ class AdquisicionesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
     {
         //
     }

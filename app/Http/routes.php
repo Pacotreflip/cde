@@ -63,7 +63,6 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
 
 // Rutas de adquisiciones...
 Route::get('adquisiciones', ['as' => 'adquisiciones.index', 'uses' => 'AdquisicionesController@index']);
-Route::get('adquisiciones/nueva', ['as' => 'adquisiciones.create', 'uses' => 'AdquisicionesController@create']);
 Route::get('adquisiciones/{id}', ['as' => 'adquisiciones.show', 'uses' => 'AdquisicionesController@show']);
 
 

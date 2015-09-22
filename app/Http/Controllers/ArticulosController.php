@@ -90,19 +90,18 @@ class ArticulosController extends Controller
             $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
         }
 
-        $familia = Familia::findOrFail($request->get('id_familia'));
+        $familia = Familia::findOrFail($request->get('familia'));
 
         $material = $materiales->make(
             $request->get('descripcion'),
             $request->get('descripcion_larga'),
             $request->get('numero_parte'),
             $unidad,
-            $unidad,
-            TipoMaterial::TIPO_MATERIALES
+            $unidad
         );
 
-        if ($request->has('id_clasificador')) {
-            $clasificador = $this->clasificadores->getById($request->get('id_clasificador'));
+        if ($request->has('clasificador')) {
+            $clasificador = $this->clasificadores->getById($request->get('clasificador'));
             $material->asignaClasificador($clasificador);
         }
 
@@ -149,8 +148,8 @@ class ArticulosController extends Controller
     {
         $material     = $this->materiales->getById($id);
         $unidad       = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
-        $clasificador = Clasificador::find($request->get('id_clasificador'));
-        $familia      = Familia::findOrFail($request->get('id_familia'));
+        $clasificador = Clasificador::find($request->get('clasificador'));
+        $familia      = Familia::findOrFail($request->get('familia'));
 
         $material->fill($request->all());
         $material->asignaUnidad($unidad);

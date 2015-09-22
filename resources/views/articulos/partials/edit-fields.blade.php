@@ -25,16 +25,16 @@
   <div class="col-xs-6">
     <!-- Familia Form Input -->
     <div class="form-group">
-      {!! Form::label('id_familia', 'Familia:') !!}
-      {!! Form::select('id_familia', $familias, 
+      {!! Form::label('familia', 'Familia:') !!}
+      {!! Form::select('familia', $familias, 
         $material->familia() ? $material->familia()->id_material : null, ['class' => 'form-control']) !!}
     </div>
   </div>
   <div class="col-xs-6">
     <!-- Clasificador Form Input -->
     <div class="form-group">
-        {!! Form::label('id_clasificador', 'Clasificador:') !!}
-        {!! Form::select('id_clasificador', $clasificadores, null, ['class' => 'form-control']) !!}
+        {!! Form::label('clasificador', 'Clasificador:') !!}
+        {!! Form::select('clasificador', $clasificadores, null, ['class' => 'form-control']) !!}
     </div>
   </div>
 </div>
