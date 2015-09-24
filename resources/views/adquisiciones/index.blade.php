@@ -29,5 +29,5 @@
     </tbody>
   </table>
 
-  {!! $ordenes->render() !!}
+  {!! $ordenes->appends(Request::only('buscar'))->render() !!}
 @stop
