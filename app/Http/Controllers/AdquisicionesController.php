@@ -35,13 +35,15 @@ class AdquisicionesController extends Controller
     /**
      * Busca ordenes de compra
      * 
-     * @param  string  $busqueda El texto a buscar
-     * @param  integer $howMany  Cuantos resultados por pagina
+     * @param string  $busqueda El texto a buscar
+     * @param integer $howMany  Cuantos resultados por pagina
+     * 
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function buscar($busqueda, $howMany = 15)
     {
         return Transaccion::ordenesCompraMateriales()
+            ->where('id_obra', $this->getIdObra())
             ->where(function ($query) use ($busqueda) {
                 $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')

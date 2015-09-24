@@ -65,4 +65,29 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
 Route::get('adquisiciones', ['as' => 'adquisiciones.index', 'uses' => 'AdquisicionesController@index']);
 Route::get('adquisiciones/{id}', ['as' => 'adquisiciones.show', 'uses' => 'AdquisicionesController@show']);
 
+// Rutas de recepcion de articulos...
+Route::get('recepcion-articulos', ['as' => 'recepciones.index', 'uses' => 'RecepcionesController@index']);
+Route::get('recepcion-articulos/recibir', ['as' => 'recepciones.create', 'uses' => 'RecepcionesController@create']);
+Route::post('recepcion-articulos', ['as' => 'recepciones.store', 'uses' => 'RecepcionesController@store']);
+Route::get('recepcion-articulos/{id}', ['as' => 'recepciones.show', 'uses' => 'RecepcionesController@show']);
+Route::patch('recepcion-articulos/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
+Route::delete('recepcion-articulos/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
+
+
+
+Route::group(['prefix' => 'api'], function () {
+
+    Route::get('materiales', function (Illuminate\Http\Request $request) {
+        $busqueda = $request->buscar;
+
+        return Ghi\Equipamiento\Articulos\Material::soloMateriales()
+            ->select('id_material', 'descripcion', 'numero_parte')
+            ->where(function ($query) use ($busqueda) {
+                $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('numero_parte', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('codigo_externo', 'LIKE', '%'.$busqueda.'%');
+            })
+            ->get();
+    });
+});
 

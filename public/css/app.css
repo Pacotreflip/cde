@@ -9132,6 +9132,31 @@ button.close {
 .table .rowlink td:not(.rowlink-skip) {
   cursor: pointer;
 }
+.tt-menu {
+  border: 1px solid #e3e3e3;
+  max-height: 250px;
+  overflow-y: auto;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+.tt-suggestion {
+  background-color: white;
+  border-bottom: 0.5em;
+  cursor: pointer;
+  padding: 1em;
+}
+.tt-cursor {
+  background-color: #e3e3e3;
+}
+.tt-notfound {
+  color: red;
+  padding: 1em;
+}
+.tt-highlight {
+  font-weight: bolder;
+  background-color: yellow;
+}
 body {
   margin-top: 70px;
 }

@@ -131,16 +131,52 @@ $factory->define(Ghi\Equipamiento\Proveedores\Proveedor::class, function (Faker\
     ];
 });
 
-$factory->define(Ghi\Equipamiento\Adquisiciones\Adquisicion::class, function (Faker\Generator $faker) {
+$factory->define(Ghi\Equipamiento\Transacciones\Transaccion::class, function (Faker\Generator $faker) {
+    $obra = Ghi\Core\Models\Obra::find(1) ?: factory(Ghi\Core\Models\Obra::class)->create();
+    $moneda = Ghi\Core\Models\Moneda::find(1) ?: factory(Ghi\Core\Models\Moneda::class)->create();
+
     return [
-        'fecha'           => $faker->dateTimeThisMonth,
-        'fecha_entrega'   => $faker->dateTimeThisMonth,
-        'observaciones'   => $faker->text,
-        'id_obra'         => null,
-        'id_empresa'      => factory(Ghi\Equipamiento\Proveedores\Proveedor::class)->create()->id_empresa,
-        'id_orden_compra' => null,
-        'numero_folio'    => $faker->randomNumber($nbDigits=6),
-        'documento'       => '',
-        'documento_path'  => '',
+        'id_obra'          => $obra->id_obra,
+        'tipo_transaccion' => null,
+        'numero_folio'     => $faker->randomNumber($nbDigits=6),
+        'fecha'            => $faker->dateTimeThisYear,
+        'id_empresa'       => null,
+        'id_sucursal'      => null,
+        'id_moneda'        => $moneda->id_moneda,
+        'opciones'         => 1,
+        'monto'            => $faker->randomFloat,
+        'saldo'            => $faker->randomFloat,
+        'impuesto'         => $faker->randomFloat,
+        'comentario'       => $faker->sentence,
+        'observaciones'    => $faker->text,
     ];
 });
+
+$factory->defineAs(Ghi\Equipamiento\Transacciones\Transaccion::class, 'orden_compra', function (Faker\Generator $faker) use ($factory) {
+    $transaccion = $factory->raw(Ghi\Equipamiento\Transacciones\Transaccion::class);
+
+    return array_merge($transaccion, [
+        'porcentaje_anticipo_pactado' => $faker->randomNumber($nbDigits=3),
+        'tipo_transaccion'            => Ghi\Equipamiento\Transacciones\Tipo::ORDEN_COMPRA,
+        'opciones'                    => 1,
+        'id_empresa'                  => factory(Ghi\Equipamiento\Proveedores\Proveedor::class)->create()->id_empresa,
+    ]);
+});
+
+$factory->define(Ghi\Equipamiento\Recepciones\Recepcion::class, function (Faker\Generator $faker) {
+    $orden_compra = factory(Ghi\Equipamiento\Transacciones\Transaccion::class, 'orden_compra')->create();
+    return [
+        'id_obra'                => $orden_compra->id_obra,
+        'numero_folio'           => $faker->randomNumber($nbDigits=6),
+        'id_empresa'             => factory(Ghi\Equipamiento\Proveedores\Proveedor::class)->create()->id_empresa,
+        'id_orden_compra'        => $orden_compra->id_transaccion,
+        'id_area_almacenamiento' => factory(Ghi\Equipamiento\Areas\Area::class)->create(['id_obra' => $orden_compra->id_obra])->id,
+        'fecha_recepcion'        => $faker->dateTimeThisYear,
+        'referencia_documento'   => $faker->sentence,
+        'orden_embarque'         => $faker->sentence,
+        'numero_pedido'          => $faker->sentence,
+        'persona_recibe'         => $faker->name,
+        'observaciones'          => $faker->text,
+    ];
+});
+

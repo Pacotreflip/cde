@@ -31,6 +31,9 @@ class Proveedor extends Model
      */
     public $timestamps = false;
 
+    /**
+     * @var array
+     */
     protected $casts = [
         'tipo_empresa' => 'int'
     ];
@@ -48,6 +51,7 @@ class Proveedor extends Model
 
     /**
      * Scope para filtrar las empresas que son proveedores y contratistas
+     * 
      * @param  Builder $query
      * @return Builder
      */
