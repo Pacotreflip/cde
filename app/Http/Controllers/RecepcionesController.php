@@ -42,7 +42,7 @@ class RecepcionesController extends Controller
      */
     public function create()
     {
-        $proveedores = Proveedor::soloProveedores()
+        $proveedores = [null => ''] + Proveedor::soloProveedores()
             ->orderBy('razon_social')
             ->lists('razon_social', 'id_empresa')->all();
 
