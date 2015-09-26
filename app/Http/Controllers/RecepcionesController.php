@@ -64,6 +64,7 @@ class RecepcionesController extends Controller
      */
     public function store(CreateRecepcionRequest $request)
     {
+        return 
         return $request->all();
     }
 

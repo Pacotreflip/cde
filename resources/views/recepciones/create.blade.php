@@ -326,6 +326,7 @@
           e.preventDefault();
 
           this.recibiendo = true;
+          this.recepcionForm.errors = [];
 
           this.$http.post('/recepcion-articulos', this.recepcionForm)
               .success(function(response) {
