@@ -38,13 +38,9 @@ class AgregaFotoAMaterial
     {
         $foto = $this->nuevaFoto();
 
-        if (! $this->file->move($foto->baseDir(), $foto->nombre)) {
-            throw new \Exception('La foto no pudo ser almacenada');
-        }
+        $this->file->move($foto->baseDir(), $foto->nombre);
 
-        if (! $this->thumbnail->make($foto->path, $foto->thumbnail_path)) {
-            throw new \Exception('El thumbnail no pudo ser creado');
-        }
+        $this->thumbnail->make($foto->path, $foto->thumbnail_path);
 
         $this->material->agregaFoto($foto);
 

@@ -32,7 +32,7 @@ class FotosController extends Controller
         $foto = (new AgregaFotoAMaterial($material, $request->file('foto')))->save();
 
         if ($request->ajax()) {
-            return response($foto->thumbnail_path);
+            return response()->json($foto->thumbnail_path);
         }
     }
 }
