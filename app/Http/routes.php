@@ -73,21 +73,9 @@ Route::get('recepcion-articulos/{id}', ['as' => 'recepciones.show', 'uses' => 'R
 Route::patch('recepcion-articulos/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
 Route::delete('recepcion-articulos/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
 
-
-
+// Rutas del api...
 Route::group(['prefix' => 'api'], function () {
-
-    Route::get('materiales', function (Illuminate\Http\Request $request) {
-        $busqueda = $request->buscar;
-
-        return Ghi\Equipamiento\Articulos\Material::soloMateriales()
-            ->select('id_material', 'descripcion', 'numero_parte')
-            ->where(function ($query) use ($busqueda) {
-                $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('numero_parte', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('codigo_externo', 'LIKE', '%'.$busqueda.'%');
-            })
-            ->get();
-    });
+    Route::get('materiales', 'Api\MaterialesController@index');
+    Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
 });
 

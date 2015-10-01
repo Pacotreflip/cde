@@ -13,7 +13,7 @@
       <tr>
         <th>Folio</th>
         <th>Folio O/C</th>
-        <th>Fecha Entrega</th>
+        <th>Fecha Recepción</th>
         <th>Proveedor</th>
         <th>Observaciones</th>
         <th></th>

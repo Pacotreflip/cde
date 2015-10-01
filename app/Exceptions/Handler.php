@@ -3,6 +3,7 @@
 namespace Ghi\Exceptions;
 
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Ghi\Core\Exceptions\ReglaNegocioException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -47,6 +48,11 @@ class Handler extends ExceptionHandler
             flash()->error('El recurso buscado no fue encontrado.');
             return back();
         } elseif ($e instanceof ReglaNegocioException) {
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse([$e->getMessage()], 500);
+            }
+
             flash()->error($e->getMessage());
             return back();
         }

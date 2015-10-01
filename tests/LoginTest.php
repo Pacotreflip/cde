@@ -10,7 +10,7 @@ class LoginTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(\Ghi\Core\Models\UsuarioCadeco::class)->create();
+        $user = factory(\Ghi\Core\Models\User::class)->create();
 
         $this->visit('/auth/login')
             ->seePageIs('/auth/login')

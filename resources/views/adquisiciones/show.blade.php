@@ -15,7 +15,9 @@
     <div class="form-group">
       <label class="col-sm-2 control-label">Fecha:</label>
       <div class="col-sm-10">
-        <p class="form-control-static">{{ $orden->fecha->format('d-m-Y') }}</p>
+        <p class="form-control-static">
+          {{ $orden->fecha->format('d-m-Y') }}
+          <span class="text-muted">({{ $orden->fecha->diffForHumans() }})</span></p>
       </div>
     </div>
 
@@ -36,15 +38,18 @@
   
   <hr>
 
-  <h3>Artículos</h3>
+  <h3>Artículos Adquiridos</h3>
 
   <table class="table table-striped table-hover">
     <thead>
       <tr>
         <th>Descripción</th>
         <th>Unidad</th>
-        <th>Cantidad</th>
-        <th>Fecha de Entrega</th>
+        <th>Adquirido</th>
+        <th>Precio</th>
+        <th>Importe</th>
+        <th>Entrega</th>
+        <th>Recibido</th>
       </tr>
     </thead>
     <tbody>
@@ -54,7 +59,10 @@
             <td>{{ $item->material->descripcion }}</td>
             <td>{{ $item->unidad }}</td>
             <td>{{ $entrega->cantidad }}</td>
+            <td>{{ $item->precio_unitario }}</td>
+            <td>{{ $item->importe }}</td>
             <td>{{ $entrega->fecha->format('d-m-Y') }}</td>
+            <td>{{ $item->cantidad_recibida }}</td>
           </tr>
           @endforeach
         @endforeach

@@ -76,7 +76,7 @@ class Familia extends Model
      */
     public function children()
     {
-        return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
+        return static::whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
             ->whereRaw('LEN(nivel) > 4')
             ->where('tipo_material', $this->tipo_material)
             ->get();
@@ -125,7 +125,7 @@ class Familia extends Model
      */
     public function hasChildren()
     {
-        return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
+        return static::whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
             ->where('tipo_material', $this->tipo_material)
             ->exists();
     }
@@ -137,7 +137,7 @@ class Familia extends Model
      */
     public function firstChild()
     {
-        return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
+        return static::whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
             ->where('tipo_material', $this->tipo_material)
             ->orderBy('nivel', 'ASC')
             ->first();
@@ -150,7 +150,7 @@ class Familia extends Model
      */
     public function lastChild()
     {
-        return static::whereRaw('LEFT(nivel, 4) = ' . $this->nivel)
+        return static::whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
             ->where('tipo_material', $this->tipo_material)
             ->orderBy('nivel', 'DESC')
             ->first();

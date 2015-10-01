@@ -3,8 +3,9 @@
 namespace Ghi\Equipamiento\Areas;
 
 use Illuminate\Support\Facades\DB;
+use Ghi\Core\Repositories\BaseRepository;
 
-class AreaRepository
+class AreaRepository extends BaseRepository
 {
     /**
      * Obtiene un area por su id
@@ -24,7 +25,8 @@ class AreaRepository
      */
     public function getAll()
     {
-        return Area::defaultOrder()->withDepth()->get();
+        return Area::where('id_obra', $this->context->getId())
+            ->defaultOrder()->withDepth()->get();
     }
 
     /**
@@ -34,7 +36,8 @@ class AreaRepository
      */
     public function getNivelesRaiz()
     {
-        return Area::whereIsRoot()->defaultOrder()->get();
+        return Area::where('id_obra', $this->context->getId())
+            ->whereIsRoot()->defaultOrder()->get();
     }
 
     /**

@@ -6,16 +6,16 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ContextTest extends TestCase
 {
-    use DatabaseTransactions;
+    // use DatabaseTransactions;
+    // use \CadecoDatabaseTransactions;
 
     public function testLogin()
     {
-        $this->inicioSesion();
-        
-        $this->actingAs($user)
-            ->visit('/obras')
-            ->click('13')
-            ->click('MUSEO BARROCO')
-            ->seePageIs('/');
+        $user = factory(Ghi\Core\Models\User::class)->create();
+        $obra = factory(\Ghi\Core\Models\Obra::class)->create(['nombre' => 'OBRA NUEVA']);
+
+        $this->inicioSesion()
+            ->seePageIs('/obras')
+            ->click($obra->nombre);
     }
 }

@@ -9173,5 +9173,11 @@ body {
 .gallery__image {
   margin-bottom: 1em;
 }
+.recepcion-detail {
+  min-height: 200px;
+}
+[v-cloak] {
+  display: none;
+}
 
 /*# sourceMappingURL=app.css.map */

@@ -30,14 +30,14 @@
         <env name="DB_USERNAME_INTRANET" value="homestead"/>
         <env name="DB_PASSWORD_INTRANET" value="secret"/>
         
-        <env name="DB_HOST_CADECO" value="10.211.55.3"/>
-        <env name="DB_DATABASE_CADECO" value="SAO1814_MUSEO_BARROCO"/>
-        <env name="DB_USERNAME_CADECO" value="homestead"/>
-        <env name="DB_PASSWORD_CADECO" value="secret"/>
+        <env name="DB_HOST_CADECO" value="172.20.74.3\SAO_DEVELOP"/>
+        <env name="DB_DATABASE_CADECO" value="SAO1814_HOTEL_DREAMS_PM"/>
+        <env name="DB_USERNAME_CADECO" value="develop"/>
+        <env name="DB_PASSWORD_CADECO" value="develop"/>
         
-        <env name="DB_HOST_GENERALES" value="10.211.55.3"/>
+        <env name="DB_HOST_GENERALES" value="172.20.74.3\GHIAPP_DEVELOP"/>
         <env name="DB_DATABASE_GENERALES" value="ModulosSAO"/>
-        <env name="DB_USERNAME_GENERALES" value="homestead"/>
-        <env name="DB_PASSWORD_GENERALES" value="secret"/>
+        <env name="DB_USERNAME_GENERALES" value="develop"/>
+        <env name="DB_PASSWORD_GENERALES" value="develop"/>
     </php>
 </phpunit>

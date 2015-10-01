@@ -22,6 +22,19 @@ class Item extends Model
      */
     protected $primaryKey = 'id_item';
 
+    protected $casts = [
+        'cantidad' => 'float',
+        'precio_unitario' => 'float'
+    ];
+
+    /**
+     * @return float
+     */
+    public function getCantidadRecibidaAttribute()
+    {
+        return $this->sumaRecepciones();
+    }
+
     /**
      * Material relacionado con este item
      *
@@ -40,5 +53,20 @@ class Item extends Model
     public function entregas()
     {
         return $this->hasMany(Entrega::class, 'id_item', 'id_item');
+    }
+
+    /**
+     * Obtiene la sumatoria de recepciones que se han hecho de este item/material.
+     * 
+     * @return float
+     */
+    public function sumaRecepciones()
+    {
+        return (float) \DB::connection($this->connection)
+            ->table('Equipamiento.recepciones')
+            ->join('Equipamiento.recepciones_materiales', 'Equipamiento.recepciones.id', '=', 'Equipamiento.recepciones_materiales.id_recepcion')
+            ->where('id_orden_compra', $this->id_transaccion)
+            ->where('id_material', $this->id_material)
+            ->sum('cantidad');
     }
 }

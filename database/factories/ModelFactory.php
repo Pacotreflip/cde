@@ -90,7 +90,7 @@ $factory->define(Ghi\Equipamiento\Articulos\Clasificador::class, function(Faker\
 
 $factory->define(Ghi\Equipamiento\Articulos\Unidad::class, function (Faker\Generator $faker) {
     return [
-        'unidad'      => $faker->unique()->randomNumber,
+        'unidad'      => str_random(),
         'descripcion' => $faker->word,
         'tipo_unidad' => Ghi\Equipamiento\Articulos\Unidad::TIPO_GENERICA,
     ];
@@ -115,7 +115,7 @@ $factory->define(Ghi\Equipamiento\Articulos\Material::class, function (Faker\Gen
         'unidad_capacidad'  => null,
         'equivalencia'      => 1,
         'marca'             => 0,
-        'nivel'             => null,
+        'nivel'             => str_random(30),
         'tipo_material'     => Ghi\Equipamiento\Articulos\TipoMaterial::TIPO_MATERIALES,
     ];
 });
@@ -165,10 +165,11 @@ $factory->defineAs(Ghi\Equipamiento\Transacciones\Transaccion::class, 'orden_com
 
 $factory->define(Ghi\Equipamiento\Recepciones\Recepcion::class, function (Faker\Generator $faker) {
     $orden_compra = factory(Ghi\Equipamiento\Transacciones\Transaccion::class, 'orden_compra')->create();
+
     return [
         'id_obra'                => $orden_compra->id_obra,
         'numero_folio'           => $faker->randomNumber($nbDigits=6),
-        'id_empresa'             => factory(Ghi\Equipamiento\Proveedores\Proveedor::class)->create()->id_empresa,
+        'id_empresa'             => $orden_compra->id_empresa,
         'id_orden_compra'        => $orden_compra->id_transaccion,
         'id_area_almacenamiento' => factory(Ghi\Equipamiento\Areas\Area::class)->create(['id_obra' => $orden_compra->id_obra])->id,
         'fecha_recepcion'        => $faker->dateTimeThisYear,
@@ -179,4 +180,3 @@ $factory->define(Ghi\Equipamiento\Recepciones\Recepcion::class, function (Faker\
         'observaciones'          => $faker->text,
     ];
 });
-

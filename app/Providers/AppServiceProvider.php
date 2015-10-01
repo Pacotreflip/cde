@@ -2,6 +2,7 @@
 
 namespace Ghi\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         setlocale(LC_TIME, 'es_MX.UTF8', 'Spanish_Spain.1252');
+        Carbon::setLocale('es');
 
         // if ($this->app->environment() == 'local') {
         //     $this->app->register(\Laracasts\Generators\GeneratorsServiceProvider::class);
