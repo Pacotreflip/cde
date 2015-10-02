@@ -47,11 +47,7 @@ class ArticulosController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('buscar')) {
-            $materiales = $this->materiales->buscar($request->get('buscar'));
-        } else {
-            $materiales = $this->materiales->getAllPaginated();
-        }
+        $materiales = $this->materiales->buscar($request->get('buscar'), 15);
 
         return view('articulos.index')
             ->withMateriales($materiales);

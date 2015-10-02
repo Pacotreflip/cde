@@ -9173,6 +9173,14 @@ body {
 .gallery__image {
   margin-bottom: 1em;
 }
+.foto {
+  position: relative;
+}
+.foto .foto-borrar {
+  position: absolute;
+  top: 0.3em;
+  right: 0.3em;
+}
 .recepcion-detail {
   min-height: 200px;
 }

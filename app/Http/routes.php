@@ -43,7 +43,8 @@ Route::get('articulos/nuevo', ['as' => 'articulos.create', 'uses' => 'ArticulosC
 Route::post('articulos', ['as' => 'articulos.store', 'uses' => 'ArticulosController@store']);
 Route::get('articulos/{id}', ['as' => 'articulos.edit', 'uses' => 'ArticulosController@edit']);
 Route::patch('articulos/{id}', ['as' => 'articulos.update', 'uses' => 'ArticulosController@update']);
-Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'FotosController@agregaFoto']);
+Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'FotosController@store']);
+Route::delete('articulos/{id_material}/fotos/{id}', ['as' => 'articulos.fotos.delete', 'uses' => 'FotosController@destroy']);
 
 // Rutas de proveedores...
 Route::get('proveedores', ['as' => 'proveedores.index', 'uses' => 'ProveedoresController@index']);
