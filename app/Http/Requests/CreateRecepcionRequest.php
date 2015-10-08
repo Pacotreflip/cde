@@ -34,7 +34,7 @@ class CreateRecepcionRequest extends Request
         foreach ($this->get('materiales') as $key => $value) {
             $rules['materiales.'.$key] = 'array';
             $rules['materiales.'.$key.'.id'] = 'required|integer';
-            $rules['materiales.'.$key.'.cantidad_recibir'] = 'numeric|min:1';
+            $rules['materiales.'.$key.'.cantidad_recibir'] = 'numeric';
             // $rules['materiales.'.$key.'.precio'] = 'required|numeric|min:1';
         }
 
@@ -53,10 +53,10 @@ class CreateRecepcionRequest extends Request
         foreach ($this->get('materiales') as $key => $value) {
             $messages['materiales.'.$key.'.id.required'] = "El identificador del artículo [{$value['numero_parte']}]-{$value['descripcion']} no es válido.";
             $messages['materiales.'.$key.'.id.required'] = "El identificador del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser un numero entero.";
-            $messages['materiales.'.$key.'.cantidad_recibir.numeric'] = "El campo cantidad del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser numerico.";
+            $messages['materiales.'.$key.'.cantidad_recibir.numeric'] = "El campo cantidad del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser numérico.";
             $messages['materiales.'.$key.'.cantidad_recibir.min'] = "El campo cantidad del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser mínimo :min.";
             // $messages['materiales.'.$key.'.precio.required'] = "El campo precio del artículo [{$value['numero_parte']}]-{$value['descripcion']} es obligatorio.";
-            // $messages['materiales.'.$key.'.precio.numeric'] = "El campo precio del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser numerico.";
+            // $messages['materiales.'.$key.'.precio.numeric'] = "El campo precio del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser numérico.";
             // $messages['materiales.'.$key.'.precio.min'] = "El campo precio del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser mínimo :min.";
         }
 

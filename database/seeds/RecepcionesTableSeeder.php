@@ -19,7 +19,7 @@ class RecepcionesTableSeeder extends Seeder
             $materiales = Material::soloMateriales()->where('tipo_material', 1)->get()->random(5);
 
             foreach ($materiales as $material) {
-                $recepcion->articulos()->attach($material->id_material, [
+                $recepcion->items()->attach($material->id_material, [
                     'cantidad' => $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 1000),
                     'precio' => $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 1000)
                 ]);

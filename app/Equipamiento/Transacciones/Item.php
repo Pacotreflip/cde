@@ -2,6 +2,7 @@
 
 namespace Ghi\Equipamiento\Transacciones;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 
@@ -32,7 +33,7 @@ class Item extends Model
      */
     public function getCantidadRecibidaAttribute()
     {
-        return $this->sumaRecepciones();
+        return $this->recibido();
     }
 
     /**
@@ -60,11 +61,11 @@ class Item extends Model
      * 
      * @return float
      */
-    public function sumaRecepciones()
+    public function recibido()
     {
-        return (float) \DB::connection($this->connection)
+        return (float) DB::connection($this->connection)
             ->table('Equipamiento.recepciones')
-            ->join('Equipamiento.recepciones_materiales', 'Equipamiento.recepciones.id', '=', 'Equipamiento.recepciones_materiales.id_recepcion')
+            ->join('Equipamiento.items_transaccion', 'recepciones.id', '=', 'items_transaccion.id_transaccion')
             ->where('id_orden_compra', $this->id_transaccion)
             ->where('id_material', $this->id_material)
             ->sum('cantidad');

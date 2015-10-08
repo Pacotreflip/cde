@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AreasTableSeeder::class);
         $this->call(ClasificadoresTableSeeder::class);
         $this->call(RequerimientosTableSeeder::class);
-        $this->call(RecepcionesTableSeeder::class);
+        // $this->call(RecepcionesTableSeeder::class);
 
         Model::reguard();
     }

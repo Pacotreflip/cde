@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 
 class Recepcion extends Model
 {
@@ -49,15 +50,13 @@ class Recepcion extends Model
     }
 
     /**
-     * Articulos relacionados con esta recepcion.
+     * Items relacionados con esta recepcion.
      * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function articulos()
+    public function items()
     {
-        return $this->belongsToMany(Material::class, 'Equipamiento.recepciones_materiales', 'id_recepcion', 'id_material')
-            ->withPivot('cantidad', 'precio')
-            ->withTimestamps();
+        return $this->morphMany(ItemTransaccion::class, 'transaccion', 'tipo_transaccion', 'id_transaccion');
     }
 
     /**
@@ -65,7 +64,7 @@ class Recepcion extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function ordenCompra()
+    public function compra()
     {
         return $this->belongsTo(Transaccion::class, 'id_orden_compra', 'id_transaccion');
     }
@@ -93,14 +92,23 @@ class Recepcion extends Model
     /**
      * Recibe un material en este folio de recepcion.
      * 
-     * @param  Material $material
-     * @param  float    $cantidad
-     * @param  float    $precio
+     * @param Material $material
+     * @param float    $cantidad
+     * @param float    $precio
      * 
      * @return void
      */
     public function recibeMaterial(Material $material, $cantidad, $precio = 0)
     {
-        $this->articulos()->save($material, ['cantidad' => $cantidad, 'precio' => $precio]);
+        if ($cantidad <= 0) {
+            return;
+        }
+
+        $item = ItemTransaccion::nuevoConMaterial($material, $cantidad, $precio);
+        $item->id_area_destino = $this->id_area_almacenamiento;
+        $this->items()->save($item);
+
+        $inventario = $material->nuevoInventarioEnArea($this->area);
+        $inventario->incrementaExistencia($cantidad, $item);
     }
 }

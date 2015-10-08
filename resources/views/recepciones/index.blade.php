@@ -13,8 +13,9 @@
       <tr>
         <th>Folio</th>
         <th>Folio O/C</th>
-        <th>Fecha Recepción</th>
+        <th>Recibido</th>
         <th>Proveedor</th>
+        <th>Recibió</th>
         <th>Observaciones</th>
         <th></th>
       </tr>
@@ -22,10 +23,14 @@
     <tbody>
       @foreach($recepciones as $recepcion)
         <tr>
-          <td><a href="{{ route('recepciones.show', $recepcion) }}">{{ $recepcion->numero_folio }}</a></td>
-          <td>{{ $recepcion->ordenCompra->numero_folio }}</td>
-          <td>{{ $recepcion->fecha_recepcion->format('d-m-Y') }}</td>
+          <td><a href="{{ route('recepciones.show', $recepcion) }}"># {{ $recepcion->numero_folio }}</a></td>
+          <td><a href="{{ route('compras.show', $recepcion->compra) }}"># {{ $recepcion->compra->numero_folio }}</a></td>
+          <td>
+            {{ $recepcion->fecha_recepcion->format('d-m-Y') }} 
+            <small class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</small>
+          </td>
           <td>{{ $recepcion->empresa->razon_social }}</td>
+          <td>{{ $recepcion->persona_recibe }}</td>
           <td>{{ str_limit($recepcion->observaciones, 70) }}</td>
           <td></td>
         </tr>

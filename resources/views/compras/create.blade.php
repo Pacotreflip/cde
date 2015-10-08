@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-  <h1>Nueva Adquisición</h1>
+  <h1>Nueva Compra</h1>
   <hr>
 
   {!! Form::open() !!}

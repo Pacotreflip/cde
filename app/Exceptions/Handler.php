@@ -57,6 +57,10 @@ class Handler extends ExceptionHandler
             return back();
         }
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse([$e->getMessage()], 500);
+        }
+
         return parent::render($request, $e);
     }
 }

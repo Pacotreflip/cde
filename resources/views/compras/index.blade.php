@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-  <h1>Adquisiciones</h1>
+  <h1>Compras</h1>
   <hr>
 
   @include('partials.search-form')
@@ -17,17 +17,17 @@
       </tr>
     </thead>
     <tbody>
-      @foreach($ordenes as $orden)
+      @foreach($compras as $compra)
         <tr>
-          <td><a href="{{ route('adquisiciones.show', $orden) }}">{{ $orden->numero_folio }}</a></td>
-          <td>{{ $orden->fecha->format('d-m-Y') }}</td>
-          <td>{{ $orden->empresa->razon_social }}</td>
-          <td>{{ str_limit($orden->observaciones, 70) }}</td>
+          <td><a href="{{ route('compras.show', $compra) }}"># {{ $compra->numero_folio }}</a></td>
+          <td>{{ $compra->fecha->format('d-m-Y') }}</td>
+          <td>{{ $compra->empresa->razon_social }}</td>
+          <td>{{ str_limit($compra->observaciones, 70) }}</td>
           <td></td>
         </tr>
       @endforeach
     </tbody>
   </table>
 
-  {!! $ordenes->render() !!}
+  {!! $compras->render() !!}
 @stop

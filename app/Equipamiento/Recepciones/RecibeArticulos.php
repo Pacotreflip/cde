@@ -3,6 +3,7 @@
 namespace Ghi\Equipamiento\Recepciones;
 
 use Ghi\Core\Models\Obra;
+use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
@@ -30,14 +31,9 @@ class RecibeArticulos
     public function save()
     {
         try {
-            \DB::connection('cadeco')->beginTransaction();
+            DB::connection('cadeco')->beginTransaction();
             
-            if (! count($this->data['materiales'])) {
-                throw new RecepcionSinArticulosException;
-            }
-
             $recepcion = $this->creaRecepcion();
-
 
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
@@ -45,12 +41,16 @@ class RecibeArticulos
                 $recepcion->recibeMaterial($material, $item['cantidad_recibir']);
             }
 
+            if ($recepcion->items->count() == 0) {
+                throw new RecepcionSinArticulosException;
+            }
+
             $recepcion->numero_folio = $this->siguienteFolio();
             $recepcion->save();
             
-            \DB::connection('cadeco')->commit();
+            DB::connection('cadeco')->commit();
         } catch (Exception $e) {
-            \DB::connection('cadeco')->rollback();
+            DB::connection('cadeco')->rollback();
             throw $e;
         }
 

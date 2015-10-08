@@ -25,7 +25,7 @@ class RecibeArticulosTest extends TestCase
 
         $recepcion = (new RecibeArticulos($data, $obra))->save();
 
-        $this->assertCount(2, $recepcion->articulos);
+        $this->assertCount(2, $recepcion->items);
     }
 
     /** @test */

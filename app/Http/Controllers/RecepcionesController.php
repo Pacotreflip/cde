@@ -47,9 +47,13 @@ class RecepcionesController extends Controller
         return Recepcion::where('id_obra', $this->getIdObra())
             ->where(function ($query) use ($busqueda) {
                 $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('persona_recibe', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
                     ->orWhereHas('empresa', function ($query) use ($busqueda) {
                         $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
+                    })
+                    ->orWhereHas('compra', function ($query) use($busqueda) {
+                        $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%');
                     });
             })
             ->orderBy('numero_folio', 'DESC')
@@ -67,7 +71,7 @@ class RecepcionesController extends Controller
             ->orderBy('razon_social')
             ->lists('razon_social', 'id_empresa')->all();
 
-        $ordenes = Transaccion::ordenesCompraMateriales()
+        $compras = Transaccion::ordenesCompraMateriales()
             ->where('id_obra', $this->getIdObra())
             ->orderBy('numero_folio', 'DESC')
             ->lists('numero_folio', 'id_transaccion')->all();
@@ -76,7 +80,7 @@ class RecepcionesController extends Controller
 
         return view('recepciones.create')
             ->withProveedores($proveedores)
-            ->withOrdenes($ordenes)
+            ->withCompras($compras)
             ->withAreas($areas);
     }
 

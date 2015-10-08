@@ -62,17 +62,17 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::patch('asignacion-requerimientos', ['as' => 'requerimientos.update', 'uses' => 'AsignacionRequerimientosController@update']);
 });
 
-// Rutas de adquisiciones...
-Route::get('adquisiciones', ['as' => 'adquisiciones.index', 'uses' => 'AdquisicionesController@index']);
-Route::get('adquisiciones/{id}', ['as' => 'adquisiciones.show', 'uses' => 'AdquisicionesController@show']);
+// Rutas de compras...
+Route::get('compras', ['as' => 'compras.index', 'uses' => 'ComprasController@index']);
+Route::get('compras/{id}', ['as' => 'compras.show', 'uses' => 'ComprasController@show']);
 
 // Rutas de recepcion de articulos...
-Route::get('recepcion-articulos', ['as' => 'recepciones.index', 'uses' => 'RecepcionesController@index']);
-Route::get('recepcion-articulos/recibir', ['as' => 'recepciones.create', 'uses' => 'RecepcionesController@create']);
-Route::post('recepcion-articulos', ['as' => 'recepciones.store', 'uses' => 'RecepcionesController@store']);
-Route::get('recepcion-articulos/{id}', ['as' => 'recepciones.show', 'uses' => 'RecepcionesController@show']);
-Route::patch('recepcion-articulos/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
-Route::delete('recepcion-articulos/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
+Route::get('recepciones', ['as' => 'recepciones.index', 'uses' => 'RecepcionesController@index']);
+Route::get('recepciones/recibir', ['as' => 'recepciones.create', 'uses' => 'RecepcionesController@create']);
+Route::post('recepciones', ['as' => 'recepciones.store', 'uses' => 'RecepcionesController@store']);
+Route::get('recepciones/{id}', ['as' => 'recepciones.show', 'uses' => 'RecepcionesController@show']);
+Route::patch('recepciones/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
+Route::delete('recepciones/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
 
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {

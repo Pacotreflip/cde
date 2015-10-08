@@ -17,7 +17,7 @@
             <!-- Orden Compra Form Input -->
             <div class="form-group">
               {!! Form::label('orden_compra', 'Folio Orden de Compra:') !!}
-              {!! Form::select('orden_compra', $ordenes, null, ['class' => 'form-control', 'required', 
+              {!! Form::select('orden_compra', $compras, null, ['class' => 'form-control', 'required', 
                 'v-model' => 'recepcionForm.orden_compra', 'v-on' => 'change: fetchMateriales']) !!}
             </div>
           </div>
@@ -72,28 +72,28 @@
         </div>
 
         <section class="orden-compra" v-cloak>
-          <span v-if="cargando"><i class="fa fa-spinner fa-spin"></i> Cargando articulos...</span>
+          <span v-if="cargando"><i class="fa fa-2x fa-spinner fa-spin"></i> Cargando articulos...</span>
           
-          <section class="orden-compra-content" v-show="ordenCompra.materiales.length">
+          <section class="orden-compra-content" v-show="compra.materiales.length">
             <section class="orden-compra-heading">
-              <h3>@{{ ordenCompra.proveedor.razon_social }}</h3>
+              <h3>@{{ compra.proveedor.razon_social }} <small>O/C # @{{ compra.numero_folio }}</small></h3>
             </section>
             <hr>
             <section class="orden-compra-materiales">
-              <table class="table table-striped">
-                <caption>Articulos en la Orden de Compra</caption>
+              <table class="table table-striped table-condensed">
+                {{-- <caption>Articulos en la Orden de Compra</caption> --}}
                 <thead>
                   <tr>
                     <th>No. Parte</th>
                     <th>Descripción</th>
                     <th>Unidad</th>
-                    <th>Adquirido</th>
+                    <th>Comprado</th>
                     <th>Recibido</th>
                     <th>A Recibir</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-repeat="material in ordenCompra.materiales">
+                  <tr v-repeat="material in compra.materiales">
                     <td>@{{ material.numero_parte }}</td>
                     <td>@{{ material.descripcion }}</td>
                     <td>@{{ material.unidad }}</td>
@@ -324,7 +324,7 @@
             materiales: [],
             errors: []
           },
-          ordenCompra: {
+          compra: {
             proveedor: {},
             materiales: []
           },
@@ -357,7 +357,7 @@
         // },
 
         articulosARecibir: function () {
-          return this.ordenCompra.materiales.filter(function(material) {
+          return this.compra.materiales.filter(function(material) {
             return material.cantidad_recibir.length;
           });
         }
@@ -387,12 +387,12 @@
 
         fetchMateriales: function (e) {
           this.cargando = true;
-          this.ordenCompra = { proveedor: {}, materiales: [] };
+          this.compra = { proveedor: {}, materiales: [] };
 
           this.$http.get('/api/ordenes-compra/' + this.recepcionForm.orden_compra)
               .success(function (response) {
                 this.cargando = false;
-                this.ordenCompra = response;
+                this.compra = response;
                 this.recepcionForm.proveedor = response.proveedor.id_empresa;
               })
               .error(function (errors) {
@@ -407,9 +407,8 @@
           this.recepcionForm.errors = [];
           this.recepcionForm.materiales = this.articulosARecibir;
 
-          this.$http.post('/recepcion-articulos', this.recepcionForm)
+          this.$http.post('/recepciones', this.recepcionForm)
               .success(function (response) {
-                this.recibiendo = false;
                 window.location = response.path;
               })
               .error(function (errors) {

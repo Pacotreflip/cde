@@ -16,12 +16,12 @@ class OrdenesCompraController extends Controller
      */
     public function show($id)
     {
-        $orden_compra = Transaccion::ordenesCompraMateriales()
+        $compra = Transaccion::ordenesCompraMateriales()
             ->with('empresa')
             ->with('items.material')
             ->findOrFail($id);
 
-        // $recepciones = Ghi\Equipamiento\Recepciones\Recepcion::deOrdenCompra($orden_compra->id_transaccion);
+        // $recepciones = Ghi\Equipamiento\Recepciones\Recepcion::deOrdenCompra($compra->id_transaccion);
 
         // $recibidos = collect();
         // $recepciones->each(function ($recepcion, $key) use ($recibidos) {
@@ -32,10 +32,10 @@ class OrdenesCompraController extends Controller
         // $recibidos = $recibidos->groupBy('pivot.id_material');
 
         return response()->json([
-            'id'           => $orden_compra->id_transaccion,
-            'numero_folio' => $orden_compra->numero_folio,
-            'proveedor'    => $orden_compra->empresa,
-            'materiales'   => $this->transformaItems($orden_compra->items),
+            'id'           => $compra->id_transaccion,
+            'numero_folio' => $compra->numero_folio,
+            'proveedor'    => $compra->empresa,
+            'materiales'   => $this->transformaItems($compra->items),
         ]);
     }
 

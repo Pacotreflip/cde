@@ -5,7 +5,7 @@
 
   <h2>
     <small>
-      <a href="{{ route('adquisiciones.show', [$recepcion->ordenCompra]) }}">Orden de Compra # {{ $recepcion->ordenCompra->numero_folio }}</a>
+      <a href="{{ route('compras.show', [$recepcion->compra]) }}">Orden de Compra # {{ $recepcion->compra->numero_folio }}</a>
     </small></h2>
   <hr>
   <div class="row recepcion">
@@ -60,12 +60,12 @@
       </tr>
     </thead>
     <tbody>
-      @foreach($recepcion->articulos as $articulo)
+      @foreach($recepcion->items as $item)
         <tr>
-          <td>{{ $articulo->numero_parte }}</td>
-          <td>{{ $articulo->descripcion }}</td>
-          <td>{{ $articulo->unidad }}</td>
-          <td>{{ $articulo->pivot->cantidad }}</td>
+          <td>{{ $item->material->numero_parte }}</td>
+          <td>{{ $item->material->descripcion }}</td>
+          <td>{{ $item->material->unidad }}</td>
+          <td>{{ $item->cantidad }}</td>
         </tr>
       @endforeach
     </tbody>
