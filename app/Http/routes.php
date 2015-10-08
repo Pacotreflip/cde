@@ -43,7 +43,8 @@ Route::get('articulos/nuevo', ['as' => 'articulos.create', 'uses' => 'ArticulosC
 Route::post('articulos', ['as' => 'articulos.store', 'uses' => 'ArticulosController@store']);
 Route::get('articulos/{id}', ['as' => 'articulos.edit', 'uses' => 'ArticulosController@edit']);
 Route::patch('articulos/{id}', ['as' => 'articulos.update', 'uses' => 'ArticulosController@update']);
-Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'FotosController@agregaFoto']);
+Route::post('articulos/{id}/fotos', ['as' => 'articulos.fotos', 'uses' => 'FotosController@store']);
+Route::delete('articulos/{id_material}/fotos/{id}', ['as' => 'articulos.fotos.delete', 'uses' => 'FotosController@destroy']);
 
 // Rutas de proveedores...
 Route::get('proveedores', ['as' => 'proveedores.index', 'uses' => 'ProveedoresController@index']);
@@ -61,8 +62,21 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::patch('asignacion-requerimientos', ['as' => 'requerimientos.update', 'uses' => 'AsignacionRequerimientosController@update']);
 });
 
-// Rutas de adquisiciones...
-Route::get('adquisiciones', ['as' => 'adquisiciones.index', 'uses' => 'AdquisicionesController@index']);
-Route::get('adquisiciones/{id}', ['as' => 'adquisiciones.show', 'uses' => 'AdquisicionesController@show']);
+// Rutas de compras...
+Route::get('compras', ['as' => 'compras.index', 'uses' => 'ComprasController@index']);
+Route::get('compras/{id}', ['as' => 'compras.show', 'uses' => 'ComprasController@show']);
 
+// Rutas de recepcion de articulos...
+Route::get('recepciones', ['as' => 'recepciones.index', 'uses' => 'RecepcionesController@index']);
+Route::get('recepciones/recibir', ['as' => 'recepciones.create', 'uses' => 'RecepcionesController@create']);
+Route::post('recepciones', ['as' => 'recepciones.store', 'uses' => 'RecepcionesController@store']);
+Route::get('recepciones/{id}', ['as' => 'recepciones.show', 'uses' => 'RecepcionesController@show']);
+Route::patch('recepciones/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
+Route::delete('recepciones/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
+
+// Rutas del api...
+Route::group(['prefix' => 'api'], function () {
+    Route::get('materiales', 'Api\MaterialesController@index');
+    Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
+});
 

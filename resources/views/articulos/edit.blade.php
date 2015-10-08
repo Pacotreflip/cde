@@ -9,19 +9,18 @@
   <h1>Artículo</h1>
   <hr>
 
-  {!! Form::model($material, ['route' => ['articulos.update', $material], 'method' => 'PATCH', 'files' => true]) !!}
-    <div class="row">
-      <div class="col-md-6">
+  <div class="row">
+    <div class="col-md-6">
+      @include('partials.errors')
+      {!! Form::model($material, ['route' => ['articulos.update', $material], 'method' => 'PATCH', 'files' => true]) !!}
         @include('articulos.partials.edit-fields')
-
-        @include('partials.errors')
-        <br>
-      </div>
-      <div class="col-md-6 gallery">
-        @include('articulos.partials.fotos')
-      </div>
+      {!! Form::close() !!}
+      <br>
     </div>
-  {!! Form::close() !!}
+    <div class="col-md-6 gallery">
+      @include('articulos.partials.fotos')
+    </div>
+  </div>
 
   <hr>
 

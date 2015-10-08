@@ -43,6 +43,6 @@ abstract class Controller extends BaseController
      */
     protected function getObraEnContexto()
     {
-        return Obra::findOrFail($this->getIdObra);
+        return Obra::findOrFail($this->getIdObra());
     }
 }

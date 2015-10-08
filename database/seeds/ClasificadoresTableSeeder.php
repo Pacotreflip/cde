@@ -13,8 +13,8 @@ class ClasificadoresTableSeeder extends Seeder
     public function run()
     {
         factory(Clasificador::class, 5)->create()->each(function ($nivel1) {
-            factory(Clasificador::class, 5)->create(['parent_id' => $nivel1->id])->each(function ($nivel2) {
-                factory(Clasificador::class, 5)->create(['parent_id' => $nivel2->id]);
+            factory(Clasificador::class, 4)->create(['parent_id' => $nivel1->id])->each(function ($nivel2) {
+                factory(Clasificador::class, 2)->create(['parent_id' => $nivel2->id]);
             });
         });
     }

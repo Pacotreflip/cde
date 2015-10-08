@@ -9,7 +9,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 
-class AdquisicionesController extends Controller
+class ComprasController extends Controller
 {
     public function __construct()
     {
@@ -26,22 +26,24 @@ class AdquisicionesController extends Controller
      */
     public function index(Request $request)
     {
-        $ordenes = $this->buscar($request->get('buscar'));
+        $compras = $this->buscar($request->get('buscar'));
 
-        return view('adquisiciones.index')
-            ->withOrdenes($ordenes);
+        return view('compras.index')
+            ->withCompras($compras);
     }
 
     /**
      * Busca ordenes de compra
      * 
-     * @param  string  $busqueda El texto a buscar
-     * @param  integer $howMany  Cuantos resultados por pagina
+     * @param string  $busqueda El texto a buscar
+     * @param integer $howMany  Cuantos resultados por pagina
+     * 
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function buscar($busqueda, $howMany = 15)
     {
         return Transaccion::ordenesCompraMateriales()
+            ->where('id_obra', $this->getIdObra())
             ->where(function ($query) use ($busqueda) {
                 $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
@@ -70,7 +72,7 @@ class AdquisicionesController extends Controller
 
         $ordenes = [];
 
-        return view('adquisiciones.create')
+        return view('compras.create')
             ->withProveedores($proveedores)
             ->withOrdenes($ordenes)
             ->withMateriales($materiales);
@@ -84,21 +86,9 @@ class AdquisicionesController extends Controller
      */
     public function show($id)
     {
-        $orden = Transaccion::with('items.entregas')->findOrFail($id);
+        $compra = Transaccion::with('items.entregas')->findOrFail($id);
 
-        return view('adquisiciones.show')
-            ->withOrden($orden);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        return view('compras.show')
+            ->withCompra($compra);
     }
 }

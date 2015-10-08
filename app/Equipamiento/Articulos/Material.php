@@ -2,9 +2,15 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
+use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Areas\Tipo;
 use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Recepciones\Recepcion;
+use Ghi\Equipamiento\Inventarios\Inventario;
+use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Ghi\Equipamiento\Inventarios\Exceptions\InventarioYaExisteException;
+use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Material extends Model
 {
@@ -93,6 +99,16 @@ class Material extends Model
         return static::where('tipo_material', $this->tipo_material)
             ->where('nivel', substr($this->nivel, 0, 4))
             ->first();
+    }
+
+    /**
+     * Items de recepciones de este material.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items()
+    {
+        return $this->hasMany(ItemTransaccion::class, 'id_material', 'id_material');
     }
 
     /**
@@ -233,5 +249,123 @@ class Material extends Model
         $this->ficha_tecnica_nombre = "{$nombre}.{$extension}";
         $this->ficha_tecnica_path = sprintf("%s/%s", $this->directorioBase, $this->ficha_tecnica_nombre);
         $file->move($this->directorioBase, $this->ficha_tecnica_nombre);
+    }
+
+    /**
+     * Inventarios de este material.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_material', 'id_material');
+    }
+
+    /**
+     * Obtiene la cantidad de existencias totales de este material.
+     * 
+     * @return float
+     */
+    public function getTotalExistencias()
+    {
+        return $this->inventarios->sum('cantidad');
+    }
+
+    /**
+     * Obtiene la existencia de este material en un area.
+     * 
+     * @param  Area  $area
+     * @return float
+     */
+    public function getExistenciaEnArea(Area $area)
+    {
+        return $this->inventarios()->where('id_area', $area->id)->sum('cantidad');
+    }
+
+    /**
+     * Indica si este material tiene existencias en el area indicada.
+     * 
+     * @param  Area $area
+     * @return bool
+     */
+    public function tieneExistenciasEnArea(Area $area)
+    {
+        return $this->getExistenciaEnArea($area) > 0 ? true : false;
+    }
+
+    /**
+     * Indica si hay existencias de este material.
+     * 
+     * @return bool
+     */
+    public function tieneExistencias()
+    {
+        return $this->getTotalExistencias() > 0 ? true : false;
+    }
+
+    /**
+     * Obtiene el inventario de este articulo en un area.
+     * 
+     * @param  Area $area
+     * @return Inventario
+     */
+    public function getInventarioDeArea(Area $area)
+    {
+        $inventario = $this->inventarios()->where('id_area', $area->getKey())->first();
+
+        if ($inventario) {
+            return $inventario;
+        }
+
+        throw new InventarioNoEncontradoException;
+    }
+
+    /**
+     * Crea una instancia de inventario de este material en el area indicada.
+     * 
+     * @param  Area $area
+     * @throws InventarioNoEncontradoException
+     * @return Inventario
+     */
+    public function nuevoInventarioEnArea(Area $area)
+    {
+        try {
+            return $this->getInventarioDeArea($area);
+        } catch (InventarioNoEncontradoException $e) {
+            $inventario = $this->inventarios()->getRelated()->newInstance();
+            $inventario->id_obra = $area->id_obra;
+            $inventario->id_area = $area->getKey();
+            $inventario->id_material = $this->getKey();
+            $inventario->cantidad = 0;
+
+            return $inventario;
+        }
+    }
+
+    /**
+     * Crea un inventario de este material en el area indicada.
+     * 
+     * @param  Area  $area
+     * @param  float $cantidad
+     * @throws InventarioNoEncontradoException
+     * @return Inventario
+     */
+    public function creaInventarioEnArea(Area $area, $cantidad, ItemTransaccion $item)
+    {
+        try {
+            return $this->getInventarioDeArea($area);
+        } catch (InventarioNoEncontradoException $e) {
+            $inventario = $this->inventarios()->getRelated()->newInstance();
+            $inventario->id_obra = $area->id_obra;
+            $inventario->id_area = $area->getKey();
+            $inventario->id_material = $this->getKey();
+            $inventario->cantidad = 0;
+
+            if ($inventario->save()) {
+                $inventario->incrementaExistencia($cantidad, $item);
+            }
+
+            return $inventario;
+        }
     }
 }

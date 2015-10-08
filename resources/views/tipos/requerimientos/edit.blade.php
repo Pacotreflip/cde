@@ -47,7 +47,7 @@
                 <td><a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a></td>
                 <td>{{ $material->unidad }}</td>
                 <td>
-                  <input type="text" class="form-control" name="articulos[{{ $material->id_material }}][cantidad]" 
+                  <input type="text" class="form-control input-sm" name="articulos[{{ $material->id_material }}][cantidad]" 
                         value="{{ $material->pivot->cantidad }}">
                 </td>
               </tr>

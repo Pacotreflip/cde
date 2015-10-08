@@ -41,8 +41,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $obra = factory(\Ghi\Core\Models\Obra::class)->create($overrides);
 
         $this->visit('/obras')
-            ->click($obra->nombre)
-            ->seePageIs('/tipos-area');
+            ->click($obra->nombre);
 
         return $this;
     }

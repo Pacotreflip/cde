@@ -2,8 +2,9 @@
 
 namespace Ghi\Equipamiento\Areas;
 
-use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\Node;
+use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Area extends Node
 {
@@ -35,6 +36,16 @@ class Area extends Node
     }
 
     /**
+     * Inventarios relacionados con esta area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_area');
+    }
+
+    /**
      * Mueve esta area dentro de otra area al final
      *
      * @param Area $parent
@@ -58,5 +69,23 @@ class Area extends Node
     public function asignaTipo(Tipo $tipo)
     {
         return $this->tipo()->associate($tipo);
+    }
+
+    /**
+     * Obtiene un inventario de un material en esta area.
+     * 
+     * @param  Material $material
+     * @throws InventarioNoEncontradoException
+     * @return \Ghi\Equipamiento\Inventarios\Inventario
+     */
+    public function getInventarioDeMaterial(Material $material)
+    {
+        $inventario = $this->inventarios()->where('id_material', $material->id_material)->first();
+
+        if (! $inventario) {
+            throw new InventarioNoEncontradoException;
+        }
+
+        return $inventario;
     }
 }

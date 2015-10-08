@@ -29,6 +29,11 @@ class Transaccion extends Model
     protected $dates = ['fecha', 'cumplimiento', 'vencimiento'];
 
     /**
+     * @var boolean
+     */
+    public $timestamps = false;
+
+    /**
      * Obra relacionada con esta adquisicion
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

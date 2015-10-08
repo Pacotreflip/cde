@@ -24,9 +24,7 @@
         <tr>
             <th>{{ $material->numero_parte }}</th>
             <td>
-              <a href="{{ route('articulos.edit', [$material]) }}">
-                {{ str_limit($material->descripcion, 70) }}
-              </a>
+              <a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a>
             </td>
             <td>{{ $material->unidad }}</td>
             <td>
