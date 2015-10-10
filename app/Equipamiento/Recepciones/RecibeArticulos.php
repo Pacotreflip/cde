@@ -10,7 +10,14 @@ use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class RecibeArticulos
 {
+    /**
+     * @var array
+     */
     protected $data;
+
+    /**
+     * @var Obra
+     */
     protected $obra;
 
     /**

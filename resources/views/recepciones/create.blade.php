@@ -230,15 +230,8 @@
 @stop
 
 @section('scripts')
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script src="https://cdn.jsdelivr.net/typeahead.js/0.11.1/typeahead.jquery.min.js"></script>
-  <script src="http://cdn.jsdelivr.net/vue/0.12.16/vue.min.js"></script>
-  <script src="http://cdn.jsdelivr.net/vue.validator/1.4.4/vue-validator.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.1.16/vue-resource.min.js"></script>
   <script>
-    window.App = { csrfToken: '{{ csrf_token() }}' };
-    Vue.http.headers.common['X-CSRF-TOKEN'] = App.csrfToken;
-
     var validator = window['vue-validator'];
     var resource = window['vue-resource'];
 

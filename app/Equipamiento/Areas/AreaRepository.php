@@ -49,11 +49,6 @@ class AreaRepository extends BaseRepository
     {
         return $tipos = Tipo::defaultOrder()->lists('nombre', 'id');
 
-        // $lista = [null => 'No Aplica'];
-        // foreach ($subtipos->sortBy(['tipo.nombre', 'nombre']) as $subtipo) {
-        //     $lista[$subtipo->id] = $subtipo->tipo->nombre." - ".$subtipo->nombre;
-        // }
-
         return $lista;
     }
 

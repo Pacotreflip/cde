@@ -22,7 +22,7 @@
   </li>
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
   <li><a href="{{ route('recepciones.index') }}">Recepciones</a></li>
-  {{--<li><a href="#">Transferencias</a></li>--}}
+  <li><a href="{{ route('transferencias.index') }}">Transferencias</a></li>
   {{--<li><a href="#">Asignación</a></li>--}}
 @else
   <li><a href="{{ route('obras') }}">Proyectos</a></li>

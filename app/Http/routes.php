@@ -74,9 +74,17 @@ Route::get('recepciones/{id}', ['as' => 'recepciones.show', 'uses' => 'Recepcion
 Route::patch('recepciones/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
 Route::delete('recepciones/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
 
+// Rutas de transferencias
+Route::get('transferencias', ['as' => 'transferencias.index', 'uses' => 'TransferenciasController@index']);
+Route::get('transferencias/transferir', ['as' => 'transferencias.create', 'uses' => 'TransferenciasController@create']);
+Route::post('transferencias', ['as' => 'transferencias.store', 'uses' => 'TransferenciasController@store']);
+Route::get('transferencias/{id}', ['as' => 'transferencias.show', 'uses' => 'TransferenciasController@show']);
+Route::delete('transferencias/{id}', ['as' => 'transferencias.delete', 'uses' => 'TransferenciasController@destroy']);
+
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
+    Route::get('areas', 'Api\AreasController@index');
+    Route::get('areas/{id}', 'Api\AreasController@show');
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
 });
-
