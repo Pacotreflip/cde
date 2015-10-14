@@ -26,7 +26,7 @@
           <td><a href="{{ route('recepciones.show', $recepcion) }}"># {{ $recepcion->numero_folio }}</a></td>
           <td><a href="{{ route('compras.show', $recepcion->compra) }}"># {{ $recepcion->compra->numero_folio }}</a></td>
           <td>
-            {{ $recepcion->fecha_recepcion->format('d-m-Y') }} 
+            {{ $recepcion->fecha_recepcion->format('d-m-Y H:m') }}
             <small class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</small>
           </td>
           <td>{{ $recepcion->empresa->razon_social }}</td>

@@ -10,21 +10,21 @@
   <hr>
   <div class="row recepcion">
     <div class="col-sm-4">
-      <div class="panel panel-default recepcion-detail">
+      <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
             Detalles de la Recepción
         </div>
         <div class="panel-body">
           <strong>Proveedor:</strong> {{ $recepcion->empresa->razon_social }} <br>
-          <strong>Fecha Recepción:</strong> {{ $recepcion->fecha_recepcion->format('Y-m-d') }} 
-            <span class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</span> <br>
+          <strong>Fecha Recepción:</strong> {{ $recepcion->fecha_recepcion->format('Y-m-d h:m') }} 
+            <small class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</small> <br>
           <strong>Persona que Recibió:</strong> {{ $recepcion->persona_recibe }} <br>
           <strong>Observaciones:</strong> {{ $recepcion->observaciones }} <br>
         </div>
       </div>
     </div>
     <div class="col-sm-4">
-      <div class="panel panel-default recepcion-detail">
+      <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
             Referencias
         </div>
@@ -36,12 +36,12 @@
       </div>
     </div>
     <div class="col-sm-4">
-      <div class="panel panel-default recepcion-detail">
+      <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
           Area de Almacenamiento
         </div>
         <div class="panel-body">
-          @include('recepciones.partials.path-almacenamiento', ['area' => $recepcion->area])
+          @include('partials.path-area', ['area' => $recepcion->area])
         </div>
       </div>
     </div>

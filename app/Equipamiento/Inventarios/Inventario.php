@@ -23,6 +23,17 @@ class Inventario extends Model
     protected $table = 'Equipamiento.inventarios';
 
     /**
+     * [$casts description].
+     * 
+     * @var array
+     */
+    protected $casts = [
+        'id_material' => 'int',
+        'id_area' => 'int',
+        'cantidad' => 'float',
+    ];
+
+    /**
      * Cantidad anterior del inventario.
      * 
      * @var float

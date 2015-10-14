@@ -29,6 +29,10 @@ Vue.component('transferencias-screen', {
       return this.inventarios.length;
     },
 
+    /**
+     * Filtra los materiales que se van a transferir,
+     * aquellos que tienen capturada una cantidad.
+     */
     inventariosATransferir: function() {
       return this.inventarios.filter(function(inventario) {
         if (inventario.hasOwnProperty('cantidad')) {
@@ -55,6 +59,11 @@ Vue.component('transferencias-screen', {
       this.transferenciaForm.errors = [];
     },
 
+    /**
+     * Obtiene los materiales que estan en inventario en un area.
+     * 
+     * @return {void}
+     */
     fetchMateriales: function() {
       this.clearFormErrors();
       this.transferenciaForm.materiales = [];
@@ -65,6 +74,12 @@ Vue.component('transferencias-screen', {
       this.$http.get('/api/areas/' + this.transferenciaForm.area_origen)
           .success(function (area) {
             this.cargandoInventarios = false;
+
+            area.materiales.forEach(function(material) {
+              material.cantidad = '';
+              material.area_destino = '';
+            });
+
             this.inventarios = area.materiales || [];
           })
           .error(function (errors) {
@@ -73,6 +88,9 @@ Vue.component('transferencias-screen', {
           });
     },
 
+    /**
+     * Envia el request para generar la transferencia.
+     */
     transferir: function(e) {
       e.preventDefault();
 

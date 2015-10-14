@@ -37,6 +37,15 @@ class Material extends Model
     protected $fillable = ['descripcion', 'descripcion_larga', 'numero_parte', 'codigo_externo', ];
 
     /**
+     * [$casts description].
+     * 
+     * @var array
+     */
+    protected $casts = [
+        'id_material' => 'int',
+    ];
+
+    /**
      * @var bool
      */
     public $timestamps = false;

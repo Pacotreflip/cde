@@ -18,8 +18,10 @@
     <tbody>
       @foreach($transferencias as $transferencia)
         <tr>
-          <td>#{{ $transferencia->numero_folio }}</td>
-          <td>{{ $transferencia->fecha }}</td>
+          <td>
+            <a href="{{ route('transferencias.show', $transferencia) }}">#{{ $transferencia->numero_folio }}</a>
+          </td>
+          <td>{{ $transferencia->fecha->format('d-M-Y h:m') }} <small class="text-muted">({{ $transferencia->created_at->diffForHumans() }})</small></td>
           <td>{{ $transferencia->area->nombre }}</td>
           <td>{{ $transferencia->observaciones }}</td>
         </tr>

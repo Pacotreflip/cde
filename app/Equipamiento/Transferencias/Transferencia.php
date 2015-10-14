@@ -21,9 +21,18 @@ class Transferencia extends Model
     protected $table = 'Equipamiento.transferencias';
 
     /**
+     * Campos asignables de forma masiva.
+     * 
      * @var array
      */
     protected $fillable = ['fecha', 'observaciones'];
+
+    /**
+     * Campos transformados a instancias de Carbon.
+     * 
+     * @var array
+     */
+    protected $dates = ['fecha'];
 
     /**
      * [boot description].

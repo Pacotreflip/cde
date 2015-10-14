@@ -73,14 +73,6 @@
         
         <app-errors form="@{{ transferenciaForm }}"></app-errors>
 
-{{--         <div id="form-errors" v-cloak>
-          <div class="alert alert-danger" v-if="transferenciaForm.errors.length">
-            <ul>
-              <li v-repeat="error in transferenciaForm.errors">@{{ error }}</li>
-            </ul>
-          </div>
-        </div> --}}
-
         <div class="form-group">
           <button class="btn btn-primary" type="submit" v-attr="disabled: transfiriendo" v-on="click: transferir">
             <span v-if="! transfiriendo"><i class="fa fa-check-circle"></i> Transferir</span>

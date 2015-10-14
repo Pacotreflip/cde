@@ -99,7 +99,7 @@ $factory->define(Area::class, function (Faker\Generator $faker) {
         'nombre'      => implode(' ', $faker->words),
         'clave'       => $faker->citySuffix,
         'descripcion' => $faker->paragraph,
-        // 'id_obra'     => factory(Obra::class)->create()->id_obra,
+        'id_obra'     => null, //factory(Obra::class)->create()->id_obra,
     ];
 });
 
@@ -220,7 +220,7 @@ $factory->defineAs(ItemTransaccion::class, 'item-recepcion', function (Faker\Gen
     return array_merge($item, [
         'cantidad'         => $faker->randomFloat,
         'precio'           => $faker->randomFloat,
-        'id_area_destino'  => factory(Area::class)->create()->id,
+        'id_area_destino'  => null,//factory(Area::class)->create()->id,
         'id_transaccion'   => factory(Recepcion::class)->create()->id,
         'tipo_transaccion' => Recepcion::class,
     ]);
