@@ -7,6 +7,7 @@ use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Areas\AreaRepository;
 use Ghi\Equipamiento\Areas\TipoAreaRepository;
 
@@ -120,10 +121,38 @@ class AreasController extends Controller
         $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
         $areas = $this->areas->getListaAreas();
 
+        dd($this->estadisticaMateriales($area));
+
         return view('areas.edit')
             ->withArea($area)
             ->withAreas($areas)
             ->withTipos($tipos);
+    }
+
+    protected function estadisticaMateriales($area)
+    {
+        $inventarios = $area->inventarios;
+        $requerimientos = $area->tipo->materiales;
+        $lista_materiales = $requerimientos->merge($inventarios);
+
+        $materiales = Material::whereIn('id_material', $lista_materiales->lists('id_material'))->get();
+
+        $estadisticas = $materiales->map(function ($material, $key) use ($requerimientos, $inventarios) {
+            $material->cantidad_requerida  = 0;
+            $material->cantidad_almacenada = 0;
+
+            if (! $requerimientos->where('id_material', $material->id_material)->isEmpty()) {
+                $material->cantidad_requerida = $requerimientos->where('id_material', $material->id_material)->first()->pivot->cantidad;
+            }
+
+            if (! $inventarios->where('id_material', $material->id_material)->isEmpty()) {
+                $material->cantidad_almacenada = $inventarios->where('id_material', $material->id_material)->first()->cantidad;
+            }
+
+            return $material;
+        });
+
+        return $estadisticas;
     }
 
     /**

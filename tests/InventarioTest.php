@@ -1,5 +1,6 @@
 <?php
 
+use Ghi\Core\Models\Obra;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
@@ -15,8 +16,9 @@ class InventarioTest extends \TestCase
     /** @test */
     public function test_un_inventario_puede_ser_creado()
     {
+        $obra     = factory(Obra::class)->create();
         $material = factory(Material::class)->create();
-        $area     = factory(Area::class)->create();
+        $area     = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
         $inventario = $material->nuevoInventarioEnArea($area);
         $inventario->save();
@@ -29,8 +31,9 @@ class InventarioTest extends \TestCase
     /** @test */
     public function test_crea_inventario_con_movimiento_inicial()
     {
+        $obra     = factory(Obra::class)->create();
         $material = factory(Material::class)->create();
-        $area     = factory(Area::class)->create();
+        $area     = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
         $item     = factory(ItemTransaccion::class, 'item-recepcion')->create([
             'id_area_destino' => $area->id,
             'id_material'     => $material->id_material,
@@ -44,12 +47,13 @@ class InventarioTest extends \TestCase
     /** @test */
     public function test_incrementa_existencia()
     {
+        $obra         = factory(Obra::class)->create();
         $material     = factory(Material::class)->create();
-        $area_origen  = factory(Area::class)->create();
-        $area_destino = factory(Area::class)->create(['id_obra' => $area_origen->id_obra]);
+        $area_origen  = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+        $area_destino = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
         $inventario = factory(Inventario::class)->create([
-            'id_obra'     => $area_origen->id_obra,
+            'id_obra'     => $obra->id_obra,
             'id_material' => $material->id_material,
             'id_area'     => $area_origen->id,
             'cantidad'    => 100

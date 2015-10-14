@@ -41,6 +41,10 @@
         @endforeach
       </tbody>
     </table>
+    
+    {{ $area->tipo->materiales->where('id_material', 47) }}
+    <hr>
+    {{ $area->inventarios }}
   @endif
 
   <hr>

@@ -37,6 +37,15 @@ class Material extends Model
     protected $fillable = ['descripcion', 'descripcion_larga', 'numero_parte', 'codigo_externo', ];
 
     /**
+     * [$casts description].
+     * 
+     * @var array
+     */
+    protected $casts = [
+        'id_material' => 'int',
+    ];
+
+    /**
      * @var bool
      */
     public $timestamps = false;
@@ -367,5 +376,21 @@ class Material extends Model
 
             return $inventario;
         }
+    }
+
+    /**
+     * Transfiere existencia de este material a otra area.
+     * 
+     * @param  float $cantidad
+     * @param  Area $origen
+     * @param  Area $destino
+     * @param  ItemTransaccion $item
+     * @return void
+     */
+    public function transferir($cantidad, Area $origen, Area $destino, $item)
+    {
+        $inventario_origen = $this->getInventarioDeArea($origen);
+        $inventario_destino = $this->nuevoInventarioEnArea($destino, $cantidad);
+        $inventario_origen->transferirA($cantidad, $inventario_destino, $item);
     }
 }

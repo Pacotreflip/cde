@@ -5,22 +5,58 @@ namespace Ghi\Equipamiento\Inventarios;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
 class Inventario extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'cadeco';
 
+    /**
+     * @var string
+     */
     protected $table = 'Equipamiento.inventarios';
 
+    /**
+     * [$casts description].
+     * 
+     * @var array
+     */
+    protected $casts = [
+        'id_material' => 'int',
+        'id_area' => 'int',
+        'cantidad' => 'float',
+    ];
+
+    /**
+     * Cantidad anterior del inventario.
+     * 
+     * @var float
+     */
     private $cantidadAnterior;
 
+    /**
+     * Item que soporta el movimiento en este inventario.
+     * 
+     * @var ItemTransaccion
+     */
     private $item;
 
+    /**
+     * Override del metodo boot para generar los movimientos
+     * de este inventario cuando sea actualizado.
+     * 
+     * @return void
+     */
     protected static function boot()
     {
+        parent::boot();
+
         static::updating(function ($inventario) {
             $inventario->cantidadAnterior = $inventario->getOriginal('cantidad');
         });
@@ -28,6 +64,26 @@ class Inventario extends Model
         static::updated(function ($inventario) {
             $inventario->generaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad, $inventario->item);
         });
+    }
+
+    /**
+     * Area relacionada con este inventario.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'id_area');
+    }
+
+    /**
+     * Material relacionado con este inventario.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material');
     }
 
     /**

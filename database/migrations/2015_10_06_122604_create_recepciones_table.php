@@ -14,12 +14,12 @@ class CreateRecepcionesTable extends Migration
     {
         Schema::create('Equipamiento.recepciones', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('id_obra')->unsigned()->index();
+            $table->integer('id_empresa')->unsigned()->index();
+            $table->integer('id_orden_compra')->unsigned()->index();
+            $table->integer('id_area_almacenamiento')->unsigned()->index();
             $table->integer('numero_folio');
-            $table->unsignedInteger('id_obra')->index();
-            $table->unsignedInteger('id_empresa')->index();
-            $table->unsignedInteger('id_orden_compra')->index();
-            $table->unsignedInteger('id_area_almacenamiento')->index();
-            $table->date('fecha_recepcion');
+            $table->datetime('fecha_recepcion');
             $table->string('referencia_documento')->nullable();
             $table->string('orden_embarque')->nullable();
             $table->string('numero_pedido')->nullable();

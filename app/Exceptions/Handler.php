@@ -44,21 +44,20 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($request->wantsJson()) {
+            if ($e instanceof ReglaNegocioException) {
+                return new JsonResponse([$e->getMessage()], 422);
+            }
+
+            return new JsonResponse(['error', get_class($e), $e->getMessage()], 500);
+        }
+
         if ($e instanceof ModelNotFoundException) {
             flash()->error('El recurso buscado no fue encontrado.');
             return back();
         } elseif ($e instanceof ReglaNegocioException) {
-
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse([$e->getMessage()], 500);
-            }
-
             flash()->error($e->getMessage());
             return back();
-        }
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse([$e->getMessage()], 500);
         }
 
         return parent::render($request, $e);

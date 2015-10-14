@@ -4,6 +4,8 @@ namespace Ghi\Equipamiento\Areas;
 
 use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\Inventarios\Inventario;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Area extends Node
@@ -43,6 +45,18 @@ class Area extends Node
     public function inventarios()
     {
         return $this->hasMany(Inventario::class, 'id_area');
+    }
+
+    /**
+     * Materiales en inventario y con existencia en esta area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function materiales()
+    {
+        return $this->belongsToMany(Material::class, 'Equipamiento.inventarios', 'id_area', 'id_material')
+            ->where('Equipamiento.inventarios.cantidad', '>', 0)
+            ->withPivot('id', 'cantidad');
     }
 
     /**
