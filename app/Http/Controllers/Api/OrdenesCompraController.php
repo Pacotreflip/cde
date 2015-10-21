@@ -4,10 +4,10 @@ namespace Ghi\Http\Controllers\Api;
 
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
-use Ghi\Http\Controllers\Controller;
+use Ghi\Http\Controllers\Api\ApiController;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 
-class OrdenesCompraController extends Controller
+class OrdenesCompraController extends ApiController
 {
     /**
      * Display a listing of the resource.

@@ -13,14 +13,9 @@ class AreasJsTreeController extends ApiController
 
     public function __construct(AreaRepository $areas)
     {
-        // parent::__construct();
-
-        $this->middleware('auth');
-        $this->middleware('context');
-
         $this->areas = $areas;
         Fractal::setSerializer(new SimpleSerializer);
-
+        parent::__construct();
     }
 
     public function areas($id = null)

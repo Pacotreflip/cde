@@ -5,10 +5,10 @@ namespace Ghi\Http\Controllers\Api;
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
-use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Http\Controllers\Api\ApiController;
 
-class AreasController extends Controller
+class AreasController extends ApiController
 {
     protected $areas;
 
@@ -18,6 +18,7 @@ class AreasController extends Controller
         $this->middleware('context');
 
         $this->areas = $areas;
+        parent::__construct();
     }
 
     public function index()
