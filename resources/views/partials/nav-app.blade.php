@@ -21,9 +21,9 @@
     </ul>
   </li>
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
-  <li><a href="{{ route('recepciones.index') }}">Recepciones</a></li>
-  <li><a href="{{ route('transferencias.index') }}">Transferencias</a></li>
-  {{--<li><a href="#">Asignación</a></li>--}}
+  <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
+  <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
+  <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>
 @else
   <li><a href="{{ route('obras') }}">Proyectos</a></li>
 @endif

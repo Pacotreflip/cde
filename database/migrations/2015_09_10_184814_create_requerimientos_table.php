@@ -15,8 +15,10 @@ class CreateRequerimientosTable extends Migration
         Schema::create('Equipamiento.requerimientos', function (Blueprint $table) {
             $table->unsignedInteger('id_tipo_area')->index();
             $table->unsignedInteger('id_material')->index();
-            $table->integer('cantidad');
+            $table->integer('cantidad_requerida');
             $table->timestamps();
+
+            $table->primary(['id_tipo_area', 'id_material']);
 
             $table->foreign('id_tipo_area')
                 ->references('id')

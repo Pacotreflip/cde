@@ -71,7 +71,7 @@ class AreasController extends Controller
             'numero_parte'  => $material->numero_parte,
             'descripcion'   => $material->descripcion,
             'unidad'        => $material->unidad,
-            'existencia'    => $material->pivot->cantidad,
+            'existencia'    => $material->pivot->cantidad_existencia,
         ];
     }
 }

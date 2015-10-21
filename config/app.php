@@ -150,6 +150,7 @@ return [
         Ghi\Providers\EventServiceProvider::class,
         Ghi\Providers\RouteServiceProvider::class,
         Ghi\Providers\ContextServiceProvider::class,
+        Ghi\Providers\FractalServiceProvider::class,
 
     ],
 
@@ -203,6 +204,7 @@ return [
         'Flash'     => Laracasts\Flash\Flash::class,
         'Context'   => Ghi\Core\Facades\Context::class,
         'Image'     => Intervention\Image\Facades\Image::class,
+        'Fractal'   => Ghi\Core\Facades\Fractal::class,
     ],
 
 ];

@@ -12,12 +12,6 @@
 
   <hr>
   
-  {{-- <ul class="nav nav-tabs">
-    <li role="presentation" class="active"><a href="#">Articulos Requeridos</a></li>
-    <li role="presentation"><a href="#">Articulos Adquiridos</a></li>
-    <li role="presentation"><a href="#">Articulos Almacenados</a></li>
-  </ul> --}}
-
   @if($area->tipo)
     <table class="table table-condensed table-striped">
       <thead>
@@ -36,19 +30,13 @@
               </span>
             </td>
             <td>{{ $material->unidad }}</td>
-            <td>{{ $material->pivot->cantidad }}</td>
+            <td>{{ $material->pivot->cantidad_requerida }}</td>
           </tr>
         @endforeach
       </tbody>
     </table>
-    
-    {{ $area->tipo->materiales->where('id_material', 47) }}
-    <hr>
-    {{ $area->inventarios }}
   @endif
 
-  <hr>
-  
   <div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>
     <p>

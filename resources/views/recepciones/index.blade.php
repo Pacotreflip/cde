@@ -2,7 +2,7 @@
 
 @section('content')
   <h1>Recepciones
-    <a href="{{ route('recepciones.create') }}" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Recibir Articulos</a>
+    <a href="{{ route('recepciones.create') }}" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Recibir Artículos</a>
   </h1>
   <hr>
 

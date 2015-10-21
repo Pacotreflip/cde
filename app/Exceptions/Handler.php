@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if ($request->wantsJson()) {
+        if ($request->wantsJson() or $request->ajax()) {
             if ($e instanceof ReglaNegocioException) {
                 return new JsonResponse([$e->getMessage()], 422);
             }

@@ -119,19 +119,20 @@ class Familia extends Model
     }
 
     /**
-     * Indica si este material-familia tiene hijos
+     * Indica si esta familia tiene hijos.
      *
      * @return bool
      */
     public function hasChildren()
     {
-        return static::whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
-            ->where('tipo_material', $this->tipo_material)
+        return static::
+            where('tipo_material', $this->tipo_material)
+            ->whereRaw("LEFT(nivel, 4) = '".$this->nivel."'")
             ->exists();
     }
 
     /**
-     * Obtiene el primer hijo de este material-familia
+     * Obtiene el primer hijo de esta familia.
      *
      * @return Material|null
      */

@@ -16,7 +16,7 @@ class AreasTableSeeder extends Seeder
             ->each(function ($nivel1) {
                 factory(Area::class, 3)->create(['parent_id' => $nivel1->id, 'id_obra' => $nivel1->id_obra])
                     ->each(function ($nivel2) {
-                        factory(Area::class, 2)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
+                        factory(Area::class, 7)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
                 });
         });
 
@@ -24,7 +24,7 @@ class AreasTableSeeder extends Seeder
             ->each(function ($nivel1) {
                 factory(Area::class, 3)->create(['parent_id' => $nivel1->id, 'id_obra' => $nivel1->id_obra])
                     ->each(function ($nivel2) {
-                        factory(Area::class, 2)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
+                        factory(Area::class, 7)->create(['parent_id' => $nivel2->id, 'id_obra' => $nivel2->id_obra]);
                 });
         });
     }

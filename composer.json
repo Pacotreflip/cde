@@ -12,7 +12,8 @@
         "ghi/laravel-intranet-auth": "^1.1",
         "overtrue/laravel-lang": "^1.0",
         "intervention/image": "^2.3",
-        "kalnoy/nestedset": "dev-master"
+        "kalnoy/nestedset": "dev-master",
+        "league/fractal": "^0.12.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

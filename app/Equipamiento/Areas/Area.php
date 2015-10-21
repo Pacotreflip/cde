@@ -2,6 +2,7 @@
 
 namespace Ghi\Equipamiento\Areas;
 
+use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
@@ -26,6 +27,16 @@ class Area extends Node
      * @var array
      */
     protected $fillable = ['nombre', 'clave', 'descripcion'];
+
+    /**
+     * Obra relacionada con esta area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function obra()
+    {
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
 
     /**
      * Subtipo de area
@@ -55,8 +66,8 @@ class Area extends Node
     public function materiales()
     {
         return $this->belongsToMany(Material::class, 'Equipamiento.inventarios', 'id_area', 'id_material')
-            ->where('Equipamiento.inventarios.cantidad', '>', 0)
-            ->withPivot('id', 'cantidad');
+            ->where('Equipamiento.inventarios.cantidad_existencia', '>', 0)
+            ->withPivot('id', 'cantidad_existencia');
     }
 
     /**

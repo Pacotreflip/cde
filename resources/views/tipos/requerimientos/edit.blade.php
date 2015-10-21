@@ -37,7 +37,7 @@
               <td><input type="checkbox" id="select_all" title="Seleccionar todos"/></td>
               <th>Descripción</th>
               <th>Unidad</th>
-              <th>Cantidad</th>
+              <th>Cantidad Requerida</th>
             </tr>
           </thead>
           <tbody>
@@ -47,8 +47,9 @@
                 <td><a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a></td>
                 <td>{{ $material->unidad }}</td>
                 <td>
-                  <input type="text" class="form-control input-sm" name="articulos[{{ $material->id_material }}][cantidad]" 
-                        value="{{ $material->pivot->cantidad }}">
+                  <input type="text" class="form-control input-sm" 
+                         name="articulos[{{ $material->id_material }}][cantidad]" 
+                         value="{{ $material->pivot->cantidad_requerida }}">
                 </td>
               </tr>
             @endforeach

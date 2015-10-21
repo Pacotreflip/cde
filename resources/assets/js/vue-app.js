@@ -16,16 +16,18 @@ module.exports = {
         this.whenReady();
     },
 
-
     events: {
         /**
          * Receive an updated team list from a child component.
          */
         teamsUpdated: function (teams) {
             this.$broadcast('teamsRetrieved', teams);
+        },
+
+        globalError: function(errors) {
+            this.$broadcast('displayGlobalErrors', errors);
         }
     },
-
 
     methods: {
         /**

@@ -49,7 +49,7 @@
   
   <hr>
 
-  <h3 class="text-center">Artículos Recibidos</h3>
+  <h3>Artículos Recibidos</h3>
   <table class="table table-striped">
     <thead>
       <tr>

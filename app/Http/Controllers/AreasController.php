@@ -94,6 +94,8 @@ class AreasController extends Controller
                 'descripcion' => $request->get('descripcion'),
             ]);
 
+            $area->obra()->associate($this->getObraEnContexto());
+
             if ($tipo) {
                 $area->asignaTipo($tipo);
             }
@@ -121,7 +123,7 @@ class AreasController extends Controller
         $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
         $areas = $this->areas->getListaAreas();
 
-        dd($this->estadisticaMateriales($area));
+        // dd($this->estadisticaMateriales($area));
 
         return view('areas.edit')
             ->withArea($area)
@@ -129,6 +131,11 @@ class AreasController extends Controller
             ->withTipos($tipos);
     }
 
+    /**
+     * [estadisticaMateriales description]
+     * @param  [type] $area [description]
+     * @return [type]       [description]
+     */
     protected function estadisticaMateriales($area)
     {
         $inventarios = $area->inventarios;

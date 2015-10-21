@@ -21,7 +21,7 @@
   <h3>Artículos Adquiridos</h3>
   
   <div class="table-responsive">
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover table-condensed">
       <thead>
         <tr>
           <th>Descripción</th>
