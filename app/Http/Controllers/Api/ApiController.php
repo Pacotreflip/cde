@@ -9,6 +9,12 @@ use League\Fractal\Resource\Collection;
 
 class ApiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('context');
+    }
+
     const CODE_WRONG_ARGS = 'GEN-FUBARGS';
     const CODE_NOT_FOUND = 'GEN-LIKETHEWIND';
     const CODE_INTERNAL_ERROR = 'GEN-AAAGHH';

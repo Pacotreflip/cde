@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "dd071c681dc9c36716bde1c3250a827f",
+    "content-hash": "c17cf337fcb3b4a35e80a841957a7be5",
     "packages": [
         {
             "name": "caouecs/laravel4-lang",
