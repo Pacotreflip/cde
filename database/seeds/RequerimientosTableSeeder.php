@@ -17,8 +17,8 @@ class RequerimientosTableSeeder extends Seeder
         $materiales = Material::soloMateriales()->get();
 
         foreach ($tipos as $tipo) {
-            foreach ($materiales->random(25) as $material) {
-                $tipo->materiales()->attach($material->id_material, ['cantidad' => 1]);
+            foreach ($materiales->take(10) as $material) {
+                $tipo->materiales()->attach($material->id_material, ['cantidad_requerida' => 1]);
             }
         }
     }

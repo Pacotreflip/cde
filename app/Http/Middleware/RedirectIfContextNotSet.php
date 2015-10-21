@@ -47,6 +47,10 @@ class RedirectIfContextNotSet
     public function handle($request, Closure $next)
     {
         if ($this->context->notEstablished()) {
+            if ($request->ajax()) {
+                return response('Lo sentimos, debe seleccionar una obra para ver esta información!.', 401);
+            }
+
             Flash::error('Lo sentimos, debe seleccionar una obra para ver esta información!');
 
             return redirect()->guest(route('obras'));

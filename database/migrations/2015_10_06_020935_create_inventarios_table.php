@@ -17,7 +17,7 @@ class CreateInventariosTable extends Migration
             $table->integer('id_obra')->unsigned()->index();
             $table->integer('id_area')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
-            $table->decimal('cantidad', 12, 2);
+            $table->decimal('cantidad_existencia', 12, 2);
             $table->timestamps();
 
             $table->foreign('id_obra')

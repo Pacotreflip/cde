@@ -12,7 +12,7 @@
             if (typeof errors === 'object') {
                 form.errors = _.flatten(_.toArray(errors));
             } else {
-                form.errors.push('Un error grave ocurrio. Por favor intente otra ves.');
+                form.errors.push('Un error grave ocurrió. Por favor intente otra ves.');
             }
         }
     }

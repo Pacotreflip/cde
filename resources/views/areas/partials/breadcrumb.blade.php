@@ -2,7 +2,7 @@
   @unless($area)
     <li class="active">Inicio</li>
   @else
-    <li><a href="{{ route('areas.index') }}">Inicio</a></li>
+    <li><a href="{{ route('areas.index') }}">Áreas</a></li>
   @endunless
 
   @foreach($ancestros as $ancestro)

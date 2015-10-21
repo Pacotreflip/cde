@@ -44,7 +44,7 @@ class Tipo extends Node
         return $this->belongsToMany(Material::class, 'Equipamiento.requerimientos', 'id_tipo_area', 'id_material')
             ->orderBy('descripcion')
             ->withTimestamps()
-            ->withPivot('cantidad');
+            ->withPivot('cantidad_requerida');
     }
 
     /**
@@ -99,7 +99,7 @@ class Tipo extends Node
      */
     public function requiereArticulo($material = [])
     {
-        $this->materiales()->attach($material, ['cantidad' => 1]);
+        $this->materiales()->attach($material, ['cantidad_requerida' => 1]);
 
         return $this;
     }

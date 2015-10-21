@@ -139,8 +139,7 @@ class Material extends Model
     public function getTipoMaterialAttribute($value)
     {
         // Para diferenciar cuando el material es de tipo servicios y devolver el tipo correcto
-        // por la inconsistencia de que mano de obra y servicios comparten el mismo numero
-        // de tipo
+        // por la inconsistencia de que mano de obra y servicios comparten el mismo numero de tipo
         if ($value == TipoMaterial::TIPO_MANO_OBRA and $this->attributes['marca'] == 1) {
             return new TipoMaterial(TipoMaterial::TIPO_SERVICIOS);
         }
@@ -277,7 +276,7 @@ class Material extends Model
      */
     public function getTotalExistencias()
     {
-        return $this->inventarios->sum('cantidad');
+        return $this->inventarios->sum('cantidad_existencia');
     }
 
     /**
@@ -288,7 +287,7 @@ class Material extends Model
      */
     public function getExistenciaEnArea(Area $area)
     {
-        return $this->inventarios()->where('id_area', $area->id)->sum('cantidad');
+        return $this->inventarios()->where('id_area', $area->id)->sum('cantidad_existencia');
     }
 
     /**
@@ -345,7 +344,7 @@ class Material extends Model
             $inventario->id_obra = $area->id_obra;
             $inventario->id_area = $area->getKey();
             $inventario->id_material = $this->getKey();
-            $inventario->cantidad = 0;
+            $inventario->cantidad_existencia = 0;
 
             return $inventario;
         }
@@ -368,7 +367,7 @@ class Material extends Model
             $inventario->id_obra = $area->id_obra;
             $inventario->id_area = $area->getKey();
             $inventario->id_material = $this->getKey();
-            $inventario->cantidad = 0;
+            $inventario->cantidad_existencia = 0;
 
             if ($inventario->save()) {
                 $inventario->incrementaExistencia($cantidad, $item);

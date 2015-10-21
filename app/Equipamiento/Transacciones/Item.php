@@ -23,6 +23,9 @@ class Item extends Model
      */
     protected $primaryKey = 'id_item';
 
+    /**
+     * @var array
+     */
     protected $casts = [
         'cantidad' => 'float',
         'precio_unitario' => 'float'

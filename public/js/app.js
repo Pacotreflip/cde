@@ -37667,14 +37667,247 @@ if ($('#app').length) {
     new Vue(require('./vue-app'));
 }
 
-},{"./vue-app":93,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":4,"jstree":5,"moment":7,"underscore":8,"vue":85,"vue-resource":10,"vue-validator":17}],88:[function(require,module,exports){
+},{"./vue-app":99,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":4,"jstree":5,"moment":7,"underscore":8,"vue":85,"vue-resource":10,"vue-validator":17}],88:[function(require,module,exports){
 'use strict';
 
+require('./components/global-errors');
 require('./components/errors');
 require('./components/transferencias');
 require('./components/recepciones');
+require('./components/areas-jstree');
+require('./components/areas-modal-tree');
+require('./components/asignaciones');
 
-},{"./components/errors":89,"./components/recepciones":90,"./components/transferencias":92}],89:[function(require,module,exports){
+},{"./components/areas-jstree":89,"./components/areas-modal-tree":90,"./components/asignaciones":91,"./components/errors":92,"./components/global-errors":93,"./components/recepciones":94,"./components/transferencias":98}],89:[function(require,module,exports){
+'use strict';
+
+Vue.component('areas-tree', {
+
+  data: function data() {
+    return {
+      created: false,
+      errors: []
+    };
+  },
+
+  template: '<div v-el="jstree"></div><div class="alert alert-danger" v-if="errors.length"><ul><li v-repeat="error in errors">{{ error }}</li></ul></div>',
+
+  props: ['whenSelected'],
+
+  ready: function ready() {
+    var that = this;
+
+    var jstreeConf = {
+      core: {
+        multiple: false,
+        data: {
+          url: function url(node) {
+            if (node.id === "#") {
+              return '/api/areas/jstree';
+            }
+            return '/api/areas/' + node.id + '/children/jstree';
+          },
+          data: function data(node) {
+            return { "id": node.id };
+          }
+        },
+        strings: {
+          'Loading ...': 'Cargando ...'
+        },
+        error: function error(object) {
+          // that.errors = _.flatten(_.toArray({ error: object.error + ': ' + object.reason }));
+          that.$dispatch('globalError', '');
+        }
+      }
+    };
+
+    $(this.$$.jstree).jstree(jstreeConf).on('changed.jstree', (function (e, data) {
+      this.created = true;
+      this.whenSelected(data.node.id);
+    }).bind(this));
+  }
+});
+
+},{}],90:[function(require,module,exports){
+'use strict';
+
+Vue.component('areas-modal-tree', {
+
+  data: function data() {
+    return {
+      created: false
+    };
+  },
+
+  template: require('./templates/modal-jstree.html'),
+
+  props: ['material', 'whenSelected', 'limit'],
+
+  ready: function ready() {
+    $(this.$$.modalButton).on('click', this.showModal);
+
+    $(this.$$.jstreemodal).modal().on('shown.bs.modal', this.initializeJsTree);
+  },
+
+  methods: {
+
+    /**
+     * Muestra la ventana modal.
+     */
+    showModal: function showModal() {
+      $(this.$$.jstreemodal).modal('show');
+    },
+
+    /**
+     * Inicializacion de JsTree.
+     */
+    initializeJsTree: function initializeJsTree() {
+      if (!this.created) {
+        this.created = true;
+
+        $(this.$$.jstree).jstree(this.config()).on('changed.jstree', this.whenChanged).on('select_node.jstree', this.whenNodeSelected);
+      }
+    },
+
+    /**
+     * Accion cuando el arbol cambia.
+     */
+    whenChanged: function whenChanged(e, data) {
+      var selected = [];
+
+      data.instance.get_selected(true).forEach(function (node) {
+        node.path = data.instance.get_path(node, ' / ');
+        selected.push(node);
+      });
+
+      this.whenSelected(this.material, selected);
+    },
+
+    /**
+     * Accion cuando un nodo es seleccionado.
+     */
+    whenNodeSelected: function whenNodeSelected(e, data) {
+      // if (data.selected.length > this.limit) {
+      //   data.instance.uncheck_node(data.node);
+      //   data.instance.deselect_node(data.node);
+      // }
+    },
+
+    /**
+     * Configuracion de JsTree.
+     */
+    config: function config() {
+      var that = this;
+
+      return {
+        core: {
+          data: {
+            url: function url(node) {
+              if (node.id === "#") {
+                return '/api/areas/jstree';
+              }
+              return '/api/areas/' + node.id + '/children/jstree';
+            },
+            data: function data(node) {
+              return { "id": node.id };
+            }
+          },
+          error: function error(object) {
+            that.$dispatch('globalError', '');
+          },
+          strings: {
+            'Loading ...': 'Cargando ...'
+          }
+        },
+        checkbox: { three_state: false },
+        plugins: ["checkbox"]
+      };
+    }
+
+  }
+});
+
+},{"./templates/modal-jstree.html":97}],91:[function(require,module,exports){
+'use strict';
+
+Vue.component('asignacion-screen', {
+
+  data: function data() {
+    return {
+      asignacionForm: {
+        origen: '',
+        materiales: [],
+        errors: []
+      },
+      cargando: false,
+      asignando: false
+    };
+  },
+
+  methods: {
+    /**
+     * Asigna los destinos seleccionados para un material.
+     */
+    setDestinos: function setDestinos(material, nodes) {
+      material.destinos = this.transformDestinos(nodes);
+    },
+
+    /**
+     * Transforma los nodos de treejs a destinos.
+     */
+    transformDestinos: function transformDestinos(nodes) {
+      var destinos = [];
+
+      nodes.forEach(function (destino) {
+        destinos.push({ id: destino.id, text: destino.text, cantidad: '', path: destino.path });
+      });
+
+      return destinos;
+    },
+
+    /**
+     * Obtiene los materiales de un area.
+     */
+    fetchMateriales: function fetchMateriales(area) {
+      this.asignacionForm.origen = area;
+      this.cargando = true;
+      this.asignacionForm.materiales = [];
+
+      this.$http.get('/api/areas/' + area).success(function (area) {
+        this.cargando = false;
+
+        area.materiales.forEach(function (material) {
+          material.destinos = [];
+        });
+
+        this.asignacionForm.materiales = area.materiales || [];
+      }).error(function (errors) {
+        this.cargandoInventarios = false;
+        App.setErrorsOnForm(this.transferenciaForm, errors);
+      });
+    },
+
+    /**
+     * Envia un request para generar la asignacion de materiales.
+     */
+    asignar: function asignar(e) {
+      e.preventDefault();
+
+      this.asignacionForm.errors = [];
+      this.asignando = true;
+
+      this.$http.post('/asignaciones', this.asignacionForm).success(function (response) {
+        this.asignando = false;
+        console.log(response);
+      }).error(function (errors) {
+        this.asignando = false;
+        App.setErrorsOnForm(this.asignacionForm, errors);
+      });
+    }
+  }
+});
+
+},{}],92:[function(require,module,exports){
 'use strict';
 
 Vue.component('app-errors', {
@@ -37683,7 +37916,31 @@ Vue.component('app-errors', {
     template: require('./templates/errors.html')
 });
 
-},{"./templates/errors.html":91}],90:[function(require,module,exports){
+},{"./templates/errors.html":95}],93:[function(require,module,exports){
+'use strict';
+
+Vue.component('global-errors', {
+
+  data: function data() {
+    return {
+      errors: []
+    };
+  },
+
+  template: require('./templates/global-errors.html'),
+
+  events: {
+    displayGlobalErrors: function displayGlobalErrors(errors) {
+      if (typeof errors === 'object') {
+        this.errors = _.flatten(_.toArray(errors));
+      } else {
+        this.errors.push('Un error grave ocurrio. Por favor intente otra ves.');
+      }
+    }
+  }
+});
+
+},{"./templates/global-errors.html":96}],94:[function(require,module,exports){
 'use strict';
 
 Vue.component('recepcion-screen', {
@@ -37793,9 +38050,13 @@ Vue.component('recepcion-screen', {
   }
 });
 
-},{}],91:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-repeat="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
-},{}],92:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
+module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-repeat="error in errors">{{ error }}</li>\n  </ul>\n</div>';
+},{}],97:[function(require,module,exports){
+module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el="modalButton">\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el="jstreemodal" data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el="jstree"></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
+},{}],98:[function(require,module,exports){
 'use strict';
 
 Vue.filter('depth', function (value, depth) {
@@ -37905,7 +38166,7 @@ Vue.component('transferencias-screen', {
   }
 });
 
-},{}],93:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /*
  * Load the Spark components.
  */
@@ -37932,6 +38193,10 @@ module.exports = {
          */
         teamsUpdated: function teamsUpdated(teams) {
             this.$broadcast('teamsRetrieved', teams);
+        },
+
+        globalError: function globalError(errors) {
+            this.$broadcast('displayGlobalErrors', errors);
         }
     },
 

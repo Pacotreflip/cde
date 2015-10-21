@@ -12,7 +12,7 @@ abstract class Controller extends BaseController
     use DispatchesJobs, ValidatesRequests;
 
     /**
-     * The signed in user
+     * The signed in user.
      * @var
      */
     protected $user;
@@ -28,7 +28,7 @@ abstract class Controller extends BaseController
     }
 
     /**
-     * Obtiene el id de la obra en contexto
+     * Obtiene el id de la obra en contexto.
      * 
      * @return int
      */
@@ -38,7 +38,8 @@ abstract class Controller extends BaseController
     }
 
     /**
-     * Obtiene la obra en el contexto
+     * Obtiene la obra en el contexto.
+     * 
      * @return Obra
      */
     protected function getObraEnContexto()

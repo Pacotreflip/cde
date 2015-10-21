@@ -103,4 +103,15 @@ class AreaRepository extends BaseRepository
 
         return Area::whereIn('id', $ids)->get();
     }
+
+    /**
+     * Obtiene las areas que son hijos de otra area.
+     * 
+     * @param  int $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getHijosDe($id)
+    {
+        return $this->getById($id)->children()->defaultOrder()->get();
+    }
 }

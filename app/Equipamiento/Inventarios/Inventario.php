@@ -30,7 +30,7 @@ class Inventario extends Model
     protected $casts = [
         'id_material' => 'int',
         'id_area' => 'int',
-        'cantidad' => 'float',
+        'cantidad_existencia' => 'float',
     ];
 
     /**
@@ -58,11 +58,11 @@ class Inventario extends Model
         parent::boot();
 
         static::updating(function ($inventario) {
-            $inventario->cantidadAnterior = $inventario->getOriginal('cantidad');
+            $inventario->cantidadAnterior = $inventario->getOriginal('cantidad_existencia');
         });
 
         static::updated(function ($inventario) {
-            $inventario->generaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad, $inventario->item);
+            $inventario->generaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad_existencia, $inventario->item);
         });
     }
 
@@ -105,9 +105,9 @@ class Inventario extends Model
     public function incrementaExistencia($cantidad, ItemTransaccion $item)
     {
         $this->item = $item;
-        $actual = $this->cantidad;
+        $actual = $this->cantidad_existencia;
         $total = $actual + $cantidad;
-        $this->cantidad = $total;
+        $this->cantidad_existencia = $total;
 
         if ((float) $total === (float) $actual) {
             return $this;
@@ -140,10 +140,10 @@ class Inventario extends Model
         $this->item = $item;
 
         if ($this->tieneExistenciaSuficiente($decremento)) {
-            $disponible = $this->cantidad;
+            $disponible = $this->cantidad_existencia;
             $restante = $disponible - $decremento;
             $this->cantidadAnterior = $disponible;
-            $this->cantidad = $restante;
+            $this->cantidad_existencia = $restante;
             
             $this->beginTransaction();
 
@@ -194,7 +194,7 @@ class Inventario extends Model
      */
     protected function tieneExistenciaSuficiente($cantidad = 0)
     {
-        $disponible = $this->cantidad;
+        $disponible = $this->cantidad_existencia;
 
         if ((float) $disponible >= (float) $cantidad) {
             return true;

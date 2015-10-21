@@ -4,7 +4,7 @@
 Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
 Route::get('obras/', ['as' => 'obras', 'uses' => 'PagesController@obras']);
 
-// Rutas de contexto
+// Rutas de contexto...
 Route::get('/context/{databaseName}/{id_obra}', ['as' => 'context.set', 'uses' => 'ContextController@set'])
     ->where(['databaseName' => '[aA-zZ0-9_-]+', 'id_obra' => '[0-9]+']);
 
@@ -74,17 +74,25 @@ Route::get('recepciones/{id}', ['as' => 'recepciones.show', 'uses' => 'Recepcion
 Route::patch('recepciones/{id}', ['as' => 'recepciones.update', 'uses' => 'RecepcionesController@update']);
 Route::delete('recepciones/{id}', ['as' => 'recepciones.delete', 'uses' => 'RecepcionesController@destroy']);
 
-// Rutas de transferencias
+// Rutas de transferencias...
 Route::get('transferencias', ['as' => 'transferencias.index', 'uses' => 'TransferenciasController@index']);
 Route::get('transferencias/transferir', ['as' => 'transferencias.create', 'uses' => 'TransferenciasController@create']);
 Route::post('transferencias', ['as' => 'transferencias.store', 'uses' => 'TransferenciasController@store']);
 Route::get('transferencias/{id}', ['as' => 'transferencias.show', 'uses' => 'TransferenciasController@show']);
 Route::delete('transferencias/{id}', ['as' => 'transferencias.delete', 'uses' => 'TransferenciasController@destroy']);
 
+// Rutas de asignaciones...
+Route::get('asignaciones', ['as' => 'asignaciones.index', 'uses' => 'AsignacionesController@index']);
+Route::get('asignaciones/asignar', ['as' => 'asignaciones.create', 'uses' => 'AsignacionesController@create']);
+Route::post('asignaciones', ['as' => 'asignaciones.store', 'uses' => 'AsignacionesController@store']);
+Route::get('asignaciones/{id}', ['as' => 'asignaciones.show', 'uses' => 'AsignacionesController@show']);
+
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
     Route::get('areas', 'Api\AreasController@index');
-    Route::get('areas/{id}', 'Api\AreasController@show');
+    Route::get('areas/{id}', 'Api\AreasController@show')->where(['id' => '[0-9]+']);
+    Route::get('areas/jstree', 'Api\AreasJsTreeController@areas');
+    Route::get('areas/{id}/children/jstree', 'Api\AreasJsTreeController@areas')->where(['id' => '[0-9]+']);;
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
 });

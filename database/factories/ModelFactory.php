@@ -257,6 +257,6 @@ $factory->define(Inventario::class, function (Faker\Generator $faker) {
         'id_obra'     => factory(Obra::class)->create()->id_obra,
         'id_area'     => factory(Area::class)->create()->id,
         'id_material' => factory(Material::class)->create()->id_material,
-        'cantidad'    => $faker->randomFloat
+        'cantidad_existencia'    => $faker->randomFloat
     ];
 });
