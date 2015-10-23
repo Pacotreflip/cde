@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRequerimientosTable extends Migration
+class CreateMaterialesRequeridosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateRequerimientosTable extends Migration
      */
     public function up()
     {
-        Schema::create('Equipamiento.requerimientos', function (Blueprint $table) {
+        Schema::create('Equipamiento.materiales_requeridos', function (Blueprint $table) {
             $table->unsignedInteger('id_tipo_area')->index();
             $table->unsignedInteger('id_material')->index();
             $table->integer('cantidad_requerida');
@@ -22,8 +22,7 @@ class CreateRequerimientosTable extends Migration
 
             $table->foreign('id_tipo_area')
                 ->references('id')
-                ->on('Equipamiento.area_tipos')
-                ->onDelete('cascade');
+                ->on('Equipamiento.area_tipos');
 
             $table->foreign('id_material')
                 ->references('id_material')
@@ -38,6 +37,6 @@ class CreateRequerimientosTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Equipamiento.requerimientos');
+        Schema::drop('Equipamiento.materiales_requeridos');
     }
 }

@@ -6,10 +6,12 @@ use Ghi\Core\Models\Obra;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Transacciones\ItemTransaccion;
+use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 
 class Transferencia extends Model
 {
+    use TransaccionTrait;
+
     /**
      * @var string
      */
@@ -25,14 +27,14 @@ class Transferencia extends Model
      * 
      * @var array
      */
-    protected $fillable = ['fecha', 'observaciones'];
+    protected $fillable = ['fecha_transferencia', 'observaciones'];
 
     /**
      * Campos transformados a instancias de Carbon.
      * 
      * @var array
      */
-    protected $dates = ['fecha'];
+    protected $dates = ['fecha_transferencia'];
 
     /**
      * [boot description].
@@ -65,28 +67,7 @@ class Transferencia extends Model
      */
     public function items()
     {
-        return $this->morphMany(ItemTransaccion::class, 'transaccion', 'tipo_transaccion', 'id_transaccion');
-    }
-
-    /**
-     * Area origen de de esta transferencia.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function area()
-    {
-        return $this->belongsTo(Area::class, 'id_area_origen');
-    }
-
-    /**
-     * Obtiene el siguiente folio disponible para asignar a esta transferencia.
-     * 
-     * @return integer
-     */
-    protected function asignaFolio()
-    {
-        $this->numero_folio = static::where('id_obra', $this->id_obra)
-            ->max('numero_folio') + 1;
+        return $this->hasMany(ItemTransferencia::class, 'id_transferencia');
     }
 
     /**
@@ -98,12 +79,11 @@ class Transferencia extends Model
      * @param  string $usuario
      * @return self
      */
-    public static function crear(Obra $obra, $fecha, Area $origen, $observaciones, $usuario)
+    public static function crear(Obra $obra, $fecha, $observaciones, $usuario)
     {
         $transferencia = new static();
-        $transferencia->area()->associate($origen);
         $transferencia->obra()->associate($obra);
-        $transferencia->fecha = $fecha;
+        $transferencia->fecha_transferencia = $fecha;
         $transferencia->observaciones = $observaciones;
         $transferencia->creado_por = $usuario;
         $transferencia->save();
@@ -118,14 +98,16 @@ class Transferencia extends Model
      * @param  Area $origen
      * @param  Area $destino
      * @param  float $cantidad
-     * @return ItemTransaccion
+     * @return ItemTransferencia
      */
     public function transfiereMaterial(Material $material, Area $origen, Area $destino, $cantidad)
     {
-        $item = ItemTransaccion::nuevoConMaterial($material, $cantidad);
+        $item = new ItemTransferencia;
+        $item->material()->associate($material);
+        $item->unidad = $material->unidad;
         $item->id_area_origen = $origen->id;
         $item->id_area_destino = $destino->id;
-        $item->cantidad = $cantidad;
+        $item->cantidad_transferida = $cantidad;
         $this->items()->save($item);
 
         $material->transferir($cantidad, $origen, $destino, $item);

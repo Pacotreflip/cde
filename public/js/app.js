@@ -37954,7 +37954,7 @@ Vue.component('recepcion-screen', {
         referencia_documento: '',
         orden_embarque: '',
         numero_pedido: '',
-        persona_recibe: '',
+        persona_recibio: '',
         observaciones: '',
         materiales: [],
         errors: []
@@ -38068,7 +38068,7 @@ Vue.component('transferencias-screen', {
   data: function data() {
     return {
       transferenciaForm: {
-        fecha: '',
+        fecha_transferencia: '',
         area_origen: '',
         observaciones: '',
         materiales: [],

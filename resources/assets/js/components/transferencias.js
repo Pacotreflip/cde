@@ -7,7 +7,7 @@ Vue.component('transferencias-screen', {
   data: function() {
     return {
       transferenciaForm: {
-        fecha: '',
+        fecha_transferencia: '',
         area_origen: '',
         observaciones: '',
         materiales: [],

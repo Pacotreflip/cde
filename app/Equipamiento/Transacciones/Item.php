@@ -60,7 +60,7 @@ class Item extends Model
     }
 
     /**
-     * Obtiene la sumatoria de recepciones que se han hecho de este item/material.
+     * Obtiene la sumatoria de recepciones que se han hecho de este item.
      * 
      * @return float
      */
@@ -68,9 +68,9 @@ class Item extends Model
     {
         return (float) DB::connection($this->connection)
             ->table('Equipamiento.recepciones')
-            ->join('Equipamiento.items_transaccion', 'recepciones.id', '=', 'items_transaccion.id_transaccion')
+            ->join('Equipamiento.recepcion_items', 'recepciones.id', '=', 'recepcion_items.id_recepcion')
             ->where('id_orden_compra', $this->id_transaccion)
             ->where('id_material', $this->id_material)
-            ->sum('cantidad');
+            ->sum('cantidad_recibida');
     }
 }

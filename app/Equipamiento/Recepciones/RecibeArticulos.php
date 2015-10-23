@@ -3,6 +3,7 @@
 namespace Ghi\Equipamiento\Recepciones;
 
 use Ghi\Core\Models\Obra;
+use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Recepciones\Recepcion;
@@ -44,15 +45,15 @@ class RecibeArticulos
 
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
+                $area = Area::findOrFail($this->data['area_almacenamiento']);
 
-                $recepcion->recibeMaterial($material, $item['cantidad_recibir']);
+                $recepcion->recibeMaterial($material, $area, $item['cantidad_recibir']);
             }
 
-            if ($recepcion->items->count() == 0) {
+            if ($recepcion->items->count() === 0) {
                 throw new RecepcionSinArticulosException;
             }
 
-            $recepcion->numero_folio = $this->siguienteFolio();
             $recepcion->save();
             
             DB::connection('cadeco')->commit();
@@ -75,21 +76,9 @@ class RecibeArticulos
         $recepcion->obra()->associate($this->obra);
         $recepcion->id_empresa = $this->data['proveedor'];
         $recepcion->id_orden_compra = $this->data['orden_compra'];
-        $recepcion->id_area_almacenamiento = $this->data['area_almacenamiento'];
-        $recepcion->numero_folio = 0;
+        $recepcion->creado_por = \Auth::user()->usuario;
         $recepcion->save();
 
         return $recepcion;
-    }
-
-    /**
-     * Obtiene el siguiente folio de recepción.
-     * 
-     * @return int
-     */
-    protected function siguienteFolio()
-    {
-        return Recepcion::where('id_obra', $this->obra->id_obra)
-            ->max('numero_folio') + 1;
     }
 }

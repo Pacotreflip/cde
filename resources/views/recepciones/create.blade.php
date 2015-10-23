@@ -41,8 +41,8 @@
           <div class="col-sm-6">
             <!-- Persona que Recibe Form Input -->
             <div class="form-group">
-              {!! Form::label('persona_recibe', 'Persona que Recibe:') !!}
-              {!! Form::text('persona_recibe', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.persona_recibe']) !!}
+              {!! Form::label('persona_recibio', 'Persona que Recibe:') !!}
+              {!! Form::text('persona_recibio', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.persona_recibio']) !!}
             </div>
 
             <!-- Observaciones Form Input -->

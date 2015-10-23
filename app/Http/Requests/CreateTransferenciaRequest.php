@@ -24,9 +24,9 @@ class CreateTransferenciaRequest extends Request
     public function rules()
     {
         $rules = [
-            'fecha'       => 'required|date',
-            'area_origen' => 'required|integer',
-            'materiales' => 'required|array',
+            'fecha_transferencia' => 'required|date',
+            'area_origen'         => 'required|integer',
+            'materiales'          => 'required|array',
         ];
 
         foreach ($this->get('materiales') as $key => $value) {

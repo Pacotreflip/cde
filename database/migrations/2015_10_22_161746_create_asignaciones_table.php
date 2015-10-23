@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTransferenciasTable extends Migration
+class CreateAsignacionesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,11 @@ class CreateTransferenciasTable extends Migration
      */
     public function up()
     {
-        Schema::create('Equipamiento.transferencias', function (Blueprint $table) {
+        Schema::create('Equipamiento.asignaciones', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('id_obra')->unsigned()->index();
             $table->integer('numero_folio')->unsigned();
-            $table->datetime('fecha_transferencia');
+            $table->datetime('fecha_asignacion');
             $table->text('observaciones')->nullable();
             $table->string('creado_por', 16);
             $table->timestamps();
@@ -34,6 +34,6 @@ class CreateTransferenciasTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Equipamiento.transferencias');
+        Schema::drop('Equipamiento.asignaciones');
     }
 }

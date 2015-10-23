@@ -11,7 +11,6 @@
       <tr>
         <th>No. Folio</th>
         <th>Fecha</th>
-        <th>Origen</th>
         <th>Observaciones</th>
       </tr>
     </thead>
@@ -21,8 +20,7 @@
           <td>
             <a href="{{ route('transferencias.show', $transferencia) }}">#{{ $transferencia->numero_folio }}</a>
           </td>
-          <td>{{ $transferencia->fecha->format('d-M-Y h:m') }} <small class="text-muted">({{ $transferencia->created_at->diffForHumans() }})</small></td>
-          <td>{{ $transferencia->area->nombre }}</td>
+          <td>{{ $transferencia->fecha_transferencia->format('d-M-Y h:m') }} <small class="text-muted">({{ $transferencia->created_at->diffForHumans() }})</small></td>
           <td>{{ $transferencia->observaciones }}</td>
         </tr>
       @endforeach
