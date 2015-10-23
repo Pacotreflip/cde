@@ -17,14 +17,14 @@ class CreateInventariosTable extends Migration
             $table->integer('id_obra')->unsigned()->index();
             $table->integer('id_area')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
-            $table->decimal('cantidad_existencia', 12, 2);
+            $table->decimal('cantidad_existencia', 8, 2);
             $table->timestamps();
 
             $table->foreign('id_obra')
                 ->references('id_obra')
                 ->on('obras')
                 ->onUpdate('cascade')
-                ->onDelete('no action');
+                ->onDelete('cascade');
 
             $table->foreign('id_area')
                 ->references('id')

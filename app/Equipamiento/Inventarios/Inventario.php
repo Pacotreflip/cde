@@ -6,7 +6,6 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
@@ -43,9 +42,9 @@ class Inventario extends Model
     /**
      * Item que soporta el movimiento en este inventario.
      * 
-     * @var ItemTransaccion
+     * @var \Ghi\Equipamiento\Inventarios\Transaccion
      */
-    private $item;
+    private $transaccion;
 
     /**
      * Override del metodo boot para generar los movimientos
@@ -62,7 +61,7 @@ class Inventario extends Model
         });
 
         static::updated(function ($inventario) {
-            $inventario->generaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad_existencia, $inventario->item);
+            $inventario->generaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad_existencia, $inventario->transaccion);
         });
     }
 
@@ -102,9 +101,9 @@ class Inventario extends Model
      * @param  float $cantidad
      * @return bool|self
      */
-    public function incrementaExistencia($cantidad, ItemTransaccion $item)
+    public function incrementaExistencia($cantidad, Transaccion $transaccion)
     {
-        $this->item = $item;
+        $this->transaccion = $transaccion;
         $actual = $this->cantidad_existencia;
         $total = $actual + $cantidad;
         $this->cantidad_existencia = $total;
@@ -135,9 +134,9 @@ class Inventario extends Model
      * @throws SinExistenciaSuficienteException
      * @return bool|self
      */
-    public function decrementaExistencia($decremento, ItemTransaccion $item)
+    public function decrementaExistencia($decremento, Transaccion $transaccion)
     {
-        $this->item = $item;
+        $this->transaccion = $transaccion;
 
         if ($this->tieneExistenciaSuficiente($decremento)) {
             $disponible = $this->cantidad_existencia;
@@ -162,19 +161,20 @@ class Inventario extends Model
 
     /**
      * Transfiere existencia de un inventario a otro.
+     * 
      * @param  float           $cantidad           La cantidad a transferir.
      * @param  Inventario      $inventario_destino El inventario destino.
-     * @param  ItemTransaccion $item               El item que soporta este movimiento.
+     * @param  Transaccion     $transaccion        La transaccion que soporta el movimiento.
      * @return bool
      */
-    public function transferirA($cantidad, Inventario $inventario_destino, ItemTransaccion $item)
+    public function transferirA($cantidad, Inventario $inventario_destino, Transaccion $transaccion)
     {
         $this->beginTransaction();
 
         try {
-            $this->decrementaExistencia($cantidad, $item);
+            $this->decrementaExistencia($cantidad, $transaccion);
 
-            $inventario_destino->incrementaExistencia($cantidad, $item);
+            $inventario_destino->incrementaExistencia($cantidad, $transaccion);
 
             $this->commitTransaction();
 
@@ -208,14 +208,14 @@ class Inventario extends Model
      * 
      * @param  float $cantidad_anterior
      * @param  float $cantidad_actual
-     * @param  ItemTransaccion $item
+     * @param  Transaccion $transaccion
      * @return MovimientoInventario
      */
-    protected function generaMovimientoInventario($cantidad_anterior, $cantidad_actual, ItemTransaccion $item)
+    protected function generaMovimientoInventario($cantidad_anterior, $cantidad_actual, Transaccion $transaccion)
     {
         $movimiento = $this->movimientos()->getRelated()->newInstance();
         $movimiento->id_inventario = $this->getKey();
-        $movimiento->id_item = $item->getKey();
+        $movimiento->id_transaccion = $transaccion->getKey();
         $movimiento->cantidad_anterior = $cantidad_anterior;
         $movimiento->cantidad_actual = $cantidad_actual;
         $movimiento->save();

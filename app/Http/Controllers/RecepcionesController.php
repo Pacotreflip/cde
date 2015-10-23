@@ -47,7 +47,7 @@ class RecepcionesController extends Controller
         return Recepcion::where('id_obra', $this->getIdObra())
             ->where(function ($query) use ($busqueda) {
                 $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('persona_recibe', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('persona_recibio', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
                     ->orWhereHas('empresa', function ($query) use ($busqueda) {
                         $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');

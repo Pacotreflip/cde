@@ -21,16 +21,6 @@ class OrdenesCompraController extends ApiController
             ->with('items.material')
             ->findOrFail($id);
 
-        // $recepciones = Ghi\Equipamiento\Recepciones\Recepcion::deOrdenCompra($compra->id_transaccion);
-
-        // $recibidos = collect();
-        // $recepciones->each(function ($recepcion, $key) use ($recibidos) {
-        //     $recepcion->articulos->each(function ($material) use ($recibidos) {
-        //         $recibidos->push($material);
-        //     });
-        // });
-        // $recibidos = $recibidos->groupBy('pivot.id_material');
-
         return response()->json([
             'id'           => $compra->id_transaccion,
             'numero_folio' => $compra->numero_folio,

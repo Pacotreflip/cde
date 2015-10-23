@@ -7,8 +7,8 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
-use Ghi\Equipamiento\Transacciones\Transaccion;
-use Ghi\Equipamiento\Transacciones\ItemTransaccion;
+use Ghi\Equipamiento\Inventarios\Transaccion;
+use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
 
 class Recepcion extends Model
 {
@@ -35,9 +35,28 @@ class Recepcion extends Model
         'referencia_documento',
         'orden_embarque',
         'numero_pedido',
-        'persona_recibe',
+        'persona_recibio',
         'observaciones'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->asignaNuevoFolio();
+
+            $transaccion = new Transaccion;
+            $transaccion->creada_por = 'ubueno';
+            $transaccion->save();
+            $transaccion->transaccion()->associate($model);
+        });
+    }
+
+    public function transaccion()
+    {
+        return $this->belongsTo(Transaccion::class, 'id');
+    }
 
     /**
      * Obra relacionada con esta recepcion.
@@ -47,26 +66,6 @@ class Recepcion extends Model
     public function obra()
     {
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
-    }
-
-    /**
-     * Items relacionados con esta recepcion.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function items()
-    {
-        return $this->morphMany(ItemTransaccion::class, 'transaccion', 'tipo_transaccion', 'id_transaccion');
-    }
-
-    /**
-     * Orden de compra asociada con esta recepcion.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function compra()
-    {
-        return $this->belongsTo(Transaccion::class, 'id_orden_compra', 'id_transaccion');
     }
 
     /**
@@ -80,13 +79,34 @@ class Recepcion extends Model
     }
 
     /**
-     * Area de almacenamiento de los articulos de esta recepcion.
+     * Orden de compra asociada con esta recepcion.
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function area()
+    public function compra()
     {
-        return $this->belongsTo(Area::class, 'id_area_almacenamiento');
+        return $this->belongsTo(OrdenCompra::class, 'id_orden_compra', 'id_transaccion');
+    }
+
+    /**
+     * Items relacionados con esta recepcion.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function items()
+    {
+        return $this->hasMany(ItemRecepcion::class, 'id_recepcion');
+    }
+
+     /**
+     * Obtiene el siguiente folio disponible para esta recepcion.
+     * 
+     * @return integer
+     */
+    protected function asignaNuevoFolio()
+    {
+        $this->numero_folio = static::where('id_obra', $this->id_obra)
+            ->max('numero_folio') + 1;
     }
 
     /**
@@ -98,17 +118,22 @@ class Recepcion extends Model
      * 
      * @return void
      */
-    public function recibeMaterial(Material $material, $cantidad, $precio = 0)
+    public function recibeMaterial(Material $material, Area $area, $cantidad, $precio = 0)
     {
         if ($cantidad <= 0) {
             return;
         }
 
-        $item = ItemTransaccion::nuevoConMaterial($material, $cantidad, $precio);
-        $item->id_area_destino = $this->id_area_almacenamiento;
+        $item = new ItemRecepcion;
+        $item->id_material = $material->id_material;
+        $item->cantidad_recibida = $cantidad;
+        $item->precio = $precio;
+        $item->unidad = $material->unidad_compra;
+        $item->id_area_almacenamiento = $area->id;
+        var_dump($this->id);
         $this->items()->save($item);
 
-        $inventario = $material->nuevoInventarioEnArea($this->area);
-        $inventario->incrementaExistencia($cantidad, $item);
+        $inventario = $material->nuevoInventarioEnArea($area);
+        $inventario->incrementaExistencia($cantidad, $this->transaccion);
     }
 }

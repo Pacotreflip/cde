@@ -9,7 +9,7 @@ Vue.component('recepcion-screen', {
         referencia_documento: '',
         orden_embarque: '',
         numero_pedido: '',
-        persona_recibe: '',
+        persona_recibio: '',
         observaciones: '',
         materiales: [],
         errors: []
