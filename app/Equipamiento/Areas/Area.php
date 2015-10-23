@@ -113,4 +113,17 @@ class Area extends Node
 
         return $inventario;
     }
+
+    public function ruta()
+    {
+        $ruta = '';
+
+        foreach ($this->getAncestors() as $area) {
+            $ruta .= $area->nombre . ' / ';
+        }
+
+        $ruta .= $this->nombre;
+
+        return $ruta;
+    }
 }

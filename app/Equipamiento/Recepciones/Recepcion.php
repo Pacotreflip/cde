@@ -7,11 +7,13 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
-use Ghi\Equipamiento\Inventarios\Transaccion;
+use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
 
 class Recepcion extends Model
 {
+    use TransaccionTrait;
+
     /**
      * @var string
      */
@@ -39,23 +41,18 @@ class Recepcion extends Model
         'observaciones'
     ];
 
-    protected static function boot()
+    /**
+     * [boot description].
+     * 
+     * @return void
+     */
+    public static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->asignaNuevoFolio();
-
-            $transaccion = new Transaccion;
-            $transaccion->creada_por = 'ubueno';
-            $transaccion->save();
-            $transaccion->transaccion()->associate($model);
+            $model->asignaFolio();
         });
-    }
-
-    public function transaccion()
-    {
-        return $this->belongsTo(Transaccion::class, 'id');
     }
 
     /**
@@ -98,25 +95,14 @@ class Recepcion extends Model
         return $this->hasMany(ItemRecepcion::class, 'id_recepcion');
     }
 
-     /**
-     * Obtiene el siguiente folio disponible para esta recepcion.
-     * 
-     * @return integer
-     */
-    protected function asignaNuevoFolio()
-    {
-        $this->numero_folio = static::where('id_obra', $this->id_obra)
-            ->max('numero_folio') + 1;
-    }
-
     /**
      * Recibe un material en este folio de recepcion.
-     * 
+     *
      * @param Material $material
-     * @param float    $cantidad
-     * @param float    $precio
-     * 
-     * @return void
+     * @param Area $area
+     * @param float $cantidad
+     * @param float|int $precio
+     *
      */
     public function recibeMaterial(Material $material, Area $area, $cantidad, $precio = 0)
     {
@@ -130,7 +116,6 @@ class Recepcion extends Model
         $item->precio = $precio;
         $item->unidad = $material->unidad_compra;
         $item->id_area_almacenamiento = $area->id;
-        var_dump($this->id);
         $this->items()->save($item);
 
         $inventario = $material->nuevoInventarioEnArea($area);

@@ -5,6 +5,7 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
+use Illuminate\Support\Facades\DB;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Areas\AreaRepository;
@@ -52,16 +53,15 @@ class TransferenciasController extends Controller
      */
     public function store(CreateTransferenciaRequest $request)
     {
-        \DB::connection('cadeco')->beginTransaction();
+        DB::connection('cadeco')->beginTransaction();
 
         try {
             $origen = Area::findOrFail($request->get('area_origen'));
 
             $transferencia = Transferencia::crear(
                 $this->getObraEnContexto(),
-                $request->get('fecha'), 
-                $origen, 
-                $request->get('observaciones'), 
+                $request->get('fecha_transferencia'),
+                $request->get('observaciones'),
                 auth()->user()->usuario
             );
             
@@ -72,9 +72,9 @@ class TransferenciasController extends Controller
                 $transferencia->transfiereMaterial($material, $origen, $destino, $item['cantidad']);
             }
 
-            \DB::connection('cadeco')->commit();
+            DB::connection('cadeco')->commit();
         } catch(\Exception $e) {
-            \DB::connection('cadeco')->rollback();
+            DB::connection('cadeco')->rollback();
             throw $e;
         }
 

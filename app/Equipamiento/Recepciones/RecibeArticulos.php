@@ -76,6 +76,7 @@ class RecibeArticulos
         $recepcion->obra()->associate($this->obra);
         $recepcion->id_empresa = $this->data['proveedor'];
         $recepcion->id_orden_compra = $this->data['orden_compra'];
+        $recepcion->creado_por = \Auth::user()->usuario;
         $recepcion->save();
 
         return $recepcion;

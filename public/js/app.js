@@ -38068,7 +38068,7 @@ Vue.component('transferencias-screen', {
   data: function data() {
     return {
       transferenciaForm: {
-        fecha: '',
+        fecha_transferencia: '',
         area_origen: '',
         observaciones: '',
         materiales: [],

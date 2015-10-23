@@ -10,8 +10,8 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
         <div class="form-group">
-          <label for="fecha">Fecha:</label>
-          <input type="date" name="fecha" value="{{ date('Y-m-d') }}" class="form-control" v-model="transferenciaForm.fecha">
+          <label for="fecha_transferencia">Fecha:</label>
+          <input type="date" name="fecha_transferencia" value="{{ date('Y-m-d') }}" class="form-control" v-model="transferenciaForm.fecha_transferencia">
         </div>
 
         <div class="form-group">
