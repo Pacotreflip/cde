@@ -15,7 +15,8 @@ class CreateMaterialesRequeridosTable extends Migration
         Schema::create('Equipamiento.materiales_requeridos', function (Blueprint $table) {
             $table->unsignedInteger('id_tipo_area')->index();
             $table->unsignedInteger('id_material')->index();
-            $table->integer('cantidad_requerida');
+            $table->integer('cantidad_requerida')->default(1);
+            $table->decimal('costo_estimado', 12, 2)->default(0)->nullable();
             $table->timestamps();
 
             $table->primary(['id_tipo_area', 'id_material']);

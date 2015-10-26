@@ -86,10 +86,17 @@ class AreasController extends Controller
         $rango  = $request->get('rango_inicial');
         $tipo   = Tipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
+        $cantidad_a_crear = $request->get('cantidad', 1);
+        $nombre = $request->get('nombre');
 
-        for ($i = 1; $i <= $request->get('cantidad', 1); $i++) {
+        for ($i = 1; $i <= $cantidad_a_crear; $i++) {
+            
+            if ($cantidad_a_crear > 1) {
+                $nombre .= $rango;
+            }
+
             $area = new Area([
-                'nombre'      => $request->get('nombre').' '.$rango,
+                'nombre'      => $nombre,
                 'clave'       => $request->get('clave'),
                 'descripcion' => $request->get('descripcion'),
             ]);

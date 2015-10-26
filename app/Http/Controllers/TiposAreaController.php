@@ -113,7 +113,7 @@ class TiposAreaController extends Controller
         $tipo  = $this->tipos->getById($id);
         $tipos = [null => 'Inicio'] + $this->tipos->getListaTipos();
 
-        return view('tipos.edit')
+        return view('tipos.datos-generales')
             ->withTipo($tipo)
             ->withTipos($tipos);
     }

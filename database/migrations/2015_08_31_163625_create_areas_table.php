@@ -15,8 +15,8 @@ class CreateAreasTable extends Migration
     {
         Schema::create('Equipamiento.areas', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('id_obra')->index();
-            $table->unsignedInteger('tipo_id')->nullable();
+            $table->integer('id_obra')->unsigned()->index();
+            $table->ineger('tipo_id')->unsigned()->nullable()->index();
             $table->string('nombre', 100);
             $table->string('clave', 50)->nullable();
             $table->text('descripcion')->default('');
