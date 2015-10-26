@@ -14,16 +14,18 @@
       <thead>
         <tr>
           <th></th>
+          <th>No. Parte</th>
           <th>Descripción</th>
           <th>Unidad</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($articulos as $articulo)
+        @foreach($articulos as $material)
           <tr>
-            <td><input type="checkbox" name="articulos[]" value="{{ $articulo->id_material }}"></td>
-            <td><a href="{{ route('articulos.edit', [$articulo]) }}">{{ $articulo->descripcion }}</a></td>
-            <td>{{ $articulo->unidad }}</td>
+            <td><input type="checkbox" name="materiales[]" value="{{ $material->id_material }}"></td>
+            <td>{{ $material->numero_parte }}</td>
+            <td><a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a></td>
+            <td>{{ $material->unidad }}</td>
           </tr>
         @endforeach
       </tbody>

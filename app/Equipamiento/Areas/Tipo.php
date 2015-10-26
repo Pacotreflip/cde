@@ -44,11 +44,41 @@ class Tipo extends Node
         return $this->belongsToMany(Material::class, 'Equipamiento.materiales_requeridos', 'id_tipo_area', 'id_material')
             ->orderBy('descripcion')
             ->withTimestamps()
-            ->withPivot('cantidad_requerida');
+            ->withPivot('cantidad_requerida', 'costo_estimado');
     }
 
     /**
-     * Crea un nuevo tipo de area dentro de otro
+     * Areas asignadas a este tipo de area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function areas()
+    {
+        return $this->hasMany(Area::class, 'tipo_id');
+    }
+
+    /**
+     * Numero de materiales requeridos para este tipo de area.
+     * 
+     * @return int
+     */
+    public function conteoMateriales()
+    {
+        return $this->materiales->count();
+    }
+
+    /**
+     * Numero de areas asociadas con este tipo de area.
+     * 
+     * @return int
+     */
+    public function conteoAreas()
+    {
+        return $this->areas->count();
+    }
+
+    /**
+     * Crea un nuevo tipo de area dentro de otro.
      *
      * @param array $data
      * @param Tipo|null $parent
@@ -60,7 +90,7 @@ class Tipo extends Node
     }
 
     /**
-     * Relaciona este tipo de area con una obra
+     * Relaciona este tipo de area con una obra.
      * 
      * @param  Obra   $obra
      * @return self
@@ -72,7 +102,7 @@ class Tipo extends Node
     }
 
     /**
-     * Mueve este tipo dentro de otro al final
+     * Mueve este tipo dentro de otro al final.
      * 
      * @param  Tipo|null   $parent
      * @return self
@@ -92,14 +122,21 @@ class Tipo extends Node
     }
 
     /**
-     * Agrega articulos requeridos a este tipo de area
+     * Agrega articulos requeridos a este tipo de area.
      * 
      * @param  array|int  $material
      * @return self
      */
-    public function requiereArticulo($material = [])
+    public function requiereArticulo($material, $cantidad_requerida = 1, $costo_estimado = 0)
     {
-        $this->materiales()->attach($material, ['cantidad_requerida' => 1]);
+        if (is_array($material)) {
+            $this->materiales()->sync($material);
+        } else {
+            $this->materiales()->attach($material, [
+                'cantidad_requerida' => $cantidad_requerida,
+                'costo_estimado' => $costo_estimado
+            ]);
+        }
 
         return $this;
     }

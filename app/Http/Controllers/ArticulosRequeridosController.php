@@ -9,7 +9,7 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\TipoAreaRepository;
 use Ghi\Equipamiento\Articulos\MaterialRepository;
 
-class AsignacionRequerimientosController extends Controller
+class ArticulosRequeridosController extends Controller
 {
     /**
      * @var TipoAreaRepository
@@ -36,7 +36,7 @@ class AsignacionRequerimientosController extends Controller
     }
 
     /**
-     * Muestra un listado de articulos para seleccionar como requeridos
+     * Muestra un listado de articulos para seleccionar como requeridos.
      * 
      * @param  int  $id
      * @param  Request $request
@@ -59,7 +59,7 @@ class AsignacionRequerimientosController extends Controller
     }
 
     /**
-     * Agrega articulos como requeridos
+     * Agrega articulos como requeridos.
      * 
      * @param  int  $id
      * @param  Request $request
@@ -69,7 +69,9 @@ class AsignacionRequerimientosController extends Controller
     {
         $tipo = $this->tipos_area->getById($id);
         
-        $tipo->requiereArticulo($request->get('articulos'));
+        foreach ($request->get('materiales') as $material) {
+            $tipo->requiereArticulo($material);
+        }
 
         return redirect()->route('requerimientos.edit', [$id]);
     }
@@ -84,7 +86,7 @@ class AsignacionRequerimientosController extends Controller
     {
         $tipo = $this->tipos_area->getById($id);
 
-        return view('tipos.requerimientos.edit')
+        return view('tipos.articulos-requeridos')
             ->withTipo($tipo);
     }
 
@@ -100,15 +102,37 @@ class AsignacionRequerimientosController extends Controller
         $tipo = $this->tipos_area->getById($id);
         $articulos = $request->get('articulos', []);
 
-        if ($request->has('action') and $request->get('action') == 'delete_selected') {
-            $seleccionados = $request->get('selected_articulos', []);
-            $articulos = array_except($articulos, $seleccionados);
+        if ($this->seEliminanArticulos($request)) {
+            $articulos = $this->filtraArticulos($articulos, $request->get('selected_articulos', []));
         }
 
-        $tipo->materiales()->sync($articulos);
+        $tipo->requiereArticulo($articulos);
 
         Flash::success('Los cambios fueron guardados');
 
         return redirect()->route('requerimientos.edit', [$id]);
+    }
+
+    /**
+     * Indica si existe una accion de eliminar articulos en el request.
+     * 
+     * @param  Request $request
+     * @return bool
+     */
+    protected function seEliminanArticulos($request)
+    {
+        return $request->has('action') and $request->get('action') == 'delete_selected';
+    }
+
+    /**
+     * Devuelve una lista de articulos filtrada por una segunda lista.
+     * 
+     * @param  array $articulos Articulos a filtrar.
+     * @param  array $filtro Articulos que se filtraran de la lista.
+     * @return array Articulos filtrados.
+     */
+    protected function filtraArticulos($articulos, $filtro)
+    {
+        return array_except($articulos, $filtro);
     }
 }

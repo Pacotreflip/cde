@@ -21,6 +21,17 @@ Route::get('tipos-area/{id}/modificar', ['as' => 'tipos.edit', 'uses' => 'TiposA
 Route::patch('tipos-area/{id}', ['as' => 'tipos.update', 'uses' => 'TiposAreaController@update']);
 Route::delete('tipos-area/{id}', ['as' => 'tipos.delete', 'uses' => 'TiposAreaController@destroy']);
 
+// Rutas de asignacion de requerimientos...
+Route::group(['prefix' => 'tipos-area/{id}'], function () {
+    Route::get('articulos-requeridos', ['as' => 'requerimientos.edit', 'uses' => 'ArticulosRequeridosController@edit']);
+    Route::get('articulos-requeridos/seleccion-articulos', ['as' => 'requerimientos.seleccion', 'uses' => 'ArticulosRequeridosController@create']);
+    Route::post('articulos-requeridos', ['as' => 'requerimientos.store', 'uses' => 'ArticulosRequeridosController@store']);
+    Route::patch('articulos-requeridos', ['as' => 'requerimientos.update', 'uses' => 'ArticulosRequeridosController@update']);
+
+    Route::get('areas-asignadas', 'AreasAsignadasController@index');
+    Route::get('evaluacion-calidad', 'EvaluacionCalidadController@index');
+});
+
 // Rutas de areas...
 Route::get('areas', ['as' => 'areas.index', 'uses' => 'AreasController@index']);
 Route::get('areas/nueva', ['as' => 'areas.create', 'uses' => 'AreasController@create']);
@@ -53,14 +64,6 @@ Route::post('proveedores', ['as' => 'proveedores.store', 'uses' => 'ProveedoresC
 Route::get('proveedores/{id}', ['as' => 'proveedores.edit', 'uses' => 'ProveedoresController@edit']);
 Route::patch('proveedores/{id}', ['as' => 'proveedores.update', 'uses' => 'ProveedoresController@update']);
 Route::delete('proveedores/{id}', ['as' => 'proveedores.delete', 'uses' => 'ProveedoresController@destroy']);
-
-// Rutas de asignacion de requerimientos...
-Route::group(['prefix' => 'tipos-area/{id}'], function () {
-    Route::get('asignacion-requerimientos', ['as' => 'requerimientos.edit', 'uses' => 'AsignacionRequerimientosController@edit']);
-    Route::get('asignacion-requerimientos/seleccion-articulos', ['as' => 'requerimientos.seleccion', 'uses' => 'AsignacionRequerimientosController@create']);
-    Route::post('asignacion-requerimientos', ['as' => 'requerimientos.store', 'uses' => 'AsignacionRequerimientosController@store']);
-    Route::patch('asignacion-requerimientos', ['as' => 'requerimientos.update', 'uses' => 'AsignacionRequerimientosController@update']);
-});
 
 // Rutas de compras...
 Route::get('compras', ['as' => 'compras.index', 'uses' => 'ComprasController@index']);
