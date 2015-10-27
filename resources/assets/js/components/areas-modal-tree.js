@@ -11,10 +11,11 @@ Vue.component('areas-modal-tree', {
   props: ['material', 'whenSelected', 'limit'],
 
   ready: function() {
-    $(this.$$.modalButton)
+
+    $(this.$els.modalbutton)
       .on('click', this.showModal);
 
-    $(this.$$.jstreemodal).modal()
+    $(this.$els.jstreemodal).modal()
       .on('shown.bs.modal', this.initializeJsTree);
   },
 
@@ -24,7 +25,7 @@ Vue.component('areas-modal-tree', {
      * Muestra la ventana modal.
      */
     showModal: function() {
-      $(this.$$.jstreemodal).modal('show');
+      $(this.$els.jstreemodal).modal('show');
     },
 
     /**
@@ -34,7 +35,7 @@ Vue.component('areas-modal-tree', {
       if (! this.created) {
         this.created = true;
 
-        $(this.$$.jstree).jstree(this.config())
+        $(this.$els.jstree).jstree(this.config())
           .on('changed.jstree', this.whenChanged)
           .on('select_node.jstree', this.whenNodeSelected);
       }

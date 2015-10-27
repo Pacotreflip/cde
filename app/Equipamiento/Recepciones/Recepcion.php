@@ -104,7 +104,7 @@ class Recepcion extends Model
      * @param float|int $precio
      *
      */
-    public function recibeMaterial(Material $material, Area $area, $cantidad, $precio = 0)
+    public function recibeMaterial(Material $material, Area $area, $cantidad)
     {
         if ($cantidad <= 0) {
             return;
@@ -113,7 +113,6 @@ class Recepcion extends Model
         $item = new ItemRecepcion;
         $item->id_material = $material->id_material;
         $item->cantidad_recibida = $cantidad;
-        $item->precio = $precio;
         $item->unidad = $material->unidad_compra;
         $item->id_area_almacenamiento = $area->id;
         $this->items()->save($item);

@@ -9,7 +9,7 @@
     <asignacion-screen inline-template>
       <div class="row">
         <div class="col-md-3">
-          <areas-tree when-selected="@{{ fetchMateriales }}"></areas-tree>
+          <areas-tree v-bind:when-selected="fetchMateriales"></areas-tree>
         </div>
         <div class="col-md-9">
           <table class="table table-condensed">
@@ -24,8 +24,7 @@
               </tr>
             </thead>
 
-            {{-- <tbody v-show="asignacionForm.materiales.length"> --}}
-            <tbody v-repeat="material in asignacionForm.materiales">
+            <tbody v-for="material in asignacionForm.materiales">
               <tr>
                 <td>@{{ material.numero_parte }}</td>
                 <td><strong>@{{ material.descripcion }}</strong></td>
@@ -34,14 +33,14 @@
                 <td>@{{ material.destinos.length }}</td>
                 <td>
                   <areas-modal-tree 
-                    material="@{{ material }}"
-                    when-selected="@{{ setDestinos }}" 
-                    limit="@{{ parseInt(material.existencia, 10) }}">
+                    v-bind:material="material"
+                    v-bind:when-selected="setDestinos" 
+                    v-bind:limit="parseInt(material.existencia, 10)">
                   </areas-modal-tree>
                 </td>
               </tr>
 
-              <tr v-repeat="destino in material.destinos" class="active">
+              <tr v-for="destino in material.destinos" class="active">
                 <td colspan="5" class="text-right">
                   <strong>@{{ destino.path }}</strong>
                 </td>
@@ -60,17 +59,17 @@
       
       <hr>
 
-      <app-errors form="@{{ asignacionForm }}"></app-errors>
+      <app-errors v-bind:form="asignacionForm"></app-errors>
       
       <div class="form-group">
-        <button class="btn btn-primary" type="submit" v-attr="disabled: asignando" v-on="click: asignar">
+        <button class="btn btn-primary" type="submit" v-bind:disabled="asignando" v-on:click="asignar">
           <span v-if="! asignando"><i class="fa fa-check-circle"></i> Asignar Artículos</span>
           <span v-if="asignando"><i class="fa fa-spinner fa-spin"></i> Asignando Articulos</span>
         </button>
       </div>
       
       <pre>
-        @{{ $data.asignacionForm.errors | json 4}}
+        @{{ $data.asignacionForm.errors | json 4 }}
       </pre>
     </asignacion-screen>
   </div>

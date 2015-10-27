@@ -19,7 +19,7 @@
           {!! Form::select('area_origen', $areas, null, [
             'class' => 'form-control', 'required',
             'v-model' => 'transferenciaForm.area_origen',
-            'v-on' => 'change: fetchMateriales']) !!}
+            'v-on:change' => 'fetchMateriales']) !!}
         </div>
 
         <div class="form-group">
@@ -51,7 +51,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-repeat="material in inventarios">
+            <tr v-for="material in inventarios">
               <td>@{{ material.numero_parte }}</td>
               <td>@{{ material.descripcion }}</td>
               <td>@{{ material.unidad }}</td>
@@ -64,17 +64,17 @@
               <td>
                 <select name="material[@{{ material.id }}][area_destino]" class="form-control"
                         v-model="material.area_destino">
-                  <option value="@{{ area.id }}" v-repeat="area in areas_destino">@{{ area.nombre | depth area.depth }}</option>
+                  <option value="@{{ area.id }}" v-for="area in areas_destino">@{{ area.nombre | depth area.depth }}</option>
                 </select>
               </td>
             </tr>
           </tbody>
         </table>
         
-        <app-errors form="@{{ transferenciaForm }}"></app-errors>
+        <app-errors v-bind:form="transferenciaForm"></app-errors>
 
         <div class="form-group">
-          <button class="btn btn-primary" type="submit" v-attr="disabled: transfiriendo" v-on="click: transferir">
+          <button class="btn btn-primary" type="submit" v-bind:disabled="transfiriendo" v-on:click="transferir">
             <span v-if="! transfiriendo"><i class="fa fa-check-circle"></i> Transferir</span>
             <span v-if="transfiriendo"><i class="fa fa-spinner fa-spin"></i> Transfiriendo</span>
           </button>
