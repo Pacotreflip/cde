@@ -17,6 +17,7 @@ class CreateMaterialesRequeridosTable extends Migration
             $table->unsignedInteger('id_material')->index();
             $table->integer('cantidad_requerida')->default(1);
             $table->decimal('costo_estimado', 12, 2)->default(0)->nullable();
+            $table->boolean('se_evalua')->default(false);
             $table->timestamps();
 
             $table->primary(['id_tipo_area', 'id_material']);

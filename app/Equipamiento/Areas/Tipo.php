@@ -44,7 +44,7 @@ class Tipo extends Node
         return $this->belongsToMany(Material::class, 'Equipamiento.materiales_requeridos', 'id_tipo_area', 'id_material')
             ->orderBy('descripcion')
             ->withTimestamps()
-            ->withPivot('cantidad_requerida', 'costo_estimado');
+            ->withPivot('cantidad_requerida', 'costo_estimado', 'se_evalua');
     }
 
     /**
@@ -75,6 +75,16 @@ class Tipo extends Node
     public function conteoAreas()
     {
         return $this->areas->count();
+    }
+
+    /**
+     * Costo total estimado de este tipo de area.
+     * 
+     * @return float
+     */
+    public function costoEstimado()
+    {
+        return $this->materiales->sum('pivot.costo_estimado');
     }
 
     /**

@@ -4,10 +4,10 @@
   {!! Form::open(['route' => ['requerimientos.update', $tipo], 'method' => 'PATCH']) !!}
     <div class="form-inline">
       <div class="form-group">
-          <select name="action" id="action" class="form-control">
-            <option value="" selected="selected">--------</option>
-            <option value="delete_selected">Borrar seleccionados</option>
-          </select>
+        <select name="action" id="action" class="form-control">
+          <option value="" selected="selected">--------</option>
+          <option value="delete_selected">Borrar seleccionados</option>
+        </select>
       </div>
       <button type="submit" class="btn btn-default">Aplicar</button>
       
@@ -15,7 +15,7 @@
           <i class="fa fa-plus"></i> Agregar Artículos
       </a>
     </div>
-    
+
     <hr>
 
     <table class="table table-striped table-hover table-condensed">
