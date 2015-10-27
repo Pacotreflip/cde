@@ -7,7 +7,7 @@ Vue.component('areas-tree', {
     }
   },
 
-  template: '<div v-el="jstree"></div><div class="alert alert-danger" v-if="errors.length"><ul><li v-repeat="error in errors">{{ error }}</li></ul></div>',
+  template: '<div v-el:jstree></div><div class="alert alert-danger" v-if="errors.length"><ul><li v-for="error in errors">{{ error }}</li></ul></div>',
 
   props: ['whenSelected'],
 
@@ -38,7 +38,7 @@ Vue.component('areas-tree', {
       }
     };
 
-    $(this.$$.jstree).jstree(jstreeConf)
+    $(this.$els.jstree).jstree(jstreeConf)
       .on('changed.jstree', function(e, data) {
         this.created = true;
         this.whenSelected(data.node.id);

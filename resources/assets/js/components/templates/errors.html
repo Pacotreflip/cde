@@ -1,7 +1,7 @@
 <div id="form-errors" v-cloak>
   <div class="alert alert-danger" v-if="form.errors.length">
     <ul>
-      <li v-repeat="error in form.errors">{{ error }}</li>
+      <li v-for="error in form.errors">{{ error }}</li>
     </ul>
   </div>
 </div>

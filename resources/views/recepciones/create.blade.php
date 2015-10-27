@@ -8,7 +8,7 @@
 
   <div id="app">
     <recepcion-screen inline-template>
-      <form action="{{ route('recepciones.store') }}" method="POST" accept-charset="UTF-8" v-on="submit: recibir">
+      <form action="{{ route('recepciones.store') }}" method="POST" accept-charset="UTF-8" @submit="recibir">
         <input name="_token" type="hidden" value="{{ csrf_token() }}">
         
         <div class="row">
@@ -17,7 +17,7 @@
             <div class="form-group">
               {!! Form::label('orden_compra', 'Folio Orden de Compra:') !!}
               {!! Form::select('orden_compra', $compras, null, ['class' => 'form-control', 'required', 
-                'v-model' => 'recepcionForm.orden_compra', 'v-on' => 'change: fetchMateriales']) !!}
+                'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}
             </div>
           </div>
           <div class="col-sm-6">
@@ -92,7 +92,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-repeat="material in compra.materiales">
+                  <tr v-for="material in compra.materiales">
                     <td>@{{ material.numero_parte }}</td>
                     <td>@{{ material.descripcion }}</td>
                     <td>@{{ material.unidad }}</td>
@@ -111,19 +111,13 @@
             </section>
           </section>
         </section>
-
-        <div id="form-errors" v-cloak>
-          <div class="alert alert-danger" v-if="recepcionForm.errors.length">
-            <ul>
-              <li v-repeat="error in recepcionForm.errors">@{{ error }}</li>
-            </ul>
-          </div>
-        </div>
+        
+        <app-errors v-bind:form="recepcionForm"></app-errors>
         
         <hr>
 
         <div class="form-group">
-          <button class="btn btn-primary" type="submit" v-attr="disabled: recibiendo" v-on="click: recibir">
+          <button class="btn btn-primary" type="submit" v-bind:disabled="recibiendo" @click="recibir">
             <span v-if="! recibiendo"><i class="fa fa-check-circle"></i> Recibir Artículos</span>
             <span v-if="recibiendo"><i class="fa fa-spinner fa-spin"></i> Recibiendo Articulos</span>
           </button>
