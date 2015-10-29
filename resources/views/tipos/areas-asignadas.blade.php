@@ -34,9 +34,9 @@
   <h4>Areas Asignadas</h4>
   <ul class="list-group">
     @foreach($tipo->areas as $area)
-      <li class="list-group-item">
-        @include('partials.path-area', ['area' => $area])
-      </li>
+      <a href="{{ route('areas.edit', $area) }}" class="list-group-item">
+        {{ $area->ruta() }}
+      </a>
     @endforeach
   </ul>
 @stop

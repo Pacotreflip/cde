@@ -34,9 +34,9 @@ class Recepcion extends Model
      */
     protected $fillable = [
         'fecha_recepcion',
-        'referencia_documento',
+        'numero_remision_factura',
         'orden_embarque',
-        'numero_pedido',
+        'numero_pedimento',
         'persona_recibio',
         'observaciones'
     ];

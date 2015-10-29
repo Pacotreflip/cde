@@ -17,7 +17,7 @@ class CreateRecepcionItemsTable extends Migration
             $table->integer('id_recepcion')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
             $table->string('unidad');
-            $table->integer('id_area_almacenamiento')->unsigned()->index();
+            $table->integer('id_area_almacenamiento')->nullable()->unsigned()->index();
             $table->decimal('cantidad_recibida', 8, 2);
             $table->timestamps();
 

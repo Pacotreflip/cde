@@ -24489,6 +24489,1262 @@ process.umask = function() { return 0; };
 
 }));
 },{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var defaultParams = {
+  title: '',
+  text: '',
+  type: null,
+  allowOutsideClick: false,
+  showConfirmButton: true,
+  showCancelButton: false,
+  closeOnConfirm: true,
+  closeOnCancel: true,
+  confirmButtonText: 'OK',
+  confirmButtonColor: '#8CD4F5',
+  cancelButtonText: 'Cancel',
+  imageUrl: null,
+  imageSize: null,
+  timer: null,
+  customClass: '',
+  html: false,
+  animation: true,
+  allowEscapeKey: true,
+  inputType: 'text',
+  inputPlaceholder: '',
+  inputValue: '',
+  showLoaderOnConfirm: false
+};
+
+exports['default'] = defaultParams;
+module.exports = exports['default'];
+},{}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _colorLuminance = require('./utils');
+
+var _getModal = require('./handle-swal-dom');
+
+var _hasClass$isDescendant = require('./handle-dom');
+
+/*
+ * User clicked on "Confirm"/"OK" or "Cancel"
+ */
+var handleButton = function handleButton(event, params, modal) {
+  var e = event || window.event;
+  var target = e.target || e.srcElement;
+
+  var targetedConfirm = target.className.indexOf('confirm') !== -1;
+  var targetedOverlay = target.className.indexOf('sweet-overlay') !== -1;
+  var modalIsVisible = _hasClass$isDescendant.hasClass(modal, 'visible');
+  var doneFunctionExists = params.doneFunction && modal.getAttribute('data-has-done-function') === 'true';
+
+  // Since the user can change the background-color of the confirm button programmatically,
+  // we must calculate what the color should be on hover/active
+  var normalColor, hoverColor, activeColor;
+  if (targetedConfirm && params.confirmButtonColor) {
+    normalColor = params.confirmButtonColor;
+    hoverColor = _colorLuminance.colorLuminance(normalColor, -0.04);
+    activeColor = _colorLuminance.colorLuminance(normalColor, -0.14);
+  }
+
+  function shouldSetConfirmButtonColor(color) {
+    if (targetedConfirm && params.confirmButtonColor) {
+      target.style.backgroundColor = color;
+    }
+  }
+
+  switch (e.type) {
+    case 'mouseover':
+      shouldSetConfirmButtonColor(hoverColor);
+      break;
+
+    case 'mouseout':
+      shouldSetConfirmButtonColor(normalColor);
+      break;
+
+    case 'mousedown':
+      shouldSetConfirmButtonColor(activeColor);
+      break;
+
+    case 'mouseup':
+      shouldSetConfirmButtonColor(hoverColor);
+      break;
+
+    case 'focus':
+      var $confirmButton = modal.querySelector('button.confirm');
+      var $cancelButton = modal.querySelector('button.cancel');
+
+      if (targetedConfirm) {
+        $cancelButton.style.boxShadow = 'none';
+      } else {
+        $confirmButton.style.boxShadow = 'none';
+      }
+      break;
+
+    case 'click':
+      var clickedOnModal = modal === target;
+      var clickedOnModalChild = _hasClass$isDescendant.isDescendant(modal, target);
+
+      // Ignore click outside if allowOutsideClick is false
+      if (!clickedOnModal && !clickedOnModalChild && modalIsVisible && !params.allowOutsideClick) {
+        break;
+      }
+
+      if (targetedConfirm && doneFunctionExists && modalIsVisible) {
+        handleConfirm(modal, params);
+      } else if (doneFunctionExists && modalIsVisible || targetedOverlay) {
+        handleCancel(modal, params);
+      } else if (_hasClass$isDescendant.isDescendant(modal, target) && target.tagName === 'BUTTON') {
+        sweetAlert.close();
+      }
+      break;
+  }
+};
+
+/*
+ *  User clicked on "Confirm"/"OK"
+ */
+var handleConfirm = function handleConfirm(modal, params) {
+  var callbackValue = true;
+
+  if (_hasClass$isDescendant.hasClass(modal, 'show-input')) {
+    callbackValue = modal.querySelector('input').value;
+
+    if (!callbackValue) {
+      callbackValue = '';
+    }
+  }
+
+  params.doneFunction(callbackValue);
+
+  if (params.closeOnConfirm) {
+    sweetAlert.close();
+  }
+  // Disable cancel and confirm button if the parameter is true
+  if (params.showLoaderOnConfirm) {
+    sweetAlert.disableButtons();
+  }
+};
+
+/*
+ *  User clicked on "Cancel"
+ */
+var handleCancel = function handleCancel(modal, params) {
+  // Check if callback function expects a parameter (to track cancel actions)
+  var functionAsStr = String(params.doneFunction).replace(/\s/g, '');
+  var functionHandlesCancel = functionAsStr.substring(0, 9) === 'function(' && functionAsStr.substring(9, 10) !== ')';
+
+  if (functionHandlesCancel) {
+    params.doneFunction(false);
+  }
+
+  if (params.closeOnCancel) {
+    sweetAlert.close();
+  }
+};
+
+exports['default'] = {
+  handleButton: handleButton,
+  handleConfirm: handleConfirm,
+  handleCancel: handleCancel
+};
+module.exports = exports['default'];
+},{"./handle-dom":10,"./handle-swal-dom":12,"./utils":15}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var hasClass = function hasClass(elem, className) {
+  return new RegExp(' ' + className + ' ').test(' ' + elem.className + ' ');
+};
+
+var addClass = function addClass(elem, className) {
+  if (!hasClass(elem, className)) {
+    elem.className += ' ' + className;
+  }
+};
+
+var removeClass = function removeClass(elem, className) {
+  var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, ' ') + ' ';
+  if (hasClass(elem, className)) {
+    while (newClass.indexOf(' ' + className + ' ') >= 0) {
+      newClass = newClass.replace(' ' + className + ' ', ' ');
+    }
+    elem.className = newClass.replace(/^\s+|\s+$/g, '');
+  }
+};
+
+var escapeHtml = function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+};
+
+var _show = function _show(elem) {
+  elem.style.opacity = '';
+  elem.style.display = 'block';
+};
+
+var show = function show(elems) {
+  if (elems && !elems.length) {
+    return _show(elems);
+  }
+  for (var i = 0; i < elems.length; ++i) {
+    _show(elems[i]);
+  }
+};
+
+var _hide = function _hide(elem) {
+  elem.style.opacity = '';
+  elem.style.display = 'none';
+};
+
+var hide = function hide(elems) {
+  if (elems && !elems.length) {
+    return _hide(elems);
+  }
+  for (var i = 0; i < elems.length; ++i) {
+    _hide(elems[i]);
+  }
+};
+
+var isDescendant = function isDescendant(parent, child) {
+  var node = child.parentNode;
+  while (node !== null) {
+    if (node === parent) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+};
+
+var getTopMargin = function getTopMargin(elem) {
+  elem.style.left = '-9999px';
+  elem.style.display = 'block';
+
+  var height = elem.clientHeight,
+      padding;
+  if (typeof getComputedStyle !== 'undefined') {
+    // IE 8
+    padding = parseInt(getComputedStyle(elem).getPropertyValue('padding-top'), 10);
+  } else {
+    padding = parseInt(elem.currentStyle.padding);
+  }
+
+  elem.style.left = '';
+  elem.style.display = 'none';
+  return '-' + parseInt((height + padding) / 2) + 'px';
+};
+
+var fadeIn = function fadeIn(elem, interval) {
+  if (+elem.style.opacity < 1) {
+    interval = interval || 16;
+    elem.style.opacity = 0;
+    elem.style.display = 'block';
+    var last = +new Date();
+    var tick = (function (_tick) {
+      function tick() {
+        return _tick.apply(this, arguments);
+      }
+
+      tick.toString = function () {
+        return _tick.toString();
+      };
+
+      return tick;
+    })(function () {
+      elem.style.opacity = +elem.style.opacity + (new Date() - last) / 100;
+      last = +new Date();
+
+      if (+elem.style.opacity < 1) {
+        setTimeout(tick, interval);
+      }
+    });
+    tick();
+  }
+  elem.style.display = 'block'; //fallback IE8
+};
+
+var fadeOut = function fadeOut(elem, interval) {
+  interval = interval || 16;
+  elem.style.opacity = 1;
+  var last = +new Date();
+  var tick = (function (_tick2) {
+    function tick() {
+      return _tick2.apply(this, arguments);
+    }
+
+    tick.toString = function () {
+      return _tick2.toString();
+    };
+
+    return tick;
+  })(function () {
+    elem.style.opacity = +elem.style.opacity - (new Date() - last) / 100;
+    last = +new Date();
+
+    if (+elem.style.opacity > 0) {
+      setTimeout(tick, interval);
+    } else {
+      elem.style.display = 'none';
+    }
+  });
+  tick();
+};
+
+var fireClick = function fireClick(node) {
+  // Taken from http://www.nonobtrusive.com/2011/11/29/programatically-fire-crossbrowser-click-event-with-javascript/
+  // Then fixed for today's Chrome browser.
+  if (typeof MouseEvent === 'function') {
+    // Up-to-date approach
+    var mevt = new MouseEvent('click', {
+      view: window,
+      bubbles: false,
+      cancelable: true
+    });
+    node.dispatchEvent(mevt);
+  } else if (document.createEvent) {
+    // Fallback
+    var evt = document.createEvent('MouseEvents');
+    evt.initEvent('click', false, false);
+    node.dispatchEvent(evt);
+  } else if (document.createEventObject) {
+    node.fireEvent('onclick');
+  } else if (typeof node.onclick === 'function') {
+    node.onclick();
+  }
+};
+
+var stopEventPropagation = function stopEventPropagation(e) {
+  // In particular, make sure the space bar doesn't scroll the main window.
+  if (typeof e.stopPropagation === 'function') {
+    e.stopPropagation();
+    e.preventDefault();
+  } else if (window.event && window.event.hasOwnProperty('cancelBubble')) {
+    window.event.cancelBubble = true;
+  }
+};
+
+exports.hasClass = hasClass;
+exports.addClass = addClass;
+exports.removeClass = removeClass;
+exports.escapeHtml = escapeHtml;
+exports._show = _show;
+exports.show = show;
+exports._hide = _hide;
+exports.hide = hide;
+exports.isDescendant = isDescendant;
+exports.getTopMargin = getTopMargin;
+exports.fadeIn = fadeIn;
+exports.fadeOut = fadeOut;
+exports.fireClick = fireClick;
+exports.stopEventPropagation = stopEventPropagation;
+},{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _stopEventPropagation$fireClick = require('./handle-dom');
+
+var _setFocusStyle = require('./handle-swal-dom');
+
+var handleKeyDown = function handleKeyDown(event, params, modal) {
+  var e = event || window.event;
+  var keyCode = e.keyCode || e.which;
+
+  var $okButton = modal.querySelector('button.confirm');
+  var $cancelButton = modal.querySelector('button.cancel');
+  var $modalButtons = modal.querySelectorAll('button[tabindex]');
+
+  if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
+    // Don't do work on keys we don't care about.
+    return;
+  }
+
+  var $targetElement = e.target || e.srcElement;
+
+  var btnIndex = -1; // Find the button - note, this is a nodelist, not an array.
+  for (var i = 0; i < $modalButtons.length; i++) {
+    if ($targetElement === $modalButtons[i]) {
+      btnIndex = i;
+      break;
+    }
+  }
+
+  if (keyCode === 9) {
+    // TAB
+    if (btnIndex === -1) {
+      // No button focused. Jump to the confirm button.
+      $targetElement = $okButton;
+    } else {
+      // Cycle to the next button
+      if (btnIndex === $modalButtons.length - 1) {
+        $targetElement = $modalButtons[0];
+      } else {
+        $targetElement = $modalButtons[btnIndex + 1];
+      }
+    }
+
+    _stopEventPropagation$fireClick.stopEventPropagation(e);
+    $targetElement.focus();
+
+    if (params.confirmButtonColor) {
+      _setFocusStyle.setFocusStyle($targetElement, params.confirmButtonColor);
+    }
+  } else {
+    if (keyCode === 13) {
+      if ($targetElement.tagName === 'INPUT') {
+        $targetElement = $okButton;
+        $okButton.focus();
+      }
+
+      if (btnIndex === -1) {
+        // ENTER/SPACE clicked outside of a button.
+        $targetElement = $okButton;
+      } else {
+        // Do nothing - let the browser handle it.
+        $targetElement = undefined;
+      }
+    } else if (keyCode === 27 && params.allowEscapeKey === true) {
+      $targetElement = $cancelButton;
+      _stopEventPropagation$fireClick.fireClick($targetElement, e);
+    } else {
+      // Fallback - let the browser handle it.
+      $targetElement = undefined;
+    }
+  }
+};
+
+exports['default'] = handleKeyDown;
+module.exports = exports['default'];
+},{"./handle-dom":10,"./handle-swal-dom":12}],12:[function(require,module,exports){
+'use strict';
+
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _hexToRgb = require('./utils');
+
+var _removeClass$getTopMargin$fadeIn$show$addClass = require('./handle-dom');
+
+var _defaultParams = require('./default-params');
+
+var _defaultParams2 = _interopRequireWildcard(_defaultParams);
+
+/*
+ * Add modal + overlay to DOM
+ */
+
+var _injectedHTML = require('./injected-html');
+
+var _injectedHTML2 = _interopRequireWildcard(_injectedHTML);
+
+var modalClass = '.sweet-alert';
+var overlayClass = '.sweet-overlay';
+
+var sweetAlertInitialize = function sweetAlertInitialize() {
+  var sweetWrap = document.createElement('div');
+  sweetWrap.innerHTML = _injectedHTML2['default'];
+
+  // Append elements to body
+  while (sweetWrap.firstChild) {
+    document.body.appendChild(sweetWrap.firstChild);
+  }
+};
+
+/*
+ * Get DOM element of modal
+ */
+var getModal = (function (_getModal) {
+  function getModal() {
+    return _getModal.apply(this, arguments);
+  }
+
+  getModal.toString = function () {
+    return _getModal.toString();
+  };
+
+  return getModal;
+})(function () {
+  var $modal = document.querySelector(modalClass);
+
+  if (!$modal) {
+    sweetAlertInitialize();
+    $modal = getModal();
+  }
+
+  return $modal;
+});
+
+/*
+ * Get DOM element of input (in modal)
+ */
+var getInput = function getInput() {
+  var $modal = getModal();
+  if ($modal) {
+    return $modal.querySelector('input');
+  }
+};
+
+/*
+ * Get DOM element of overlay
+ */
+var getOverlay = function getOverlay() {
+  return document.querySelector(overlayClass);
+};
+
+/*
+ * Add box-shadow style to button (depending on its chosen bg-color)
+ */
+var setFocusStyle = function setFocusStyle($button, bgColor) {
+  var rgbColor = _hexToRgb.hexToRgb(bgColor);
+  $button.style.boxShadow = '0 0 2px rgba(' + rgbColor + ', 0.8), inset 0 0 0 1px rgba(0, 0, 0, 0.05)';
+};
+
+/*
+ * Animation when opening modal
+ */
+var openModal = function openModal(callback) {
+  var $modal = getModal();
+  _removeClass$getTopMargin$fadeIn$show$addClass.fadeIn(getOverlay(), 10);
+  _removeClass$getTopMargin$fadeIn$show$addClass.show($modal);
+  _removeClass$getTopMargin$fadeIn$show$addClass.addClass($modal, 'showSweetAlert');
+  _removeClass$getTopMargin$fadeIn$show$addClass.removeClass($modal, 'hideSweetAlert');
+
+  window.previousActiveElement = document.activeElement;
+  var $okButton = $modal.querySelector('button.confirm');
+  $okButton.focus();
+
+  setTimeout(function () {
+    _removeClass$getTopMargin$fadeIn$show$addClass.addClass($modal, 'visible');
+  }, 500);
+
+  var timer = $modal.getAttribute('data-timer');
+
+  if (timer !== 'null' && timer !== '') {
+    var timerCallback = callback;
+    $modal.timeout = setTimeout(function () {
+      var doneFunctionExists = (timerCallback || null) && $modal.getAttribute('data-has-done-function') === 'true';
+      if (doneFunctionExists) {
+        timerCallback(null);
+      } else {
+        sweetAlert.close();
+      }
+    }, timer);
+  }
+};
+
+/*
+ * Reset the styling of the input
+ * (for example if errors have been shown)
+ */
+var resetInput = function resetInput() {
+  var $modal = getModal();
+  var $input = getInput();
+
+  _removeClass$getTopMargin$fadeIn$show$addClass.removeClass($modal, 'show-input');
+  $input.value = _defaultParams2['default'].inputValue;
+  $input.setAttribute('type', _defaultParams2['default'].inputType);
+  $input.setAttribute('placeholder', _defaultParams2['default'].inputPlaceholder);
+
+  resetInputError();
+};
+
+var resetInputError = function resetInputError(event) {
+  // If press enter => ignore
+  if (event && event.keyCode === 13) {
+    return false;
+  }
+
+  var $modal = getModal();
+
+  var $errorIcon = $modal.querySelector('.sa-input-error');
+  _removeClass$getTopMargin$fadeIn$show$addClass.removeClass($errorIcon, 'show');
+
+  var $errorContainer = $modal.querySelector('.sa-error-container');
+  _removeClass$getTopMargin$fadeIn$show$addClass.removeClass($errorContainer, 'show');
+};
+
+/*
+ * Set "margin-top"-property on modal based on its computed height
+ */
+var fixVerticalPosition = function fixVerticalPosition() {
+  var $modal = getModal();
+  $modal.style.marginTop = _removeClass$getTopMargin$fadeIn$show$addClass.getTopMargin(getModal());
+};
+
+exports.sweetAlertInitialize = sweetAlertInitialize;
+exports.getModal = getModal;
+exports.getOverlay = getOverlay;
+exports.getInput = getInput;
+exports.setFocusStyle = setFocusStyle;
+exports.openModal = openModal;
+exports.resetInput = resetInput;
+exports.resetInputError = resetInputError;
+exports.fixVerticalPosition = fixVerticalPosition;
+},{"./default-params":8,"./handle-dom":10,"./injected-html":13,"./utils":15}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var injectedHTML =
+
+// Dark overlay
+"<div class=\"sweet-overlay\" tabIndex=\"-1\"></div>" +
+
+// Modal
+"<div class=\"sweet-alert\">" +
+
+// Error icon
+"<div class=\"sa-icon sa-error\">\n      <span class=\"sa-x-mark\">\n        <span class=\"sa-line sa-left\"></span>\n        <span class=\"sa-line sa-right\"></span>\n      </span>\n    </div>" +
+
+// Warning icon
+"<div class=\"sa-icon sa-warning\">\n      <span class=\"sa-body\"></span>\n      <span class=\"sa-dot\"></span>\n    </div>" +
+
+// Info icon
+"<div class=\"sa-icon sa-info\"></div>" +
+
+// Success icon
+"<div class=\"sa-icon sa-success\">\n      <span class=\"sa-line sa-tip\"></span>\n      <span class=\"sa-line sa-long\"></span>\n\n      <div class=\"sa-placeholder\"></div>\n      <div class=\"sa-fix\"></div>\n    </div>" + "<div class=\"sa-icon sa-custom\"></div>" +
+
+// Title, text and input
+"<h2>Title</h2>\n    <p>Text</p>\n    <fieldset>\n      <input type=\"text\" tabIndex=\"3\" />\n      <div class=\"sa-input-error\"></div>\n    </fieldset>" +
+
+// Input errors
+"<div class=\"sa-error-container\">\n      <div class=\"icon\">!</div>\n      <p>Not valid!</p>\n    </div>" +
+
+// Cancel and confirm buttons
+"<div class=\"sa-button-container\">\n      <button class=\"cancel\" tabIndex=\"2\">Cancel</button>\n      <div class=\"sa-confirm-button-container\">\n        <button class=\"confirm\" tabIndex=\"1\">OK</button>" +
+
+// Loading animation
+"<div class=\"la-ball-fall\">\n          <div></div>\n          <div></div>\n          <div></div>\n        </div>\n      </div>\n    </div>" +
+
+// End of modal
+"</div>";
+
+exports["default"] = injectedHTML;
+module.exports = exports["default"];
+},{}],14:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _isIE8 = require('./utils');
+
+var _getModal$getInput$setFocusStyle = require('./handle-swal-dom');
+
+var _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide = require('./handle-dom');
+
+var alertTypes = ['error', 'warning', 'info', 'success', 'input', 'prompt'];
+
+/*
+ * Set type, text and actions on modal
+ */
+var setParameters = function setParameters(params) {
+  var modal = _getModal$getInput$setFocusStyle.getModal();
+
+  var $title = modal.querySelector('h2');
+  var $text = modal.querySelector('p');
+  var $cancelBtn = modal.querySelector('button.cancel');
+  var $confirmBtn = modal.querySelector('button.confirm');
+
+  /*
+   * Title
+   */
+  $title.innerHTML = params.html ? params.title : _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.escapeHtml(params.title).split('\n').join('<br>');
+
+  /*
+   * Text
+   */
+  $text.innerHTML = params.html ? params.text : _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.escapeHtml(params.text || '').split('\n').join('<br>');
+  if (params.text) _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.show($text);
+
+  /*
+   * Custom class
+   */
+  if (params.customClass) {
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass(modal, params.customClass);
+    modal.setAttribute('data-custom-class', params.customClass);
+  } else {
+    // Find previously set classes and remove them
+    var customClass = modal.getAttribute('data-custom-class');
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.removeClass(modal, customClass);
+    modal.setAttribute('data-custom-class', '');
+  }
+
+  /*
+   * Icon
+   */
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.hide(modal.querySelectorAll('.sa-icon'));
+
+  if (params.type && !_isIE8.isIE8()) {
+    var _ret = (function () {
+
+      var validType = false;
+
+      for (var i = 0; i < alertTypes.length; i++) {
+        if (params.type === alertTypes[i]) {
+          validType = true;
+          break;
+        }
+      }
+
+      if (!validType) {
+        logStr('Unknown alert type: ' + params.type);
+        return {
+          v: false
+        };
+      }
+
+      var typesWithIcons = ['success', 'error', 'warning', 'info'];
+      var $icon = undefined;
+
+      if (typesWithIcons.indexOf(params.type) !== -1) {
+        $icon = modal.querySelector('.sa-icon.' + 'sa-' + params.type);
+        _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.show($icon);
+      }
+
+      var $input = _getModal$getInput$setFocusStyle.getInput();
+
+      // Animate icon
+      switch (params.type) {
+
+        case 'success':
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon, 'animate');
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon.querySelector('.sa-tip'), 'animateSuccessTip');
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon.querySelector('.sa-long'), 'animateSuccessLong');
+          break;
+
+        case 'error':
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon, 'animateErrorIcon');
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon.querySelector('.sa-x-mark'), 'animateXMark');
+          break;
+
+        case 'warning':
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon, 'pulseWarning');
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon.querySelector('.sa-body'), 'pulseWarningIns');
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass($icon.querySelector('.sa-dot'), 'pulseWarningIns');
+          break;
+
+        case 'input':
+        case 'prompt':
+          $input.setAttribute('type', params.inputType);
+          $input.value = params.inputValue;
+          $input.setAttribute('placeholder', params.inputPlaceholder);
+          _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.addClass(modal, 'show-input');
+          setTimeout(function () {
+            $input.focus();
+            $input.addEventListener('keyup', swal.resetInputError);
+          }, 400);
+          break;
+      }
+    })();
+
+    if (typeof _ret === 'object') {
+      return _ret.v;
+    }
+  }
+
+  /*
+   * Custom image
+   */
+  if (params.imageUrl) {
+    var $customIcon = modal.querySelector('.sa-icon.sa-custom');
+
+    $customIcon.style.backgroundImage = 'url(' + params.imageUrl + ')';
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.show($customIcon);
+
+    var _imgWidth = 80;
+    var _imgHeight = 80;
+
+    if (params.imageSize) {
+      var dimensions = params.imageSize.toString().split('x');
+      var imgWidth = dimensions[0];
+      var imgHeight = dimensions[1];
+
+      if (!imgWidth || !imgHeight) {
+        logStr('Parameter imageSize expects value with format WIDTHxHEIGHT, got ' + params.imageSize);
+      } else {
+        _imgWidth = imgWidth;
+        _imgHeight = imgHeight;
+      }
+    }
+
+    $customIcon.setAttribute('style', $customIcon.getAttribute('style') + 'width:' + _imgWidth + 'px; height:' + _imgHeight + 'px');
+  }
+
+  /*
+   * Show cancel button?
+   */
+  modal.setAttribute('data-has-cancel-button', params.showCancelButton);
+  if (params.showCancelButton) {
+    $cancelBtn.style.display = 'inline-block';
+  } else {
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.hide($cancelBtn);
+  }
+
+  /*
+   * Show confirm button?
+   */
+  modal.setAttribute('data-has-confirm-button', params.showConfirmButton);
+  if (params.showConfirmButton) {
+    $confirmBtn.style.display = 'inline-block';
+  } else {
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.hide($confirmBtn);
+  }
+
+  /*
+   * Custom text on cancel/confirm buttons
+   */
+  if (params.cancelButtonText) {
+    $cancelBtn.innerHTML = _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.escapeHtml(params.cancelButtonText);
+  }
+  if (params.confirmButtonText) {
+    $confirmBtn.innerHTML = _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide.escapeHtml(params.confirmButtonText);
+  }
+
+  /*
+   * Custom color on confirm button
+   */
+  if (params.confirmButtonColor) {
+    // Set confirm button to selected background color
+    $confirmBtn.style.backgroundColor = params.confirmButtonColor;
+
+    // Set the confirm button color to the loading ring
+    $confirmBtn.style.borderLeftColor = params.confirmLoadingButtonColor;
+    $confirmBtn.style.borderRightColor = params.confirmLoadingButtonColor;
+
+    // Set box-shadow to default focused button
+    _getModal$getInput$setFocusStyle.setFocusStyle($confirmBtn, params.confirmButtonColor);
+  }
+
+  /*
+   * Allow outside click
+   */
+  modal.setAttribute('data-allow-outside-click', params.allowOutsideClick);
+
+  /*
+   * Callback function
+   */
+  var hasDoneFunction = params.doneFunction ? true : false;
+  modal.setAttribute('data-has-done-function', hasDoneFunction);
+
+  /*
+   * Animation
+   */
+  if (!params.animation) {
+    modal.setAttribute('data-animation', 'none');
+  } else if (typeof params.animation === 'string') {
+    modal.setAttribute('data-animation', params.animation); // Custom animation
+  } else {
+    modal.setAttribute('data-animation', 'pop');
+  }
+
+  /*
+   * Timer
+   */
+  modal.setAttribute('data-timer', params.timer);
+};
+
+exports['default'] = setParameters;
+module.exports = exports['default'];
+},{"./handle-dom":10,"./handle-swal-dom":12,"./utils":15}],15:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+/*
+ * Allow user to pass their own params
+ */
+var extend = function extend(a, b) {
+  for (var key in b) {
+    if (b.hasOwnProperty(key)) {
+      a[key] = b[key];
+    }
+  }
+  return a;
+};
+
+/*
+ * Convert HEX codes to RGB values (#000000 -> rgb(0,0,0))
+ */
+var hexToRgb = function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' + parseInt(result[3], 16) : null;
+};
+
+/*
+ * Check if the user is using Internet Explorer 8 (for fallbacks)
+ */
+var isIE8 = function isIE8() {
+  return window.attachEvent && !window.addEventListener;
+};
+
+/*
+ * IE compatible logging for developers
+ */
+var logStr = function logStr(string) {
+  if (window.console) {
+    // IE...
+    window.console.log('SweetAlert: ' + string);
+  }
+};
+
+/*
+ * Set hover, active and focus-states for buttons 
+ * (source: http://www.sitepoint.com/javascript-generate-lighter-darker-color)
+ */
+var colorLuminance = function colorLuminance(hex, lum) {
+  // Validate hex string
+  hex = String(hex).replace(/[^0-9a-f]/gi, '');
+  if (hex.length < 6) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+  lum = lum || 0;
+
+  // Convert to decimal and change luminosity
+  var rgb = '#';
+  var c;
+  var i;
+
+  for (i = 0; i < 3; i++) {
+    c = parseInt(hex.substr(i * 2, 2), 16);
+    c = Math.round(Math.min(Math.max(0, c + c * lum), 255)).toString(16);
+    rgb += ('00' + c).substr(c.length);
+  }
+
+  return rgb;
+};
+
+exports.extend = extend;
+exports.hexToRgb = hexToRgb;
+exports.isIE8 = isIE8;
+exports.logStr = logStr;
+exports.colorLuminance = colorLuminance;
+},{}],16:[function(require,module,exports){
+'use strict';
+
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+// SweetAlert
+// 2014-2015 (c) - Tristan Edwards
+// github.com/t4t5/sweetalert
+
+/*
+ * jQuery-like functions for manipulating the DOM
+ */
+
+var _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation = require('./modules/handle-dom');
+
+/*
+ * Handy utilities
+ */
+
+var _extend$hexToRgb$isIE8$logStr$colorLuminance = require('./modules/utils');
+
+/*
+ *  Handle sweetAlert's DOM elements
+ */
+
+var _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition = require('./modules/handle-swal-dom');
+
+// Handle button events and keyboard events
+
+var _handleButton$handleConfirm$handleCancel = require('./modules/handle-click');
+
+var _handleKeyDown = require('./modules/handle-key');
+
+var _handleKeyDown2 = _interopRequireWildcard(_handleKeyDown);
+
+// Default values
+
+var _defaultParams = require('./modules/default-params');
+
+var _defaultParams2 = _interopRequireWildcard(_defaultParams);
+
+var _setParameters = require('./modules/set-params');
+
+var _setParameters2 = _interopRequireWildcard(_setParameters);
+
+/*
+ * Remember state in cases where opening and handling a modal will fiddle with it.
+ * (We also use window.previousActiveElement as a global variable)
+ */
+var previousWindowKeyDown;
+var lastFocusedButton;
+
+/*
+ * Global sweetAlert function
+ * (this is what the user calls)
+ */
+var sweetAlert, swal;
+
+exports['default'] = sweetAlert = swal = function () {
+  var customizations = arguments[0];
+
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.addClass(document.body, 'stop-scrolling');
+  _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.resetInput();
+
+  /*
+   * Use argument if defined or default value from params object otherwise.
+   * Supports the case where a default value is boolean true and should be
+   * overridden by a corresponding explicit argument which is boolean false.
+   */
+  function argumentOrDefault(key) {
+    var args = customizations;
+    return args[key] === undefined ? _defaultParams2['default'][key] : args[key];
+  }
+
+  if (customizations === undefined) {
+    _extend$hexToRgb$isIE8$logStr$colorLuminance.logStr('SweetAlert expects at least 1 attribute!');
+    return false;
+  }
+
+  var params = _extend$hexToRgb$isIE8$logStr$colorLuminance.extend({}, _defaultParams2['default']);
+
+  switch (typeof customizations) {
+
+    // Ex: swal("Hello", "Just testing", "info");
+    case 'string':
+      params.title = customizations;
+      params.text = arguments[1] || '';
+      params.type = arguments[2] || '';
+      break;
+
+    // Ex: swal({ title:"Hello", text: "Just testing", type: "info" });
+    case 'object':
+      if (customizations.title === undefined) {
+        _extend$hexToRgb$isIE8$logStr$colorLuminance.logStr('Missing "title" argument!');
+        return false;
+      }
+
+      params.title = customizations.title;
+
+      for (var customName in _defaultParams2['default']) {
+        params[customName] = argumentOrDefault(customName);
+      }
+
+      // Show "Confirm" instead of "OK" if cancel button is visible
+      params.confirmButtonText = params.showCancelButton ? 'Confirm' : _defaultParams2['default'].confirmButtonText;
+      params.confirmButtonText = argumentOrDefault('confirmButtonText');
+
+      // Callback function when clicking on "OK"/"Cancel"
+      params.doneFunction = arguments[1] || null;
+
+      break;
+
+    default:
+      _extend$hexToRgb$isIE8$logStr$colorLuminance.logStr('Unexpected type of argument! Expected "string" or "object", got ' + typeof customizations);
+      return false;
+
+  }
+
+  _setParameters2['default'](params);
+  _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.fixVerticalPosition();
+  _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.openModal(arguments[1]);
+
+  // Modal interactions
+  var modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+
+  /*
+   * Make sure all modal buttons respond to all events
+   */
+  var $buttons = modal.querySelectorAll('button');
+  var buttonEvents = ['onclick', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'onfocus'];
+  var onButtonEvent = function onButtonEvent(e) {
+    return _handleButton$handleConfirm$handleCancel.handleButton(e, params, modal);
+  };
+
+  for (var btnIndex = 0; btnIndex < $buttons.length; btnIndex++) {
+    for (var evtIndex = 0; evtIndex < buttonEvents.length; evtIndex++) {
+      var btnEvt = buttonEvents[evtIndex];
+      $buttons[btnIndex][btnEvt] = onButtonEvent;
+    }
+  }
+
+  // Clicking outside the modal dismisses it (if allowed by user)
+  _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getOverlay().onclick = onButtonEvent;
+
+  previousWindowKeyDown = window.onkeydown;
+
+  var onKeyEvent = function onKeyEvent(e) {
+    return _handleKeyDown2['default'](e, params, modal);
+  };
+  window.onkeydown = onKeyEvent;
+
+  window.onfocus = function () {
+    // When the user has focused away and focused back from the whole window.
+    setTimeout(function () {
+      // Put in a timeout to jump out of the event sequence.
+      // Calling focus() in the event sequence confuses things.
+      if (lastFocusedButton !== undefined) {
+        lastFocusedButton.focus();
+        lastFocusedButton = undefined;
+      }
+    }, 0);
+  };
+
+  // Show alert with enabled buttons always
+  swal.enableButtons();
+};
+
+/*
+ * Set default params for each popup
+ * @param {Object} userParams
+ */
+sweetAlert.setDefaults = swal.setDefaults = function (userParams) {
+  if (!userParams) {
+    throw new Error('userParams is required');
+  }
+  if (typeof userParams !== 'object') {
+    throw new Error('userParams has to be a object');
+  }
+
+  _extend$hexToRgb$isIE8$logStr$colorLuminance.extend(_defaultParams2['default'], userParams);
+};
+
+/*
+ * Animation when closing modal
+ */
+sweetAlert.close = swal.close = function () {
+  var modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.fadeOut(_sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getOverlay(), 5);
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.fadeOut(modal, 5);
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass(modal, 'showSweetAlert');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.addClass(modal, 'hideSweetAlert');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass(modal, 'visible');
+
+  /*
+   * Reset icon animations
+   */
+  var $successIcon = modal.querySelector('.sa-icon.sa-success');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($successIcon, 'animate');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($successIcon.querySelector('.sa-tip'), 'animateSuccessTip');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($successIcon.querySelector('.sa-long'), 'animateSuccessLong');
+
+  var $errorIcon = modal.querySelector('.sa-icon.sa-error');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($errorIcon, 'animateErrorIcon');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($errorIcon.querySelector('.sa-x-mark'), 'animateXMark');
+
+  var $warningIcon = modal.querySelector('.sa-icon.sa-warning');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($warningIcon, 'pulseWarning');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($warningIcon.querySelector('.sa-body'), 'pulseWarningIns');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($warningIcon.querySelector('.sa-dot'), 'pulseWarningIns');
+
+  // Reset custom class (delay so that UI changes aren't visible)
+  setTimeout(function () {
+    var customClass = modal.getAttribute('data-custom-class');
+    _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass(modal, customClass);
+  }, 300);
+
+  // Make page scrollable again
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass(document.body, 'stop-scrolling');
+
+  // Reset the page to its previous state
+  window.onkeydown = previousWindowKeyDown;
+  if (window.previousActiveElement) {
+    window.previousActiveElement.focus();
+  }
+  lastFocusedButton = undefined;
+  clearTimeout(modal.timeout);
+
+  return true;
+};
+
+/*
+ * Validation of the input field is done by user
+ * If something is wrong => call showInputError with errorMessage
+ */
+sweetAlert.showInputError = swal.showInputError = function (errorMessage) {
+  var modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+
+  var $errorIcon = modal.querySelector('.sa-input-error');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.addClass($errorIcon, 'show');
+
+  var $errorContainer = modal.querySelector('.sa-error-container');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.addClass($errorContainer, 'show');
+
+  $errorContainer.querySelector('p').innerHTML = errorMessage;
+
+  setTimeout(function () {
+    sweetAlert.enableButtons();
+  }, 1);
+
+  modal.querySelector('input').focus();
+};
+
+/*
+ * Reset input error DOM elements
+ */
+sweetAlert.resetInputError = swal.resetInputError = function (event) {
+  // If press enter => ignore
+  if (event && event.keyCode === 13) {
+    return false;
+  }
+
+  var $modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+
+  var $errorIcon = $modal.querySelector('.sa-input-error');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($errorIcon, 'show');
+
+  var $errorContainer = $modal.querySelector('.sa-error-container');
+  _hasClass$addClass$removeClass$escapeHtml$_show$show$_hide$hide$isDescendant$getTopMargin$fadeIn$fadeOut$fireClick$stopEventPropagation.removeClass($errorContainer, 'show');
+};
+
+/*
+ * Disable confirm and cancel buttons
+ */
+sweetAlert.disableButtons = swal.disableButtons = function (event) {
+  var modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+  var $confirmButton = modal.querySelector('button.confirm');
+  var $cancelButton = modal.querySelector('button.cancel');
+  $confirmButton.disabled = true;
+  $cancelButton.disabled = true;
+};
+
+/*
+ * Enable confirm and cancel buttons
+ */
+sweetAlert.enableButtons = swal.enableButtons = function (event) {
+  var modal = _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$resetInput$fixVerticalPosition.getModal();
+  var $confirmButton = modal.querySelector('button.confirm');
+  var $cancelButton = modal.querySelector('button.cancel');
+  $confirmButton.disabled = false;
+  $cancelButton.disabled = false;
+};
+
+if (typeof window !== 'undefined') {
+  // The 'handle-click' module requires
+  // that 'sweetAlert' was set as global.
+  window.sweetAlert = window.swal = sweetAlert;
+} else {
+  _extend$hexToRgb$isIE8$logStr$colorLuminance.logStr('SweetAlert is a frontend module!');
+}
+module.exports = exports['default'];
+},{"./modules/default-params":8,"./modules/handle-click":9,"./modules/handle-dom":10,"./modules/handle-key":11,"./modules/handle-swal-dom":12,"./modules/set-params":14,"./modules/utils":15}],17:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -26038,7 +27294,7 @@ process.umask = function() { return 0; };
   }
 }.call(this));
 
-},{}],9:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Service for sending network requests.
  */
@@ -26200,7 +27456,7 @@ module.exports = function (_) {
     return _.http = Http;
 };
 
-},{"./lib/jsonp":11,"./lib/promise":12,"./lib/xhr":14}],10:[function(require,module,exports){
+},{"./lib/jsonp":20,"./lib/promise":21,"./lib/xhr":23}],19:[function(require,module,exports){
 /**
  * Install plugin.
  */
@@ -26241,7 +27497,7 @@ if (window.Vue) {
 }
 
 module.exports = install;
-},{"./http":9,"./lib/util":13,"./resource":15,"./url":16}],11:[function(require,module,exports){
+},{"./http":18,"./lib/util":22,"./resource":24,"./url":25}],20:[function(require,module,exports){
 /**
  * JSONP request.
  */
@@ -26293,7 +27549,7 @@ module.exports = function (_, options) {
 
 };
 
-},{"./promise":12}],12:[function(require,module,exports){
+},{"./promise":21}],21:[function(require,module,exports){
 /**
  * Promises/A+ polyfill v1.1.0 (https://github.com/bramstein/promis)
  */
@@ -26505,7 +27761,7 @@ if (window.MutationObserver) {
 
 module.exports = window.Promise || Promise;
 
-},{}],13:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * Utility functions.
  */
@@ -26587,7 +27843,7 @@ module.exports = function (Vue) {
     return _;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * XMLHttp request.
  */
@@ -26640,7 +27896,7 @@ module.exports = function (_, options) {
     return promise;
 };
 
-},{"./promise":12}],15:[function(require,module,exports){
+},{"./promise":21}],24:[function(require,module,exports){
 /**
  * Service for interacting with RESTful services.
  */
@@ -26753,7 +28009,7 @@ module.exports = function (_) {
     return _.resource = Resource;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Service for URL templating.
  */
@@ -26912,7 +28168,7 @@ module.exports = function (_) {
     return _.url = Url;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * Import(s)
  */
@@ -27129,7 +28385,7 @@ function install (Vue, options) {
   })
 }
 
-},{"./lib/util":18,"./lib/validates":19,"./lib/validator":20}],18:[function(require,module,exports){
+},{"./lib/util":27,"./lib/validates":28,"./lib/validator":29}],27:[function(require,module,exports){
 /**
  * Utilties
  */
@@ -27203,7 +28459,7 @@ exports.getCustomValidators = function (options) {
   return validators
 }
 
-},{}],19:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * Fundamental validate functions
  */
@@ -27344,7 +28600,7 @@ module.exports = {
   max: max
 }
 
-},{}],20:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * Import(s)
  */
@@ -27744,7 +29000,7 @@ function getCustomNamespace (options) {
   return namespace
 }
 
-},{"./util":18,"./validates":19}],21:[function(require,module,exports){
+},{"./util":27,"./validates":28}],30:[function(require,module,exports){
 var _ = require('../util')
 var Watcher = require('../watcher')
 var Path = require('../parsers/path')
@@ -27920,7 +29176,7 @@ function clean (obj) {
   return JSON.parse(JSON.stringify(obj))
 }
 
-},{"../parsers/directive":71,"../parsers/expression":72,"../parsers/path":73,"../parsers/text":75,"../util":83,"../watcher":87}],22:[function(require,module,exports){
+},{"../parsers/directive":80,"../parsers/expression":81,"../parsers/path":82,"../parsers/text":84,"../util":92,"../watcher":96}],31:[function(require,module,exports){
 var _ = require('../util')
 var transition = require('../transition')
 
@@ -28126,7 +29382,7 @@ function remove (el, vm, cb) {
   if (cb) cb()
 }
 
-},{"../transition":76,"../util":83}],23:[function(require,module,exports){
+},{"../transition":85,"../util":92}],32:[function(require,module,exports){
 var _ = require('../util')
 
 /**
@@ -28297,7 +29553,7 @@ function modifyListenerCount (vm, event, count) {
   }
 }
 
-},{"../util":83}],24:[function(require,module,exports){
+},{"../util":92}],33:[function(require,module,exports){
 var _ = require('../util')
 var config = require('../config')
 
@@ -28451,7 +29707,7 @@ config._assetTypes.forEach(function (type) {
   }
 })
 
-},{"../compiler":30,"../config":32,"../directives/internal":39,"../fragment/factory":61,"../parsers/directive":71,"../parsers/expression":72,"../parsers/path":73,"../parsers/template":74,"../parsers/text":75,"../util":83}],25:[function(require,module,exports){
+},{"../compiler":39,"../config":41,"../directives/internal":48,"../fragment/factory":70,"../parsers/directive":80,"../parsers/expression":81,"../parsers/path":82,"../parsers/template":83,"../parsers/text":84,"../util":92}],34:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var compiler = require('../compiler')
@@ -28523,7 +29779,7 @@ exports.$compile = function (el, host, scope, frag) {
 }
 
 }).call(this,require('_process'))
-},{"../compiler":30,"../util":83,"_process":6}],26:[function(require,module,exports){
+},{"../compiler":39,"../util":92,"_process":6}],35:[function(require,module,exports){
 (function (process){
 var _ = require('./util')
 var config = require('./config')
@@ -28632,7 +29888,7 @@ exports.push = function (watcher) {
 }
 
 }).call(this,require('_process'))
-},{"./config":32,"./util":83,"_process":6}],27:[function(require,module,exports){
+},{"./config":41,"./util":92,"_process":6}],36:[function(require,module,exports){
 /**
  * A doubly linked list-based Least Recently Used (LRU)
  * cache. Will keep most recently used items while
@@ -28746,7 +30002,7 @@ p.get = function (key, returnEntry) {
 
 module.exports = Cache
 
-},{}],28:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var dirParser = require('../parsers/directive')
@@ -28956,7 +30212,7 @@ function getDefault (vm, options) {
 }
 
 }).call(this,require('_process'))
-},{"../config":32,"../directives/internal/prop":40,"../parsers/directive":71,"../parsers/path":73,"../util":83,"_process":6}],29:[function(require,module,exports){
+},{"../config":41,"../directives/internal/prop":49,"../parsers/directive":80,"../parsers/path":82,"../util":92,"_process":6}],38:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var publicDirectives = require('../directives/public')
@@ -29669,13 +30925,13 @@ function makeNodeLinkFn (directives) {
 }
 
 }).call(this,require('_process'))
-},{"../directives/internal":39,"../directives/public":49,"../parsers/directive":71,"../parsers/template":74,"../parsers/text":75,"../util":83,"./compile-props":28,"_process":6}],30:[function(require,module,exports){
+},{"../directives/internal":48,"../directives/public":58,"../parsers/directive":80,"../parsers/template":83,"../parsers/text":84,"../util":92,"./compile-props":37,"_process":6}],39:[function(require,module,exports){
 var _ = require('../util')
 
 _.extend(exports, require('./compile'))
 _.extend(exports, require('./transclude'))
 
-},{"../util":83,"./compile":29,"./transclude":31}],31:[function(require,module,exports){
+},{"../util":92,"./compile":38,"./transclude":40}],40:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var templateParser = require('../parsers/template')
@@ -29827,7 +31083,7 @@ function mergeAttrs (from, to) {
 }
 
 }).call(this,require('_process'))
-},{"../parsers/template":74,"../util":83,"_process":6}],32:[function(require,module,exports){
+},{"../parsers/template":83,"../util":92,"_process":6}],41:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -29933,7 +31189,7 @@ Object.defineProperty(module.exports, 'unsafeDelimiters', {
   }
 })
 
-},{"./parsers/text":75}],33:[function(require,module,exports){
+},{"./parsers/text":84}],42:[function(require,module,exports){
 (function (process){
 var _ = require('./util')
 var Watcher = require('./watcher')
@@ -30257,11 +31513,11 @@ Directive.prototype._teardown = function () {
 module.exports = Directive
 
 }).call(this,require('_process'))
-},{"./parsers/expression":72,"./util":83,"./watcher":87,"_process":6}],34:[function(require,module,exports){
+},{"./parsers/expression":81,"./util":92,"./watcher":96,"_process":6}],43:[function(require,module,exports){
 exports.slot = require('./slot')
 exports.partial = require('./partial')
 
-},{"./partial":35,"./slot":36}],35:[function(require,module,exports){
+},{"./partial":44,"./slot":45}],44:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 var vIf = require('../public/if')
@@ -30308,7 +31564,7 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../fragment/factory":61,"../../util":83,"../public/if":48,"_process":6}],36:[function(require,module,exports){
+},{"../../fragment/factory":70,"../../util":92,"../public/if":57,"_process":6}],45:[function(require,module,exports){
 var _ = require('../../util')
 var templateParser = require('../../parsers/template')
 
@@ -30434,7 +31690,7 @@ function extractFragment (nodes, parent, main) {
   }
 }
 
-},{"../../parsers/template":74,"../../util":83}],37:[function(require,module,exports){
+},{"../../parsers/template":83,"../../util":92}],46:[function(require,module,exports){
 var _ = require('../../util')
 var addClass = _.addClass
 var removeClass = _.removeClass
@@ -30505,7 +31761,7 @@ function contains (value, key) {
     : value.hasOwnProperty(key)
 }
 
-},{"../../util":83}],38:[function(require,module,exports){
+},{"../../util":92}],47:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 var templateParser = require('../../parsers/template')
@@ -30847,14 +32103,14 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../parsers/template":74,"../../util":83,"_process":6}],39:[function(require,module,exports){
+},{"../../parsers/template":83,"../../util":92,"_process":6}],48:[function(require,module,exports){
 exports.style = require('./style')
 exports['class'] = require('./class')
 exports.component = require('./component')
 exports.prop = require('./prop')
 exports.transition = require('./transition')
 
-},{"./class":37,"./component":38,"./prop":40,"./style":41,"./transition":42}],40:[function(require,module,exports){
+},{"./class":46,"./component":47,"./prop":49,"./style":50,"./transition":51}],49:[function(require,module,exports){
 // NOTE: the prop internal directive is compiled and linked
 // during _initScope(), before the created hook is called.
 // The purpose is to make the initial prop values available
@@ -30920,7 +32176,7 @@ module.exports = {
   }
 }
 
-},{"../../config":32,"../../util":83,"../../watcher":87}],41:[function(require,module,exports){
+},{"../../config":41,"../../util":92,"../../watcher":96}],50:[function(require,module,exports){
 var _ = require('../../util')
 var prefixes = ['-webkit-', '-moz-', '-ms-']
 var camelPrefixes = ['Webkit', 'Moz', 'ms']
@@ -31030,7 +32286,7 @@ function prefix (prop) {
   }
 }
 
-},{"../../util":83}],42:[function(require,module,exports){
+},{"../../util":92}],51:[function(require,module,exports){
 var _ = require('../../util')
 var Transition = require('../../transition/transition')
 
@@ -31052,7 +32308,7 @@ module.exports = {
   }
 }
 
-},{"../../transition/transition":78,"../../util":83}],43:[function(require,module,exports){
+},{"../../transition/transition":87,"../../util":92}],52:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 
@@ -31162,7 +32418,7 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../util":83,"_process":6}],44:[function(require,module,exports){
+},{"../../util":92,"_process":6}],53:[function(require,module,exports){
 module.exports = {
   bind: function () {
     var el = this.el
@@ -31172,7 +32428,7 @@ module.exports = {
   }
 }
 
-},{}],45:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var _ = require('../../util')
 
 module.exports = {
@@ -31201,7 +32457,7 @@ module.exports = {
   }
 }
 
-},{"../../util":83}],46:[function(require,module,exports){
+},{"../../util":92}],55:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 var FragmentFactory = require('../../fragment/factory')
@@ -31804,7 +33060,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"../../fragment/factory":61,"../../util":83,"_process":6}],47:[function(require,module,exports){
+},{"../../fragment/factory":70,"../../util":92,"_process":6}],56:[function(require,module,exports){
 var _ = require('../../util')
 var templateParser = require('../../parsers/template')
 
@@ -31846,7 +33102,7 @@ module.exports = {
   }
 }
 
-},{"../../parsers/template":74,"../../util":83}],48:[function(require,module,exports){
+},{"../../parsers/template":83,"../../util":92}],57:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 var FragmentFactory = require('../../fragment/factory')
@@ -31916,7 +33172,7 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../fragment/factory":61,"../../util":83,"_process":6}],49:[function(require,module,exports){
+},{"../../fragment/factory":70,"../../util":92,"_process":6}],58:[function(require,module,exports){
 // text & html
 exports.text = require('./text')
 exports.html = require('./html')
@@ -31942,7 +33198,7 @@ exports.ref = require('./ref')
 // cloak
 exports.cloak = require('./cloak')
 
-},{"./bind":43,"./cloak":44,"./el":45,"./for":46,"./html":47,"./if":48,"./model":51,"./on":55,"./ref":56,"./show":57,"./text":58}],50:[function(require,module,exports){
+},{"./bind":52,"./cloak":53,"./el":54,"./for":55,"./html":56,"./if":57,"./model":60,"./on":64,"./ref":65,"./show":66,"./text":67}],59:[function(require,module,exports){
 var _ = require('../../../util')
 
 module.exports = {
@@ -32006,7 +33262,7 @@ module.exports = {
   }
 }
 
-},{"../../../util":83}],51:[function(require,module,exports){
+},{"../../../util":92}],60:[function(require,module,exports){
 (function (process){
 var _ = require('../../../util')
 
@@ -32092,7 +33348,7 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../../util":83,"./checkbox":50,"./radio":52,"./select":53,"./text":54,"_process":6}],52:[function(require,module,exports){
+},{"../../../util":92,"./checkbox":59,"./radio":61,"./select":62,"./text":63,"_process":6}],61:[function(require,module,exports){
 var _ = require('../../../util')
 
 module.exports = {
@@ -32128,7 +33384,7 @@ module.exports = {
   }
 }
 
-},{"../../../util":83}],53:[function(require,module,exports){
+},{"../../../util":92}],62:[function(require,module,exports){
 var _ = require('../../../util')
 
 module.exports = {
@@ -32248,7 +33504,7 @@ function indexOf (arr, val) {
   return -1
 }
 
-},{"../../../util":83}],54:[function(require,module,exports){
+},{"../../../util":92}],63:[function(require,module,exports){
 var _ = require('../../../util')
 
 module.exports = {
@@ -32377,7 +33633,7 @@ module.exports = {
   }
 }
 
-},{"../../../util":83}],55:[function(require,module,exports){
+},{"../../../util":92}],64:[function(require,module,exports){
 (function (process){
 var _ = require('../../util')
 
@@ -32504,7 +33760,7 @@ module.exports = {
 }
 
 }).call(this,require('_process'))
-},{"../../util":83,"_process":6}],56:[function(require,module,exports){
+},{"../../util":92,"_process":6}],65:[function(require,module,exports){
 (function (process){
 if (process.env.NODE_ENV !== 'production') {
   module.exports = {
@@ -32518,7 +33774,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"../../util":83,"_process":6}],57:[function(require,module,exports){
+},{"../../util":92,"_process":6}],66:[function(require,module,exports){
 var _ = require('../../util')
 var transition = require('../../transition')
 
@@ -32546,7 +33802,7 @@ module.exports = {
   }
 }
 
-},{"../../transition":76,"../../util":83}],58:[function(require,module,exports){
+},{"../../transition":85,"../../util":92}],67:[function(require,module,exports){
 var _ = require('../../util')
 
 module.exports = {
@@ -32562,7 +33818,7 @@ module.exports = {
   }
 }
 
-},{"../../util":83}],59:[function(require,module,exports){
+},{"../../util":92}],68:[function(require,module,exports){
 var _ = require('../util')
 var Path = require('../parsers/path')
 var toArray = require('../directives/public/for')._postProcess
@@ -32669,7 +33925,7 @@ function contains (val, search) {
   }
 }
 
-},{"../directives/public/for":46,"../parsers/path":73,"../util":83}],60:[function(require,module,exports){
+},{"../directives/public/for":55,"../parsers/path":82,"../util":92}],69:[function(require,module,exports){
 var _ = require('../util')
 
 /**
@@ -32789,7 +34045,7 @@ exports.debounce = function (handler, delay) {
 
 _.extend(exports, require('./array-filters'))
 
-},{"../util":83,"./array-filters":59}],61:[function(require,module,exports){
+},{"../util":92,"./array-filters":68}],70:[function(require,module,exports){
 var _ = require('../util')
 var compiler = require('../compiler')
 var templateParser = require('../parsers/template')
@@ -32847,7 +34103,7 @@ FragmentFactory.prototype.create = function (host, scope, parentFrag) {
 
 module.exports = FragmentFactory
 
-},{"../cache":27,"../compiler":30,"../parsers/template":74,"../util":83,"./fragment":62}],62:[function(require,module,exports){
+},{"../cache":36,"../compiler":39,"../parsers/template":83,"../util":92,"./fragment":71}],71:[function(require,module,exports){
 var _ = require('../util')
 var transition = require('../transition')
 
@@ -33024,7 +34280,7 @@ function detach (child) {
 
 module.exports = Fragment
 
-},{"../transition":76,"../util":83}],63:[function(require,module,exports){
+},{"../transition":85,"../util":92}],72:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var inDoc = _.inDoc
@@ -33191,7 +34447,7 @@ exports._callHook = function (hook) {
 }
 
 }).call(this,require('_process'))
-},{"../util":83,"_process":6}],64:[function(require,module,exports){
+},{"../util":92,"_process":6}],73:[function(require,module,exports){
 var mergeOptions = require('../util').mergeOptions
 var uid = 0
 
@@ -33307,7 +34563,7 @@ exports._init = function (options) {
   }
 }
 
-},{"../util":83}],65:[function(require,module,exports){
+},{"../util":92}],74:[function(require,module,exports){
 var _ = require('../util')
 var Directive = require('../directive')
 var compiler = require('../compiler')
@@ -33524,7 +34780,7 @@ exports._cleanup = function () {
   this.$off()
 }
 
-},{"../compiler":30,"../directive":33,"../util":83}],66:[function(require,module,exports){
+},{"../compiler":39,"../directive":42,"../util":92}],75:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 
@@ -33621,7 +34877,7 @@ exports._resolveComponent = function (id, cb) {
 }
 
 }).call(this,require('_process'))
-},{"../util":83,"_process":6}],67:[function(require,module,exports){
+},{"../util":92,"_process":6}],76:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var compiler = require('../compiler')
@@ -33866,7 +35122,7 @@ exports._initMeta = function () {
 }
 
 }).call(this,require('_process'))
-},{"../compiler":30,"../observer":70,"../observer/dep":69,"../util":83,"../watcher":87,"_process":6}],68:[function(require,module,exports){
+},{"../compiler":39,"../observer":79,"../observer/dep":78,"../util":92,"../watcher":96,"_process":6}],77:[function(require,module,exports){
 var _ = require('../util')
 var arrayProto = Array.prototype
 var arrayMethods = Object.create(arrayProto)
@@ -33958,7 +35214,7 @@ _.define(
 
 module.exports = arrayMethods
 
-},{"../util":83}],69:[function(require,module,exports){
+},{"../util":92}],78:[function(require,module,exports){
 var _ = require('../util')
 var uid = 0
 
@@ -34021,7 +35277,7 @@ Dep.prototype.notify = function () {
 
 module.exports = Dep
 
-},{"../util":83}],70:[function(require,module,exports){
+},{"../util":92}],79:[function(require,module,exports){
 var _ = require('../util')
 var Dep = require('./dep')
 var arrayMethods = require('./array')
@@ -34229,7 +35485,7 @@ _.defineReactive = defineReactive
 
 module.exports = Observer
 
-},{"../util":83,"./array":68,"./dep":69}],71:[function(require,module,exports){
+},{"../util":92,"./array":77,"./dep":78}],80:[function(require,module,exports){
 var _ = require('../util')
 var Cache = require('../cache')
 var cache = new Cache(1000)
@@ -34365,7 +35621,7 @@ exports.parse = function (s) {
   return dir
 }
 
-},{"../cache":27,"../util":83}],72:[function(require,module,exports){
+},{"../cache":36,"../util":92}],81:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var Path = require('./path')
@@ -34633,7 +35889,7 @@ exports.isSimplePath = function (exp) {
 }
 
 }).call(this,require('_process'))
-},{"../cache":27,"../util":83,"./path":73,"_process":6}],73:[function(require,module,exports){
+},{"../cache":36,"../util":92,"./path":82,"_process":6}],82:[function(require,module,exports){
 (function (process){
 var _ = require('../util')
 var Cache = require('../cache')
@@ -34995,7 +36251,7 @@ exports.set = function (obj, path, val) {
 }
 
 }).call(this,require('_process'))
-},{"../cache":27,"../util":83,"_process":6}],74:[function(require,module,exports){
+},{"../cache":36,"../util":92,"_process":6}],83:[function(require,module,exports){
 var _ = require('../util')
 var Cache = require('../cache')
 var templateCache = new Cache(1000)
@@ -35285,7 +36541,7 @@ exports.parse = function (template, clone, noSelector) {
     : frag
 }
 
-},{"../cache":27,"../util":83}],75:[function(require,module,exports){
+},{"../cache":36,"../util":92}],84:[function(require,module,exports){
 var Cache = require('../cache')
 var config = require('../config')
 var dirParser = require('./directive')
@@ -35447,7 +36703,7 @@ function inlineFilters (exp, single) {
   }
 }
 
-},{"../cache":27,"../config":32,"./directive":71}],76:[function(require,module,exports){
+},{"../cache":36,"../config":41,"./directive":80}],85:[function(require,module,exports){
 var _ = require('../util')
 
 /**
@@ -35528,7 +36784,7 @@ var apply = exports.apply = function (el, direction, op, vm, cb) {
   transition[action](op, cb)
 }
 
-},{"../util":83}],77:[function(require,module,exports){
+},{"../util":92}],86:[function(require,module,exports){
 var _ = require('../util')
 var queue = []
 var queued = false
@@ -35565,7 +36821,7 @@ function flush () {
   return f
 }
 
-},{"../util":83}],78:[function(require,module,exports){
+},{"../util":92}],87:[function(require,module,exports){
 var _ = require('../util')
 var queue = require('./queue')
 var addClass = _.addClass
@@ -35934,7 +37190,7 @@ function isHidden (el) {
 
 module.exports = Transition
 
-},{"../util":83,"./queue":77}],79:[function(require,module,exports){
+},{"../util":92,"./queue":86}],88:[function(require,module,exports){
 (function (process){
 var _ = require('./index')
 
@@ -36088,7 +37344,7 @@ function formatValue (val) {
 }
 
 }).call(this,require('_process'))
-},{"./index":83,"_process":6}],80:[function(require,module,exports){
+},{"./index":92,"_process":6}],89:[function(require,module,exports){
 (function (process){
 /**
  * Enable debug utilities.
@@ -36139,7 +37395,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"../config":32,"_process":6}],81:[function(require,module,exports){
+},{"../config":41,"_process":6}],90:[function(require,module,exports){
 (function (process){
 var _ = require('./index')
 var config = require('../config')
@@ -36505,7 +37761,7 @@ exports.removeNodeRange = function (start, end, vm, frag, cb) {
 }
 
 }).call(this,require('_process'))
-},{"../config":32,"../transition":76,"./index":83,"_process":6}],82:[function(require,module,exports){
+},{"../config":41,"../transition":85,"./index":92,"_process":6}],91:[function(require,module,exports){
 // can we use __proto__?
 exports.hasProto = '__proto__' in {}
 
@@ -36592,7 +37848,7 @@ exports.nextTick = (function () {
   }
 })()
 
-},{}],83:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var lang = require('./lang')
 var extend = lang.extend
 
@@ -36603,7 +37859,7 @@ extend(exports, require('./options'))
 extend(exports, require('./component'))
 extend(exports, require('./debug'))
 
-},{"./component":79,"./debug":80,"./dom":81,"./env":82,"./lang":84,"./options":85}],84:[function(require,module,exports){
+},{"./component":88,"./debug":89,"./dom":90,"./env":91,"./lang":93,"./options":94}],93:[function(require,module,exports){
 /**
  * Set a property on an object. Adds the new property and
  * triggers change notification if the property doesn't
@@ -36993,7 +38249,7 @@ exports.looseEqual = function (a, b) {
   /* eslint-enable eqeqeq */
 }
 
-},{}],85:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 (function (process){
 var _ = require('./index')
 var config = require('../config')
@@ -37351,7 +38607,7 @@ exports.resolveAsset = function resolve (options, type, id) {
 }
 
 }).call(this,require('_process'))
-},{"../config":32,"./index":83,"_process":6}],86:[function(require,module,exports){
+},{"../config":41,"./index":92,"_process":6}],95:[function(require,module,exports){
 (function (process){
 var _ = require('./util')
 var extend = _.extend
@@ -37451,7 +38707,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./api/data":21,"./api/dom":22,"./api/events":23,"./api/global":24,"./api/lifecycle":25,"./directives/element":34,"./directives/public":49,"./filters":60,"./instance/events":63,"./instance/init":64,"./instance/lifecycle":65,"./instance/misc":66,"./instance/state":67,"./util":83,"_process":6}],87:[function(require,module,exports){
+},{"./api/data":30,"./api/dom":31,"./api/events":32,"./api/global":33,"./api/lifecycle":34,"./directives/element":43,"./directives/public":58,"./filters":69,"./instance/events":72,"./instance/init":73,"./instance/lifecycle":74,"./instance/misc":75,"./instance/state":76,"./util":92,"_process":6}],96:[function(require,module,exports){
 (function (process){
 var _ = require('./util')
 var config = require('./config')
@@ -37799,7 +39055,7 @@ function traverse (obj) {
 module.exports = Watcher
 
 }).call(this,require('_process'))
-},{"./batcher":26,"./config":32,"./observer/dep":69,"./parsers/expression":72,"./util":83,"_process":6}],88:[function(require,module,exports){
+},{"./batcher":35,"./config":41,"./observer/dep":78,"./parsers/expression":81,"./util":92,"_process":6}],97:[function(require,module,exports){
 'use strict';
 
 var jquery = require('jquery');
@@ -37807,6 +39063,7 @@ var _ = require('underscore');
 var moment = require('moment');
 var dropzone = require('dropzone');
 var jstree = require('jstree');
+var sweetalert = require('sweetalert');
 
 window.Vue = require('vue');
 require('vue-resource');
@@ -37825,7 +39082,7 @@ if ($('#app').length) {
     new Vue(require('./vue-app'));
 }
 
-},{"./vue-app":100,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":4,"jstree":5,"moment":7,"underscore":8,"vue":86,"vue-resource":10,"vue-validator":17}],89:[function(require,module,exports){
+},{"./vue-app":109,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":4,"jstree":5,"moment":7,"sweetalert":16,"underscore":17,"vue":95,"vue-resource":19,"vue-validator":26}],98:[function(require,module,exports){
 'use strict';
 
 require('./components/global-errors');
@@ -37836,7 +39093,7 @@ require('./components/areas-jstree');
 require('./components/areas-modal-tree');
 require('./components/asignaciones');
 
-},{"./components/areas-jstree":90,"./components/areas-modal-tree":91,"./components/asignaciones":92,"./components/errors":93,"./components/global-errors":94,"./components/recepciones":95,"./components/transferencias":99}],90:[function(require,module,exports){
+},{"./components/areas-jstree":99,"./components/areas-modal-tree":100,"./components/asignaciones":101,"./components/errors":102,"./components/global-errors":103,"./components/recepciones":104,"./components/transferencias":108}],99:[function(require,module,exports){
 'use strict';
 
 Vue.component('areas-tree', {
@@ -37886,7 +39143,7 @@ Vue.component('areas-tree', {
   }
 });
 
-},{}],91:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 'use strict';
 
 Vue.component('areas-modal-tree', {
@@ -37986,7 +39243,7 @@ Vue.component('areas-modal-tree', {
   }
 });
 
-},{"./templates/modal-jstree.html":98}],92:[function(require,module,exports){
+},{"./templates/modal-jstree.html":107}],101:[function(require,module,exports){
 'use strict';
 
 Vue.component('asignacion-screen', {
@@ -38066,7 +39323,7 @@ Vue.component('asignacion-screen', {
   }
 });
 
-},{}],93:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 'use strict';
 
 Vue.component('app-errors', {
@@ -38075,7 +39332,7 @@ Vue.component('app-errors', {
     template: require('./templates/errors.html')
 });
 
-},{"./templates/errors.html":96}],94:[function(require,module,exports){
+},{"./templates/errors.html":105}],103:[function(require,module,exports){
 'use strict';
 
 Vue.component('global-errors', {
@@ -38099,7 +39356,7 @@ Vue.component('global-errors', {
   }
 });
 
-},{"./templates/global-errors.html":97}],95:[function(require,module,exports){
+},{"./templates/global-errors.html":106}],104:[function(require,module,exports){
 'use strict';
 
 Vue.component('recepcion-screen', {
@@ -38110,9 +39367,9 @@ Vue.component('recepcion-screen', {
         orden_compra: '',
         fecha_recepcion: '',
         area_almacenamiento: '',
-        referencia_documento: '',
+        numero_remision_factura: '',
         orden_embarque: '',
-        numero_pedido: '',
+        numero_pedimento: '',
         persona_recibio: '',
         observaciones: '',
         materiales: [],
@@ -38180,6 +39437,7 @@ Vue.component('recepcion-screen', {
     // },
 
     fetchMateriales: function fetchMateriales(e) {
+      this.errors = [];
       this.cargando = true;
       this.compra = { proveedor: {}, materiales: [] };
 
@@ -38193,29 +39451,41 @@ Vue.component('recepcion-screen', {
     },
 
     recibir: function recibir(e) {
+      var _this = this;
+
       e.preventDefault();
 
-      this.recibiendo = true;
-      this.recepcionForm.errors = [];
-      this.recepcionForm.materiales = this.articulosARecibir;
+      swal({
+        title: "Desea continuar?",
+        text: "Esta seguro de que la información es correcta?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        confirmButtonColor: "#ec6c62"
+      }, function () {
+        _this.recibiendo = true;
+        _this.recepcionForm.errors = [];
+        _this.recepcionForm.materiales = _this.articulosARecibir;
 
-      this.$http.post('/recepciones', this.recepcionForm).success(function (response) {
-        window.location = response.path;
-      }).error(function (errors) {
-        this.recibiendo = false;
-        App.setErrorsOnForm(this.recepcionForm, errors);
+        _this.$http.post('/recepciones', _this.recepcionForm).success(function (response) {
+          window.location = response.path;
+        }).error(function (errors) {
+          this.recibiendo = false;
+          App.setErrorsOnForm(this.recepcionForm, errors);
+        });
       });
     }
   }
 });
 
-},{}],96:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-for="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
-},{}],97:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-for="error in errors">{{ error }}</li>\n  </ul>\n</div>';
-},{}],98:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
-},{}],99:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 'use strict';
 
 Vue.filter('depth', function (value, depth) {
@@ -38325,7 +39595,7 @@ Vue.component('transferencias-screen', {
   }
 });
 
-},{}],100:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 /*
  * Load the Spark components.
  */
@@ -38378,4 +39648,4 @@ module.exports = {
     }
 };
 
-},{"./components":89}]},{},[88]);
+},{"./components":98}]},{},[97]);

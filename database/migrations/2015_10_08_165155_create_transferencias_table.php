@@ -18,6 +18,7 @@ class CreateTransferenciasTable extends Migration
             $table->integer('numero_folio')->unsigned();
             $table->datetime('fecha_transferencia');
             $table->text('observaciones')->nullable();
+            $table->boolean('validada')->default(false);
             $table->string('creado_por', 16);
             $table->timestamps();
 

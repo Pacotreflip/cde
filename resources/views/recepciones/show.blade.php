@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-  <h1>Recepción de Artículos <small># {{ $recepcion->numero_folio }}</small></h1>
+  <h1>Recepción de Artículos - <span># {{ $recepcion->numero_folio }}</span></h1>
 
   <h2>
     <small>
@@ -29,9 +29,9 @@
             Referencias
         </div>
         <div class="panel-body">
-          <strong>Referencia Documento:</strong> {{ $recepcion->referencia_documento }} <br>
+          <strong>Np. de Remisión ó Factura:</strong> {{ $recepcion->numero_remision_factura }} <br>
           <strong>Orden de Embarque:</strong> {{ $recepcion->orden_embarque }} <br>
-          <strong>Numero de Pedido:</strong> {{ $recepcion->numero_pedido }} <br>
+          <strong>Numero de Pedimento:</strong> {{ $recepcion->numero_pedimento }} <br>
         </div>
       </div>
     </div>
@@ -54,10 +54,14 @@
       @foreach($recepcion->items as $item)
         <tr>
           <td>{{ $item->material->numero_parte }}</td>
-          <td>{{ $item->material->descripcion }}</td>
+          <td>
+            <a href="{{ route('articulos.edit', $item->material) }}">{{ $item->material->descripcion }}</a>
+          </td>
           <td>{{ $item->material->unidad }}</td>
           <td>{{ $item->cantidad_recibida }}</td>
-          <td>{{ $item->area->ruta() }}</td>
+          <td>
+            <a href="{{ route('areas.edit', $item->area) }}">{{ $item->area->ruta() }}</a>
+          </td>
         </tr>
       @endforeach
     </tbody>

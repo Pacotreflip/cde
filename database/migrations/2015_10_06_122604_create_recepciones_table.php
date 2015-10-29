@@ -19,11 +19,12 @@ class CreateRecepcionesTable extends Migration
             $table->integer('id_orden_compra')->unsigned()->index();
             $table->integer('numero_folio');
             $table->datetime('fecha_recepcion');
-            $table->string('referencia_documento')->nullable();
+            $table->string('numero_remision_factura')->nullable();
             $table->string('orden_embarque')->nullable();
-            $table->string('numero_pedido')->nullable();
+            $table->string('numero_pedimento')->nullable();
             $table->string('persona_recibio');
             $table->text('observaciones')->nullable();
+            $table->boolean('validada')->default(false);
             $table->string('creado_por', 16);
             $table->timestamps();
 

@@ -3,6 +3,7 @@ var _ = require('underscore');
 var moment = require('moment');
 var dropzone = require('dropzone');
 var jstree = require('jstree');
+var sweetalert = require('sweetalert');
 
 window.Vue = require('vue');
 require('vue-resource');

@@ -29,7 +29,9 @@
             {{ $recepcion->fecha_recepcion->format('d-m-Y H:m') }}
             <small class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</small>
           </td>
-          <td>{{ $recepcion->empresa->razon_social }}</td>
+          <td>
+            <a href="{{ route('proveedores.edit', $recepcion->empresa ) }}">{{ $recepcion->empresa->razon_social }}</a>
+          </td>
           <td>{{ $recepcion->persona_recibe }}</td>
           <td>{{ str_limit($recepcion->observaciones, 70) }}</td>
           <td></td>

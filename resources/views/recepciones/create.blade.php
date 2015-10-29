@@ -42,7 +42,7 @@
             <!-- Persona que Recibe Form Input -->
             <div class="form-group">
               {!! Form::label('persona_recibio', 'Persona que Recibe:') !!}
-              {!! Form::text('persona_recibio', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.persona_recibio']) !!}
+              {!! Form::text('persona_recibio', auth()->user()->present()->nombreCompleto, ['class' => 'form-control', 'v-model' => 'recepcionForm.persona_recibio']) !!}
             </div>
 
             <!-- Observaciones Form Input -->
@@ -52,20 +52,22 @@
             </div>
           </div>
           <div class="col-sm-6">
-            <!-- Referencia Documento Form Input -->
+            <!-- No. de Remision ó Factura Form Input -->
             <div class="form-group">
-              {!! Form::label('referencia_documento', 'Referencia de Documento:') !!}
-              {!! Form::text('referencia_documento', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.referencia_documento']) !!}
+              {!! Form::label('numero_remision_factura', 'No. de Remision ó Factura:') !!}
+              {!! Form::text('numero_remision_factura', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.numero_remision_factura']) !!}
             </div>
+            
             <!-- Orden Embarque Form Input -->
             <div class="form-group">
               {!! Form::label('orden_embarque', 'Orden de Embarque:') !!}
               {!! Form::text('orden_embarque', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.orden_embarque']) !!}
             </div>
+
             <!-- No. de Pedido Form Input -->
             <div class="form-group">
-              {!! Form::label('numero_pedido', 'No. de Pedido:') !!}
-              {!! Form::text('numero_pedido', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.numero_pedido']) !!}
+              {!! Form::label('numero_pedimento', 'No. de Pedimento:') !!}
+              {!! Form::text('numero_pedimento', null, ['class' => 'form-control', 'v-model' => 'recepcionForm.numero_pedimento']) !!}
             </div>
           </div>
         </div>
@@ -73,14 +75,13 @@
         <section class="orden-compra" v-cloak>
           <span v-if="cargando"><i class="fa fa-2x fa-spinner fa-spin"></i> Cargando articulos...</span>
           
+          
           <section class="orden-compra-content" v-show="compra.materiales.length">
             <section class="orden-compra-heading">
-              <h3>@{{ compra.proveedor.razon_social }} <small>O/C # @{{ compra.numero_folio }}</small></h3>
+              <h3>@{{ compra.proveedor.razon_social }} - <strong>O/C # @{{ compra.numero_folio }}</strong></h3>
             </section>
-            <hr>
             <section class="orden-compra-materiales">
               <table class="table table-striped table-condensed">
-                {{-- <caption>Articulos en la Orden de Compra</caption> --}}
                 <thead>
                   <tr>
                     <th>No. Parte</th>
@@ -112,10 +113,10 @@
           </section>
         </section>
         
+        <hr>
+        
         <app-errors v-bind:form="recepcionForm"></app-errors>
         
-        <hr>
-
         <div class="form-group">
           <button class="btn btn-primary" type="submit" v-bind:disabled="recibiendo" @click="recibir">
             <span v-if="! recibiendo"><i class="fa fa-check-circle"></i> Recibir Artículos</span>

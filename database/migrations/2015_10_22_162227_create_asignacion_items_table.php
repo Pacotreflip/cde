@@ -17,7 +17,7 @@ class CreateAsignacionItemsTable extends Migration
             $table->integer('id_asignacion')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
             $table->string('unidad');
-            $table->integer('id_area_origen')->unsigned()->index();
+            $table->integer('id_area_origen')->unsigned()->nullable()->index();
             $table->integer('id_area_destino')->unsigned()->index();
             $table->decimal('cantidad_asignada', 8, 2);
             $table->timestamps();

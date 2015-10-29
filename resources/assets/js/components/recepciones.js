@@ -6,9 +6,9 @@ Vue.component('recepcion-screen', {
         orden_compra: '',
         fecha_recepcion: '',
         area_almacenamiento: '',
-        referencia_documento: '',
+        numero_remision_factura: '',
         orden_embarque: '',
-        numero_pedido: '',
+        numero_pedimento: '',
         persona_recibio: '',
         observaciones: '',
         materiales: [],
@@ -76,6 +76,7 @@ Vue.component('recepcion-screen', {
     // },
 
     fetchMateriales: function (e) {
+      this.errors = [];
       this.cargando = true;
       this.compra = { proveedor: {}, materiales: [] };
 
@@ -93,18 +94,28 @@ Vue.component('recepcion-screen', {
     recibir: function (e) {
       e.preventDefault();
 
-      this.recibiendo = true;
-      this.recepcionForm.errors = [];
-      this.recepcionForm.materiales = this.articulosARecibir;
+      swal({
+        title: "Desea continuar?", 
+        text: "Esta seguro de que la información es correcta?", 
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        confirmButtonColor: "#ec6c62"
+      }, () => {
+        this.recibiendo = true;
+        this.recepcionForm.errors = [];
+        this.recepcionForm.materiales = this.articulosARecibir;
 
-      this.$http.post('/recepciones', this.recepcionForm)
-          .success(function (response) {
-            window.location = response.path;
-          })
-          .error(function (errors) {
-            this.recibiendo = false;
-            App.setErrorsOnForm(this.recepcionForm, errors);
-          });
+        this.$http.post('/recepciones', this.recepcionForm)
+            .success(function (response) {
+              window.location = response.path;
+            })
+            .error(function (errors) {
+              this.recibiendo = false;
+              App.setErrorsOnForm(this.recepcionForm, errors);
+            });
+      });
     }
   }
 });
