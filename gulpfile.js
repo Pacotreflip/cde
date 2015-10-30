@@ -12,5 +12,11 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss');
+    mix.less('app.less')
+        .copy('vendor/bower_components/roboto-fontface/fonts', 'public/fonts/roboto')
+        .copy('vendor/bower_components/font-awesome/fonts', 'public/fonts/font-awesome')
+        .copy('node_modules/jstree/src/themes/default/32px.png', 'public/img')
+        .copy('node_modules/jstree/src/themes/default/40px.png', 'public/img')
+        .copy('node_modules/jstree/src/themes/default/throbber.gif', 'public/img')
+        .browserify('app.js');
 });

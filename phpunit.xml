@@ -24,5 +24,20 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+
+        <env name="DB_HOST_INTRANET" value="192.168.10.10"/>
+        <env name="DB_DATABASE_INTRANET" value="igh"/>
+        <env name="DB_USERNAME_INTRANET" value="homestead"/>
+        <env name="DB_PASSWORD_INTRANET" value="secret"/>
+        
+        <env name="DB_HOST_CADECO" value="172.20.74.3\SAO_DEVELOP"/>
+        <env name="DB_DATABASE_CADECO" value="SAO1814_HOTEL_DREAMS_PM"/>
+        <env name="DB_USERNAME_CADECO" value="develop"/>
+        <env name="DB_PASSWORD_CADECO" value="develop"/>
+        
+        <env name="DB_HOST_GENERALES" value="172.20.74.3\GHIAPP_DEVELOP"/>
+        <env name="DB_DATABASE_GENERALES" value="ModulosSAO"/>
+        <env name="DB_USERNAME_GENERALES" value="develop"/>
+        <env name="DB_PASSWORD_GENERALES" value="develop"/>
     </php>
 </phpunit>

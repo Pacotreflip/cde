@@ -1,2 +1,17 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+// Font Awesome overrides
+$fa-font-path: "../fonts/font-awesome/";
 
+// Roboto Font overrides
+$roboto-font-path: "../fonts/roboto/";
+
+@import "partials/variables";
+@import "vendor/bower_components/roboto-fontface/css/roboto-fontface";
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+//@import "vendor/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "vendor/bower_components/font-awesome/scss/font-awesome";
+@import "partials/theme";
+@import "partials/nav";
+
+body {
+  margin-top: 70px;
+}

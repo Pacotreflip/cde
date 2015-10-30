@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace Ghi\Events;
 
 abstract class Event
 {

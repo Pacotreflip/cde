@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Exceptions;
+namespace Ghi\Exceptions;
 
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Ghi\Core\Exceptions\ReglaNegocioException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,8 +44,20 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($request->wantsJson() or $request->ajax()) {
+            if ($e instanceof ReglaNegocioException) {
+                return new JsonResponse([$e->getMessage()], 422);
+            }
+
+            return new JsonResponse(['error', get_class($e), $e->getMessage()], 500);
+        }
+
         if ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e);
+            flash()->error('El recurso buscado no fue encontrado.');
+            return back();
+        } elseif ($e instanceof ReglaNegocioException) {
+            flash()->error($e->getMessage());
+            return back();
         }
 
         return parent::render($request, $e);
