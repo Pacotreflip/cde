@@ -17,6 +17,7 @@ window.Dropzone = dropzone;
 
 require('bootstrap/dist/js/bootstrap');
 require('jasny-bootstrap/js/rowlink');
+require('jquery.inputmask/dist/jquery.inputmask.bundle');
 
 if ($('#app').length) {
     new Vue(require('./vue-app'));

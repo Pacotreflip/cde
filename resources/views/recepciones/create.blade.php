@@ -75,7 +75,6 @@
         <section class="orden-compra" v-cloak>
           <span v-if="cargando"><i class="fa fa-2x fa-spinner fa-spin"></i> Cargando articulos...</span>
           
-          
           <section class="orden-compra-content" v-show="compra.materiales.length">
             <section class="orden-compra-heading">
               <h3>@{{ compra.proveedor.razon_social }} - <strong>O/C # @{{ compra.numero_folio }}</strong></h3>
@@ -100,11 +99,12 @@
                     <td>@{{ material.cantidad_adquirida }}</td>
                     <td>@{{ material.cantidad_recibida }}</td>
                     <td>
-                        <input type="text" name="materiales[@{{ material.id }}][cantidad]" 
+                      <selector-destinos></selector-destinos>
+                        {{-- <input type="text" name="materiales[@{{ material.id }}][cantidad]" 
                           class="form-control input-sm"
                           placeholder="Cantidad"
                           value="@{{ material.cantidad_recibir }}"
-                          v-model="material.cantidad_recibir">
+                          v-model="material.cantidad_recibir"> --}}
                     </td>
                   </tr>
                 </tbody>
