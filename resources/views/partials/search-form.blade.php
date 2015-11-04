@@ -7,4 +7,5 @@
       </span>
     </div>
   {!! Form::close() !!}
+  <br>
 </div>

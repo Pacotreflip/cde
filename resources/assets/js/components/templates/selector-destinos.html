@@ -19,14 +19,18 @@
                 <tr>
                   <td><b>Area</b></td>
                   <td><b>Cantidad</b></td>
+                  <!-- <td></td> -->
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="destino in destinos">
                   <td>{{ destino.ruta }}</td>
                   <td>
-                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{ destino.cantidad | currency '' }">
+                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{{ destino.cantidad | currency '' }}">
                   </td>
+                  <!-- <td>
+                    <button class="btn btn-xs btn-danger" v-on:click="quitaDestino($event, destino)"><i class="fa fa-trash"></i> Quitar</button>
+                  </td> -->
                 </tr>
               </tbody>
               <tfoot>
@@ -36,6 +40,10 @@
                 </tr>
               </tfoot>
             </table>
+
+            <!-- <pre>
+              {{ $data.destinos | json }}
+            </pre> -->
           </div>
           <div class="col-md-6">
             <areas-tree v-if="activarJsTree"

@@ -83,8 +83,11 @@ Vue.component('recepcion-screen', {
       this.$http.get('/api/ordenes-compra/' + this.recepcionForm.orden_compra)
           .success(function (response) {
             this.cargando = false;
-            this.compra = response;
             this.recepcionForm.proveedor = response.proveedor.id_empresa;
+            response.materiales.forEach(function (material) {
+              material.destinos = [];
+            });
+            this.compra = response;
           })
           .error(function (errors) {
             this.cargando = false;
