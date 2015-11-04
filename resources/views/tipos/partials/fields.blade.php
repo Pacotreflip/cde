@@ -4,6 +4,12 @@
   {!! Form::text('nombre', null, ['class' => 'form-control', 'required']) !!}
 </div>
 
+<!-- Clave Form Input -->
+<div class="form-group">
+  {!! Form::label('clave', 'Clave:') !!}
+  {!! Form::text('clave', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Descripción Form Input -->
 <div class="form-group">
   {!! Form::label('descripcion', 'Descripción:') !!}

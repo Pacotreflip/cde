@@ -24,7 +24,7 @@ class CreateAreaRequest extends Request
     public function rules()
     {
         return [
-            'nombre' => 'required',
+            // 'nombre' => 'required',
             'cantidad' => 'integer|min:1',
             'rango_inicial' => 'integer|min:1',
             'tipo_id' => 'integer',

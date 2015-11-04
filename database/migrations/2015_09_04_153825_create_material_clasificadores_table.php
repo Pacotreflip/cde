@@ -16,6 +16,7 @@ class CreateMaterialClasificadoresTable extends Migration
         Schema::create('Equipamiento.material_clasificadores', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->string('descripcion')->nullable();
             NestedSet::columns($table);
             $table->timestamps();
         });

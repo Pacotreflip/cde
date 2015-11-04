@@ -25,7 +25,7 @@ class Clasificador extends Node
      * Campos que se pueden asignar masivamente
      * @var array
      */
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'descripcion'];
 
     /**
      * Mueve este clasificador dentro de otro
