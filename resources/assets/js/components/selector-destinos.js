@@ -3,6 +3,13 @@ Vue.component('selector-destinos', {
 
   template: require('./templates/selector-destinos.html'),
 
+  // props: {
+  //   destinos: {
+  //     type: Array,
+  //     default: () => { return [] }
+  //   }
+  // },
+
   data: function () {
 
     return {
@@ -36,6 +43,12 @@ Vue.component('selector-destinos', {
       this.activarJsTree = true;
     },
 
+    quitaDestino: function (e, destino) {
+      e.preventDefault();
+
+      this.destinos.$remove(destino);
+    },
+
     sincronizaDestinos: function (data) {
       var checked = data.instance.get_checked();
 
@@ -51,6 +64,8 @@ Vue.component('selector-destinos', {
         return { id: parseInt(id, 10), nombre: '', ruta: data.instance.get_path(data.node, ' / '), cantidad: 1 };
       });
 
+      this.$dispatch('destinos-changed', this.destinos);
+
       this.$nextTick(this.applyMask);
     },
 
@@ -64,5 +79,6 @@ Vue.component('selector-destinos', {
           digits: 2
       });
     }
+
   }
 });

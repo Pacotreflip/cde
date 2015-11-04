@@ -14,7 +14,7 @@ class Entrega extends Model
     /**
      * @var string
      */
-    protected $table = 'entregas';
+    protected $table = 'Equipamiento.entregas';
 
     /**
      * @var string
