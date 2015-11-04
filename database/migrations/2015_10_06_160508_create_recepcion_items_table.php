@@ -15,6 +15,7 @@ class CreateRecepcionItemsTable extends Migration
         Schema::create('Equipamiento.recepcion_items', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('id_recepcion')->unsigned()->index();
+            $table->integer('id_item')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
             $table->string('unidad');
             $table->integer('id_area_almacenamiento')->nullable()->unsigned()->index();
@@ -25,6 +26,10 @@ class CreateRecepcionItemsTable extends Migration
                 ->references('id')
                 ->on('Equipamiento.recepciones')
                 ->onDelete('cascade');
+
+            $table->foreign('id_item')
+                ->references('id_item')
+                ->on('items');
 
             $table->foreign('id_material')
                 ->references('id_material')

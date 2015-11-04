@@ -97,7 +97,7 @@ class AreasController extends Controller
 
             $area = new Area([
                 'nombre'      => $nombre,
-                'clave'       => $request->get('clave'),
+                'clave'       => $request->get('clave', $tipo ? $tipo->clave : ''),
                 'descripcion' => $request->get('descripcion'),
             ]);
 

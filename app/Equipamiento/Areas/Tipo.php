@@ -22,7 +22,7 @@ class Tipo extends Node
     /**
      * @var array
      */
-    protected $fillable = ['nombre', 'descripcion'];
+    protected $fillable = ['nombre', 'descripcion', 'clave'];
 
     /**
      * Obra relacionada con este tipo de area

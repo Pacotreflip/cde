@@ -5,6 +5,7 @@ namespace Ghi\Equipamiento\Transacciones;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 
 class Item extends Model
 {
@@ -50,13 +51,13 @@ class Item extends Model
     }
 
     /**
-     * Entregas relacionadas con este item
+     * Recepciones relacionadas con este item
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function entregas()
     {
-        return $this->hasMany(Entrega::class, 'id_item', 'id_item');
+        return $this->hasMany(ItemRecepcion::class, 'id_item', 'id_item');
     }
 
     /**
