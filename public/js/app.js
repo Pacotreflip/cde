@@ -32836,6 +32836,9 @@ var terminalDirectives = [
   'if'
 ]
 
+// default directive priority
+var DEFAULT_PRIORITY = 1000
+
 /**
  * Compile a template and return a reusable composite link
  * function, which recursively contains more link functions
@@ -32918,8 +32921,8 @@ function linkAndCapture (linker, vm) {
  */
 
 function directiveComparator (a, b) {
-  a = a.descriptor.def.priority || 0
-  b = b.descriptor.def.priority || 0
+  a = a.descriptor.def.priority || DEFAULT_PRIORITY
+  b = b.descriptor.def.priority || DEFAULT_PRIORITY
   return a > b ? -1 : a === b ? 0 : 1
 }
 
@@ -33024,16 +33027,17 @@ exports.compileRoot = function (el, options, contextOptions) {
     }
   } else if (process.env.NODE_ENV !== 'production' && containerAttrs) {
     // warn container directives for fragment instances
-    containerAttrs.forEach(function (attr) {
-      if (attr.name.indexOf('v-') === 0 || attr.name === 'transition') {
-        _.warn(
-          attr.name + ' is ignored on component ' +
-          '<' + options.el.tagName.toLowerCase() + '> because ' +
-          'the component is a fragment instance: ' +
-          'http://vuejs.org/guide/components.html#Fragment_Instance'
-        )
-      }
-    })
+    var names = containerAttrs.map(function (attr) {
+      return '"' + attr.name + '"'
+    }).join(', ')
+    var plural = containerAttrs.length > 1
+    _.warn(
+      'Attribute' + (plural ? 's ' : ' ') + names +
+      (plural ? ' are' : ' is') + ' ignored on component ' +
+      '<' + options.el.tagName.toLowerCase() + '> because ' +
+      'the component is a fragment instance: ' +
+      'http://vuejs.org/guide/components.html#Fragment_Instance'
+    )
   }
 
   return function rootLinkFn (vm, el, scope) {
@@ -33949,15 +33953,15 @@ Directive.prototype._setupParams = function () {
   while (i--) {
     key = params[i]
     mappedKey = _.camelize(key)
-    val = _.attr(this.el, key)
+    val = _.getBindAttr(this.el, key)
     if (val != null) {
-      // static
-      this.params[mappedKey] = val === '' ? true : val
-    } else {
       // dynamic
-      val = _.getBindAttr(this.el, key)
+      this._setupParamWatcher(mappedKey, val)
+    } else {
+      // static
+      val = _.attr(this.el, key)
       if (val != null) {
-        this._setupParamWatcher(mappedKey, val)
+        this.params[mappedKey] = val === '' ? true : val
       }
     }
   }
@@ -34014,7 +34018,7 @@ Directive.prototype._checkStatement = function () {
       fn.call(scope, scope)
     }
     if (this.filters) {
-      handler = this.vm._applyFilters(handler, null, this.filters)
+      handler = scope._applyFilters(handler, null, this.filters)
     }
     this.update(handler)
     return true
@@ -34296,6 +34300,8 @@ var addClass = _.addClass
 var removeClass = _.removeClass
 
 module.exports = {
+
+  deep: true,
 
   update: function (value) {
     if (value && typeof value === 'string') {
@@ -34941,6 +34947,10 @@ module.exports = {
   bind: function () {
     var attr = this.arg
     var tag = this.el.tagName
+    // should be deep watch on object mode
+    if (!attr) {
+      this.deep = true
+    }
     // handle interpolation bindings
     if (this.descriptor.interp) {
       // only allow binding on native attributes
@@ -35275,8 +35285,8 @@ module.exports = {
     var parentScope = this._scope || this.vm
     var scope = Object.create(parentScope)
     // ref holder for the scope
-    scope.$refs = {}
-    scope.$els = {}
+    scope.$refs = Object.create(parentScope.$refs)
+    scope.$els = Object.create(parentScope.$els)
     // make sure point $parent to parent scope
     scope.$parent = parentScope
     // for two-way binding on alias
@@ -39542,7 +39552,7 @@ p.enter = function (op, cb) {
 
 p.enterNextTick = function () {
 
-  // Importnatn hack:
+  // Important hack:
   // in Chrome, if a just-entered element is applied the
   // leave class while its interpolated property still has
   // a very small value (within one frame), Chrome will
@@ -41321,7 +41331,7 @@ extend(p, require('./api/dom'))
 extend(p, require('./api/events'))
 extend(p, require('./api/lifecycle'))
 
-Vue.version = '1.0.3'
+Vue.version = '1.0.4'
 module.exports = _.Vue = Vue
 
 /* istanbul ignore if */
@@ -41661,19 +41671,18 @@ Watcher.prototype.teardown = function () {
  * getters, so that every nested property inside the object
  * is collected as a "deep" dependency.
  *
- * @param {Object} obj
+ * @param {*} val
  */
 
-function traverse (obj) {
-  var key, val, i
-  for (key in obj) {
-    val = obj[key]
-    if (_.isArray(val)) {
-      i = val.length
-      while (i--) traverse(val[i])
-    } else if (_.isObject(val)) {
-      traverse(val)
-    }
+function traverse (val) {
+  var i, keys
+  if (_.isArray(val)) {
+    i = val.length
+    while (i--) traverse(val[i])
+  } else if (_.isObject(val)) {
+    keys = Object.keys(val)
+    i = keys.length
+    while (i--) traverse(val[keys[i]])
   }
 }
 
@@ -42128,8 +42137,11 @@ Vue.component('recepcion-screen', {
 
       this.$http.get('/api/ordenes-compra/' + this.recepcionForm.orden_compra).success(function (response) {
         this.cargando = false;
-        this.compra = response;
         this.recepcionForm.proveedor = response.proveedor.id_empresa;
+        response.materiales.forEach(function (material) {
+          material.destinos = [];
+        });
+        this.compra = response;
       }).error(function (errors) {
         this.cargando = false;
       });
@@ -42171,6 +42183,13 @@ Vue.component('selector-destinos', {
 
   template: require('./templates/selector-destinos.html'),
 
+  // props: {
+  //   destinos: {
+  //     type: Array,
+  //     default: () => { return [] }
+  //   }
+  // },
+
   data: function data() {
 
     return {
@@ -42203,6 +42222,12 @@ Vue.component('selector-destinos', {
       this.activarJsTree = true;
     },
 
+    quitaDestino: function quitaDestino(e, destino) {
+      e.preventDefault();
+
+      this.destinos.$remove(destino);
+    },
+
     sincronizaDestinos: function sincronizaDestinos(data) {
       var _this = this;
 
@@ -42220,6 +42245,8 @@ Vue.component('selector-destinos', {
         return { id: parseInt(id, 10), nombre: '', ruta: data.instance.get_path(data.node, ' / '), cantidad: 1 };
       });
 
+      this.$dispatch('destinos-changed', this.destinos);
+
       this.$nextTick(this.applyMask);
     },
 
@@ -42233,6 +42260,7 @@ Vue.component('selector-destinos', {
         digits: 2
       });
     }
+
   }
 });
 
@@ -42243,7 +42271,7 @@ module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul
 },{}],109:[function(require,module,exports){
 module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
 },{}],110:[function(require,module,exports){
-module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    Ver destinos\n</a>\n\n<div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Destinos Asignados</h3>\n      </div>\n      <div class="modal-body">\n        <div class="row">\n          <div class="col-md-6">\n            <table class="table">\n              <thead>\n                <tr>\n                  <td><b>Area</b></td>\n                  <td><b>Cantidad</b></td>\n                </tr>\n              </thead>\n              <tbody>\n                <tr v-for="destino in destinos">\n                  <td>{{ destino.ruta }}</td>\n                  <td>\n                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{ destino.cantidad | currency \'\' }">\n                  </td>\n                </tr>\n              </tbody>\n              <tfoot>\n                <tr>\n                  <td class="text-right"><strong>Total:</strong></td>\n                  <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                </tr>\n              </tfoot>\n            </table>\n          </div>\n          <div class="col-md-6">\n            <areas-tree v-if="activarJsTree"\n                      v-bind:plugins="[\'checkbox\']"\n                      v-bind:multiple="true"\n                      :when-change="sincronizaDestinos"\n                      :select-only-leaf="true"></areas-tree>\n          </div>\n        </div>\n      </div>\n\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
+module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    Ver destinos\n</a>\n\n<div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Destinos Asignados</h3>\n      </div>\n      <div class="modal-body">\n        <div class="row">\n          <div class="col-md-6">\n            <table class="table">\n              <thead>\n                <tr>\n                  <td><b>Area</b></td>\n                  <td><b>Cantidad</b></td>\n                  <!-- <td></td> -->\n                </tr>\n              </thead>\n              <tbody>\n                <tr v-for="destino in destinos">\n                  <td>{{ destino.ruta }}</td>\n                  <td>\n                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{{ destino.cantidad | currency \'\' }}">\n                  </td>\n                  <!-- <td>\n                    <button class="btn btn-xs btn-danger" v-on:click="quitaDestino($event, destino)"><i class="fa fa-trash"></i> Quitar</button>\n                  </td> -->\n                </tr>\n              </tbody>\n              <tfoot>\n                <tr>\n                  <td class="text-right"><strong>Total:</strong></td>\n                  <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                </tr>\n              </tfoot>\n            </table>\n\n            <!-- <pre>\n              {{ $data.destinos | json }}\n            </pre> -->\n          </div>\n          <div class="col-md-6">\n            <areas-tree v-if="activarJsTree"\n                      v-bind:plugins="[\'checkbox\']"\n                      v-bind:multiple="true"\n                      :when-change="sincronizaDestinos"\n                      :select-only-leaf="true"></areas-tree>\n          </div>\n        </div>\n      </div>\n\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
 },{}],111:[function(require,module,exports){
 'use strict';
 
