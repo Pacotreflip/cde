@@ -38,7 +38,6 @@ class CreateRecepcionItemsTable extends Migration
             $table->foreign('id_area_almacenamiento')
                 ->references('id')
                 ->on('Equipamiento.areas');
-
         });
     }
 

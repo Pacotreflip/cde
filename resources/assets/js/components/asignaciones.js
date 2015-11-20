@@ -1,6 +1,6 @@
 Vue.component('asignacion-screen', {
   
-  data: function() {
+  data: function () {
     return {
       asignacionForm: {
         origen: '',
@@ -12,11 +12,15 @@ Vue.component('asignacion-screen', {
     }
   },
 
+  components: {
+    'areas-tree': require('./areas-jstree.js')
+  },
+
   methods: {
     /**
      * Asigna los destinos seleccionados para un material.
      */
-    setDestinos: function(material, nodes) {
+    setDestinos: function (material, nodes) {
       material.destinos = this.transformDestinos(nodes);
     },
 
@@ -36,12 +40,13 @@ Vue.component('asignacion-screen', {
     /**
      * Obtiene los materiales de un area.
      */
-    fetchMateriales: function (area) {
-      this.asignacionForm.origen = area;
+    fetchMateriales: function (data) {
+      var id_area = data.node.id;
+      this.asignacionForm.origen = id_area;
       this.cargando = true;
       this.asignacionForm.materiales = [];
 
-      this.$http.get('/api/areas/' + area)
+      this.$http.get('/api/areas/' + id_area)
         .success(function (area) {
           this.cargando = false;
 

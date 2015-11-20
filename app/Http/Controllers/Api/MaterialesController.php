@@ -5,13 +5,14 @@ namespace Ghi\Http\Controllers\Api;
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Http\Controllers\Api\ApiController;
 
 class MaterialesController extends ApiController
 {
+
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -30,7 +31,7 @@ class MaterialesController extends ApiController
         }
 
         return Material::soloMateriales()
-                ->select('id_material', 'descripcion', 'numero_parte')
-                ->get();
+            ->select('id_material', 'descripcion', 'numero_parte')
+            ->get();
     }
 }

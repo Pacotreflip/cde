@@ -26,10 +26,11 @@ class EvaluacionCalidadController extends Controller
 
         parent::__construct();
     }
-    
+
     /**
      * Display a listing of the resource.
      *
+     * @param $id
      * @return \Illuminate\Http\Response
      */
     public function index($id)

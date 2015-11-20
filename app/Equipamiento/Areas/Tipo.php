@@ -44,7 +44,7 @@ class Tipo extends Node
         return $this->belongsToMany(Material::class, 'Equipamiento.materiales_requeridos', 'id_tipo_area', 'id_material')
             ->orderBy('descripcion')
             ->withTimestamps()
-            ->withPivot('cantidad_requerida', 'costo_estimado', 'se_evalua');
+            ->withPivot('cantidad_requerida', 'costo_estimado', 'se_evalua', 'cantidad_comparativa', 'precio_comparativa', 'existe_para_comparativa');
     }
 
     /**
@@ -91,7 +91,6 @@ class Tipo extends Node
      * Crea un nuevo tipo de area dentro de otro.
      *
      * @param array $data
-     * @param Tipo|null $parent
      * @return self
      */
     public static function nuevo(array $data)
@@ -133,18 +132,33 @@ class Tipo extends Node
 
     /**
      * Agrega articulos requeridos a este tipo de area.
-     * 
-     * @param  array|int  $material
-     * @return self
+     *
+     * @param  array|int $material
+     * @param int $cantidad_requerida
+     * @param float $costo_estimado
+     * @param int $cantidad_comparativa
+     * @param float $precio_comparativa
+     * @param bool $existe_para_comparativa
+     * @return Tipo
      */
-    public function requiereArticulo($material, $cantidad_requerida = 1, $costo_estimado = 0)
+    public function requiereArticulo(
+        $material,
+        $cantidad_requerida = 1,
+        $costo_estimado = 0.0,
+        $cantidad_comparativa = null,
+        $precio_comparativa = null,
+        $existe_para_comparativa = true
+    )
     {
         if (is_array($material)) {
             $this->materiales()->sync($material);
         } else {
             $this->materiales()->attach($material, [
-                'cantidad_requerida' => $cantidad_requerida,
-                'costo_estimado' => $costo_estimado
+                'cantidad_requerida'      => $cantidad_requerida,
+                'costo_estimado'          => $costo_estimado,
+                'cantidad_comparativa'    => $cantidad_comparativa,
+                'precio_comparativa'      => $precio_comparativa,
+                'existe_para_comparativa' => $existe_para_comparativa,
             ]);
         }
 

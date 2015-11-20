@@ -36,6 +36,7 @@ class TiposAreaController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
     public function index(Request $request)
@@ -110,7 +111,7 @@ class TiposAreaController extends Controller
      */
     public function edit($id)
     {
-        $tipo  = $this->tipos->getById($id);
+        $tipo = $this->tipos->getById($id);
         $tipos = [null => 'Inicio'] + $this->tipos->getListaTipos();
 
         return view('tipos.datos-generales')
@@ -127,7 +128,7 @@ class TiposAreaController extends Controller
      */
     public function update(UpdateTipoRequest $request, $id)
     {
-        $tipo   = Tipo::findOrFail($id);
+        $tipo = Tipo::findOrFail($id);
         $parent = Tipo::find($request->get('parent_id'));
 
         $tipo->fill($request->all());

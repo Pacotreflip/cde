@@ -12,6 +12,11 @@ class AreasController extends ApiController
 {
     protected $areas;
 
+    /**
+     * AreasController constructor.
+     *
+     * @param AreaRepository $areas
+     */
     public function __construct(AreaRepository $areas)
     {
         $this->middleware('auth');
@@ -21,6 +26,9 @@ class AreasController extends ApiController
         parent::__construct();
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $areas = [];
@@ -36,6 +44,10 @@ class AreasController extends ApiController
         return response()->json($areas);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
         $area = Area::with('materiales')->findOrFail($id);
@@ -43,6 +55,10 @@ class AreasController extends ApiController
         return response()->json($this->transformArea($area));
     }
 
+    /**
+     * @param Area $area
+     * @return array
+     */
     protected function transformArea(Area $area)
     {
         return [
@@ -53,6 +69,10 @@ class AreasController extends ApiController
         ];
     }
 
+    /**
+     * @param $materiales
+     * @return array
+     */
     protected function includeMateriales($materiales)
     {
         $recursos = [];
@@ -64,15 +84,19 @@ class AreasController extends ApiController
         return $recursos;
     }
 
+    /**
+     * @param $material
+     * @return array
+     */
     protected function transformMaterial($material)
     {
         return [
-            'id'            => $material->id_material,
+            'id' => $material->id_material,
             'id_inventario' => $material->pivot->id,
-            'numero_parte'  => $material->numero_parte,
-            'descripcion'   => $material->descripcion,
-            'unidad'        => $material->unidad,
-            'existencia'    => $material->pivot->cantidad_existencia,
+            'numero_parte' => $material->numero_parte,
+            'descripcion' => $material->descripcion,
+            'unidad' => $material->unidad,
+            'existencia' => $material->pivot->cantidad_existencia,
         ];
     }
 }

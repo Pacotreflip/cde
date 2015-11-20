@@ -5,7 +5,6 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
-use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\TipoAreaRepository;
 use Ghi\Equipamiento\Articulos\MaterialRepository;
 
@@ -23,6 +22,7 @@ class ArticulosRequeridosController extends Controller
 
     /**
      * @param TipoAreaRepository $tipos_area
+     * @param MaterialRepository $articulos
      */
     public function __construct(TipoAreaRepository $tipos_area, MaterialRepository $articulos)
     {
@@ -106,6 +106,8 @@ class ArticulosRequeridosController extends Controller
             $articulos = $this->filtraArticulos($articulos, $request->get('selected_articulos', []));
         }
 
+        $articulos = $this->asignaValoresDefault($articulos);
+
         $tipo->requiereArticulo($articulos);
 
         Flash::success('Los cambios fueron guardados');
@@ -134,5 +136,25 @@ class ArticulosRequeridosController extends Controller
     protected function filtraArticulos($articulos, $filtro)
     {
         return array_except($articulos, $filtro);
+    }
+
+    /**
+     * Asigna valores default para los campos que pueden ser nulos o no existir.
+     *
+     * @param $articulos
+     * @return array
+     */
+    private function asignaValoresDefault($articulos)
+    {
+        return collect($articulos)->map(function ($articulo) {
+            $articulo['cantidad_comparativa'] = $articulo['cantidad_comparativa'] ?: null;
+            $articulo['precio_comparativa'] = $articulo['precio_comparativa'] ?: null;
+
+            if ( ! array_key_exists('existe_para_comparativa', $articulo)) {
+                $articulo['existe_para_comparativa'] = 0;
+            }
+
+            return $articulo;
+        })->all();
     }
 }

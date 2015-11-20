@@ -99,6 +99,7 @@ $factory->define(Area::class, function (Faker\Generator $faker) {
         'nombre'      => implode(' ', $faker->words),
         'clave'       => $faker->citySuffix,
         'descripcion' => $faker->paragraph,
+        'tipo_id' => null,
         'id_obra'     => null, //factory(Obra::class)->create()->id_obra,
     ];
 });

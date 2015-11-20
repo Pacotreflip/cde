@@ -49,7 +49,7 @@ class Handler extends ExceptionHandler
                 return new JsonResponse([$e->getMessage()], 422);
             }
 
-            return new JsonResponse(['error', get_class($e), $e->getMessage()], 500);
+            return new JsonResponse([$e->getMessage()], 500);
         }
 
         if ($e instanceof ModelNotFoundException) {

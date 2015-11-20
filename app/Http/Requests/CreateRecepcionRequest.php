@@ -24,17 +24,20 @@ class CreateRecepcionRequest extends Request
     public function rules()
     {
         $rules = [
-            'fecha_recepcion'     => 'required|date',
-            'orden_compra'        => 'required',
-            'persona_recibio'     => 'required',
-            'area_almacenamiento' => 'required',
-            'materiales'          => 'required|array',
+            'fecha_recepcion' => 'required|date',
+            'orden_compra'    => 'required',
+            'persona_recibio' => 'required',
+            'materiales'      => 'required|array',
         ];
 
-        foreach ($this->get('materiales') as $key => $value) {
+        foreach ($this->get('materiales') as $key => $material) {
             $rules['materiales.'.$key] = 'array';
             $rules['materiales.'.$key.'.id'] = 'required|integer';
-            $rules['materiales.'.$key.'.cantidad_recibir'] = 'numeric';
+            $rules['materiales.'.$key.'.destinos'] = 'array';
+            
+            foreach ($material['destinos'] as $keyDestino => $destino) {
+                $rules['materiales.'.$key.'.destinos.'.$keyDestino.'.cantidad'] = 'required|numeric|min:1';
+            }
         }
 
         return $rules;
@@ -43,17 +46,25 @@ class CreateRecepcionRequest extends Request
     public function messages()
     {
         $messages = [
-            'orden_compra.required'        => 'El campo folio orden de compra es obligatorio.',
-            'persona_recibio.required'     => 'El campo persona que recibe es obligatorio.',
-            'area_almacenamiento.required' => 'El campo area de almacenamiento es obligatorio.',
-            'materiales.required'          => 'Debe agregar por lo menos un articulo a recibir.',
+            'orden_compra.required'    => 'El campo folio orden de compra es obligatorio.',
+            'persona_recibio.required' => 'El campo persona que recibe es obligatorio.',
+            'materiales.required'      => 'Debe recibir por lo menos un articulo.',
         ];
 
-        foreach ($this->get('materiales') as $key => $value) {
-            $messages['materiales.'.$key.'.id.required'] = "El identificador del artículo [{$value['numero_parte']}]-{$value['descripcion']} no es válido.";
-            $messages['materiales.'.$key.'.id.required'] = "El identificador del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser un numero entero.";
-            $messages['materiales.'.$key.'.cantidad_recibir.numeric'] = "El campo cantidad del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser numérico.";
-            $messages['materiales.'.$key.'.cantidad_recibir.min'] = "El campo cantidad del artículo [{$value['numero_parte']}]-{$value['descripcion']} debe ser mínimo :min.";
+        foreach ($this->get('materiales') as $key => $material) {
+            $messages['materiales.'.$key.'.id.required'] = 
+                "El identificador del artículo [{$material['numero_parte']}]-{$material['descripcion']} no es válido.";
+
+            $messages['materiales.'.$key.'.id.required'] = 
+                "El identificador del artículo [{$material['numero_parte']}]-{$material['descripcion']} debe ser un numero entero.";
+
+            $messages['materiales.'.$key.'.cantidad_recibir.min'] = 
+                "El campo cantidad del artículo [{$material['numero_parte']}]-{$material['descripcion']} debe ser mínimo :min.";
+
+            foreach ($material['destinos'] as $keyDestino => $destino) {
+                $messages['materiales.'.$key.'.destinos.'.$keyDestino.'.cantidad.min'] = 
+                    "La cantidad del destino {$destino['ruta']} del articulo [{$material['numero_parte']}]-{$material['descripcion']} debe ser de al menos 1";
+            }
         }
 
         return $messages;

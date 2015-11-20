@@ -9,9 +9,11 @@ use Ghi\Equipamiento\Transacciones\Transaccion;
 
 class OrdenesCompraController extends ApiController
 {
+
     /**
      * Display a listing of the resource.
      *
+     * @param $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -22,10 +24,10 @@ class OrdenesCompraController extends ApiController
             ->findOrFail($id);
 
         return response()->json([
-            'id'           => $compra->id_transaccion,
+            'id' => $compra->id_transaccion,
             'numero_folio' => $compra->numero_folio,
-            'proveedor'    => $compra->empresa,
-            'materiales'   => $this->transformaItems($compra->items),
+            'proveedor' => $compra->empresa,
+            'materiales' => $this->transformaItems($compra->items),
         ]);
     }
 
@@ -42,14 +44,15 @@ class OrdenesCompraController extends ApiController
 
         foreach ($items as $item) {
             $materiales[] = [
-                'id'                 => $item->id_material,
-                'descripcion'        => $item->material->descripcion,
-                'unidad'             => $item->material->unidad,
-                'numero_parte'       => $item->material->numero_parte,
+                'id' => $item->id_material,
+                'id_item' => $item->id_item,
+                'descripcion' => $item->material->descripcion,
+                'unidad' => $item->material->unidad,
+                'numero_parte' => $item->material->numero_parte,
                 'cantidad_adquirida' => $item->cantidad,
-                'precio_unitario'    => $item->precio_unitario,
-                'cantidad_recibida'  => $item->cantidad_recibida,
-                'cantidad_recibir'   => '',
+                'precio_unitario' => $item->precio_unitario,
+                'cantidad_recibida' => $item->cantidad_recibida,
+                'cantidad_por_recibir' => $item->cantidad_por_recibir,
             ];
         }
 

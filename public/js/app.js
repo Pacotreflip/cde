@@ -41717,22 +41717,24 @@ if ($('#app').length) {
     new Vue(require('./vue-app'));
 }
 
-},{"./vue-app":112,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":5,"jquery.inputmask/dist/jquery.inputmask.bundle":4,"jstree":6,"moment":8,"sweetalert":17,"underscore":18,"vue":96,"vue-resource":20,"vue-validator":27}],99:[function(require,module,exports){
+},{"./vue-app":113,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":5,"jquery.inputmask/dist/jquery.inputmask.bundle":4,"jstree":6,"moment":8,"sweetalert":17,"underscore":18,"vue":96,"vue-resource":20,"vue-validator":27}],99:[function(require,module,exports){
 'use strict';
 
 require('./components/global-errors');
 require('./components/errors');
 require('./components/transferencias');
 require('./components/recepciones');
-require('./components/areas-jstree');
+// require('./components/areas-jstree');
 require('./components/areas-modal-tree');
 require('./components/asignaciones');
-require('./components/selector-destinos');
+// require('./components/selector-destinos');
 
-},{"./components/areas-jstree":100,"./components/areas-modal-tree":101,"./components/asignaciones":102,"./components/errors":103,"./components/global-errors":104,"./components/recepciones":105,"./components/selector-destinos":106,"./components/transferencias":111}],100:[function(require,module,exports){
+},{"./components/areas-modal-tree":101,"./components/asignaciones":102,"./components/errors":103,"./components/global-errors":104,"./components/recepciones":105,"./components/transferencias":112}],100:[function(require,module,exports){
 'use strict';
 
-Vue.component('areas-tree', {
+module.exports = {
+
+  template: require('./templates/areas-jstree.html'),
 
   data: function data() {
     return {
@@ -41740,8 +41742,6 @@ Vue.component('areas-tree', {
       errors: []
     };
   },
-
-  template: '<div v-el:jstree></div><div class="alert alert-danger" v-if="errors.length"><ul><li v-for="error in errors">{{ error }}</li></ul></div>',
 
   props: {
     multiple: {
@@ -41779,65 +41779,99 @@ Vue.component('areas-tree', {
   ready: function ready() {
     var _this = this;
 
-    var that = this;
+    var jstreeConf = this.getConfig();
 
-    var jstreeConf = {
-      core: {
-        multiple: this.multiple,
-        data: {
-          url: function url(node) {
-            if (node.id === "#") {
-              return '/api/areas/jstree';
-            }
-            return '/api/areas/' + node.id + '/children/jstree';
-          },
-          data: function data(node) {
-            return { "id": node.id };
-          }
-        },
-        strings: {
-          'Loading ...': 'Cargando ...'
-        },
-        error: function error(object) {
-          // that.errors = _.flatten(_.toArray({ error: object.error + ': ' + object.reason }));
-          _this.$dispatch('globalError', '');
-        }
-      },
-      checkbox: { three_state: false },
-      plugins: this.plugins
-    };
-
-    $(this.$els.jstree).jstree(jstreeConf)
-    // .on('changed.jstree', (e, data) => { this.whenSelected(data); })
-    .on('changed.jstree', function (e, data) {
-      if (_this.selectOnlyLeaf && !data.instance.is_leaf(data.node)) {
-        data.instance.uncheck_node(data.node);
-        data.instance.deselect_node(data.node);
-        return false;
-      }
-
-      if (_this.isChecked(data)) {
-        _this.whenCheck(data);
-      }
-
-      _this.whenChange(data);
+    $(this.$els.jstree).jstree(jstreeConf).on('changed.jstree', function (e, data) {
+      return _this.treeHasChanged(data);
     });
 
     this.created = true;
   },
 
   methods: {
+    /**
+     * Obtiene la instancia de jstree.
+     */
+    getInstance: function getInstance() {
+      return $(this.$els.jstree).jstree(true);
+    },
+
+    /**
+     * Identifica si un nodo es una hoja.
+     */
+    nodeIsLeaf: function nodeIsLeaf(node) {
+      return this.getInstance().is_leaf(node);
+    },
+
+    /**
+     * Genera la ruta completa de un nodo.
+     */
     getNodePath: function getNodePath(data) {
       return data.instance.get_path(data.node, ' / ');
     },
 
-    isChecked: function isChecked(data) {
-      return data.instance.is_checked(data.node);
+    /**
+     * Identifica si un nodo tiene marcado su checkbox.
+     */
+    nodeIsChecked: function nodeIsChecked(node) {
+      if (this.plugins.indexOf('checkbox') != -1) {
+        return this.getInstance().is_checked(node);
+      }
+      return false;
+    },
+
+    /**
+     * Tareas que se ejecutan cuando el arbol cambia 
+     * (cuando un nodo es seleccionado/deseleccionado).
+     */
+    treeHasChanged: function treeHasChanged(data) {
+      if (this.selectOnlyLeaf && !this.nodeIsLeaf(data.node)) {
+        data.instance.uncheck_node(data.node);
+        data.instance.deselect_node(data.node);
+        return false;
+      }
+
+      if (this.nodeIsChecked(data.node)) {
+        this.whenCheck(data);
+      }
+
+      this.whenChange(data);
+    },
+
+    displayErrors: function displayErrors(object) {
+      console.error('error (' + object.error + '): ' + object.reason);
+      // that.errors = _.flatten(_.toArray({ error: object.error + ': ' + object.reason }));
+      this.$dispatch('globalError', '');
+    },
+
+    getConfig: function getConfig() {
+      return {
+        core: {
+          multiple: this.multiple,
+          data: {
+            url: function url(node) {
+              if (node.id === "#") {
+                return '/api/areas/jstree';
+              }
+              return '/api/areas/' + node.id + '/children/jstree';
+            },
+            data: function data(node) {
+              return { "id": node.id };
+            }
+          },
+          strings: {
+            'Loading ...': 'Cargando ...'
+          },
+          error: this.displayErrors
+        },
+        checkbox: { three_state: false },
+        plugins: this.plugins
+      };
     }
   }
-});
+};
 
-},{}],101:[function(require,module,exports){
+},{"./templates/areas-jstree.html":107}],101:[function(require,module,exports){
 'use strict';
 
 Vue.component('areas-modal-tree', {
@@ -41937,7 +41971,7 @@ Vue.component('areas-modal-tree', {
   }
 });
 
-},{"./templates/modal-jstree.html":109}],102:[function(require,module,exports){
+},{"./templates/modal-jstree.html":110}],102:[function(require,module,exports){
 'use strict';
 
 Vue.component('asignacion-screen', {
@@ -41952,6 +41986,10 @@ Vue.component('asignacion-screen', {
       cargando: false,
       asignando: false
     };
+  },
+
+  components: {
+    'areas-tree': require('./areas-jstree.js')
   },
 
   methods: {
@@ -41978,12 +42016,13 @@ Vue.component('asignacion-screen', {
     /**
      * Obtiene los materiales de un area.
      */
-    fetchMateriales: function fetchMateriales(area) {
-      this.asignacionForm.origen = area;
+    fetchMateriales: function fetchMateriales(data) {
+      var id_area = data.node.id;
+      this.asignacionForm.origen = id_area;
       this.cargando = true;
       this.asignacionForm.materiales = [];
 
-      this.$http.get('/api/areas/' + area).success(function (area) {
+      this.$http.get('/api/areas/' + id_area).success(function (area) {
         this.cargando = false;
 
         area.materiales.forEach(function (material) {
@@ -42017,7 +42056,7 @@ Vue.component('asignacion-screen', {
   }
 });
 
-},{}],103:[function(require,module,exports){
+},{"./areas-jstree.js":100}],103:[function(require,module,exports){
 'use strict';
 
 Vue.component('app-errors', {
@@ -42026,7 +42065,7 @@ Vue.component('app-errors', {
     template: require('./templates/errors.html')
 });
 
-},{"./templates/errors.html":107}],104:[function(require,module,exports){
+},{"./templates/errors.html":108}],104:[function(require,module,exports){
 'use strict';
 
 Vue.component('global-errors', {
@@ -42050,22 +42089,23 @@ Vue.component('global-errors', {
   }
 });
 
-},{"./templates/global-errors.html":108}],105:[function(require,module,exports){
+},{"./templates/global-errors.html":109}],105:[function(require,module,exports){
 'use strict';
 
 Vue.component('recepcion-screen', {
+
   data: function data() {
     return {
       recepcionForm: {
         proveedor: '',
         orden_compra: '',
         fecha_recepcion: '',
-        area_almacenamiento: '',
         numero_remision_factura: '',
         orden_embarque: '',
         numero_pedimento: '',
         persona_recibio: '',
         observaciones: '',
+        opcion_recepcion: 1,
         materiales: [],
         errors: []
       },
@@ -42073,81 +42113,75 @@ Vue.component('recepcion-screen', {
         proveedor: {},
         materiales: []
       },
-      // nuevoMaterial: {
-      //   id: null,
-      //   numero_parte: '',
-      //   descripcion: '',
-      //   cantidad: '',
-      //   precio: ''
-      // },
       recibiendo: false,
       cargando: false
     };
   },
 
-  // validator: {
-  //   validates: {
-  //     numeric: function (val) {
-  //       return /^\d+(\.\d+)?$/.test(val)
-  //     }
-  //   }
-  // },
+  events: {
+    'destinos-changed': function destinosChanged(destinos, material) {}
+  },
+
+  components: {
+    'selector-destinos': require('./selector-destinos.js')
+  },
 
   computed: {
-    // formIsValid: function () {
-    //   return this.dirty && this.valid && this.nuevoMaterial.id;
-    // },
-    // sinMateriales: function () {
-    //   return !this.recepcionForm.materiales.length;
-    // },
-
     articulosARecibir: function articulosARecibir() {
       return this.compra.materiales.filter(function (material) {
-        return material.cantidad_recibir.length;
+        return material.destinos.length;
       });
     }
   },
 
   methods: {
-    // setMaterial: function (material) {
-    //   this.nuevoMaterial.id = material.id;
-    //   this.nuevoMaterial.numero_parte = material.numero_parte;
-    //   this.nuevoMaterial.descripcion = material.descripcion;
-    // },
-
-    // addMaterial: function (e) {
-    //   e.preventDefault();
-
-    //   if(this.formIsValid) {
-    //     this.recepcionForm.materiales.push(this.nuevoMaterial);
-    //     this.$broadcast('material-agregado', this);
-    //     this.nuevoMaterial = { id: null, numero_parte: '', descripcion: '', cantidad: '', precio: '' };
-    //   }
-    // },
-
-    // removeMaterial: function (material, index, e) {
-    //   e.preventDefault();
-    //   this.recepcionForm.materiales.$remove(index);
-    // },
-
+    /**
+     * Obtiene los materiales de una orden de compra.
+     */
     fetchMateriales: function fetchMateriales(e) {
-      this.errors = [];
+      this.recepcionForm.errors = [];
       this.cargando = true;
       this.compra = { proveedor: {}, materiales: [] };
 
       this.$http.get('/api/ordenes-compra/' + this.recepcionForm.orden_compra).success(function (response) {
         this.cargando = false;
         this.recepcionForm.proveedor = response.proveedor.id_empresa;
+
         response.materiales.forEach(function (material) {
           material.destinos = [];
         });
+
         this.compra = response;
+
+        this.$nextTick(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+        });
       }).error(function (errors) {
         this.cargando = false;
       });
     },
 
-    recibir: function recibir(e) {
+    /**
+     * Calcula la cantidad a recibir de un material de acuerdo
+     * a la cantidad definida en sus destinos.
+     */
+    cantidadARecibir: function cantidadARecibir(material) {
+      return material.destinos.reduce(function (prev, cur) {
+        return prev + cur.cantidad;
+      }, 0);
+    },
+
+    /**
+     * Indica si un material es inconsistente para recepcion.
+     */
+    esInconsistente: function esInconsistente(material) {
+      return this.cantidadARecibir(material) != material.cantidad_adquirida;
+    },
+
+    /**
+     * Confirma si se reciben los articulos.
+     */
+    confirmaRecepcion: function confirmaRecepcion(e) {
       var _this = this;
 
       e.preventDefault();
@@ -42161,49 +42195,63 @@ Vue.component('recepcion-screen', {
         cancelButtonText: "No",
         confirmButtonColor: "#ec6c62"
       }, function () {
-        _this.recibiendo = true;
-        _this.recepcionForm.errors = [];
-        _this.recepcionForm.materiales = _this.articulosARecibir;
+        return _this.recibir();
+      });
+    },
 
-        _this.$http.post('/recepciones', _this.recepcionForm).success(function (response) {
-          window.location = response.path;
-        }).error(function (errors) {
-          this.recibiendo = false;
-          App.setErrorsOnForm(this.recepcionForm, errors);
-        });
+    /**
+     * Recibe los articulos.
+     */
+    recibir: function recibir() {
+      this.recibiendo = true;
+      this.recepcionForm.errors = [];
+      this.recepcionForm.materiales = this.articulosARecibir;
+
+      this.$http.post('/recepciones', this.recepcionForm).success(function (response) {
+        window.location = response.path;
+      }).error(function (errors) {
+        this.recibiendo = false;
+        App.setErrorsOnForm(this.recepcionForm, errors);
       });
     }
   }
 });
 
-},{}],106:[function(require,module,exports){
+},{"./selector-destinos.js":106}],106:[function(require,module,exports){
 'use strict';
 
-Vue.component('selector-destinos', {
+module.exports = {
 
   template: require('./templates/selector-destinos.html'),
 
-  // props: {
-  //   destinos: {
-  //     type: Array,
-  //     default: () => { return [] }
-  //   }
-  // },
-
   data: function data() {
-
     return {
-      destinos: [
-        // { id: 1, nombre: 'Nivel 1', ruta: 'Nivel Raiz / Nivel 1', cantidad: 1},
-        // { id: 2, nombre: 'Nivel 2', ruta: 'Nivel Raiz / Nivel 2', cantidad: 1},
-        // { id: 3, nombre: 'Nivel 3', ruta: 'Nivel Raiz / Nivel 3', cantidad: 1}
-      ],
-
       activarJsTree: false
     };
   },
 
+  props: {
+    destinos: {
+      type: Array,
+      'default': function _default() {
+        return [];
+      }
+    },
+
+    material: {
+      type: Object,
+      required: false
+    }
+  },
+
+  components: {
+    'areas-jstree': require('./areas-jstree.js')
+  },
+
   computed: {
+    /**
+     * Cantidad total de articulos por todos los destinos.
+     */
     cantidadTotal: function cantidadTotal() {
       return this.destinos.reduce(function (prev, cur) {
         return prev + cur.cantidad;
@@ -42216,24 +42264,23 @@ Vue.component('selector-destinos', {
   },
 
   methods: {
-
+    /**
+     * Abre la ventana modal del componente.
+     */
     openModal: function openModal() {
       $(this.$els.destinosmodal).modal('show');
       this.activarJsTree = true;
     },
 
-    quitaDestino: function quitaDestino(e, destino) {
-      e.preventDefault();
-
-      this.destinos.$remove(destino);
-    },
-
+    /**
+     * Sincroniza el formulario de acuerdo a los destinos seleccionados en el treeview.
+     */
     sincronizaDestinos: function sincronizaDestinos(data) {
       var _this = this;
 
       var checked = data.instance.get_checked();
 
-      this.destinos = checked.map(function (id) {
+      this.destinos = checked.map(function (id, index, array) {
         var exists = _this.destinos.filter(function (destino) {
           return 'id' in destino && destino.id == id;
         });
@@ -42245,34 +42292,37 @@ Vue.component('selector-destinos', {
         return { id: parseInt(id, 10), nombre: '', ruta: data.instance.get_path(data.node, ' / '), cantidad: 1 };
       });
 
-      this.$dispatch('destinos-changed', this.destinos);
+      this.$dispatch('destinos-changed', this.destinos, this.material);
 
       this.$nextTick(this.applyMask);
     },
 
+    /**
+     * Aplica el plugin de masking a los destinos del formulario.
+     */
     applyMask: function applyMask() {
       $('.decimal').inputmask('decimal', {
         allowMinus: false,
         rightAlign: true,
         removeMaskOnSubmit: true,
         unmaskAsNumber: true,
-        min: 1,
-        digits: 2
+        digits: 0
       });
     }
-
   }
-});
+};
 
-},{"./templates/selector-destinos.html":110}],107:[function(require,module,exports){
-module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-for="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
+},{"./areas-jstree.js":100,"./templates/selector-destinos.html":111}],107:[function(require,module,exports){
+module.exports = '<div>\n    <div v-el:jstree></div>\n    <div class="alert alert-danger" v-if="errors.length">\n      <ul>\n        <li v-for="error in errors">{{ error }}</li>\n      </ul>\n    </div>\n</div>';
 },{}],108:[function(require,module,exports){
-module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-for="error in errors">{{ error }}</li>\n  </ul>\n</div>';
+module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-for="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
 },{}],109:[function(require,module,exports){
-module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
+module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-for="error in errors">{{ error }}</li>\n  </ul>\n</div>';
 },{}],110:[function(require,module,exports){
-module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    Ver destinos\n</a>\n\n<div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Destinos Asignados</h3>\n      </div>\n      <div class="modal-body">\n        <div class="row">\n          <div class="col-md-6">\n            <table class="table">\n              <thead>\n                <tr>\n                  <td><b>Area</b></td>\n                  <td><b>Cantidad</b></td>\n                  <!-- <td></td> -->\n                </tr>\n              </thead>\n              <tbody>\n                <tr v-for="destino in destinos">\n                  <td>{{ destino.ruta }}</td>\n                  <td>\n                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{{ destino.cantidad | currency \'\' }}">\n                  </td>\n                  <!-- <td>\n                    <button class="btn btn-xs btn-danger" v-on:click="quitaDestino($event, destino)"><i class="fa fa-trash"></i> Quitar</button>\n                  </td> -->\n                </tr>\n              </tbody>\n              <tfoot>\n                <tr>\n                  <td class="text-right"><strong>Total:</strong></td>\n                  <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                </tr>\n              </tfoot>\n            </table>\n\n            <!-- <pre>\n              {{ $data.destinos | json }}\n            </pre> -->\n          </div>\n          <div class="col-md-6">\n            <areas-tree v-if="activarJsTree"\n                      v-bind:plugins="[\'checkbox\']"\n                      v-bind:multiple="true"\n                      :when-change="sincronizaDestinos"\n                      :select-only-leaf="true"></areas-tree>\n          </div>\n        </div>\n      </div>\n\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
+module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
 },{}],111:[function(require,module,exports){
+module.exports = '<div>\n  <a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n      Asignar destinos\n  </a>\n\n  <div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n    <div class="modal-dialog modal-lg" role="document">\n      <div class="modal-content">\n\n        <div class="modal-header">\n          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n            <span aria-hidden="true">&times;</span>\n          </button>\n          <h3 class="modal-title">Destinos Asignados</h3>\n        </div>\n        \n        <div class="modal-body">\n          <div class="row">\n            <div class="col-md-6">\n              <table class="table">\n                <thead>\n                  <tr>\n                    <td><b>Area</b></td>\n                    <td><b>Cantidad</b></td>\n                  </tr>\n                </thead>\n                <tbody>\n                  <tr v-for="destino in destinos">\n                    <td>{{ destino.ruta }}</td>\n                    <td>\n                      <input\n                        type="text" \n                        class="form-control input-sm decimal" \n                        v-model="destino.cantidad" \n                        number \n                        value="{{ destino.cantidad | currency \'\' }}">\n                    </td>\n                  </tr>\n                </tbody>\n                <tfoot>\n                  <tr>\n                    <td class="text-right"><strong>Total:</strong></td>\n                    <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                  </tr>\n                </tfoot>\n              </table>\n            </div>\n            <div class="col-md-6">\n              <areas-jstree\n                v-if="activarJsTree"\n                v-bind:plugins="[\'checkbox\']"\n                v-bind:multiple="true"\n                :when-change="sincronizaDestinos"\n                :select-only-leaf="true">\n              </areas-jstree>\n            </div>\n          </div>\n        </div>\n\n        <div class="modal-footer">\n          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>';
+},{}],112:[function(require,module,exports){
 'use strict';
 
 Vue.filter('depth', function (value, depth) {
@@ -42382,7 +42432,7 @@ Vue.component('transferencias-screen', {
   }
 });
 
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 /*
  * Load the Spark components.
  */

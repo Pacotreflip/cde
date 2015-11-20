@@ -28,6 +28,9 @@
           <th>Unidad</th>
           <th>Cantidad Requerida</th>
           <th>Costo Estimado</th>
+          <th>Cantidad Comparativa</th>
+          <th>Precio Comparativa</th>
+          <th>Existe para Comparativa?</th>
         </tr>
       </thead>
       <tbody>
@@ -39,14 +42,33 @@
             <td><a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a></td>
             <td>{{ $material->unidad }}</td>
             <td>
-              <input type="text" class="form-control input-sm" 
-                     name="articulos[{{ $material->id_material }}][cantidad_requerida]" 
-                     value="{{ $material->pivot->cantidad_requerida }}">
+              <input
+                type="text" class="form-control input-sm" 
+                name="articulos[{{ $material->id_material }}][cantidad_requerida]" 
+                value="{{ $material->pivot->cantidad_requerida }}">
             </td>
             <td>
-              <input type="text" class="form-control input-sm" 
-                     name="articulos[{{ $material->id_material }}][costo_estimado]" 
-                     value="{{ $material->pivot->costo_estimado }}">
+              <input
+                type="text" class="form-control input-sm" 
+                name="articulos[{{ $material->id_material }}][costo_estimado]" 
+                value="{{ $material->pivot->costo_estimado }}">
+            </td>
+            <td>
+              <input
+                type="text" class="form-control input-sm"
+                name="articulos[{{ $material->id_material }}][cantidad_comparativa]"
+                value="{{ $material->pivot->cantidad_comparativa }}"
+              >
+            </td>
+            <td>
+              <input
+                type="text" class="form-control input-sm"
+                name="articulos[{{ $material->id_material }}][precio_comparativa]"
+                value="{{ $material->pivot->precio_comparativa }}"
+              >
+            </td>
+            <td class="text-center">
+              {!! Form::checkbox('articulos['.$material->id_material.'][existe_para_comparativa]', 1, $material->pivot->existe_para_comparativa) !!}
             </td>
           </tr>
         @endforeach

@@ -17,7 +17,7 @@ class CreateAreaTiposTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('id_obra')->index();
             $table->string('nombre', 100);
-            $table->string('clave', 50)->nullable()->unique();
+            $table->string('clave', 50)->nullable();
             $table->text('descripcion')->default('');
             NestedSet::columns($table);
             $table->timestamps();

@@ -33,11 +33,23 @@ class Item extends Model
     ];
 
     /**
+     * Indica la cantidad recibida de este item.
+     * 
      * @return float
      */
     public function getCantidadRecibidaAttribute()
     {
         return $this->recibido();
+    }
+
+    /**
+     * Indica la cantidad pendiente por recibir de este item.
+     * 
+     * @return float
+     */
+    public function getCantidadPorRecibirAttribute()
+    {
+        return $this->cantidad - $this->cantidad_recibida;
     }
 
     /**
@@ -73,5 +85,36 @@ class Item extends Model
             ->where('id_orden_compra', $this->id_transaccion)
             ->where('id_material', $this->id_material)
             ->sum('cantidad_recibida');
+    }
+
+    /**
+     * Identifica si ya se recibio la cantidad total de este item.
+     * 
+     * @return bool
+     */
+    public function seRecibioTodo()
+    {
+        return $this->cantidad - $this->recibido();
+    }
+
+    /**
+     * Identifica si este item tiene cantidad pendiente por recibir.
+     * 
+     * @return bool
+     */
+    public function tieneCantidadPorRecibir()
+    {
+        return (bool) $this->cantidad_por_recibir;
+    }
+
+    /**
+     * Identifica si se puede recibir una cantidad de este item.
+     * 
+     * @param  float $cantidad
+     * @return bool
+     */
+    public function puedeRecibir($cantidad)
+    {
+        return ($this->cantidad_por_recibir - $cantidad) >= 0;
     }
 }

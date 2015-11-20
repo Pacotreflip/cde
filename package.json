@@ -1,7 +1,8 @@
 {
   "private": true,
   "devDependencies": {
-    "gulp": "^3.8.8"
+    "gulp": "^3.8.8",
+    "vue-hot-reload-api": "^1.2.1"
   },
   "dependencies": {
     "bootstrap": "^3.3.5",
