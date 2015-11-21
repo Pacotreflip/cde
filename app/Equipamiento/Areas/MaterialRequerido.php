@@ -49,7 +49,7 @@ class MaterialRequerido extends Model
      * @param  float $tipo_cambio
      * @return float
      */
-    public function getImporte($tipo_cambio)
+    public function getImporteEstimado($tipo_cambio)
     {
         if (! $this->moneda) {
             return 0;
@@ -60,6 +60,19 @@ class MaterialRequerido extends Model
         }
 
         return $this->importe;
+    }
+
+    public function getPrecioEstimado($tipo_cambio)
+    {
+        if (! $this->moneda) {
+            return 0;
+        }
+        
+        if ($this->moneda->eslocal()) {
+          return $this->precio_estimado / $tipo_cambio;
+        }
+
+        return $this->precio_estimado;
     }
 
     /**
@@ -79,6 +92,19 @@ class MaterialRequerido extends Model
         }
 
         return $this->importe_comparativa;
+    }
+
+    public function getPrecioComparativa($tipo_cambio)
+    {
+        if (! $this->moneda) {
+            return 0;
+        }
+        
+        if ($this->moneda->eslocal()) {
+          return $this->precio_comparativa / $tipo_cambio;
+        }
+
+        return $this->precio_comparativa;
     }
 
     /**

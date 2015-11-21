@@ -41717,19 +41717,18 @@ if ($('#app').length) {
     new Vue(require('./vue-app'));
 }
 
-},{"./vue-app":113,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":5,"jquery.inputmask/dist/jquery.inputmask.bundle":4,"jstree":6,"moment":8,"sweetalert":17,"underscore":18,"vue":96,"vue-resource":20,"vue-validator":27}],99:[function(require,module,exports){
+},{"./vue-app":114,"bootstrap/dist/js/bootstrap":1,"dropzone":2,"jasny-bootstrap/js/rowlink":3,"jquery":5,"jquery.inputmask/dist/jquery.inputmask.bundle":4,"jstree":6,"moment":8,"sweetalert":17,"underscore":18,"vue":96,"vue-resource":20,"vue-validator":27}],99:[function(require,module,exports){
 'use strict';
 
 require('./components/global-errors');
 require('./components/errors');
 require('./components/transferencias');
 require('./components/recepciones');
-// require('./components/areas-jstree');
 require('./components/areas-modal-tree');
 require('./components/asignaciones');
-// require('./components/selector-destinos');
+require('./components/comparativa');
 
-},{"./components/areas-modal-tree":101,"./components/asignaciones":102,"./components/errors":103,"./components/global-errors":104,"./components/recepciones":105,"./components/transferencias":112}],100:[function(require,module,exports){
+},{"./components/areas-modal-tree":101,"./components/asignaciones":102,"./components/comparativa":103,"./components/errors":104,"./components/global-errors":105,"./components/recepciones":106,"./components/transferencias":113}],100:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -41871,7 +41870,7 @@ module.exports = {
   }
 };
 
-},{"./templates/areas-jstree.html":107}],101:[function(require,module,exports){
+},{"./templates/areas-jstree.html":108}],101:[function(require,module,exports){
 'use strict';
 
 Vue.component('areas-modal-tree', {
@@ -41971,7 +41970,7 @@ Vue.component('areas-modal-tree', {
   }
 });
 
-},{"./templates/modal-jstree.html":110}],102:[function(require,module,exports){
+},{"./templates/modal-jstree.html":111}],102:[function(require,module,exports){
 'use strict';
 
 Vue.component('asignacion-screen', {
@@ -42059,13 +42058,58 @@ Vue.component('asignacion-screen', {
 },{"./areas-jstree.js":100}],103:[function(require,module,exports){
 'use strict';
 
+Vue.component('screen-comparativa', {
+
+    data: function data() {
+        return {
+            tipo_cambio: 0,
+            articulos: [],
+            sortKey: '',
+            reverse: 1
+        };
+    },
+
+    ready: function ready() {
+        this.$http.get('/api/tipos-area/' + 7 + '/comparativa').success(function (response) {
+            this.articulos = response.articulos;
+            this.tipo_cambio = response.tipo_cambio;
+        }).error(function (errors) {
+            console.error(errors);
+        });
+    },
+
+    computed: {
+        importeTotalEstimado: function importeTotalEstimado() {
+            return this.articulos.reduce(function (prev, cur) {
+                return prev + cur.importe_estimado_homologado;
+            }, 0);
+        },
+
+        importeTotalComparativa: function importeTotalComparativa() {
+            return this.articulos.reduce(function (prev, cur) {
+                return prev + cur.importe_comparativa_homologado;
+            }, 0);
+        }
+    },
+
+    methods: {
+        sortBy: function sortBy(sortKey) {
+            this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
+            this.sortKey = sortKey;
+        }
+    }
+});
+
+},{}],104:[function(require,module,exports){
+'use strict';
+
 Vue.component('app-errors', {
     props: ['form'],
 
     template: require('./templates/errors.html')
 });
 
-},{"./templates/errors.html":108}],104:[function(require,module,exports){
+},{"./templates/errors.html":109}],105:[function(require,module,exports){
 'use strict';
 
 Vue.component('global-errors', {
@@ -42089,7 +42133,7 @@ Vue.component('global-errors', {
   }
 });
 
-},{"./templates/global-errors.html":109}],105:[function(require,module,exports){
+},{"./templates/global-errors.html":110}],106:[function(require,module,exports){
 'use strict';
 
 Vue.component('recepcion-screen', {
@@ -42217,7 +42261,7 @@ Vue.component('recepcion-screen', {
   }
 });
 
-},{"./selector-destinos.js":106}],106:[function(require,module,exports){
+},{"./selector-destinos.js":107}],107:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -42312,17 +42356,17 @@ module.exports = {
   }
 };
 
-},{"./areas-jstree.js":100,"./templates/selector-destinos.html":111}],107:[function(require,module,exports){
+},{"./areas-jstree.js":100,"./templates/selector-destinos.html":112}],108:[function(require,module,exports){
 module.exports = '<div>\n    <div v-el:jstree></div>\n    <div class="alert alert-danger" v-if="errors.length">\n      <ul>\n        <li v-for="error in errors">{{ error }}</li>\n      </ul>\n    </div>\n</div>';
-},{}],108:[function(require,module,exports){
-module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-for="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
 },{}],109:[function(require,module,exports){
-module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-for="error in errors">{{ error }}</li>\n  </ul>\n</div>';
+module.exports = '<div id="form-errors" v-cloak>\n  <div class="alert alert-danger" v-if="form.errors.length">\n    <ul>\n      <li v-for="error in form.errors">{{ error }}</li>\n    </ul>\n  </div>\n</div>';
 },{}],110:[function(require,module,exports){
-module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
+module.exports = '<div class="alert alert-danger" v-show="errors.length">\n  <ul>\n    <li v-for="error in errors">{{ error }}</li>\n  </ul>\n</div>';
 },{}],111:[function(require,module,exports){
-module.exports = '<div>\n  <a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n      Asignar destinos\n  </a>\n\n  <div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n    <div class="modal-dialog modal-lg" role="document">\n      <div class="modal-content">\n\n        <div class="modal-header">\n          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n            <span aria-hidden="true">&times;</span>\n          </button>\n          <h3 class="modal-title">Destinos Asignados</h3>\n        </div>\n        \n        <div class="modal-body">\n          <div class="row">\n            <div class="col-md-6">\n              <table class="table">\n                <thead>\n                  <tr>\n                    <td><b>Area</b></td>\n                    <td><b>Cantidad</b></td>\n                  </tr>\n                </thead>\n                <tbody>\n                  <tr v-for="destino in destinos">\n                    <td>{{ destino.ruta }}</td>\n                    <td>\n                      <input\n                        type="text" \n                        class="form-control input-sm decimal" \n                        v-model="destino.cantidad" \n                        number \n                        value="{{ destino.cantidad | currency \'\' }}">\n                    </td>\n                  </tr>\n                </tbody>\n                <tfoot>\n                  <tr>\n                    <td class="text-right"><strong>Total:</strong></td>\n                    <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                  </tr>\n                </tfoot>\n              </table>\n            </div>\n            <div class="col-md-6">\n              <areas-jstree\n                v-if="activarJsTree"\n                v-bind:plugins="[\'checkbox\']"\n                v-bind:multiple="true"\n                :when-change="sincronizaDestinos"\n                :select-only-leaf="true">\n              </areas-jstree>\n            </div>\n          </div>\n        </div>\n\n        <div class="modal-footer">\n          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>';
+module.exports = '<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n    <i class="fa fa-fw fa-sitemap"></i>\n</a>\n<div class="modal fade" v-el:jstreemodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="areas">\n  <div class="modal-dialog modal-lg" role="document">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n          <span aria-hidden="true">&times;</span>\n        </button>\n        <h3 class="modal-title">Areas</h3>\n      </div>\n      <div class="modal-body">\n        <div v-el:jstree></div>\n      </div>\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n      </div>\n    </div>\n  </div>\n</div>';
 },{}],112:[function(require,module,exports){
+module.exports = '<div>\n  <a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>\n      Asignar destinos\n  </a>\n\n  <div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">\n    <div class="modal-dialog modal-lg" role="document">\n      <div class="modal-content">\n\n        <div class="modal-header">\n          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">\n            <span aria-hidden="true">&times;</span>\n          </button>\n          <h3 class="modal-title">Destinos Asignados</h3>\n        </div>\n        \n        <div class="modal-body">\n          <div class="row">\n            <div class="col-md-6">\n              <table class="table">\n                <thead>\n                  <tr>\n                    <td><b>Area</b></td>\n                    <td><b>Cantidad</b></td>\n                  </tr>\n                </thead>\n                <tbody>\n                  <tr v-for="destino in destinos">\n                    <td>{{ destino.ruta }}</td>\n                    <td>\n                      <input\n                        type="text" \n                        class="form-control input-sm decimal" \n                        v-model="destino.cantidad" \n                        number \n                        value="{{ destino.cantidad | currency \'\' }}">\n                    </td>\n                  </tr>\n                </tbody>\n                <tfoot>\n                  <tr>\n                    <td class="text-right"><strong>Total:</strong></td>\n                    <td class="text-right"><strong>{{ cantidadTotal | currency \'\' }}</strong></td>\n                  </tr>\n                </tfoot>\n              </table>\n            </div>\n            <div class="col-md-6">\n              <areas-jstree\n                v-if="activarJsTree"\n                v-bind:plugins="[\'checkbox\']"\n                v-bind:multiple="true"\n                :when-change="sincronizaDestinos"\n                :select-only-leaf="true">\n              </areas-jstree>\n            </div>\n          </div>\n        </div>\n\n        <div class="modal-footer">\n          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>';
+},{}],113:[function(require,module,exports){
 'use strict';
 
 Vue.filter('depth', function (value, depth) {
@@ -42432,7 +42476,7 @@ Vue.component('transferencias-screen', {
   }
 });
 
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 /*
  * Load the Spark components.
  */

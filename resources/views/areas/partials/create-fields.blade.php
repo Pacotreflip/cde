@@ -3,7 +3,7 @@
     <!-- Nombre Form Input -->
     <div class="form-group">
       {!! Form::label('nombre', 'Nombre:') !!}
-      {!! Form::text('nombre', null, ['class' => 'form-control']) !!}
+      {!! Form::text('nombre', null, ['class' => 'form-control', 'autofocus']) !!}
     </div>
 
     <!-- Clave Form Input -->

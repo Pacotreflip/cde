@@ -12,19 +12,19 @@
           <figure class="nav-company pull-left">
             <img src="{{ asset('img/company-icon.png') }}" alt="Grupo Hermes Infraestructura"/>
           </figure>
-          Control de Equipamiento
+          Equipamiento
       </a>
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      @if($signedIn)
+      @if ($signedIn)
         <ul class="nav navbar-nav">
-          @include('partials.nav-app')
+          @include ('partials.nav-app')
         </ul>
       @endif
 
       <ul class="nav navbar-nav navbar-right">
-        @include('partials.nav-user')
+        @include ('partials.nav-user')
       </ul>
     </div>
   </div>

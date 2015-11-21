@@ -60,7 +60,7 @@
               {!! Form::select('articulos['.$requerido->id.'][id_moneda]', $monedas, $requerido->id_moneda, ['placeholder' => 'Elija una moneda...']) !!}
             </td>
             <td class="text-right">
-              {{ round($requerido->getImporte($tipo_cambio), 2) }}
+              {{ round($requerido->getImporteEstimado($tipo_cambio), 2) }}
             </td>
             <td>
               <input
