@@ -31,6 +31,7 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::get('areas-asignadas', 'AreasAsignadasController@index');
     Route::get('evaluacion-calidad', 'EvaluacionCalidadController@index');
     Route::patch('evaluacion-calidad', 'EvaluacionCalidadController@update');
+    Route::get('comparativa', 'ComparativaTipoAreaController@index');
 });
 
 // Rutas de areas...

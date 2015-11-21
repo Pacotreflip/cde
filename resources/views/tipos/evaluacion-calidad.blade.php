@@ -15,16 +15,16 @@
         </tr>
       </thead>
       <tbody>
-        @foreach($tipo->materiales as $material)
+        @foreach($tipo->materialesRequeridos as $material)
           <tr>
-            <td>{{ $material->numero_parte }}</td>
-            <td>{{ str_limit($material->descripcion, 70) }}</td>
+            <td>{{ $material->material->numero_parte }}</td>
+            <td>{{ str_limit($material->material->descripcion, 70) }}</td>
             <td>
               <label class="radio-inline">
-                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 1, $material->pivot->se_evalua) !!} Si
+                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 1, $material->se_evalua) !!} Si
               </label>
               <label class="radio-inline">
-                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 0, !$material->pivot->se_evalua) !!} No
+                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 0, !$material->se_evalua) !!} No
               </label>
             </td>
           </tr>

@@ -22,15 +22,15 @@
         </tr>
       </thead>
       <tbody>
-        @foreach($area->tipo->materiales as $material)
+        @foreach($area->tipo->materialesRequeridos as $material)
           <tr>
             <td>
-              <span data-toggle="tooltip" data-placement="top" title="{{ $material->descripcion }}">
-                {{ str_limit($material->descripcion, 60) }}
+              <span data-toggle="tooltip" data-placement="top" title="{{ $material->material->descripcion }}">
+                {{ str_limit($material->material->descripcion, 60) }}
               </span>
             </td>
-            <td>{{ $material->unidad }}</td>
-            <td>{{ $material->pivot->cantidad_requerida }}</td>
+            <td>{{ $material->material->unidad }}</td>
+            <td>{{ $material->cantidad_requerida }}</td>
           </tr>
         @endforeach
       </tbody>

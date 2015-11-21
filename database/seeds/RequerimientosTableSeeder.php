@@ -18,7 +18,10 @@ class RequerimientosTableSeeder extends Seeder
 
         foreach ($tipos as $tipo) {
             foreach ($materiales->take(10) as $material) {
-                $tipo->materiales()->attach($material->id_material, ['cantidad_requerida' => 1]);
+                $tipo->materialesRequeridos()->create([
+                    'id_material' => $material->id_material,
+                    'cantidad_requerida' => 1,
+                ]);
             }
         }
     }

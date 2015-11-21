@@ -83,8 +83,8 @@ class AreasController extends Controller
      */
     public function store(Requests\CreateAreaRequest $request)
     {
-        $rango  = $request->get('rango_inicial');
-        $tipo   = Tipo::find($request->get('tipo_id'));
+        $rango = $request->get('rango_inicial');
+        $tipo = Tipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
         $cantidad_a_crear = $request->get('cantidad', 1);
 
@@ -96,8 +96,8 @@ class AreasController extends Controller
             }
 
             $area = new Area([
-                'nombre'      => $nombre,
-                'clave'       => $request->get('clave', $tipo ? $tipo->clave : ''),
+                'nombre' => $nombre,
+                'clave' => $request->get('clave', $tipo ? $tipo->clave : ''),
                 'descripcion' => $request->get('descripcion'),
             ]);
 

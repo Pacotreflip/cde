@@ -4,20 +4,16 @@ namespace Ghi\Http\Controllers;
 
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
+use Ghi\Equipamiento\Moneda;
 use Illuminate\Http\Request;
+use Ghi\Equipamiento\TipoCambio;
+use Ghi\Equipamiento\Areas\MaterialRequerido;
 use Ghi\Equipamiento\Areas\TipoAreaRepository;
 use Ghi\Equipamiento\Articulos\MaterialRepository;
 
 class ArticulosRequeridosController extends Controller
 {
-    /**
-     * @var TipoAreaRepository
-     */
     protected $tipos_area;
-
-    /**
-     * @var [type]
-     */
     protected $articulos;
 
     /**
@@ -45,7 +41,7 @@ class ArticulosRequeridosController extends Controller
     public function create($id, Request $request)
     {
         $tipo = $this->tipos_area->getById($id);
-        $except = $tipo->materiales->pluck('id_material')->all();
+        $except = $tipo->materialesRequeridos->pluck('id_material')->all();
 
         if ($request->has('buscar')) {
             $articulos = $this->articulos->buscar($request->get('buscar'), 50, $except);
@@ -68,9 +64,9 @@ class ArticulosRequeridosController extends Controller
     public function store($id, Request $request)
     {
         $tipo = $this->tipos_area->getById($id);
-        
-        foreach ($request->get('materiales') as $material) {
-            $tipo->requiereArticulo($material);
+
+        foreach ($request->get('materiales') as $id_material) {
+            $tipo->agregaArticuloRequerido($id_material);
         }
 
         return redirect()->route('requerimientos.edit', [$id]);
@@ -79,22 +75,26 @@ class ArticulosRequeridosController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function edit($id)
     {
         $tipo = $this->tipos_area->getById($id);
+        $monedas = Moneda::lists('nombre', 'id_moneda');
+        $tipo_cambio = Moneda::where('nombre', 'DOLARES')->first()->tipoCambioMasReciente();
 
         return view('tipos.articulos-requeridos')
-            ->withTipo($tipo);
+            ->withTipo($tipo)
+            ->withMonedas($monedas)
+            ->withTipoCambio($tipo_cambio->cambio);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  int      $id
      * @return Response
      */
     public function update(Request $request, $id)
@@ -103,12 +103,15 @@ class ArticulosRequeridosController extends Controller
         $articulos = $request->get('articulos', []);
 
         if ($this->seEliminanArticulos($request)) {
-            $articulos = $this->filtraArticulos($articulos, $request->get('selected_articulos', []));
+            $tipo->quitaMaterialesRequeridos($request->get('selected_articulos', []));
         }
 
+        $articulos = $this->quitaEliminados($articulos, $request->get('selected_articulos', []));
         $articulos = $this->asignaValoresDefault($articulos);
 
-        $tipo->requiereArticulo($articulos);
+        foreach ($articulos as $id_articulo => $articulo) {
+            MaterialRequerido::find($id_articulo)->update($articulo);
+        }
 
         Flash::success('Los cambios fueron guardados');
 
@@ -130,12 +133,12 @@ class ArticulosRequeridosController extends Controller
      * Devuelve una lista de articulos filtrada por una segunda lista.
      * 
      * @param  array $articulos Articulos a filtrar.
-     * @param  array $filtro Articulos que se filtraran de la lista.
+     * @param  array $eliminados Articulos que se eliminaron.
      * @return array Articulos filtrados.
      */
-    protected function filtraArticulos($articulos, $filtro)
+    protected function quitaEliminados($articulos, $eliminados)
     {
-        return array_except($articulos, $filtro);
+        return array_except($articulos, $eliminados);
     }
 
     /**
@@ -144,13 +147,15 @@ class ArticulosRequeridosController extends Controller
      * @param $articulos
      * @return array
      */
-    private function asignaValoresDefault($articulos)
+    protected function asignaValoresDefault($articulos)
     {
         return collect($articulos)->map(function ($articulo) {
             $articulo['cantidad_comparativa'] = $articulo['cantidad_comparativa'] ?: null;
             $articulo['precio_comparativa'] = $articulo['precio_comparativa'] ?: null;
+            $articulo['id_moneda'] = $articulo['id_moneda'] ?: null;
+            $articulo['id_moneda_comparativa'] = $articulo['id_moneda_comparativa'] ?: null;
 
-            if ( ! array_key_exists('existe_para_comparativa', $articulo)) {
+            if (! array_key_exists('existe_para_comparativa', $articulo)) {
                 $articulo['existe_para_comparativa'] = 0;
             }
 

@@ -11,4 +11,7 @@
   <li role="presentation" {!! Request::is('tipos-area/'.$tipo->id.'/evaluacion-calidad*') ? 'class="active"' : '' !!}>
     <a href="{{ '/tipos-area/'.$tipo->id.'/evaluacion-calidad' }}">Evaluación de Calidad</a>
   </li>
+  <li role="presentation" {!! Request::is('tipos-area/'.$tipo->id.'/comparativa*') ? 'class="active"' : '' !!}>
+    <a href="{{ '/tipos-area/'.$tipo->id.'/comparativa' }}">Comparativa</a>
+  </li>
 </ul>

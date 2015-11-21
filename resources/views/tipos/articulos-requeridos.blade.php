@@ -27,48 +27,60 @@
           <th>Descripción</th>
           <th>Unidad</th>
           <th>Cantidad Requerida</th>
-          <th>Costo Estimado</th>
+          <th>Precio Estimado</th>
+          <th>Moneda Nativa</th>
+          <th>Moneda Homologada USD ({{ $tipo_cambio }})</th>
           <th>Cantidad Comparativa</th>
           <th>Precio Comparativa</th>
+          <th>Moneda Nativa</th>
           <th>Existe para Comparativa?</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($tipo->materiales as $key => $material)
+        @foreach($tipo->materialesRequeridos as $key => $requerido)
           <tr>
-            <td><input type="checkbox" name="selected_articulos[]" value="{{ $material->id_material }}"></td>
+            <td><input type="checkbox" name="selected_articulos[{{ $requerido->id }}]" value="{{ $requerido->id }}"></td>
             <td>{{ $key + 1 }}</td>
-            <td>{{ $material->numero_parte }}</td>
-            <td><a href="{{ route('articulos.edit', [$material]) }}">{{ $material->descripcion }}</a></td>
-            <td>{{ $material->unidad }}</td>
+            <td>{{ $requerido->material->numero_parte }}</td>
+            <td><a href="{{ route('articulos.edit', [$requerido]) }}">{{ $requerido->material->descripcion }}</a></td>
+            <td>{{ $requerido->material->unidad }}</td>
             <td>
               <input
                 type="text" class="form-control input-sm" 
-                name="articulos[{{ $material->id_material }}][cantidad_requerida]" 
-                value="{{ $material->pivot->cantidad_requerida }}">
+                name="articulos[{{ $requerido->id }}][cantidad_requerida]" 
+                value="{{ $requerido->cantidad_requerida }}">
             </td>
             <td>
               <input
                 type="text" class="form-control input-sm" 
-                name="articulos[{{ $material->id_material }}][costo_estimado]" 
-                value="{{ $material->pivot->costo_estimado }}">
+                name="articulos[{{ $requerido->id }}][precio_estimado]" 
+                value="{{ $requerido->precio_estimado }}">
+            </td>
+            <td>
+              {!! Form::select('articulos['.$requerido->id.'][id_moneda]', $monedas, $requerido->id_moneda, ['placeholder' => 'Elija una moneda...']) !!}
+            </td>
+            <td class="text-right">
+              {{ round($requerido->getImporte($tipo_cambio), 2) }}
             </td>
             <td>
               <input
                 type="text" class="form-control input-sm"
-                name="articulos[{{ $material->id_material }}][cantidad_comparativa]"
-                value="{{ $material->pivot->cantidad_comparativa }}"
+                name="articulos[{{ $requerido->id }}][cantidad_comparativa]"
+                value="{{ $requerido->cantidad_comparativa }}"
               >
             </td>
             <td>
               <input
                 type="text" class="form-control input-sm"
-                name="articulos[{{ $material->id_material }}][precio_comparativa]"
-                value="{{ $material->pivot->precio_comparativa }}"
+                name="articulos[{{ $requerido->id }}][precio_comparativa]"
+                value="{{ $requerido->precio_comparativa }}"
               >
+            </td>
+            <td>
+              {!! Form::select('articulos['.$requerido->id.'][id_moneda_comparativa]', $monedas, $requerido->id_moneda_comparativa, ['placeholder' => 'Elija una moneda...']) !!}
             </td>
             <td class="text-center">
-              {!! Form::checkbox('articulos['.$material->id_material.'][existe_para_comparativa]', 1, $material->pivot->existe_para_comparativa) !!}
+              {!! Form::checkbox('articulos['.$requerido->id.'][existe_para_comparativa]', 1, $requerido->existe_para_comparativa) !!}
             </td>
           </tr>
         @endforeach
