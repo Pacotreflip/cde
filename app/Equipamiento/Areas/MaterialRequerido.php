@@ -23,6 +23,13 @@ class MaterialRequerido extends Model
         'existe_para_comparativa',
     ];
 
+    protected $casts = [
+        'existe_para_comparativa' => 'bool',
+        'cantidad_requerida' => 'int',
+        'precio_estimado' => 'int',
+        'cantidad_comparativa' => 'int',
+    ];
+
     /**
      * Calcula el importe de este material requerido.
      * 

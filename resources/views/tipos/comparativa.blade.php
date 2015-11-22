@@ -3,6 +3,23 @@
 @section ('main-content')
   <div id="app">
     <screen-comparativa :id="{{ $tipo->id }}" inline-template>
+      <section class="Filtros">
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="todos" v-model="tipoFiltro"> Todos los Articulos
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="noExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que no existen en este proyecto
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="noExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que no existen en proyecto comparativo
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="masCarosQueEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros que en proyecto comparativo
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros que en este proyecto
+        </label>
+      </section>
       <div>
         <table class="table table-condensed table-striped">
           <thead>
@@ -37,7 +54,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="articulo in articulos | orderBy sortKey reverse">
+            <tr v-for="articulo in articulos | orderBy sortKey reverse | filtro tipoFiltro">
               <th>@{{ $index+1 }}</th>
               <td class="text-right">@{{ articulo.cantidad_requerida }}</td>
               <td class="text-right">@{{ articulo.precio_estimado_homologado | currency ''  }}</td>
@@ -62,13 +79,5 @@
         </table>
       </div>
     </screen-comparativa>
-        {{-- <div class="well" data-spy="affix" data-offset-top="60" data-offset-bottom="10">
-            <div class="info text-right">
-                <span class="text-right">Total (USD):</span>
-                <span class="text-right">{{ round($importe_total, 2) }}</span>
-                <span class="text-right">Total (USD):</span>
-                <span class="text-right">{{ round($importe_total_comparativa, 2) }}</span>
-            </div>
-        </div> --}}      
   </div>
 @stop

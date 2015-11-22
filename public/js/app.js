@@ -42065,7 +42065,9 @@ Vue.component('screen-comparativa', {
             tipo_cambio: 0,
             articulos: [],
             sortKey: '',
-            reverse: 1
+            reverse: 1,
+            tipoFiltro: 'todos',
+            articulosFiltrados: []
         };
     },
 
@@ -42080,15 +42082,48 @@ Vue.component('screen-comparativa', {
         });
     },
 
+    filters: {
+        filtro: function filtro(articulos, tipoFiltro) {
+            if (tipoFiltro == 'todos') {
+                this.articulosFiltrados = articulos;
+                return articulos;
+            }
+
+            if (tipoFiltro == 'noExistenEnEsteProyecto') {
+                return this.articulosFiltrados = articulos.filter(function (articulo) {
+                    return !articulo.existe_para_comparativa;
+                });
+            }
+
+            if (tipoFiltro == 'noExistenEnProyectoComparativo') {
+                return this.articulosFiltrados = articulos.filter(function (articulo) {
+                    return articulo.cantidad_requerida == 0;
+                });
+            }
+
+            if (tipoFiltro == 'masCarosQueEnProyectoComparativo') {
+                return this.articulosFiltrados = articulos.filter(function (articulo) {
+                    return articulo.existe_para_comparativa && articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
+                });
+            }
+
+            if (tipoFiltro == 'masCarosEnProyectoComparativo') {
+                return this.articulosFiltrados = articulos.filter(function (articulo) {
+                    return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0 && articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
+                });
+            }
+        }
+    },
+
     computed: {
         importeTotalEstimado: function importeTotalEstimado() {
-            return this.articulos.reduce(function (prev, cur) {
+            return this.articulosFiltrados.reduce(function (prev, cur) {
                 return prev + cur.importe_estimado_homologado;
             }, 0);
         },
 
         importeTotalComparativa: function importeTotalComparativa() {
-            return this.articulos.reduce(function (prev, cur) {
+            return this.articulosFiltrados.reduce(function (prev, cur) {
                 return prev + cur.importe_comparativa_homologado;
             }, 0);
         }
