@@ -28,6 +28,8 @@ class MaterialRequerido extends Model
         'cantidad_requerida' => 'int',
         'precio_estimado' => 'int',
         'cantidad_comparativa' => 'int',
+        'id_moneda' => 'int',
+        'id_moneda_comparativa' => 'int',
     ];
 
     /**
@@ -51,7 +53,7 @@ class MaterialRequerido extends Model
     }
 
     /**
-     * Obtiene el importe de acuerdo al tipo de cambio.
+     * Obtiene el importe de acuerdo al tipo de cambio de la moneda homologada.
      * 
      * @param  float $tipo_cambio
      * @return float
@@ -63,12 +65,18 @@ class MaterialRequerido extends Model
         }
         
         if ($this->moneda->eslocal()) {
-          return $this->importe / $tipo_cambio;
+            return $this->importe / $tipo_cambio;
         }
 
         return $this->importe;
     }
 
+    /**
+     * Obtiene el precio estimado de acuerdo al tipo de cambio de la moneda homologada.
+     * 
+     * @param  float $tipo_cambio
+     * @return float
+     */
     public function getPrecioEstimado($tipo_cambio)
     {
         if (! $this->moneda) {
@@ -76,39 +84,45 @@ class MaterialRequerido extends Model
         }
         
         if ($this->moneda->eslocal()) {
-          return $this->precio_estimado / $tipo_cambio;
+            return $this->precio_estimado / $tipo_cambio;
         }
 
         return $this->precio_estimado;
     }
 
     /**
-     * Obtiene el importe de comparativa de acuerdo al tipo de cambio.
+     * Obtiene el importe de comparativa de acuerdo al tipo de cambio de la moneda homologada.
      * 
      * @param  float $tipo_cambio
      * @return float
      */
     public function getImporteComparativa($tipo_cambio)
     {
-        if (! $this->moneda) {
+        if (! $this->monedaComparativa) {
             return 0;
         }
         
-        if ($this->moneda->eslocal()) {
-          return $this->importe_comparativa / $tipo_cambio;
+        if ($this->monedaComparativa->eslocal()) {
+            return $this->importe_comparativa / $tipo_cambio;
         }
 
         return $this->importe_comparativa;
     }
 
+    /**
+     * Obtiene el precio de comparativa de acuerdo al tipo de cambio de la moneda homologada.
+     * 
+     * @param  float $tipo_cambio
+     * @return float
+     */
     public function getPrecioComparativa($tipo_cambio)
     {
-        if (! $this->moneda) {
+        if (! $this->monedaComparativa) {
             return 0;
         }
         
-        if ($this->moneda->eslocal()) {
-          return $this->precio_comparativa / $tipo_cambio;
+        if ($this->monedaComparativa->eslocal()) {
+            return $this->precio_comparativa / $tipo_cambio;
         }
 
         return $this->precio_comparativa;
@@ -135,12 +149,22 @@ class MaterialRequerido extends Model
     }
 
     /**
-     * Moneda relacionada con este articulo requerido.
+     * Moneda relacionada con este material requerido.
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    /**
+     * Moneda comparativa relacionada con este material requerido.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function monedaComparativa()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda_comparativa', 'id_moneda');
     }
 }

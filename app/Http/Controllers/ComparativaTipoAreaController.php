@@ -48,7 +48,8 @@ class ComparativaTipoAreaController extends Controller
     public function comparativa($id)
     {
         $tipo = $this->tipos_area->getById($id);
-        $tipo_cambio = Moneda::where('nombre', 'DOLARES')->first()->tipoCambioMasReciente();
+        $moneda_homologada = Moneda::where('nombre', 'DOLARES')->first();
+        $tipo_cambio = $moneda_homologada->tipoCambioMasReciente();
 
         $articulos = $tipo->materialesRequeridos->map(function ($material, $key) use ($tipo_cambio) {
             return [
