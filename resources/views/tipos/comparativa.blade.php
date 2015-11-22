@@ -14,10 +14,10 @@
           <input type="radio" name="filtros" value="noExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que no existen en proyecto comparativo
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="masCarosQueEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros que en proyecto comparativo
+          <input type="radio" name="filtros" value="masCarosEnEsteProyecto" v-model="tipoFiltro"> Articulos mas caros en este proyecto
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros que en este proyecto
+          <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros en proyecto comparativo
         </label>
       </section>
       <div>

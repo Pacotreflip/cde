@@ -42096,8 +42096,8 @@ Vue.component('screen-comparativa', {
                 return this.articulosQueNoExistenEnProyectoComparativo(articulos);
             }
 
-            if (tipoFiltro == 'masCarosQueEnProyectoComparativo') {
-                return this.articulosMasCarosQueEnProyectoComparativo(articulos);
+            if (tipoFiltro == 'masCarosEnEsteProyecto') {
+                return this.articulosMasCarosEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'masCarosEnProyectoComparativo') {
@@ -42127,9 +42127,9 @@ Vue.component('screen-comparativa', {
         },
 
         articulosQueNoExistenEnEsteProyecto: function articulosQueNoExistenEnEsteProyecto(articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return articulo.cantidad_requerida == 0;
-            });
+            return this.articulosFiltrados = articulos.filter((function (articulo) {
+                return this.articuloNoExisteEnEsteProyecto(articulo);
+            }).bind(this));
         },
 
         articulosQueNoExistenEnProyectoComparativo: function articulosQueNoExistenEnProyectoComparativo(articulos) {
@@ -42138,16 +42138,24 @@ Vue.component('screen-comparativa', {
             });
         },
 
-        articulosMasCarosQueEnProyectoComparativo: function articulosMasCarosQueEnProyectoComparativo(articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return articulo.existe_para_comparativa && articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
-            });
+        articulosMasCarosEnEsteProyecto: function articulosMasCarosEnEsteProyecto(articulos) {
+            return this.articulosFiltrados = articulos.filter((function (articulo) {
+                return this.articuloExisteEnAmbosProyectos(articulo) && articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
+            }).bind(this));
         },
 
         articulosMasCarosEnProyectoComparativo: function articulosMasCarosEnProyectoComparativo(articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0 && articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
-            });
+            return this.articulosFiltrados = articulos.filter((function (articulo) {
+                return this.articuloExisteEnAmbosProyectos(articulo) && articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
+            }).bind(this));
+        },
+
+        articuloExisteEnAmbosProyectos: function articuloExisteEnAmbosProyectos(articulo) {
+            return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0;
+        },
+
+        articuloNoExisteEnEsteProyecto: function articuloNoExisteEnEsteProyecto(articulo) {
+            return articulo.cantidad_requerida == 0;
         }
     }
 });
