@@ -42085,32 +42085,23 @@ Vue.component('screen-comparativa', {
     filters: {
         filtro: function filtro(articulos, tipoFiltro) {
             if (tipoFiltro == 'todos') {
-                this.articulosFiltrados = articulos;
-                return articulos;
+                return this.articulosFiltrados = articulos;
             }
 
             if (tipoFiltro == 'noExistenEnEsteProyecto') {
-                return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return articulo.cantidad_requerida == 0;
-                });
+                return this.articulosQueNoExistenEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'noExistenEnProyectoComparativo') {
-                return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return !articulo.existe_para_comparativa;
-                });
+                return this.articulosQueNoExistenEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'masCarosQueEnProyectoComparativo') {
-                return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return articulo.existe_para_comparativa && articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
-                });
+                return this.articulosMasCarosQueEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'masCarosEnProyectoComparativo') {
-                return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0 && articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
-                });
+                return this.articulosMasCarosEnProyectoComparativo(articulos);
             }
         }
     },
@@ -42133,6 +42124,30 @@ Vue.component('screen-comparativa', {
         sortBy: function sortBy(sortKey) {
             this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
             this.sortKey = sortKey;
+        },
+
+        articulosQueNoExistenEnEsteProyecto: function articulosQueNoExistenEnEsteProyecto(articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.cantidad_requerida == 0;
+            });
+        },
+
+        articulosQueNoExistenEnProyectoComparativo: function articulosQueNoExistenEnProyectoComparativo(articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return !articulo.existe_para_comparativa;
+            });
+        },
+
+        articulosMasCarosQueEnProyectoComparativo: function articulosMasCarosQueEnProyectoComparativo(articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.existe_para_comparativa && articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
+            });
+        },
+
+        articulosMasCarosEnProyectoComparativo: function articulosMasCarosEnProyectoComparativo(articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0 && articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
+            });
         }
     }
 });
