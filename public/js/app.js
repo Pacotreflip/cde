@@ -42126,6 +42126,14 @@ Vue.component('screen-comparativa', {
             this.sortKey = sortKey;
         },
 
+        sortIsAscending: function sortIsAscending(sortKey) {
+            return this.reverse == 1 && this.sortKey == sortKey;
+        },
+
+        sortIsDescending: function sortIsDescending(sortKey) {
+            return this.reverse == -1 && this.sortKey == sortKey;
+        },
+
         articulosQueSoloExistenEnEsteProyecto: function articulosQueSoloExistenEnEsteProyecto(articulos) {
             return this.articulosFiltrados = articulos.filter((function (articulo) {
                 return this.articuloNoExisteEnEsteProyecto(articulo);

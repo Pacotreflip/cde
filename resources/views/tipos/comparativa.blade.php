@@ -40,25 +40,53 @@
             <tr>
                 <th>#</th>
                 <th class="text-center"><a href="#" @click="sortBy('cantidad_requerida')">Cantidad</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'cantidad_requerida', 'fa-sort-desc': reverse == -1 && sortKey == 'cantidad_requerida' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('cantidad_requerida'),
+                      'fa-sort-desc': sortIsDescending('cantidad_requerida')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('precio_estimado_homologado')">P.U. (USD)</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'precio_estimado_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'precio_estimado_homologado' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('precio_estimado_homologado'),
+                      'fa-sort-desc': sortIsDescending('precio_estimado_homologado')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('importe_estimado_homologado')">Costo (USD)</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'importe_estimado_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'importe_estimado_homologado' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('importe_estimado_homologado'),
+                      'fa-sort-desc': sortIsDescending('importe_estimado_homologado')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('material')">Articulo</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'material', 'fa-sort-desc': reverse == -1 && sortKey == 'material' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('material'),
+                      'fa-sort-desc': sortIsDescending('material')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('cantidad_comparativa')">Cantidad</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'cantidad_comparativa', 'fa-sort-desc': reverse == -1 && sortKey == 'cantidad_comparativa' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('cantidad_comparativa'),
+                      'fa-sort-desc': sortIsDescending('cantidad_comparativa')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('precio_comparativa_homologado')">P.U. (USD)</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'precio_comparativa_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'precio_comparativa_homologado' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('precio_comparativa_homologado'),
+                      'fa-sort-desc': sortIsDescending('precio_comparativa_homologado')
+                    }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('importe_comparativa_homologado')">Costo (USD)</a>
-                  <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'importe_comparativa_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'importe_comparativa_homologado' }"></i>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('importe_comparativa_homologado'),
+                      'fa-sort-desc': sortIsDescending('importe_comparativa_homologado')
+                    }"></i>
                 </th>
             </tr>
           </thead>

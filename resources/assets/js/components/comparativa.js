@@ -68,6 +68,14 @@ Vue.component('screen-comparativa', {
             this.sortKey = sortKey;
         },
 
+        sortIsAscending: function (sortKey) {
+            return this.reverse == 1 && this.sortKey == sortKey;
+        },
+
+        sortIsDescending: function (sortKey) {
+            return this.reverse == -1 && this.sortKey == sortKey;
+        },
+
         articulosQueSoloExistenEnEsteProyecto: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return this.articuloNoExisteEnEsteProyecto(articulo);
