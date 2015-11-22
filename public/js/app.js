@@ -42091,13 +42091,13 @@ Vue.component('screen-comparativa', {
 
             if (tipoFiltro == 'noExistenEnEsteProyecto') {
                 return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return !articulo.existe_para_comparativa;
+                    return articulo.cantidad_requerida == 0;
                 });
             }
 
             if (tipoFiltro == 'noExistenEnProyectoComparativo') {
                 return this.articulosFiltrados = articulos.filter(function (articulo) {
-                    return articulo.cantidad_requerida == 0;
+                    return !articulo.existe_para_comparativa;
                 });
             }
 
