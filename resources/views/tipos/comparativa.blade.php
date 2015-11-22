@@ -66,11 +66,11 @@
             <tr v-for="articulo in articulos | orderBy sortKey reverse | filtro tipoFiltro">
               <th>@{{ $index+1 }}</th>
               <td class="text-right">@{{ articulo.cantidad_requerida }}</td>
-              <td class="text-right">@{{ articulo.precio_estimado_homologado | currency ''  }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_estimado_homologado | currency ''  }}</td>
               <td class="text-right">@{{ articulo.importe_estimado_homologado | currency ''  }}</td>
               <td><a href="@{{ articulo.url }}">@{{ articulo.material }}</a></td>
               <td class="text-right">@{{ articulo.cantidad_comparativa }}</td>
-              <td class="text-right">@{{ articulo.precio_comparativa_homologado | currency '' }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | currency '' }}</td>
               <td class="text-right">@{{ articulo.importe_comparativa_homologado | currency '' }}</td>
             </tr>
           </tbody>
