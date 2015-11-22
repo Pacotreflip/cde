@@ -4,14 +4,15 @@
   <div id="app">
     <screen-comparativa :id="{{ $tipo->id }}" inline-template>
       <section class="Filtros">
+        <h3>Filtros</h3>
         <label class="radio-inline">
           <input type="radio" name="filtros" value="todos" v-model="tipoFiltro"> Todos los Articulos
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="noExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que no existen en este proyecto
+          <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="noExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que no existen en proyecto comparativo
+          <input type="radio" name="filtros" value="soloExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que solo existen en proyecto comparativo
         </label>
         <label class="radio-inline">
           <input type="radio" name="filtros" value="masCarosEnEsteProyecto" v-model="tipoFiltro"> Articulos mas caros en este proyecto
@@ -20,13 +21,21 @@
           <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros en proyecto comparativo
         </label>
       </section>
+      <hr>
       <div>
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped table-bordered">
           <thead>
             <tr>
                 <th colspan="4" class="text-center">ESTE PROYECTO</th>
                 <th></th>
-                <th colspan="4" class="text-center">PROYECTO COMPARATIVO</th>
+                <th colspan="3" class="text-center">PROYECTO COMPARATIVO</th>
+            </tr>
+            <tr class="info">
+                <th colspan="3" class="text-right">Costo Total (USD):</th>
+                <th class="text-right">@{{ importeTotalEstimado | currency '' }}</th>
+                <th></th>
+                <th colspan="2" class="text-right">Costo Total (USD):</th>
+                <th class="text-right">@{{ importeTotalComparativa | currency '' }}</th>
             </tr>
             <tr>
                 <th>#</th>
@@ -36,7 +45,7 @@
                 <th class="text-center"><a href="#" @click="sortBy('precio_estimado_homologado')">P.U. (USD)</a>
                   <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'precio_estimado_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'precio_estimado_homologado' }"></i>
                 </th>
-                <th class="text-center"><a href="#" @click="sortBy('importe_estimado_homologado')">Importe (USD)</a>
+                <th class="text-center"><a href="#" @click="sortBy('importe_estimado_homologado')">Costo (USD)</a>
                   <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'importe_estimado_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'importe_estimado_homologado' }"></i>
                 </th>
                 <th class="text-center"><a href="#" @click="sortBy('material')">Articulo</a>
@@ -48,7 +57,7 @@
                 <th class="text-center"><a href="#" @click="sortBy('precio_comparativa_homologado')">P.U. (USD)</a>
                   <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'precio_comparativa_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'precio_comparativa_homologado' }"></i>
                 </th>
-                <th class="text-center"><a href="#" @click="sortBy('importe_comparativa_homologado')">Importe (USD)</a>
+                <th class="text-center"><a href="#" @click="sortBy('importe_comparativa_homologado')">Costo (USD)</a>
                   <i class="fa fa-sort" v-bind:class="{ 'fa-sort-asc': reverse == 1 && sortKey == 'importe_comparativa_homologado', 'fa-sort-desc': reverse == -1 && sortKey == 'importe_comparativa_homologado' }"></i>
                 </th>
             </tr>
@@ -67,13 +76,11 @@
           </tbody>
           <tfoot>
             <tr class="info">
-              <th></th>
-              <th colspan="2" class="text-right">Total (USD):</th>
+              <th colspan="3" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalEstimado | currency '' }}</th>
               <th></th>
-              <th colspan="2" class="text-right">Total (USD):</th>
+              <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalComparativa | currency '' }}</th>
-              <th></th>
             </tr>
           </tfoot>
         </table>

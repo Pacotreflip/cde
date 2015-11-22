@@ -30,12 +30,12 @@ Vue.component('screen-comparativa', {
                 return this.articulosFiltrados = articulos;
             }
 
-            if (tipoFiltro == 'noExistenEnEsteProyecto') {
-                return this.articulosQueNoExistenEnEsteProyecto(articulos);
+            if (tipoFiltro == 'soloExistenEnEsteProyecto') {
+                return this.articulosQueSoloExistenEnEsteProyecto(articulos);
             }
 
-            if (tipoFiltro == 'noExistenEnProyectoComparativo') {
-                return this.articulosQueNoExistenEnProyectoComparativo(articulos);
+            if (tipoFiltro == 'soloExistenEnProyectoComparativo') {
+                return this.articulosQueSoloExistenEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'masCarosEnEsteProyecto') {
@@ -68,13 +68,13 @@ Vue.component('screen-comparativa', {
             this.sortKey = sortKey;
         },
 
-        articulosQueNoExistenEnEsteProyecto: function (articulos) {
+        articulosQueSoloExistenEnEsteProyecto: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return this.articuloNoExisteEnEsteProyecto(articulo);
             }.bind(this));
         },
 
-        articulosQueNoExistenEnProyectoComparativo: function (articulos) {
+        articulosQueSoloExistenEnProyectoComparativo: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return ! articulo.existe_para_comparativa;
             });
