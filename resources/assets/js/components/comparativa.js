@@ -9,8 +9,10 @@ Vue.component('screen-comparativa', {
         }
     },
 
+    props: ['id'],
+
     ready: function () {
-        this.$http.get('/api/tipos-area/' + 7 + '/comparativa')
+        this.$http.get('/api/tipos-area/' + this.id + '/comparativa')
             .success(function (response) {
                 this.articulos = response.articulos;
                 this.tipo_cambio = response.tipo_cambio;

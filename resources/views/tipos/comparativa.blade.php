@@ -2,7 +2,7 @@
 
 @section ('main-content')
   <div id="app">
-    <screen-comparativa inline-template>
+    <screen-comparativa :id="{{ $tipo->id }}" inline-template>
       <div>
         <table class="table table-condensed table-striped">
           <thead>

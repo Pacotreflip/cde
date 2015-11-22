@@ -42069,8 +42069,10 @@ Vue.component('screen-comparativa', {
         };
     },
 
+    props: ['id'],
+
     ready: function ready() {
-        this.$http.get('/api/tipos-area/' + 7 + '/comparativa').success(function (response) {
+        this.$http.get('/api/tipos-area/' + this.id + '/comparativa').success(function (response) {
             this.articulos = response.articulos;
             this.tipo_cambio = response.tipo_cambio;
         }).error(function (errors) {
