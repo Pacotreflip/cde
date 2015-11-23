@@ -38,7 +38,8 @@
                 <th>DIFERENCIAL</th>
             </tr>
             <tr class="info">
-                <th colspan="3" class="text-right">Costo Total (USD):</th>
+                <th>@{{ cuentaDeArticulos }}</th>
+                <th colspan="2" class="text-right">Costo Total (USD):</th>
                 <th class="text-right">@{{ importeTotalEstimado | currency '' }}</th>
                 <th></th>
                 <th colspan="2" class="text-right">Costo Total (USD):</th>
@@ -114,7 +115,8 @@
           </tbody>
           <tfoot>
             <tr class="info">
-              <th colspan="3" class="text-right">Costo Total (USD):</th>
+              <th>@{{ cuentaDeArticulos }}</th>
+              <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalEstimado | currency '' }}</th>
               <th></th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>

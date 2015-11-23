@@ -67,6 +67,10 @@ Vue.component('screen-comparativa', {
             return this.articulosFiltrados.reduce(function (prev, cur) {
                 return prev + cur.importe_comparativa_homologado;
             }, 0);
+        },
+
+        cuentaDeArticulos: function () {
+            return this.articulosFiltrados.length;
         }
     },
 
