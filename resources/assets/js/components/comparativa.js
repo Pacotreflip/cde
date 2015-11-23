@@ -93,6 +93,12 @@ Vue.component('screen-comparativa', {
             }, 0);
         },
 
+        importeTotalDiferencia: function () {
+            return Math.abs(this.articulosFiltrados.reduce(function (prev, cur) {
+                return prev + (cur.importe_estimado_homologado - cur.importe_comparativa_homologado);
+            }, 0));
+        },
+
         cuentaDeArticulos: function () {
             return this.articulosFiltrados.length;
         },
@@ -216,6 +222,26 @@ Vue.component('screen-comparativa', {
 
         articuloSoloExisteEnProyectoComparativo: function (articulo) {
             return articulo.cantidad_requerida == 0 && articulo.cantidad_comparativa > 0;
+        },
+
+        costoAcumuladoCorrienteEsteProyecto: function (ix) {
+            return this.articulosFiltrados.reduce(function (prev, cur, curIndex) {
+                if (curIndex <= ix) {
+                    return prev + cur.importe_estimado_homologado;
+                }
+
+                return prev;
+            }, 0);
+        },
+
+        costoAcumuladoCorrienteProyectoComparativo: function (ix) {
+            return this.articulosFiltrados.reduce(function (prev, cur, curIndex) {
+                if (curIndex <= ix) {
+                    return prev + cur.importe_comparativa_homologado;
+                }
+
+                return prev;
+            }, 0);
         }
     }
 });

@@ -49,25 +49,27 @@
             <tr>
                 <th colspan="4" class="text-center">ESTE PROYECTO</th>
                 <th></th>
-                <th colspan="3" class="text-center">PROYECTO COMPARATIVO</th>
+                <th colspan="5" class="text-center">PROYECTO COMPARATIVO</th>
                 <th>DIFERENCIAL</th>
             </tr>
             <tr class="info">
               <th>@{{ cuentaDeArticulos }}</th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
+              <th>acum</th>
               <th></th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
-              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
+              <th>acum</th>
+              <th class="text-right">@{{ importeTotalDiferencia | sinDecimales | currency '' }}</th>
             </tr>
             <tr>
               <th></th>
               <th class="text-right">T.A.: @{{ sumaCantidadRequeridaEsteProyecto }}</th>
-              <th colspan="2">Conteo: @{{ cuentaArticulosEsteProyecto }}</th>
+              <th colspan="3">Conteo: @{{ cuentaArticulosEsteProyecto }}</th>
               <th></th>
               <th class="text-right">T.A.: @{{ sumaCantidadProyectoComparativo }}</th>
-              <th colspan="2">Conteo: @{{ cuentaArticulosProyectoComparativo }}</th>
+              <th colspan="3">Conteo: @{{ cuentaArticulosProyectoComparativo }}</th>
               <th></th>
             </tr>
             <tr>
@@ -93,6 +95,7 @@
                       'fa-sort-desc': sortIsDescending('importe_estimado_homologado')
                     }"></i>
                 </th>
+                <th>Acumulado</th>
                 <th class="text-center"><a href="#" @click.prevent="sortBy('material')">Articulo</a>
                   <i class="fa fa-sort"
                     v-bind:class="{
@@ -121,6 +124,7 @@
                       'fa-sort-desc': sortIsDescending('importe_comparativa_homologado')
                     }"></i>
                 </th>
+                <th>Acumulado</th>
                 <th class="text-center"><a href="#" @click.prevent="sortBy('diferencia_costo_homologado')">Costo (USD)</a>
                   <i class="fa fa-sort"
                     v-bind:class="{
@@ -134,13 +138,19 @@
             <tr v-for="articulo in articulos | orderBy sortKey reverse | filtro tipoFiltro">
               <th>@{{ $index+1 }}</th>
               <td class="text-right">@{{ articulo.cantidad_requerida }}</td>
-              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_estimado_homologado | sinDecimales | currency '' }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">
+                @{{ articulo.precio_estimado_homologado | sinDecimales | currency '' }}
+              </td>
               <td class="text-right">@{{ articulo.importe_estimado_homologado | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ costoAcumuladoCorrienteEsteProyecto($index) | sinDecimales | currency '' }}</td>
               <td><a href="@{{ articulo.url }}">@{{ articulo.material }}</a></td>
               <td class="text-right">@{{ articulo.cantidad_comparativa }}</td>
-              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | sinDecimales | currency '' }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">
+                @{{ articulo.precio_comparativa_homologado | sinDecimales | currency '' }}
+              </td>
               <td class="text-right">@{{ articulo.importe_comparativa_homologado | sinDecimales | currency '' }}</td>
-              <td class="text-right">@{{ Math.abs(articulo.diferencia_costo_homologado) | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ costoAcumuladoCorrienteProyectoComparativo($index) | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ articulo.diferencia_costo_homologado | sinDecimales | currency '' }}</td>
             </tr>
           </tbody>
           <tfoot>
@@ -148,10 +158,12 @@
               <th>@{{ cuentaDeArticulos }}</th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
+              <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
               <th></th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
-              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
+              <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
+              <th class="text-right">@{{ importeTotalDiferencia | sinDecimales | currency '' }}</th>
             </tr>
           </tfoot>
         </table>
