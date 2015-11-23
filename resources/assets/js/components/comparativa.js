@@ -70,6 +70,10 @@ Vue.component('screen-comparativa', {
                 return this.articulosSoloCotizadosEnEsteProyecto(articulos);
             }
 
+            if (tipoFiltro == 'existenEnProyectoComparativo') {
+                return this.articulosQueExistenEnProyectoComparativo(articulos);
+            }
+
             if (tipoFiltro == 'sinNombre') {
                 return this.sinNombre(articulos);
             }
@@ -120,11 +124,6 @@ Vue.component('screen-comparativa', {
             }.bind(this));
         },
 
-        /**
-         * falta
-         * @param  {[type]} articulos [description]
-         * @return {[type]}           [description]
-         */
         articulosQueExistenEnProyectoComparativo: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return articulo.cantidad_comparativa > 0;
