@@ -12,7 +12,13 @@
           <input type="radio" name="filtros" value="existenEnEsteProyecto" v-model="tipoFiltro"> Articulos que existen en este proyecto
         </label>
         <label class="radio">
+          <input type="radio" name="filtros" value="existenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que existen en proyecto comparativo
+        </label>
+        <label class="radio">
           <input type="radio" name="filtros" value="soloExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que solo existen en proyecto comparativo
+        </label>
+        <label class="radio">
+          <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
         </label>
         <label class="radio">
           <input type="radio" name="filtros" value="masCarosEnEsteProyecto" v-model="tipoFiltro"> Articulos mas caros en este proyecto
@@ -27,16 +33,10 @@
           <input type="radio" name="filtros" value="sinPrecioEnProyectoComparativo" v-model="tipoFiltro"> Articulos sin precio en proyecto comparativo
         </label>
         <label class="radio">
-          <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
-        </label>
-        <label class="radio">
           <input type="radio" name="filtros" value="cotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados en este proyecto y que existen en proyecto comparativo
         </label>
         <label class="radio">
           <input type="radio" name="filtros" value="soloCotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados a la fecha {{ date('d-m-Y') }} en este proyecto
-        </label>
-        <label class="radio">
-          <input type="radio" name="filtros" value="existenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que existen en proyecto comparativo
         </label>
         <label class="radio">
           <input type="radio" name="filtros" value="sinNombre" v-model="tipoFiltro"> Articulos cotizados a la fecha en este proyecto mas articulos unicos en proyecto comparativo
