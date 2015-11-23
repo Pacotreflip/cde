@@ -106,7 +106,13 @@
                       'fa-sort-desc': sortIsDescending('importe_comparativa_homologado')
                     }"></i>
                 </th>
-                <th></th>
+                <th class="text-center"><a href="#" @click="sortBy('diferencia_costo_homologado')">Costo (USD)</a>
+                  <i class="fa fa-sort"
+                    v-bind:class="{
+                      'fa-sort-asc': sortIsAscending('diferencia_costo_homologado'),
+                      'fa-sort-desc': sortIsDescending('diferencia_costo_homologado')
+                    }"></i>
+                </th>
             </tr>
           </thead>
           <tbody>
@@ -118,8 +124,8 @@
               <td><a href="@{{ articulo.url }}">@{{ articulo.material }}</a></td>
               <td class="text-right">@{{ articulo.cantidad_comparativa }}</td>
               <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | sinDecimales | currency '' }}</td>
-              <td class="text-right">@{{ articulo.importe_comparativa_homologado | sinDecimales }}</td>
-              <td class="text-right">@{{ Math.abs(articulo.importe_estimado_homologado - articulo.importe_comparativa_homologado) | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ articulo.importe_comparativa_homologado | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ Math.abs(articulo.diferencia_costo_homologado) | sinDecimales | currency '' }}</td>
             </tr>
           </tbody>
           <tfoot>
