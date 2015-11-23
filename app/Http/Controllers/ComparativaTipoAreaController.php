@@ -68,7 +68,7 @@ class ComparativaTipoAreaController extends Controller
                 'moneda_comparativa' => $material->monedaComparativa ? $material->monedaComparativa->nombre : '',
                 'importe_comparativa_homologado' => $material->getImporteComparativa($tipo_cambio->cambio),
                 'existe_para_comparativa' => $material->existe_para_comparativa,
-                'diferencia_costo_homologado' => $material->getImporteEstimado($tipo_cambio->cambio) - $material->getImporteComparativa($tipo_cambio->cambio),
+                'diferencia_costo_homologado' => abs($material->getImporteEstimado($tipo_cambio->cambio) - $material->getImporteComparativa($tipo_cambio->cambio)),
                 'url' => route('articulos.edit', $material->id_material),
             ];
         });
