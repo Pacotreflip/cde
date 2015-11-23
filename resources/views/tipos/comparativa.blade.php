@@ -30,10 +30,10 @@
           <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="cotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados en este proyecto y que existen en este proyecto
+          <input type="radio" name="filtros" value="cotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados en este proyecto y que existen en proyecto comparativo
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="soloCotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos solo cotizados en este proyecto
+          <input type="radio" name="filtros" value="soloCotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados a la fecha {{ date('d-m-Y') }} en este proyecto
         </label>
       </section>
       <hr>
