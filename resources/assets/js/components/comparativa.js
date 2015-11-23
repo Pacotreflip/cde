@@ -25,6 +25,12 @@ Vue.component('screen-comparativa', {
     },
 
     filters: {
+        sinDecimales: function (valor) {
+            console.log(valor);
+            console.log(parseInt(valor));
+            return parseInt(valor);
+        },
+
         filtro: function (articulos, tipoFiltro) {
             if (tipoFiltro == 'todos') {
                 return this.articulosFiltrados = articulos;
