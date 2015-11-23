@@ -45,6 +45,14 @@ Vue.component('screen-comparativa', {
             if (tipoFiltro == 'masCarosEnProyectoComparativo') {
                 return this.articulosMasCarosEnProyectoComparativo(articulos);
             }
+
+            if (tipoFiltro == 'sinPrecioEnEsteProyecto') {
+                return this.articulosSinPrecioEnEsteProyecto(articulos);
+            }
+
+            if (tipoFiltro == 'sinPrecioEnProyectoComparativo') {
+                return this.articulosSinPrecioEnProyectoComparativo(articulos);
+            }
         }
     },
 
@@ -84,8 +92,8 @@ Vue.component('screen-comparativa', {
 
         articulosQueSoloExistenEnProyectoComparativo: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return articulo.existe_para_comparativa && (articulo.cantidad_requerida == 0 || ! articulo.cantidad_requerida);
-            });
+                return this.articuloSoloExisteEnProyectoComparativo(articulo);
+            }.bind(this));
         },
 
         articulosMasCarosEnEsteProyecto: function (articulos) {
@@ -102,12 +110,28 @@ Vue.component('screen-comparativa', {
             }.bind(this));
         },
 
+        articulosSinPrecioEnEsteProyecto: function (articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return ! articulo.precio_estimado_homologado || articulo.precio_estimado_homologado == 0;
+            });
+        },
+
+        articulosSinPrecioEnProyectoComparativo: function (articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return ! articulo.precio_comparativa_homologado || articulo.precio_comparativa_homologado == 0;
+            });
+        },
+
         articuloExisteEnAmbosProyectos: function (articulo) {
             return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0;
         },
 
         articuloSoloExisteEnEsteProyecto: function (articulo) {
-            return articulo.cantidad_requerida > 0 && ! articulo.existe_para_comparativa;
+            return articulo.cantidad_requerida > 0;
+        },
+
+        articuloSoloExisteEnProyectoComparativo: function (articulo) {
+            return articulo.cantidad_requerida == 0 && articulo.cantidad_comparativa > 0;
         }
     }
 });

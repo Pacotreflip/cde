@@ -20,6 +20,12 @@
         <label class="radio-inline">
           <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros en proyecto comparativo
         </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="sinPrecioEnEsteProyecto" v-model="tipoFiltro"> Articulos sin precio en este proyecto
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="sinPrecioEnProyectoComparativo" v-model="tipoFiltro"> Articulos sin precio en proyecto comparativo
+        </label>
       </section>
       <hr>
       <div>
