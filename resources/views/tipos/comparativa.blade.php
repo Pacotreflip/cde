@@ -9,7 +9,7 @@
           <input type="radio" name="filtros" value="todos" v-model="tipoFiltro"> Todos los Articulos
         </label>
         <label class="radio-inline">
-          <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
+          <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que existen en este proyecto
         </label>
         <label class="radio-inline">
           <input type="radio" name="filtros" value="soloExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que solo existen en proyecto comparativo
