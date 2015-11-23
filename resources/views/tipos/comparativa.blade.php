@@ -29,6 +29,7 @@
                 <th colspan="4" class="text-center">ESTE PROYECTO</th>
                 <th></th>
                 <th colspan="3" class="text-center">PROYECTO COMPARATIVO</th>
+                <th>DIFERENCIAL</th>
             </tr>
             <tr class="info">
                 <th colspan="3" class="text-right">Costo Total (USD):</th>
@@ -36,6 +37,7 @@
                 <th></th>
                 <th colspan="2" class="text-right">Costo Total (USD):</th>
                 <th class="text-right">@{{ importeTotalComparativa | currency '' }}</th>
+                <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | currency '' }}</th>
             </tr>
             <tr>
                 <th>#</th>
@@ -88,6 +90,7 @@
                       'fa-sort-desc': sortIsDescending('importe_comparativa_homologado')
                     }"></i>
                 </th>
+                <th></th>
             </tr>
           </thead>
           <tbody>
@@ -100,6 +103,7 @@
               <td class="text-right">@{{ articulo.cantidad_comparativa }}</td>
               <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | currency '' }}</td>
               <td class="text-right">@{{ articulo.importe_comparativa_homologado | currency '' }}</td>
+              <td class="text-right">@{{ Math.abs(articulo.importe_estimado_homologado - articulo.importe_comparativa_homologado) | currency '' }}</td>
             </tr>
           </tbody>
           <tfoot>
@@ -109,6 +113,7 @@
               <th></th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
               <th class="text-right">@{{ importeTotalComparativa | currency '' }}</th>
+              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | currency '' }}</th>
             </tr>
           </tfoot>
         </table>

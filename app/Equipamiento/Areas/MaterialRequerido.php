@@ -26,8 +26,9 @@ class MaterialRequerido extends Model
     protected $casts = [
         'existe_para_comparativa' => 'bool',
         'cantidad_requerida' => 'int',
-        'precio_estimado' => 'int',
+        'precio_estimado' => 'float',
         'cantidad_comparativa' => 'int',
+        'precio_comparativa' => 'float',
         'id_moneda' => 'int',
         'id_moneda_comparativa' => 'int',
     ];
