@@ -78,13 +78,13 @@ Vue.component('screen-comparativa', {
 
         articulosQueSoloExistenEnEsteProyecto: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return this.articuloNoExisteEnEsteProyecto(articulo);
+                return this.articuloSoloExisteEnEsteProyecto(articulo);
             }.bind(this));
         },
 
         articulosQueSoloExistenEnProyectoComparativo: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
-                return ! articulo.existe_para_comparativa;
+                return articulo.existe_para_comparativa && (articulo.cantidad_requerida == 0 || ! articulo.cantidad_requerida);
             });
         },
 
@@ -106,8 +106,8 @@ Vue.component('screen-comparativa', {
             return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0;
         },
 
-        articuloNoExisteEnEsteProyecto: function (articulo) {
-            return articulo.cantidad_requerida == 0;
+        articuloSoloExisteEnEsteProyecto: function (articulo) {
+            return articulo.cantidad_requerida > 0 && ! articulo.existe_para_comparativa;
         }
     }
 });
