@@ -39,7 +39,7 @@
           <input type="radio" name="filtros" value="existenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que existen en proyecto comparativo
         </label>
         <label class="radio">
-          <input type="radio" name="filtros" value="sinNombre" v-model="tipoFiltro"> X
+          <input type="radio" name="filtros" value="sinNombre" v-model="tipoFiltro"> Articulos cotizados a la fecha en este proyecto mas articulos unicos en proyecto comparativo
         </label>
       </section>
       <hr>
