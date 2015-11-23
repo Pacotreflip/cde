@@ -5,34 +5,34 @@
     <screen-comparativa :id="{{ $tipo->id }}" inline-template>
       <section class="Filtros">
         <h3>Filtros</h3>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="todos" v-model="tipoFiltro"> Todos los Articulos
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="existenEnEsteProyecto" v-model="tipoFiltro"> Articulos que existen en este proyecto
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="soloExistenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que solo existen en proyecto comparativo
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="masCarosEnEsteProyecto" v-model="tipoFiltro"> Articulos mas caros en este proyecto
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="masCarosEnProyectoComparativo" v-model="tipoFiltro"> Articulos mas caros en proyecto comparativo
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="sinPrecioEnEsteProyecto" v-model="tipoFiltro"> Articulos sin precio en este proyecto
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="sinPrecioEnProyectoComparativo" v-model="tipoFiltro"> Articulos sin precio en proyecto comparativo
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="cotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados en este proyecto y que existen en proyecto comparativo
         </label>
-        <label class="radio-inline">
+        <label class="radio">
           <input type="radio" name="filtros" value="soloCotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados a la fecha {{ date('d-m-Y') }} en este proyecto
         </label>
       </section>
