@@ -63,10 +63,10 @@
             </tr>
             <tr>
               <th></th>
-              <th class="text-right">@{{ sumaCantidadRequeridaEsteProyecto }}</th>
+              <th class="text-right">T.A.: @{{ sumaCantidadRequeridaEsteProyecto }}</th>
               <th colspan="2">Conteo: @{{ cuentaArticulosEsteProyecto }}</th>
               <th></th>
-              <th class="text-right">@{{ sumaCantidadProyectoComparativo }}</th>
+              <th class="text-right">T.A.: @{{ sumaCantidadProyectoComparativo }}</th>
               <th colspan="2">Conteo: @{{ cuentaArticulosProyectoComparativo }}</th>
               <th></th>
             </tr>
