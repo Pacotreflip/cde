@@ -29,6 +29,9 @@
         <label class="radio-inline">
           <input type="radio" name="filtros" value="soloExistenEnEsteProyecto" v-model="tipoFiltro"> Articulos que solo existen en este proyecto
         </label>
+        <label class="radio-inline">
+          <input type="radio" name="filtros" value="cotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados en este proyecto
+        </label>
       </section>
       <hr>
       <div>

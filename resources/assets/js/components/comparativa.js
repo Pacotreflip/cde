@@ -26,8 +26,6 @@ Vue.component('screen-comparativa', {
 
     filters: {
         sinDecimales: function (valor) {
-            console.log(valor);
-            console.log(parseInt(valor));
             return parseInt(valor);
         },
 
@@ -62,6 +60,10 @@ Vue.component('screen-comparativa', {
 
             if (tipoFiltro == 'sinPrecioEnProyectoComparativo') {
                 return this.articulosSinPrecioEnProyectoComparativo(articulos);
+            }
+
+            if (tipoFiltro == 'cotizadosEnEsteProyecto') {
+                return this.articulosCotizadosEnEsteProyecto(articulos);
             }
         }
     },
@@ -141,6 +143,13 @@ Vue.component('screen-comparativa', {
                 return ! articulo.precio_comparativa_homologado || articulo.precio_comparativa_homologado == 0;
             });
         },
+
+        articulosCotizadosEnEsteProyecto: function (articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.precio_estimado_homologado > 0 && articulo.existe_para_comparativa;
+            });
+        },
+
 
         articuloExisteEnAmbosProyectos: function (articulo) {
             return articulo.existe_para_comparativa && articulo.cantidad_requerida > 0;
