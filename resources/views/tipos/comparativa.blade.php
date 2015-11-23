@@ -46,11 +46,11 @@
             <tr class="info">
                 <th>@{{ cuentaDeArticulos }}</th>
                 <th colspan="2" class="text-right">Costo Total (USD):</th>
-                <th class="text-right">@{{ importeTotalEstimado | sinDecimales }}</th>
+                <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
                 <th></th>
                 <th colspan="2" class="text-right">Costo Total (USD):</th>
-                <th class="text-right">@{{ importeTotalComparativa | sinDecimales }}</th>
-                <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales }}</th>
+                <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
+                <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
             </tr>
             <tr>
                 <th>#</th>
@@ -110,24 +110,24 @@
             <tr v-for="articulo in articulos | orderBy sortKey reverse | filtro tipoFiltro">
               <th>@{{ $index+1 }}</th>
               <td class="text-right">@{{ articulo.cantidad_requerida }}</td>
-              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_estimado_homologado | sinDecimales }}</td>
-              <td class="text-right">@{{ articulo.importe_estimado_homologado | sinDecimales }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_estimado_homologado | sinDecimales | currency '' }}</td>
+              <td class="text-right">@{{ articulo.importe_estimado_homologado | sinDecimales | currency '' }}</td>
               <td><a href="@{{ articulo.url }}">@{{ articulo.material }}</a></td>
               <td class="text-right">@{{ articulo.cantidad_comparativa }}</td>
-              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | sinDecimales }}</td>
+              <td class="text-right" v-bind:class="{ warning: tipoFiltro == 'masCarosEnEsteProyecto' || tipoFiltro == 'masCarosEnProyectoComparativo' }">@{{ articulo.precio_comparativa_homologado | sinDecimales | currency '' }}</td>
               <td class="text-right">@{{ articulo.importe_comparativa_homologado | sinDecimales }}</td>
-              <td class="text-right">@{{ Math.abs(articulo.importe_estimado_homologado - articulo.importe_comparativa_homologado) | sinDecimales }}</td>
+              <td class="text-right">@{{ Math.abs(articulo.importe_estimado_homologado - articulo.importe_comparativa_homologado) | sinDecimales | currency '' }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr class="info">
               <th>@{{ cuentaDeArticulos }}</th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
-              <th class="text-right">@{{ importeTotalEstimado | sinDecimales }}</th>
+              <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
               <th></th>
               <th colspan="2" class="text-right">Costo Total (USD):</th>
-              <th class="text-right">@{{ importeTotalComparativa | sinDecimales }}</th>
-              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales }}</th>
+              <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
+              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
             </tr>
           </tfoot>
         </table>
