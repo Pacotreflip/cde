@@ -35,6 +35,12 @@
         <label class="radio">
           <input type="radio" name="filtros" value="soloCotizadosEnEsteProyecto" v-model="tipoFiltro"> Articulos cotizados a la fecha {{ date('d-m-Y') }} en este proyecto
         </label>
+        <label class="radio">
+          <input type="radio" name="filtros" value="existenEnProyectoComparativo" v-model="tipoFiltro"> Articulos que existen en proyecto comparativo
+        </label>
+        <label class="radio">
+          <input type="radio" name="filtros" value="sinNombre" v-model="tipoFiltro"> X
+        </label>
       </section>
       <hr>
       <div>

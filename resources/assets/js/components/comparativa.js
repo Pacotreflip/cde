@@ -69,6 +69,10 @@ Vue.component('screen-comparativa', {
             if (tipoFiltro == 'soloCotizadosEnEsteProyecto') {
                 return this.articulosSoloCotizadosEnEsteProyecto(articulos);
             }
+
+            if (tipoFiltro == 'sinNombre') {
+                return this.sinNombre(articulos);
+            }
         }
     },
 
@@ -114,6 +118,24 @@ Vue.component('screen-comparativa', {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return this.articuloSoloExisteEnEsteProyecto(articulo);
             }.bind(this));
+        },
+
+        /**
+         * falta
+         * @param  {[type]} articulos [description]
+         * @return {[type]}           [description]
+         */
+        articulosQueExistenEnProyectoComparativo: function (articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.cantidad_comparativa > 0;
+            }.bind(this));
+        },
+
+        sinNombre: function (articulos) {
+            var filtro1 = this.articulosSoloCotizadosEnEsteProyecto(articulos);
+            var filtro2 = this.articulosQueSoloExistenEnProyectoComparativo(articulos);
+
+            return this.articulosFiltrados = filtro1.concat(filtro2);
         },
 
         articulosQueSoloExistenEnProyectoComparativo: function (articulos) {
