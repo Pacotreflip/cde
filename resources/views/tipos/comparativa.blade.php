@@ -53,13 +53,22 @@
                 <th>DIFERENCIAL</th>
             </tr>
             <tr class="info">
-                <th>@{{ cuentaDeArticulos }}</th>
-                <th colspan="2" class="text-right">Costo Total (USD):</th>
-                <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
-                <th></th>
-                <th colspan="2" class="text-right">Costo Total (USD):</th>
-                <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
-                <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
+              <th>@{{ cuentaDeArticulos }}</th>
+              <th colspan="2" class="text-right">Costo Total (USD):</th>
+              <th class="text-right">@{{ importeTotalEstimado | sinDecimales | currency '' }}</th>
+              <th></th>
+              <th colspan="2" class="text-right">Costo Total (USD):</th>
+              <th class="text-right">@{{ importeTotalComparativa | sinDecimales | currency '' }}</th>
+              <th class="text-right">@{{ Math.abs(importeTotalEstimado - importeTotalComparativa) | sinDecimales | currency '' }}</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th class="text-right">@{{ sumaCantidadRequeridaEsteProyecto }}</th>
+              <th colspan="2">Conteo: @{{ cuentaArticulosEsteProyecto }}</th>
+              <th></th>
+              <th class="text-right">@{{ sumaCantidadProyectoComparativo }}</th>
+              <th colspan="2">Conteo: @{{ cuentaArticulosProyectoComparativo }}</th>
+              <th></th>
             </tr>
             <tr>
                 <th>#</th>

@@ -35,47 +35,47 @@ Vue.component('screen-comparativa', {
             }
 
             if (tipoFiltro == 'existenEnEsteProyecto') {
-                return this.articulosQueExistenEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosQueExistenEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'soloExistenEnEsteProyecto') {
-                return this.articulosQueSoloExistenEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosQueSoloExistenEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'soloExistenEnProyectoComparativo') {
-                return this.articulosQueSoloExistenEnProyectoComparativo(articulos);
+                return this.articulosFiltrados = this.articulosQueSoloExistenEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'masCarosEnEsteProyecto') {
-                return this.articulosMasCarosEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosMasCarosEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'masCarosEnProyectoComparativo') {
-                return this.articulosMasCarosEnProyectoComparativo(articulos);
+                return this.articulosFiltrados = this.articulosMasCarosEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'sinPrecioEnEsteProyecto') {
-                return this.articulosSinPrecioEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosSinPrecioEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'sinPrecioEnProyectoComparativo') {
-                return this.articulosSinPrecioEnProyectoComparativo(articulos);
+                return this.articulosFiltrados = this.articulosSinPrecioEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'cotizadosEnEsteProyecto') {
-                return this.articulosCotizadosEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosCotizadosEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'soloCotizadosEnEsteProyecto') {
-                return this.articulosSoloCotizadosEnEsteProyecto(articulos);
+                return this.articulosFiltrados = this.articulosSoloCotizadosEnEsteProyecto(articulos);
             }
 
             if (tipoFiltro == 'existenEnProyectoComparativo') {
-                return this.articulosQueExistenEnProyectoComparativo(articulos);
+                return this.articulosFiltrados = this.articulosQueExistenEnProyectoComparativo(articulos);
             }
 
             if (tipoFiltro == 'sinNombre') {
-                return this.sinNombre(articulos);
+                return this.articulosFiltrados = this.sinNombre(articulos);
             }
         }
     },
@@ -95,6 +95,26 @@ Vue.component('screen-comparativa', {
 
         cuentaDeArticulos: function () {
             return this.articulosFiltrados.length;
+        },
+
+        cuentaArticulosEsteProyecto: function () {
+            return this.articulosQueExistenEnEsteProyecto(this.articulosFiltrados).length;
+        },
+
+        sumaCantidadRequeridaEsteProyecto: function () {
+            return this.articulosQueExistenEnEsteProyecto(this.articulosFiltrados).reduce(function (prev, cur) {
+                return prev + cur.cantidad_requerida;
+            }, 0);
+        },
+
+        cuentaArticulosProyectoComparativo: function () {
+            return this.articulosQueExistenEnProyectoComparativo(this.articulosFiltrados).length;
+        },
+
+        sumaCantidadProyectoComparativo: function () {
+            return this.articulosQueExistenEnProyectoComparativo(this.articulosFiltrados).reduce(function (prev, cur) {
+                return prev + cur.cantidad_comparativa;
+            }, 0);
         }
     },
 
@@ -113,19 +133,19 @@ Vue.component('screen-comparativa', {
         },
 
         articulosQueExistenEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return this.articuloExisteEnEsteProyecto(articulo);
             }.bind(this));
         },
 
         articulosQueSoloExistenEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return this.articuloSoloExisteEnEsteProyecto(articulo);
             }.bind(this));
         },
 
         articulosQueExistenEnProyectoComparativo: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return articulo.cantidad_comparativa > 0;
             }.bind(this));
         },
@@ -138,45 +158,45 @@ Vue.component('screen-comparativa', {
         },
 
         articulosQueSoloExistenEnProyectoComparativo: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return this.articuloSoloExisteEnProyectoComparativo(articulo);
             }.bind(this));
         },
 
         articulosMasCarosEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return this.articuloExisteEnAmbosProyectos(articulo) &&
                     articulo.precio_estimado_homologado > articulo.precio_comparativa_homologado;
             }.bind(this));
         },
 
         articulosMasCarosEnProyectoComparativo: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return this.articuloExisteEnAmbosProyectos(articulo) &&
                     articulo.precio_comparativa_homologado > articulo.precio_estimado_homologado;
             }.bind(this));
         },
 
         articulosSinPrecioEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return ! articulo.precio_estimado_homologado || articulo.precio_estimado_homologado == 0;
             });
         },
 
         articulosSinPrecioEnProyectoComparativo: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return ! articulo.precio_comparativa_homologado || articulo.precio_comparativa_homologado == 0;
             });
         },
 
         articulosCotizadosEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return articulo.precio_estimado_homologado > 0 && articulo.existe_para_comparativa;
             });
         },
 
         articulosSoloCotizadosEnEsteProyecto: function (articulos) {
-            return this.articulosFiltrados = articulos.filter(function (articulo) {
+            return articulos.filter(function (articulo) {
                 return articulo.precio_estimado_homologado > 0;
             });
         },
