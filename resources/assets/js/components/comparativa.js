@@ -65,6 +65,10 @@ Vue.component('screen-comparativa', {
             if (tipoFiltro == 'cotizadosEnEsteProyecto') {
                 return this.articulosCotizadosEnEsteProyecto(articulos);
             }
+
+            if (tipoFiltro == 'soloCotizadosEnEsteProyecto') {
+                return this.articulosSoloCotizadosEnEsteProyecto(articulos);
+            }
         }
     },
 
@@ -147,6 +151,12 @@ Vue.component('screen-comparativa', {
         articulosCotizadosEnEsteProyecto: function (articulos) {
             return this.articulosFiltrados = articulos.filter(function (articulo) {
                 return articulo.precio_estimado_homologado > 0 && articulo.existe_para_comparativa;
+            });
+        },
+
+        articulosSoloCotizadosEnEsteProyecto: function (articulos) {
+            return this.articulosFiltrados = articulos.filter(function (articulo) {
+                return articulo.precio_estimado_homologado > 0;
             });
         },
 
