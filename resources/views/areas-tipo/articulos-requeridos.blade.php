@@ -1,4 +1,4 @@
-@extends('tipos.layout')
+@extends('areas-tipo.layout')
 
 @section('main-content')
   {!! Form::open(['route' => ['requerimientos.update', $tipo], 'method' => 'PATCH']) !!}

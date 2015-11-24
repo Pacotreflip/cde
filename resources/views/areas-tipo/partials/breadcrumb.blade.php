@@ -2,7 +2,7 @@
   @unless($tipo)
     <li class="active">Inicio</li>
   @else
-    <li><a href="{{ route('tipos.index') }}">Tipos de Área</a></li>
+    <li><a href="{{ route('tipos.index') }}">Áreas Tipo</a></li>
 
     @foreach($tipo->getAncestors() as $ancestro)
       <li>

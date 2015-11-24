@@ -37,7 +37,7 @@ class EvaluacionCalidadController extends Controller
     {
         $tipo = $this->tipos_area->getById($id);
 
-        return view('tipos.evaluacion-calidad')
+        return view('areas-tipo.evaluacion-calidad')
             ->withTipo($tipo);
     }
 

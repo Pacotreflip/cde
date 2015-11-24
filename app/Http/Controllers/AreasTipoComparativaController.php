@@ -5,7 +5,7 @@ namespace Ghi\Http\Controllers;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Areas\AreasTipo;
 
-class ComparativaTipoAreaController extends Controller
+class AreasTipoComparativaController extends Controller
 {
     /**
      * @var AreasTipo
@@ -38,7 +38,7 @@ class ComparativaTipoAreaController extends Controller
         $tipo = $this->tipos_area->getById($id);
         $tipo_cambio = Moneda::where('nombre', 'DOLARES')->first()->tipoCambioMasReciente();
 
-        return view('tipos.comparativa')
+        return view('areas-tipo.comparativa')
             ->withTipo($tipo)
             ->withTipoCambio($tipo_cambio->cambio)
             ->withImporteTotal(0)

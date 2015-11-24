@@ -49,7 +49,7 @@ class ArticulosRequeridosController extends Controller
             $articulos = $this->articulos->getAllPaginated(50, $except);
         }
 
-        return view('tipos.requerimientos.seleccion-articulos')
+        return view('areas-tipo.requerimientos.seleccion-articulos')
             ->withTipo($tipo)
             ->withArticulos($articulos);
     }
@@ -84,7 +84,7 @@ class ArticulosRequeridosController extends Controller
         $monedas = Moneda::lists('nombre', 'id_moneda');
         $tipo_cambio = Moneda::where('nombre', 'DOLARES')->first()->tipoCambioMasReciente();
 
-        return view('tipos.articulos-requeridos')
+        return view('areas-tipo.articulos-requeridos')
             ->withTipo($tipo)
             ->withMonedas($monedas)
             ->withTipoCambio($tipo_cambio->cambio);

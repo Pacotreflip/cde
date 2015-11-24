@@ -18,6 +18,6 @@
 
 <!-- Dentro de que otro tipo estará? Form Input -->
 <div class="form-group">
-  {!! Form::label('parent_id', 'Dentro de que otro tipo estará?') !!}
+  {!! Form::label('parent_id', 'Dentro de que otra área tipo estará?') !!}
   {!! Form::select('parent_id', $tipos, Request::get('dentro_de'), ['class' => 'form-control']) !!}
 </div>

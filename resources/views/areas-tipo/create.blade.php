@@ -4,18 +4,18 @@
   <ol class="breadcrumb">
     <li>
       <a href="{{ route('tipos.index', Request::has('dentro_de') ? 
-        ['tipo' => Request::get('dentro_de')] : []) }}">Tipos de Área</a>
+        ['tipo' => Request::get('dentro_de')] : []) }}">Áreas Tipo</a>
     </li>
-    <li class="active">Nuevo Tipo</li>
+    <li class="active">Nueva Área Tipo</li>
   </ol>
 
   <div class="row">
       <div class="col-md-6">
-          <h1>Nuevo Tipo de Área</h1>
+          <h1>Nueva Área Tipo</h1>
           <hr>
 
           {!! Form::open(['route' => ['tipos.store'], 'method' => 'POST']) !!}
-              @include('tipos.partials.fields')
+              @include('areas-tipo.partials.fields')
               <hr>
 
               <div class="form-group">

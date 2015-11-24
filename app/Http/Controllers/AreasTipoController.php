@@ -10,7 +10,7 @@ use Ghi\Http\Requests\CreateAreaTipoRequest;
 use Ghi\Http\Requests\UpdateAreaTipoRequest;
 use Ghi\Equipamiento\Areas\AreasTipo;
 
-class TiposAreaController extends Controller
+class AreasTipoController extends Controller
 {
     /**
      * @tipos TipoAreaRepository
@@ -49,11 +49,11 @@ class TiposAreaController extends Controller
             $descendientes = $this->areas_tipo->getNivelesRaiz();
         }
 
-        return view('tipos.index')
+        return view('areas-tipo.index')
             ->withTipo($tipo)
             ->withDescendientes($descendientes);
 
-        return view('tipos.index')->withTipos($tipos);
+        return view('areas-tipo.index')->withTipos($tipos);
     }
 
     /**
@@ -65,7 +65,7 @@ class TiposAreaController extends Controller
     {
         $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaTipos();
 
-        return view('tipos.create')
+        return view('areas-tipo.create')
             ->withTipos($tipos);
     }
 
@@ -114,7 +114,7 @@ class TiposAreaController extends Controller
         $tipo = $this->areas_tipo->getById($id);
         $tipos = [null => 'Inicio'] + $this->areas_tipo->getListaTipos();
 
-        return view('tipos.datos-generales')
+        return view('areas-tipo.datos-generales')
             ->withTipo($tipo)
             ->withTipos($tipos);
     }

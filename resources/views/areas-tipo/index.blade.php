@@ -1,13 +1,13 @@
 @extends('layout')
 
 @section('content')
-  <h1>Tipos de Área
+  <h1>Áreas Tipo
       <a href="{{ route('tipos.create', Request::has('tipo') ? ['dentro_de' => Request::get('tipo')] : []) }}" 
-          class="btn btn-success pull-right"><i class="fa fa-plus"></i> Nuevo Tipo</a>
+          class="btn btn-success pull-right"><i class="fa fa-plus"></i> Nueva Área Tipo</a>
   </h1>
   <hr>
 
-  @include('tipos.partials.breadcrumb')
+  @include('areas-tipo.partials.breadcrumb')
 
   <table class="table table-striped">
     <tbody>

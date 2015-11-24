@@ -30,13 +30,14 @@ class AreasAsignadasController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param $id
      * @return \Illuminate\Http\Response
      */
     public function index($id)
     {
         $tipo = $this->tipos_area->getById($id);
 
-        return view('tipos.areas-asignadas')
+        return view('areas-tipo.areas-asignadas')
             ->withTipo($tipo);
     }
 
