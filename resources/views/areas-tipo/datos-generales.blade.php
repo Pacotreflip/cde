@@ -1,8 +1,8 @@
-@extends('tipos.layout')
+@extends('areas-tipo.layout')
 
 @section('main-content')
   {!! Form::model($tipo, ['route' => ['tipos.update', $tipo], 'method' => 'PATCH']) !!}
-    @include('tipos.partials.fields')
+    @include('areas-tipo.partials.fields')
     
     <div class="form-group">
       {!! Form::submit('Guardar Cambios', ['class' => 'btn btn-primary']) !!}

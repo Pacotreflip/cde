@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-  @include('tipos.partials.breadcrumb')
+  @include('areas-tipo.partials.breadcrumb')
 
   <h1>Selección de Artículos Requeridos</h1>
   <hr>

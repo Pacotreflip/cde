@@ -13,7 +13,7 @@
         Catalogos <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
-        <li><a href="{{ route('tipos.index') }}">Tipos de Área</a></li>
+        <li><a href="{{ route('tipos.index') }}">Áreas Tipo</a></li>
         <li><a href="{{ route('areas.index') }}">Áreas</a></li>
         <li><a href="{{ route('clasificadores.index') }}">Clasificadores de Artículo</a></li>
         <li><a href="{{ route('articulos.index') }}">Artículos</a></li>

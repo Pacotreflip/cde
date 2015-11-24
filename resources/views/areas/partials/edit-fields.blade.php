@@ -15,7 +15,7 @@
   <div class="col-sm-6">
     <!-- Tipo Form Input -->
     <div class="form-group">
-      {!! Form::label('tipo_id', 'Tipo:') !!}
+      {!! Form::label('tipo_id', 'Área Tipo:') !!}
       {!! Form::select('tipo_id', $tipos, null, ['class' => 'form-control']) !!}
     </div>
 

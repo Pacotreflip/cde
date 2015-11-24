@@ -1,4 +1,4 @@
-@extends('tipos.layout')
+@extends('areas-tipo.layout')
 
 @section('main-content')
   <form action="{{ '/tipos-area/'.$tipo->id.'/evaluacion-calidad' }}" method="POST" accept-charset="UTF-8">

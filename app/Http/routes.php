@@ -14,15 +14,15 @@ Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
 // Rutas de tipos de area...
-Route::get('tipos-area', ['as' => 'tipos.index', 'uses' => 'TiposAreaController@index']);
-Route::get('tipos-area/nuevo', ['as' => 'tipos.create', 'uses' => 'TiposAreaController@create']);
-Route::post('tipos-area', ['as' => 'tipos.store', 'uses' => 'TiposAreaController@store']);
-Route::get('tipos-area/{id}/modificar', ['as' => 'tipos.edit', 'uses' => 'TiposAreaController@edit']);
-Route::patch('tipos-area/{id}', ['as' => 'tipos.update', 'uses' => 'TiposAreaController@update']);
-Route::delete('tipos-area/{id}', ['as' => 'tipos.delete', 'uses' => 'TiposAreaController@destroy']);
+Route::get('areas-tipo', ['as' => 'tipos.index', 'uses' => 'AreasTipoController@index']);
+Route::get('areas-tipo/nuevo', ['as' => 'tipos.create', 'uses' => 'AreasTipoController@create']);
+Route::post('areas-tipo', ['as' => 'tipos.store', 'uses' => 'AreasTipoController@store']);
+Route::get('areas-tipo/{id}/modificar', ['as' => 'tipos.edit', 'uses' => 'AreasTipoController@edit']);
+Route::patch('areas-tipo/{id}', ['as' => 'tipos.update', 'uses' => 'AreasTipoController@update']);
+Route::delete('areas-tipo/{id}', ['as' => 'tipos.delete', 'uses' => 'AreasTipoController@destroy']);
 
 // Rutas de asignacion de requerimientos...
-Route::group(['prefix' => 'tipos-area/{id}'], function () {
+Route::group(['prefix' => 'areas-tipo/{id}'], function () {
     Route::get('articulos-requeridos', ['as' => 'requerimientos.edit', 'uses' => 'ArticulosRequeridosController@edit']);
     Route::get('articulos-requeridos/seleccion-articulos', ['as' => 'requerimientos.seleccion', 'uses' => 'ArticulosRequeridosController@create']);
     Route::post('articulos-requeridos', ['as' => 'requerimientos.store', 'uses' => 'ArticulosRequeridosController@store']);
@@ -31,7 +31,7 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::get('areas-asignadas', 'AreasAsignadasController@index');
     Route::get('evaluacion-calidad', 'EvaluacionCalidadController@index');
     Route::patch('evaluacion-calidad', 'EvaluacionCalidadController@update');
-    Route::get('comparativa', 'ComparativaTipoAreaController@index');
+    Route::get('comparativa', 'AreasTipoComparativaController@index');
 });
 
 // Rutas de areas...
@@ -101,5 +101,5 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
 
-    Route::get('tipos-area/{id}/comparativa', 'ComparativaTipoAreaController@comparativa');
+    Route::get('areas-tipo/{id}/comparativa', 'AreasTipoComparativaController@comparativa');
 });
