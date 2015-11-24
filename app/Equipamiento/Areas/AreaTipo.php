@@ -7,7 +7,7 @@ use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 
-class Tipo extends Node
+class AreaTipo extends Node
 {
     /**
      * @var string
@@ -17,12 +17,23 @@ class Tipo extends Node
     /**
      * @var string
      */
-    protected $table = 'Equipamiento.area_tipos';
+    protected $table = 'Equipamiento.areas_tipo';
 
     /**
      * @var array
      */
     protected $fillable = ['nombre', 'descripcion', 'clave'];
+
+    /**
+     * Obtiene las areas tipo que son las ultimas en la jerarquia.
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOnlyLeafs($query)
+    {
+        return $query->whereRaw('_lft + 1 = _rgt');
+    }
 
     /**
      * Obra relacionada con este tipo de area
@@ -43,19 +54,6 @@ class Tipo extends Node
     {
         return $this->hasMany(MaterialRequerido::class, 'id_tipo_area');
     }
-
-    /**
-     * Materiales requeridos para este tipo de area
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    // public function materiales()
-    // {
-    //     return $this->belongsToMany(Material::class, 'Equipamiento.materiales_requeridos', 'id_tipo_area', 'id_material')
-    //         ->orderBy('descripcion')
-    //         ->withTimestamps()
-    //         ->withPivot('cantidad_requerida', 'precio_estimado', 'se_evalua', 'cantidad_comparativa', 'precio_comparativa', 'existe_para_comparativa');
-    // }
 
     /**
      * Areas asignadas a este tipo de area.
@@ -123,7 +121,7 @@ class Tipo extends Node
     /**
      * Mueve este tipo dentro de otro al final.
      * 
-     * @param  Tipo|null $parent
+     * @param  AreaTipo|null $parent
      * @return self
      */
     public function dentroDe($parent = null)
@@ -149,7 +147,7 @@ class Tipo extends Node
      * @param int $cantidad_comparativa
      * @param float $precio_comparativa
      * @param bool $existe_para_comparativa
-     * @return Tipo
+     * @return AreaTipo
      */
     public function agregaArticuloRequerido($id_material)
     {

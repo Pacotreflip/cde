@@ -8,8 +8,8 @@ use Ghi\Equipamiento\Moneda;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\TipoCambio;
 use Ghi\Equipamiento\Areas\MaterialRequerido;
-use Ghi\Equipamiento\Areas\TipoAreaRepository;
-use Ghi\Equipamiento\Articulos\MaterialRepository;
+use Ghi\Equipamiento\Areas\AreasTipo;
+use Ghi\Equipamiento\Articulos\Materiales;
 
 class ArticulosRequeridosController extends Controller
 {
@@ -17,10 +17,10 @@ class ArticulosRequeridosController extends Controller
     protected $articulos;
 
     /**
-     * @param TipoAreaRepository $tipos_area
-     * @param MaterialRepository $articulos
+     * @param AreasTipo $tipos_area
+     * @param Materiales $articulos
      */
-    public function __construct(TipoAreaRepository $tipos_area, MaterialRepository $articulos)
+    public function __construct(AreasTipo $tipos_area, Materiales $articulos)
     {
         $this->middleware('auth');
         $this->middleware('context');

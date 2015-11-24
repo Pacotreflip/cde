@@ -2,7 +2,7 @@
 
 use Ghi\Core\Models\Obra;
 use Illuminate\Database\Seeder;
-use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaTipo;
 
 class TiposAreaTableSeeder extends Seeder
 {
@@ -22,11 +22,11 @@ class TiposAreaTableSeeder extends Seeder
 //        });
 
         foreach (Obra::all() as $obra) {
-            $junior = factory(Tipo::class)->create(['nombre' => 'Junior Suite', 'id_obra' => $obra->id_obra,]);
-            factory(Tipo::class)->create(['nombre' => 'STD K', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
-            factory(Tipo::class)->create(['nombre' => 'STD D', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
-            factory(Tipo::class)->create(['nombre' => 'PREF K', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
-            factory(Tipo::class)->create(['nombre' => 'PREF D', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
+            $junior = factory(AreaTipo::class)->create(['nombre' => 'Junior Suite', 'id_obra' => $obra->id_obra,]);
+            factory(AreaTipo::class)->create(['nombre' => 'STD K', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
+            factory(AreaTipo::class)->create(['nombre' => 'STD D', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
+            factory(AreaTipo::class)->create(['nombre' => 'PREF K', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
+            factory(AreaTipo::class)->create(['nombre' => 'PREF D', 'parent_id' => $junior->id, 'id_obra' => $obra->id_obra,]);
         }
         // $tipo->subtipos()->save(factory(Subtipo::class)->make(['nombre' => 'STD K']));
         // $tipo->subtipos()->save(factory(Subtipo::class)->make(['nombre' => 'STD D']));

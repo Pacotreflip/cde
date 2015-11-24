@@ -5,7 +5,6 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
-use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Unidad;
 use Ghi\Equipamiento\Articulos\Factory;
 use Ghi\Equipamiento\Articulos\Familia;
@@ -13,22 +12,20 @@ use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
-use Ghi\Equipamiento\Articulos\MaterialRepository;
+use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Articulos\ClasificadorRepository;
 
 class ArticulosController extends Controller
 {
-    /**
-     *
-     * @var MaterialRepository
-     */
     protected $materiales;
+
     protected $clasificadores;
 
     /**
-     * @param MaterialRepository $materiales
+     * @param Materiales $materiales
+     * @param ClasificadorRepository $clasificadores
      */
-    public function __construct(MaterialRepository $materiales, ClasificadorRepository $clasificadores)
+    public function __construct(Materiales $materiales, ClasificadorRepository $clasificadores)
     {
         $this->middleware('auth');
         $this->middleware('context');

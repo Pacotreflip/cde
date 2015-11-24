@@ -3,21 +3,21 @@
 namespace Ghi\Http\Controllers;
 
 use Ghi\Equipamiento\Moneda;
-use Ghi\Equipamiento\Areas\TipoAreaRepository;
+use Ghi\Equipamiento\Areas\AreasTipo;
 
 class ComparativaTipoAreaController extends Controller
 {
     /**
-     * @var TipoAreaRepository
+     * @var AreasTipo
      */
     private $tipos_area;
 
     /**
      * ComparativaTipoAreaController constructor.
      *
-     * @param TipoAreaRepository $tipos_area
+     * @param AreasTipo $tipos_area
      */
-    public function __construct(TipoAreaRepository $tipos_area)
+    public function __construct(AreasTipo $tipos_area)
     {
         $this->middleware('auth');
         $this->middleware('context');

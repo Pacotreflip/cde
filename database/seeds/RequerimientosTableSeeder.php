@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaTipo;
 use Ghi\Equipamiento\Articulos\Material;
 
 class RequerimientosTableSeeder extends Seeder
@@ -13,7 +13,7 @@ class RequerimientosTableSeeder extends Seeder
      */
     public function run()
     {
-        $tipos = Tipo::all();
+        $tipos = AreaTipo::all();
         $materiales = Material::soloMateriales()->get();
 
         foreach ($tipos as $tipo) {

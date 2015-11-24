@@ -5,29 +5,28 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
-use Ghi\Equipamiento\Areas\Tipo;
-use Ghi\Http\Controllers\Controller;
-use Ghi\Http\Requests\CreateTipoRequest;
-use Ghi\Http\Requests\UpdateTipoRequest;
-use Ghi\Equipamiento\Areas\TipoAreaRepository;
+use Ghi\Equipamiento\Areas\AreaTipo;
+use Ghi\Http\Requests\CreateAreaTipoRequest;
+use Ghi\Http\Requests\UpdateAreaTipoRequest;
+use Ghi\Equipamiento\Areas\AreasTipo;
 
 class TiposAreaController extends Controller
 {
     /**
      * @tipos TipoAreaRepository
      */
-    protected $tipos;
+    protected $areas_tipo;
 
     /**
      *
-     * @param TipoAreaRepository $tipos
+     * @param AreasTipo $areas_tipo
      */
-    public function __construct(TipoAreaRepository $tipos)
+    public function __construct(AreasTipo $areas_tipo)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
-        $this->tipos = $tipos;
+        $this->areas_tipo = $areas_tipo;
 
         parent::__construct();
     }
@@ -44,10 +43,10 @@ class TiposAreaController extends Controller
         $tipo = null;
 
         if ($request->has('tipo')) {
-            $tipo = $this->tipos->getById($request->get('tipo'));
+            $tipo = $this->areas_tipo->getById($request->get('tipo'));
             $descendientes = $tipo->children()->defaultOrder()->get();
         } else {
-            $descendientes = $this->tipos->getNivelesRaiz();
+            $descendientes = $this->areas_tipo->getNivelesRaiz();
         }
 
         return view('tipos.index')
@@ -64,7 +63,7 @@ class TiposAreaController extends Controller
      */
     public function create()
     {
-        $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
+        $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaTipos();
 
         return view('tipos.create')
             ->withTipos($tipos);
@@ -73,12 +72,12 @@ class TiposAreaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateTipoRequest $request
+     * @param CreateAreaTipoRequest $request
      * @return Response
      */
-    public function store(CreateTipoRequest $request)
+    public function store(CreateAreaTipoRequest $request)
     {
-        $parent = Tipo::find($request->get('parent_id'));
+        $parent = AreaTipo::find($request->get('parent_id'));
         $tipo = $this->nuevoTipo($request->all(), $parent);
 
         Flash::success('El nuevo tipo de area fue agregado.');
@@ -87,17 +86,18 @@ class TiposAreaController extends Controller
     }
 
     /**
-     * Crea un nuevo tipo de area
+     * Crea un nuevo tipo de area.
      * 
      * @param  array $data
-     * @param  Tipo|null $parent
-     * @return Tipo
+     * @param  AreaTipo|null $parent
+     * @return AreaTipo
      */
     protected function nuevoTipo($data, $parent)
     {
-        $tipo = Tipo::nuevo($data)
+        $tipo = AreaTipo::nuevo($data)
             ->enObra($this->getObraEnContexto())
             ->dentroDe($parent);
+
         $tipo->save();
 
         return $tipo;
@@ -111,8 +111,8 @@ class TiposAreaController extends Controller
      */
     public function edit($id)
     {
-        $tipo = $this->tipos->getById($id);
-        $tipos = [null => 'Inicio'] + $this->tipos->getListaTipos();
+        $tipo = $this->areas_tipo->getById($id);
+        $tipos = [null => 'Inicio'] + $this->areas_tipo->getListaTipos();
 
         return view('tipos.datos-generales')
             ->withTipo($tipo)
@@ -122,14 +122,14 @@ class TiposAreaController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateTipoRequest $request
+     * @param UpdateAreaTipoRequest $request
      * @param  int $id
      * @return Response
      */
-    public function update(UpdateTipoRequest $request, $id)
+    public function update(UpdateAreaTipoRequest $request, $id)
     {
-        $tipo = Tipo::findOrFail($id);
-        $parent = Tipo::find($request->get('parent_id'));
+        $tipo = $this->areas_tipo->getById($id);
+        $parent = AreaTipo::find($request->get('parent_id'));
 
         $tipo->fill($request->all());
 
@@ -144,7 +144,7 @@ class TiposAreaController extends Controller
         }
 
         $tipo->dentroDe($parent);
-        $this->tipos->save($tipo);
+        $this->areas_tipo->save($tipo);
 
         Flash::success('Los cambios fueron guardados.');
 
@@ -159,14 +159,14 @@ class TiposAreaController extends Controller
      */
     public function destroy($id)
     {
-        $tipo = $this->tipos->getById($id);
+        $tipo = $this->areas_tipo->getById($id);
         $isRoot = $tipo->isRoot();
 
         if (! $isRoot) {
             $parent_id = $tipo->parent->id;
         }
 
-        $this->tipos->delete($tipo);
+        $this->areas_tipo->delete($tipo);
 
         Flash::message('El tipo de area fue borrado.');
 

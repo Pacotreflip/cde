@@ -2,14 +2,12 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
-use Ghi\Equipamiento\Articulos\Unidad;
-use Ghi\Equipamiento\Articulos\Material;
-
-class MaterialRepository
+class Materiales
 {
     /**
-     * Busca un material por su id
+     * Busca un material por su id.
      *
+     * @param $id
      * @return Material
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
@@ -19,10 +17,10 @@ class MaterialRepository
     }
 
     /**
-     * Obtiene todos los materiales
+     * Obtiene todos los materiales.
      *
      * @param array $except Ids de los materiales a excluir
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAll($except = [])
     {
@@ -33,7 +31,7 @@ class MaterialRepository
     }
 
     /**
-     * Obtiene todos los materiales paginados
+     * Obtiene todos los materiales paginados.
      *
      * @param int $howMany
      * @param array $except Ids de los materiales a excluir
@@ -48,7 +46,7 @@ class MaterialRepository
     }
 
     /**
-     * Obtiene los materiales en forma de lista
+     * Obtiene los materiales en forma de lista.
      * 
      * @return array
      */
@@ -61,11 +59,11 @@ class MaterialRepository
     }
 
     /**
-     * Busqueda de materiales
+     * Busqueda de materiales.
      *
      * @param string $busqueda Texto a buscar
-     * @param int $howMany Numero de articulos por pagina
-     * @param array $except Ids de los materiales a excluir
+     * @param int    $howMany  Numero de articulos por pagina
+     * @param array  $except   Ids de los materiales a excluir
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function buscar($busqueda, $howMany = 30, $except = [])
@@ -82,30 +80,34 @@ class MaterialRepository
     }
 
     /**
-     * Obtiene una lista de unidades como arreglo
+     * Obtiene una lista de unidades como arreglo.
      *
      * @return array
      */
     public function getListaUnidades()
     {
         return Unidad::selectRaw('unidad AS id, unidad')
-            ->orderBy('unidad')->lists('unidad', 'unidad')->all();
+            ->orderBy('unidad')
+            ->lists('unidad', 'unidad')
+            ->all();
     }
 
     /**
-     * Obtiene una lista de clasificadores como arreglo
+     * Obtiene una lista de clasificadores como arreglo.
      *
      * @return array
      */
     public function getListaClasificadores()
     {
         return Clasificador::orderBy('nombre')
-            ->lists('nombre', 'id')->all();
+            ->lists('nombre', 'id')
+            ->all();
     }
 
     /**
-     * Obtiene una lista de las familias de materiales
+     * Obtiene una lista de las familias de materiales.
      *
+     * @param null $tipo
      * @return array
      */
     public function getListaFamilias($tipo = null)
@@ -116,7 +118,7 @@ class MaterialRepository
     }
 
     /**
-     * Obtiene una lista de los tipos de material como arreglo
+     * Obtiene una lista de los tipos de material como arreglo.
      *
      * @return array
      */
@@ -132,8 +134,9 @@ class MaterialRepository
     }
 
     /**
-     * Guarda los cambios de un material
-     * @param Mateiral $material
+     * Guarda los cambios de un material.
+     *
+     * @param Material $material
      * @return bool
      */
     public function save(Material $material)

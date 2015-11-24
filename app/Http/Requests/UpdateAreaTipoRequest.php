@@ -4,7 +4,7 @@ namespace Ghi\Http\Requests;
 
 use Ghi\Http\Requests\Request;
 
-class UpdateSubtipoRequest extends Request
+class UpdateAreaTipoRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class UpdateSubtipoRequest extends Request
      */
     public function rules()
     {
-        $tipo_id = $this->route('tipo_id');
-        $subtipo_id = $this->route('subtipo_id');
         return [
-            'nombre' => 'required|unique:equipamiento.subtipos,nombre,'.$subtipo_id.',id,tipo_id,'.$tipo_id,
+            'nombre' => 'required_without_all:move_up,move_down',
         ];
     }
 }

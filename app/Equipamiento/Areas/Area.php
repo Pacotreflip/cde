@@ -45,7 +45,7 @@ class Area extends Node
      */
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'tipo_id');
+        return $this->belongsTo(AreaTipo::class, 'tipo_id');
     }
 
     /**
@@ -88,10 +88,10 @@ class Area extends Node
     /**
      * Asigna el subtipo a esta area
      *
-     * @param Tipo $tipo
+     * @param AreaTipo $tipo
      * @return Area
      */
-    public function asignaTipo(Tipo $tipo)
+    public function asignaTipo(AreaTipo $tipo)
     {
         return $this->tipo()->associate($tipo);
     }

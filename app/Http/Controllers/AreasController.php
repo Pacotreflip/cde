@@ -6,10 +6,10 @@ use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
-use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaTipo;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Areas\AreaRepository;
-use Ghi\Equipamiento\Areas\TipoAreaRepository;
+use Ghi\Equipamiento\Areas\AreasTipo;
 
 class AreasController extends Controller
 {
@@ -24,7 +24,7 @@ class AreasController extends Controller
      *
      * @param AreaRepository $areas
      */
-    public function __construct(AreaRepository $areas, TipoAreaRepository $tipos)
+    public function __construct(AreaRepository $areas, AreasTipo $tipos)
     {
         $this->middleware('auth');
         $this->middleware('context');
@@ -67,7 +67,7 @@ class AreasController extends Controller
      */
     public function create()
     {
-        $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
+        $tipos = [null => 'Ninguno'] + $this->tipos->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
 
         return view('areas.create')
@@ -84,7 +84,7 @@ class AreasController extends Controller
     public function store(Requests\CreateAreaRequest $request)
     {
         $rango = $request->get('rango_inicial');
-        $tipo = Tipo::find($request->get('tipo_id'));
+        $tipo = AreaTipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
         $cantidad_a_crear = $request->get('cantidad', 1);
 
@@ -127,7 +127,7 @@ class AreasController extends Controller
     public function edit($id)
     {
         $area  = $this->areas->getById($id);
-        $tipos = [null => 'Ninguno'] + $this->tipos->getListaTipos();
+        $tipos = [null => 'Ninguno'] + $this->tipos->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
 
         // dd($this->estadisticaMateriales($area));
@@ -180,7 +180,7 @@ class AreasController extends Controller
     {
         $area   = $this->areas->getById($id);
         $parent = Area::find($request->get('parent_id'));
-        $tipo   = Tipo::find($request->get('tipo_id'));
+        $tipo   = AreaTipo::find($request->get('tipo_id'));
 
         $area->fill($request->all());
 

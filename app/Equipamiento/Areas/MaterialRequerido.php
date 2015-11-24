@@ -136,7 +136,7 @@ class MaterialRequerido extends Model
      */
     public function tipoArea()
     {
-        return $this->belongsTo(Tipo::class, 'id_tipo_area');
+        return $this->belongsTo(AreaTipo::class, 'id_tipo_area');
     }
 
     /**

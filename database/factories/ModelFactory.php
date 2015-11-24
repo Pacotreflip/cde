@@ -11,7 +11,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transacciones\Entrega;
-use Ghi\Equipamiento\Areas\Tipo as TipoArea;
+use Ghi\Equipamiento\Areas\AreaTipo as TipoArea;
 use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Equipamiento\Inventarios\Inventario;

@@ -1,7 +1,7 @@
 <?php
 
 use Ghi\Core\Models\Obra;
-use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaTipo;
 use Illuminate\Database\Seeder;
 use Ghi\Equipamiento\Areas\Area;
 
@@ -29,7 +29,7 @@ class AreasTableSeeder extends Seeder
                                 'parent_id' => $nivel2->id,
                                 'id_obra' => $nivel2->id_obra,
                                 'nombre' => 'Habitación',
-                                'tipo_id' => Tipo::where('id_obra', $nivel2->id_obra)->where('nombre', 'STD D')->first()->id,
+                                'tipo_id' => AreaTipo::where('id_obra', $nivel2->id_obra)->where('nombre', 'STD D')->first()->id,
                             ])
                                 ->each(function ($nivel3, $nivel3Key) {
                                     $nivel3->nombre .= ' '.$nivel3Key;

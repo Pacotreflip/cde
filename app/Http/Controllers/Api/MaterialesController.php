@@ -8,7 +8,6 @@ use Ghi\Equipamiento\Articulos\Material;
 
 class MaterialesController extends ApiController
 {
-
     /**
      * Display a listing of the resource.
      *
