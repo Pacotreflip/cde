@@ -84,7 +84,7 @@ class ProveedoresController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  CreateProveedorRequest  $request
+     * @param Requests\CreateProveedorRequest $request
      * @return Response
      */
     public function store(Requests\CreateProveedorRequest $request)
@@ -117,8 +117,8 @@ class ProveedoresController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateProveedorRequest  $request
-     * @param  int  $id
+     * @param Requests\UpdateProveedorRequest $request
+     * @param  int $id
      * @return Response
      */
     public function update(Requests\UpdateProveedorRequest $request, $id)

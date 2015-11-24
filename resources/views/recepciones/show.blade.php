@@ -60,7 +60,11 @@
           <td>{{ $item->material->unidad }}</td>
           <td>{{ $item->cantidad_recibida }}</td>
           <td>
-            <a href="{{ route('areas.edit', $item->area) }}">{{ $item->area->ruta() }}</a>
+            @if ($item->area)
+              <a href="{{ route('areas.edit', $item->area) }}">{{ $item->area->ruta() }}</a>
+            @else
+              N/A
+            @endif
           </td>
         </tr>
       @endforeach

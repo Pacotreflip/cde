@@ -4,7 +4,7 @@ namespace Ghi\Http\Requests;
 
 use Ghi\Http\Requests\Request;
 
-class CreateSubtipoRequest extends Request
+class CreateAreaTipoRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,8 @@ class CreateSubtipoRequest extends Request
      */
     public function rules()
     {
-        $tipo_id = $this->route('tipo_id');
         return [
-            'nombre' => 'required|unique:equipamiento.subtipos,nombre,null,id,tipo_id,'.$tipo_id,
+            'nombre' => 'required',
         ];
     }
 }

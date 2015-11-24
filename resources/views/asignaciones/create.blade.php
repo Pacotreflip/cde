@@ -9,7 +9,7 @@
     <asignacion-screen inline-template>
       <div class="row">
         <div class="col-md-3">
-          <areas-tree v-bind:when-selected="fetchMateriales"></areas-tree>
+          <areas-tree v-bind:when-change="fetchMateriales"></areas-tree>
         </div>
         <div class="col-md-9">
           <table class="table table-condensed">

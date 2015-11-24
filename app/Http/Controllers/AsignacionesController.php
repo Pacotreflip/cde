@@ -43,7 +43,7 @@ class AsignacionesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateAsignacionRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateAsignacionRequest $request)

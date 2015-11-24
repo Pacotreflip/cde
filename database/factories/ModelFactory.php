@@ -11,7 +11,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transacciones\Entrega;
-use Ghi\Equipamiento\Areas\Tipo as TipoArea;
+use Ghi\Equipamiento\Areas\AreaTipo as TipoArea;
 use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Equipamiento\Inventarios\Inventario;
@@ -99,6 +99,7 @@ $factory->define(Area::class, function (Faker\Generator $faker) {
         'nombre'      => implode(' ', $faker->words),
         'clave'       => $faker->citySuffix,
         'descripcion' => $faker->paragraph,
+        'tipo_id' => null,
         'id_obra'     => null, //factory(Obra::class)->create()->id_obra,
     ];
 });

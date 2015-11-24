@@ -5,19 +5,19 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Http\Controllers\Controller;
-use Ghi\Equipamiento\Areas\TipoAreaRepository;
+use Ghi\Equipamiento\Areas\AreasTipo;
 
 class EvaluacionCalidadController extends Controller
 {
     /**
-     * @var TipoAreaRepository
+     * @var AreasTipo
      */
     protected $tipos_area;
 
     /**
-     * @param TipoAreaRepository $tipos_area
+     * @param AreasTipo $tipos_area
      */
-    public function __construct(TipoAreaRepository $tipos_area)
+    public function __construct(AreasTipo $tipos_area)
     {
         $this->middleware('auth');
         $this->middleware('context');
@@ -26,10 +26,11 @@ class EvaluacionCalidadController extends Controller
 
         parent::__construct();
     }
-    
+
     /**
      * Display a listing of the resource.
      *
+     * @param $id
      * @return \Illuminate\Http\Response
      */
     public function index($id)

@@ -10,8 +10,8 @@
 
   @include('clasificadores.partials.breadcrumb')
 
-  <table class="table table-striped" data-link="row">
-    <tbody class="rowlink">
+  <table class="table table-striped">
+    <tbody>
       @foreach($descendientes as $descendiente)
         <tr>
           <td>

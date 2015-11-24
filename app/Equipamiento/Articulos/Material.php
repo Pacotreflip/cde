@@ -3,7 +3,7 @@
 namespace Ghi\Equipamiento\Articulos;
 
 use Ghi\Equipamiento\Areas\Area;
-use Ghi\Equipamiento\Areas\Tipo;
+use Ghi\Equipamiento\Areas\AreaTipo;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Inventarios\Inventario;
@@ -94,7 +94,7 @@ class Material extends Model
      */
     public function tiposArea()
     {
-        return $this->belongsToMany(Tipo::class, 'Equipamiento.requerimientos', 'id_material', 'id_tipo_area')
+        return $this->belongsToMany(AreaTipo::class, 'Equipamiento.requerimientos', 'id_material', 'id_tipo_area')
             ->withTimestamps();
     }
 

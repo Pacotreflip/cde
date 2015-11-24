@@ -38,7 +38,7 @@ class Recepcion extends Model
         'orden_embarque',
         'numero_pedimento',
         'persona_recibio',
-        'observaciones'
+        'observaciones',
     ];
 
     /**
@@ -99,12 +99,11 @@ class Recepcion extends Model
      * Recibe un material en este folio de recepcion.
      *
      * @param Material $material
-     * @param Area $area
      * @param float $cantidad
-     * @param float|int $precio
-     *
+     * @param $id_item
+     * @param Area $area
      */
-    public function recibeMaterial(Material $material, Area $area, $cantidad)
+    public function agregaMaterial(Material $material, $cantidad, $id_item, $area = null)
     {
         if ($cantidad <= 0) {
             return;
@@ -114,10 +113,14 @@ class Recepcion extends Model
         $item->id_material = $material->id_material;
         $item->cantidad_recibida = $cantidad;
         $item->unidad = $material->unidad_compra;
-        $item->id_area_almacenamiento = $area->id;
-        $this->items()->save($item);
+        $item->id_item = $id_item;
 
-        $inventario = $material->nuevoInventarioEnArea($area);
-        $inventario->incrementaExistencia($cantidad, $this->transaccion);
+        if ($area) {
+            $item->id_area_almacenamiento = $area->id;
+            $inventario = $material->nuevoInventarioEnArea($area);
+            $inventario->incrementaExistencia($cantidad, $this->transaccion);
+        }
+
+        $this->items()->save($item);
     }
 }

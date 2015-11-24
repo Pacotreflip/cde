@@ -31,6 +31,7 @@ Route::group(['prefix' => 'tipos-area/{id}'], function () {
     Route::get('areas-asignadas', 'AreasAsignadasController@index');
     Route::get('evaluacion-calidad', 'EvaluacionCalidadController@index');
     Route::patch('evaluacion-calidad', 'EvaluacionCalidadController@update');
+    Route::get('comparativa', 'ComparativaTipoAreaController@index');
 });
 
 // Rutas de areas...
@@ -99,4 +100,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('areas/{id}/children/jstree', 'Api\AreasJsTreeController@areas')->where(['id' => '[0-9]+']);;
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
+
+    Route::get('tipos-area/{id}/comparativa', 'ComparativaTipoAreaController@comparativa');
 });

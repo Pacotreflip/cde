@@ -7,7 +7,7 @@ use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 
-class Tipo extends Node
+class AreaTipo extends Node
 {
     /**
      * @var string
@@ -17,12 +17,23 @@ class Tipo extends Node
     /**
      * @var string
      */
-    protected $table = 'Equipamiento.area_tipos';
+    protected $table = 'Equipamiento.areas_tipo';
 
     /**
      * @var array
      */
     protected $fillable = ['nombre', 'descripcion', 'clave'];
+
+    /**
+     * Obtiene las areas tipo que son las ultimas en la jerarquia.
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOnlyLeafs($query)
+    {
+        return $query->whereRaw('_lft + 1 = _rgt');
+    }
 
     /**
      * Obra relacionada con este tipo de area
@@ -35,16 +46,13 @@ class Tipo extends Node
     }
 
     /**
-     * Materiales requeridos para este tipo de area
+     * Materiales requeridos para este tipo de area.
      * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function materiales()
+    public function materialesRequeridos()
     {
-        return $this->belongsToMany(Material::class, 'Equipamiento.materiales_requeridos', 'id_tipo_area', 'id_material')
-            ->orderBy('descripcion')
-            ->withTimestamps()
-            ->withPivot('cantidad_requerida', 'costo_estimado', 'se_evalua');
+        return $this->hasMany(MaterialRequerido::class, 'id_tipo_area');
     }
 
     /**
@@ -64,7 +72,7 @@ class Tipo extends Node
      */
     public function conteoMateriales()
     {
-        return $this->materiales->count();
+        return $this->materialesRequeridos->count();
     }
 
     /**
@@ -84,14 +92,13 @@ class Tipo extends Node
      */
     public function costoEstimado()
     {
-        return $this->materiales->sum('pivot.costo_estimado');
+        return $this->materialesRequeridos->sum('precio_estimado');
     }
 
     /**
      * Crea un nuevo tipo de area dentro de otro.
      *
      * @param array $data
-     * @param Tipo|null $parent
      * @return self
      */
     public static function nuevo(array $data)
@@ -102,7 +109,7 @@ class Tipo extends Node
     /**
      * Relaciona este tipo de area con una obra.
      * 
-     * @param  Obra   $obra
+     * @param  Obra $obra
      * @return self
      */
     public function enObra(Obra $obra)
@@ -114,7 +121,7 @@ class Tipo extends Node
     /**
      * Mueve este tipo dentro de otro al final.
      * 
-     * @param  Tipo|null   $parent
+     * @param  AreaTipo|null $parent
      * @return self
      */
     public function dentroDe($parent = null)
@@ -132,22 +139,39 @@ class Tipo extends Node
     }
 
     /**
-     * Agrega articulos requeridos a este tipo de area.
-     * 
-     * @param  array|int  $material
-     * @return self
+     * Agrega materiales requeridos a este tipo de area.
+     *
+     * @param  array|int $material
+     * @param int $cantidad_requerida
+     * @param float $precio_estimado
+     * @param int $cantidad_comparativa
+     * @param float $precio_comparativa
+     * @param bool $existe_para_comparativa
+     * @return AreaTipo
      */
-    public function requiereArticulo($material, $cantidad_requerida = 1, $costo_estimado = 0)
+    public function agregaArticuloRequerido($id_material)
     {
-        if (is_array($material)) {
-            $this->materiales()->sync($material);
-        } else {
-            $this->materiales()->attach($material, [
-                'cantidad_requerida' => $cantidad_requerida,
-                'costo_estimado' => $costo_estimado
-            ]);
-        }
+        $this->materialesRequeridos()->create([
+            'id_material' => $id_material,
+            'cantidad_requerida' => 1,
+            'precio_estimado' => 0.0,
+            'cantidad_comparativa' => null,
+            'precio_comparativa' => null,
+            'existe_para_comparativa' => true,
+        ]);
 
         return $this;
+    }
+
+    /**
+     * Elimina materiales requeridos.
+     * 
+     * @param array $ids
+     */
+    public function quitaMaterialesRequeridos(array $ids)
+    {
+        foreach ($ids as $id_articulo) {
+            $this->materialesRequeridos->find($id_articulo)->delete();
+        }
     }
 }

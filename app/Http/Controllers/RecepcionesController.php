@@ -8,8 +8,9 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreaRepository;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
-use Ghi\Equipamiento\Recepciones\RecibeArticulos;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Recepciones\RecibeArticulosAlmacen;
+use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
 
 class RecepcionesController extends Controller
 {
@@ -22,8 +23,9 @@ class RecepcionesController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * Muestra un listado de recepciones generadas.
+     * 
+     * @param  Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -61,20 +63,24 @@ class RecepcionesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra un formulario para crear una recepcion.
      *
+     * @param AreaRepository $areas
+     * 
      * @return \Illuminate\Http\Response
      */
     public function create(AreaRepository $areas)
     {
         $proveedores = Proveedor::soloProveedores()
             ->orderBy('razon_social')
-            ->lists('razon_social', 'id_empresa')->all();
+            ->lists('razon_social', 'id_empresa')
+            ->all();
 
         $compras = Transaccion::ordenesCompraMateriales()
             ->where('id_obra', $this->getIdObra())
             ->orderBy('numero_folio', 'DESC')
-            ->lists('numero_folio', 'id_transaccion')->all();
+            ->lists('numero_folio', 'id_transaccion')
+            ->all();
 
         $areas = $areas->getListaAreas();
 
@@ -87,12 +93,19 @@ class RecepcionesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Requests\CreateRecepcionRequest $request
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function store(Requests\CreateRecepcionRequest $request)
     {
-        $recepcion = (new RecibeArticulos($request->all(), $this->getObraEnContexto()))->save();
+        if ($request->get('opcion_recepcion') === 'almacenar') {
+            $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
+        }
+
+        if ($request->get('opcion_recepcion') === 'asignar') {
+            $recepcion = (new RecibeArticulosAsignacion($request->all(), $this->getObraEnContexto()))->save();
+        }
 
         if ($request->ajax()) {
             return response()->json(['path' => route('recepciones.show', $recepcion)]);
@@ -111,17 +124,5 @@ class RecepcionesController extends Controller
 
         return view('recepciones.show')
             ->withRecepcion($recepcion);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 }

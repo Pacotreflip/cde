@@ -1,7 +1,7 @@
 <!-- Nombre Form Input -->
 <div class="form-group">
   {!! Form::label('nombre', 'Nombre:') !!}
-  {!! Form::text('nombre', null, ['class' => 'form-control', 'required']) !!}
+  {!! Form::text('nombre', null, ['class' => 'form-control', 'required', 'autofocus']) !!}
 </div>
 
 <!-- Clave Form Input -->

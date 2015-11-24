@@ -47,7 +47,7 @@ class AreaRepository extends BaseRepository
      */
     public function getListaTipos()
     {
-        return $tipos = Tipo::defaultOrder()->lists('nombre', 'id');
+        return $tipos = AreaTipo::defaultOrder()->lists('nombre', 'id');
 
         return $lista;
     }

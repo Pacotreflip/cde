@@ -32,17 +32,18 @@ class ClasificadoresController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
     public function index(Request $request)
     {
-        $clasificador      = null;
+        $clasificador = null;
         $ancestros = [];
 
         if ($request->has('clasificador')) {
-            $clasificador  = $this->clasificadores->getById($request->get('clasificador'));
+            $clasificador = $this->clasificadores->getById($request->get('clasificador'));
             $descendientes = $clasificador->children()->defaultOrder()->get();
-            $ancestros     = $clasificador->getAncestors();
+            $ancestros = $clasificador->getAncestors();
         } else {
             $descendientes = $this->clasificadores->getNivelesRaiz();
         }
@@ -71,7 +72,7 @@ class ClasificadoresController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param Requests\CreateClasificadorRequest $request
      * @return Response
      */
     public function store(Requests\CreateClasificadorRequest $request)
@@ -96,8 +97,8 @@ class ClasificadoresController extends Controller
      */
     public function edit($id)
     {
-        $clasificador   = $this->clasificadores->getById($id);
-        $ancestros      = $clasificador->getAncestors();
+        $clasificador = $this->clasificadores->getById($id);
+        $ancestros = $clasificador->getAncestors();
         $clasificadores = [null => 'Inicio'] + $this->clasificadores->getAsList();
 
         return view('clasificadores.edit')
@@ -109,8 +110,8 @@ class ClasificadoresController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param Requests\UpdateClasificadorRequest $request
+     * @param  int $id
      * @return Response
      */
     public function update(Requests\UpdateClasificadorRequest $request, $id)

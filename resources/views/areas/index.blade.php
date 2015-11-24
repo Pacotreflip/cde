@@ -9,8 +9,8 @@
 
   @include('areas.partials.breadcrumb')
 
-  <table class="table table-striped table-hover" data-link="row">
-    <tbody class="rowlink">
+  <table class="table table-striped table-hover">
+    <tbody>
       @foreach($descendientes as $descendiente)
         <tr>
           <td>

@@ -5,7 +5,6 @@ namespace Ghi\Http\Controllers;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Illuminate\Http\Request;
-use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Unidad;
 use Ghi\Equipamiento\Articulos\Factory;
 use Ghi\Equipamiento\Articulos\Familia;
@@ -13,22 +12,20 @@ use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
-use Ghi\Equipamiento\Articulos\MaterialRepository;
+use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Articulos\ClasificadorRepository;
 
 class ArticulosController extends Controller
 {
-    /**
-     *
-     * @var MaterialRepository
-     */
     protected $materiales;
+
     protected $clasificadores;
 
     /**
-     * @param MaterialRepository $materiales
+     * @param Materiales $materiales
+     * @param ClasificadorRepository $clasificadores
      */
-    public function __construct(MaterialRepository $materiales, ClasificadorRepository $clasificadores)
+    public function __construct(Materiales $materiales, ClasificadorRepository $clasificadores)
     {
         $this->middleware('auth');
         $this->middleware('context');
@@ -60,9 +57,9 @@ class ArticulosController extends Controller
      */
     public function create()
     {
-        $unidades       = [null => 'Seleccione una opcion'] + $this->materiales->getListaunidades();
-        $familias       = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
-        $tipos          = $this->materiales->getListaTipoMateriales();
+        $unidades = [null => 'Seleccione una opcion'] + $this->materiales->getListaunidades();
+        $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
+        $tipos = $this->materiales->getListaTipoMateriales();
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.create')
@@ -75,7 +72,8 @@ class ArticulosController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param CreateArticuloRequest $request
+     * @param Factory $materiales
      * @return Response
      */
     public function store(CreateArticuloRequest $request, Factory $materiales)
@@ -121,9 +119,9 @@ class ArticulosController extends Controller
      */
     public function edit($id)
     {
-        $material       = $this->materiales->getById($id);
-        $unidades       = $this->materiales->getListaUnidades();
-        $familias       = $this->materiales->getListaFamilias($material->tipo_material);
+        $material = $this->materiales->getById($id);
+        $unidades = $this->materiales->getListaUnidades();
+        $familias = $this->materiales->getListaFamilias($material->tipo_material);
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.edit')
@@ -136,16 +134,16 @@ class ArticulosController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param UpdateArticuloRequest $request
+     * @param  int $id
      * @return Response
      */
     public function update(UpdateArticuloRequest $request, $id)
     {
-        $material     = $this->materiales->getById($id);
-        $unidad       = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
+        $material = $this->materiales->getById($id);
+        $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
         $clasificador = Clasificador::find($request->get('clasificador'));
-        $familia      = Familia::findOrFail($request->get('familia'));
+        $familia = Familia::findOrFail($request->get('familia'));
 
         $material->fill($request->all());
         $material->asignaUnidad($unidad);

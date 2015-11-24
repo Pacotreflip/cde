@@ -5,20 +5,14 @@ namespace Ghi\Equipamiento\Recepciones;
 use Ghi\Core\Models\Obra;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
-class RecibeArticulos
+class RecibeArticulosAsignacion
 {
-    /**
-     * @var array
-     */
     protected $data;
 
-    /**
-     * @var Obra
-     */
     protected $obra;
 
     /**
@@ -33,8 +27,9 @@ class RecibeArticulos
 
     /**
      * Genera una recepcion de articulos.
-     * 
+     *
      * @return Recepcion
+     * @throws \Exception
      */
     public function save()
     {
@@ -45,9 +40,14 @@ class RecibeArticulos
 
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
-                $area = Area::findOrFail($this->data['area_almacenamiento']);
 
-                $recepcion->recibeMaterial($material, $area, $item['cantidad_recibir']);
+                $cantidad = collect($item['destinos'])->sum('cantidad');
+
+                $recepcion->agregaMaterial($material, $cantidad, $item['id_item']);
+
+                // foreach ( as $destino) {
+                //     $area = Area::findOrFail($destino['id']);
+                // }
             }
 
             if ($recepcion->items->count() === 0) {
@@ -57,7 +57,7 @@ class RecibeArticulos
             $recepcion->save();
             
             DB::connection('cadeco')->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
             throw $e;
         }
@@ -76,7 +76,7 @@ class RecibeArticulos
         $recepcion->obra()->associate($this->obra);
         $recepcion->id_empresa = $this->data['proveedor'];
         $recepcion->id_orden_compra = $this->data['orden_compra'];
-        $recepcion->creado_por = \Auth::user()->usuario;
+        $recepcion->creado_por = Auth::user()->usuario;
         $recepcion->save();
 
         return $recepcion;

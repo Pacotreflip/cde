@@ -13,14 +13,20 @@ class CreateMaterialesRequeridosTable extends Migration
     public function up()
     {
         Schema::create('Equipamiento.materiales_requeridos', function (Blueprint $table) {
-            $table->unsignedInteger('id_tipo_area')->index();
-            $table->unsignedInteger('id_material')->index();
-            $table->integer('cantidad_requerida')->default(1);
-            $table->decimal('costo_estimado', 12, 2)->default(0)->nullable();
+            $table->increments('id');
+            $table->integer('id_tipo_area')->unsigned()->index();
+            $table->integer('id_material')->unsigned()->index();
+            $table->decimal('cantidad_requerida', 9, 2)->default(1);
+            $table->integer('id_moneda')->unsigned()->nullable()->index();
+            $table->integer('precio_estimado')->default(0)->nullable();
             $table->boolean('se_evalua')->default(false);
+            $table->decimal('cantidad_comparativa', 9, 2)->nullable();
+            $table->integer('id_moneda_comparativa')->unsigned()->nullable()->index();
+            $table->integer('precio_comparativa')->nullable();
+            $table->boolean('existe_para_comparativa')->default(true);
             $table->timestamps();
 
-            $table->primary(['id_tipo_area', 'id_material']);
+            $table->unique(['id_tipo_area', 'id_material']);
 
             $table->foreign('id_tipo_area')
                 ->references('id')
@@ -29,6 +35,14 @@ class CreateMaterialesRequeridosTable extends Migration
             $table->foreign('id_material')
                 ->references('id_material')
                 ->on('materiales');
+
+            $table->foreign('id_moneda')
+                ->references('id_moneda')
+                ->on('monedas');
+
+            $table->foreign('id_moneda_comparativa')
+                ->references('id_moneda')
+                ->on('monedas');
         });
     }
 

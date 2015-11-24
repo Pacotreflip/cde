@@ -1,62 +1,65 @@
-<a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>
-    Ver destinos
-</a>
+<div>
+  <a type="button" data-toggle="modal" class="btn btn-xs btn-primary" v-el:modalButton>
+      Asignar destinos
+  </a>
 
-<div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title">Destinos Asignados</h3>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <table class="table">
-              <thead>
-                <tr>
-                  <td><b>Area</b></td>
-                  <td><b>Cantidad</b></td>
-                  <!-- <td></td> -->
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="destino in destinos">
-                  <td>{{ destino.ruta }}</td>
-                  <td>
-                    <input type="text" class="form-control input-sm decimal" v-model="destino.cantidad" number value="{{ destino.cantidad | currency '' }}">
-                  </td>
-                  <!-- <td>
-                    <button class="btn btn-xs btn-danger" v-on:click="quitaDestino($event, destino)"><i class="fa fa-trash"></i> Quitar</button>
-                  </td> -->
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td class="text-right"><strong>Total:</strong></td>
-                  <td class="text-right"><strong>{{ cantidadTotal | currency '' }}</strong></td>
-                </tr>
-              </tfoot>
-            </table>
+  <div class="modal fade" v-el:destinosmodal data-show="false" tabindex="-1" role="dialog" aria-labelledby="destinos">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
 
-            <!-- <pre>
-              {{ $data.destinos | json }}
-            </pre> -->
-          </div>
-          <div class="col-md-6">
-            <areas-tree v-if="activarJsTree"
-                      v-bind:plugins="['checkbox']"
-                      v-bind:multiple="true"
-                      :when-change="sincronizaDestinos"
-                      :select-only-leaf="true"></areas-tree>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h3 class="modal-title">Destinos Asignados</h3>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <td><b>Area</b></td>
+                    <td><b>Cantidad</b></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="destino in destinos">
+                    <td>{{ destino.ruta }}</td>
+                    <td>
+                      <input
+                        type="text" 
+                        class="form-control input-sm decimal" 
+                        v-model="destino.cantidad" 
+                        number 
+                        value="{{ destino.cantidad | currency '' }}">
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right"><strong>{{ cantidadTotal | currency '' }}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <areas-jstree
+                v-if="activarJsTree"
+                v-bind:plugins="['checkbox']"
+                v-bind:multiple="true"
+                :when-change="sincronizaDestinos"
+                :select-only-leaf="true">
+              </areas-jstree>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>

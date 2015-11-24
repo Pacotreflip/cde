@@ -17,7 +17,6 @@
     </div>
   </div>
 
-
   <h3>Articulos Transferidos</h3>
   <hr>
   <div class="table-responsive">

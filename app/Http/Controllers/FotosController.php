@@ -24,7 +24,8 @@ class FotosController extends Controller
     /**
      * Agrega una foto a un articulo.
      *
-     * @param  Request $request
+     * @param AgregaFotoRequest $request
+     * @param $id
      * @return Response
      */
     public function store(AgregaFotoRequest $request, $id)
