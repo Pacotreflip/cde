@@ -4,14 +4,14 @@ namespace Ghi\Http\Controllers\Api;
 
 use Ghi\Core\Facades\Fractal;
 use Ghi\Serializers\SimpleSerializer;
-use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Areas\AreaJsTreeTransformer;
 
 class AreasJsTreeController extends ApiController
 {
     protected $areas;
 
-    public function __construct(AreaRepository $areas)
+    public function __construct(Areas $areas)
     {
         $this->areas = $areas;
         Fractal::setSerializer(new SimpleSerializer);

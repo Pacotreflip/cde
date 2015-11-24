@@ -8,9 +8,10 @@ class SimpleSerializer extends ArraySerializer
 {
     /**
      * [collection description]
-     * @param  [type] $resourceKey [description]
-     * @param  array  $data        [description]
-     * @return [type]              [description]
+     *
+     * @param string $resourceKey
+     * @param  array $data
+     * @return array
      */
     public function collection($resourceKey, array $data)
     {

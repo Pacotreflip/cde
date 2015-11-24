@@ -5,49 +5,27 @@ namespace Ghi\Equipamiento\Articulos;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Areas\AreaTipo;
 use Illuminate\Database\Eloquent\Model;
-use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Inventarios\Inventario;
 use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Ghi\Equipamiento\Inventarios\Exceptions\InventarioYaExisteException;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Material extends Model
 {
     const MAX_HIJOS_EN_FAMILIA = 999;
 
-    /**
-     * @var string
-     */
     protected $connection = 'cadeco';
 
-    /**
-     * @var string
-     */
     protected $table = 'materiales';
 
-    /**
-     * @var string
-     */
     protected $primaryKey = 'id_material';
 
-    /**
-     * @var array
-     */
     protected $fillable = ['descripcion', 'descripcion_larga', 'numero_parte', 'codigo_externo', ];
 
-    /**
-     * [$casts description].
-     * 
-     * @var array
-     */
     protected $casts = [
         'id_material' => 'int',
     ];
 
-    /**
-     * @var bool
-     */
     public $timestamps = false;
 
     /**
@@ -313,9 +291,10 @@ class Material extends Model
 
     /**
      * Obtiene el inventario de este articulo en un area.
-     * 
+     *
      * @param  Area $area
      * @return Inventario
+     * @throws InventarioNoEncontradoException
      */
     public function getInventarioDeArea(Area $area)
     {

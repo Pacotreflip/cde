@@ -9,19 +9,10 @@ use Ghi\Equipamiento\Articulos\Material;
 
 class AreaTipo extends Node
 {
-    /**
-     * @var string
-     */
     protected $connection = 'cadeco';
 
-    /**
-     * @var string
-     */
     protected $table = 'Equipamiento.areas_tipo';
 
-    /**
-     * @var array
-     */
     protected $fillable = ['nombre', 'descripcion', 'clave'];
 
     /**
@@ -141,12 +132,7 @@ class AreaTipo extends Node
     /**
      * Agrega materiales requeridos a este tipo de area.
      *
-     * @param  array|int $material
-     * @param int $cantidad_requerida
-     * @param float $precio_estimado
-     * @param int $cantidad_comparativa
-     * @param float $precio_comparativa
-     * @param bool $existe_para_comparativa
+     * @param $id_material
      * @return AreaTipo
      */
     public function agregaArticuloRequerido($id_material)

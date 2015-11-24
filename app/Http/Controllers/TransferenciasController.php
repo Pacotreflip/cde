@@ -3,12 +3,10 @@
 namespace Ghi\Http\Controllers;
 
 use Ghi\Http\Requests;
-use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
-use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Http\Requests\CreateTransferenciaRequest;
 use Ghi\Equipamiento\Transferencias\Transferencia;
 
@@ -37,9 +35,10 @@ class TransferenciasController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param Areas $areas
      * @return \Illuminate\Http\Response
      */
-    public function create(AreaRepository $areas)
+    public function create(Areas $areas)
     {
         return view('transferencias.create')
             ->withAreas($areas->getListaAreas());
@@ -48,8 +47,9 @@ class TransferenciasController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateTransferenciaRequest $request
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function store(CreateTransferenciaRequest $request)
     {
@@ -67,7 +67,7 @@ class TransferenciasController extends Controller
             
             foreach ($request->get('materiales') as $item) {
                 $material = Material::where('id_material', $item['id'])->firstOrFail();
-                $destino  = Area::findOrFail($item['area_destino']);
+                $destino = Area::findOrFail($item['area_destino']);
 
                 $transferencia->transfiereMaterial($material, $origen, $destino, $item['cantidad']);
             }
@@ -93,16 +93,5 @@ class TransferenciasController extends Controller
 
         return view('transferencias.show')
             ->withTransferencia($transferencia);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -44,7 +44,10 @@
       </section>
       <hr>
       <div>
-        <table class="table table-condensed table-striped table-bordered">
+        <p v-show="cargando">
+          <i class="fa fa-2x fa-spin fa-spinner"></i> Cargando ...
+        </p>
+        <table class="table table-condensed table-striped table-bordered" v-else>
           <thead>
             <tr>
                 <th colspan="4" class="text-center">ESTE PROYECTO</th>

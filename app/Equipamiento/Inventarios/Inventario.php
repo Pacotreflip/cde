@@ -102,7 +102,6 @@ class Inventario extends Model
     {
         $actual = $this->cantidad_existencia;
         $total = $actual + $cantidad;
-        $this->cantidad_existencia = $total;
 
         if ((float) $total === (float) $actual) {
             return $this;
@@ -111,7 +110,7 @@ class Inventario extends Model
         $this->beginTransaction();
 
         try {
-            if ($this->save()) {
+            if ($this->increments('cantidad_existencia', $total)) {
                 $this->commitTransaction();
 
                 return $this;
@@ -135,13 +134,13 @@ class Inventario extends Model
         if ($this->tieneExistenciaSuficiente($decremento)) {
             $disponible = $this->cantidad_existencia;
             $restante = $disponible - $decremento;
-            $this->cantidad_existencia = $restante;
             
             $this->beginTransaction();
 
             try {
-                $this->save();
-                $this->commitTransaction();
+                if ($this->decrement('cantidad_existencia', $restante)) {
+                    $this->commitTransaction();
+                }
 
                 return $this;
             } catch (SinExistenciaDisponibleException $e) {
