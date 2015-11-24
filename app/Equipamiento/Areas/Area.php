@@ -4,21 +4,14 @@ namespace Ghi\Equipamiento\Areas;
 
 use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
-use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Area extends Node
 {
-    /**
-     * @var string
-     */
     protected $connection = 'cadeco';
 
-    /**
-     * @var string
-     */
     protected $table = 'Equipamiento.areas';
 
     /**
@@ -39,7 +32,7 @@ class Area extends Node
     }
 
     /**
-     * Subtipo de area
+     * Area tipo de esta area.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -71,7 +64,7 @@ class Area extends Node
     }
 
     /**
-     * Mueve esta area dentro de otra area al final
+     * Mueve esta area dentro de otra area al final.
      *
      * @param Area $parent
      * @return Area
@@ -86,14 +79,14 @@ class Area extends Node
     }
 
     /**
-     * Asigna el subtipo a esta area
+     * Asigna el subtipo a esta area.
      *
-     * @param AreaTipo $tipo
+     * @param AreaTipo $area_tipo
      * @return Area
      */
-    public function asignaTipo(AreaTipo $tipo)
+    public function asignaTipo(AreaTipo $area_tipo)
     {
-        return $this->tipo()->associate($tipo);
+        return $this->tipo()->associate($area_tipo);
     }
 
     /**
@@ -114,12 +107,18 @@ class Area extends Node
         return $inventario;
     }
 
-    public function ruta()
+    /**
+     * Genera la cadena que representa la ruta de esta area.
+     *
+     * @param string $separator
+     * @return string
+     */
+    public function ruta($separator = '/')
     {
         $ruta = '';
 
         foreach ($this->getAncestors() as $area) {
-            $ruta .= $area->nombre . ' / ';
+            $ruta .= $area->nombre.$separator;
         }
 
         $ruta .= $this->nombre;

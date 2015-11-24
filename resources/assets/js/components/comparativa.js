@@ -7,15 +7,20 @@ Vue.component('screen-comparativa', {
             sortKey: '',
             reverse: 1,
             tipoFiltro: 'todos',
-            articulosFiltrados: []
+            articulosFiltrados: [],
+            cargando: false
         }
     },
 
     props: ['id'],
 
     ready: function () {
+        this.cargando = true;
+
         this.$http.get('/api/areas-tipo/' + this.id + '/comparativa')
             .success(function (response) {
+                this.cargando = false;
+
                 this.articulos = response.articulos;
                 this.tipo_cambio = response.tipo_cambio;
             })
@@ -30,6 +35,7 @@ Vue.component('screen-comparativa', {
         },
 
         filtro: function (articulos, tipoFiltro) {
+
             if (tipoFiltro == 'todos') {
                 return this.articulosFiltrados = articulos;
             }

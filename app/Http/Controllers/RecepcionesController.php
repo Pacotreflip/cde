@@ -4,8 +4,7 @@ namespace Ghi\Http\Controllers;
 
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
-use Ghi\Http\Controllers\Controller;
-use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transacciones\Transaccion;
@@ -65,11 +64,11 @@ class RecepcionesController extends Controller
     /**
      * Muestra un formulario para crear una recepcion.
      *
-     * @param AreaRepository $areas
+     * @param Areas $areas
      * 
      * @return \Illuminate\Http\Response
      */
-    public function create(AreaRepository $areas)
+    public function create(Areas $areas)
     {
         $proveedores = Proveedor::soloProveedores()
             ->orderBy('razon_social')

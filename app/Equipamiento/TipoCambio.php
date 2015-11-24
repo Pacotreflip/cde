@@ -2,7 +2,6 @@
 
 namespace Ghi\Equipamiento;
 
-use Ghi\Equipamiento\Moneda;
 use Illuminate\Database\Eloquent\Model;
 
 class TipoCambio extends Model

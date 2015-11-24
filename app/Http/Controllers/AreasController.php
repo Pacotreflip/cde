@@ -8,29 +8,28 @@ use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Areas\AreaTipo;
 use Ghi\Equipamiento\Articulos\Material;
-use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Areas\AreasTipo;
 
 class AreasController extends Controller
 {
-    /**
-     * @var AreaRepository
-     */
-    private $areas;
-    protected $tipos;
+    protected $areas;
+
+    protected $areas_tipo;
 
     /**
      * AreasController constructor.
      *
-     * @param AreaRepository $areas
+     * @param Areas     $areas
+     * @param AreasTipo $areas_tipo
      */
-    public function __construct(AreaRepository $areas, AreasTipo $tipos)
+    public function __construct(Areas $areas, AreasTipo $areas_tipo)
     {
         $this->middleware('auth');
         $this->middleware('context');
         
         $this->areas = $areas;
-        $this->tipos = $tipos;
+        $this->areas_tipo = $areas_tipo;
 
         parent::__construct();
     }
@@ -43,13 +42,13 @@ class AreasController extends Controller
      */
     public function index(Request $request)
     {
-        $area      = null;
+        $area = null;
         $ancestros = [];
 
         if ($request->has('area')) {
             $area = $this->areas->getById($request->get('area'));
             $descendientes = $area->children()->defaultOrder()->get();
-            $ancestros     = $area->getAncestors();
+            $ancestros = $area->getAncestors();
         } else {
             $descendientes = $this->areas->getNivelesRaiz();
         }
@@ -67,7 +66,7 @@ class AreasController extends Controller
      */
     public function create()
     {
-        $tipos = [null => 'Ninguno'] + $this->tipos->getListaUltimosNiveles();
+        $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
 
         return view('areas.create')
@@ -126,8 +125,8 @@ class AreasController extends Controller
      */
     public function edit($id)
     {
-        $area  = $this->areas->getById($id);
-        $tipos = [null => 'Ninguno'] + $this->tipos->getListaUltimosNiveles();
+        $area = $this->areas->getById($id);
+        $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
 
         // dd($this->estadisticaMateriales($area));
@@ -140,8 +139,9 @@ class AreasController extends Controller
 
     /**
      * [estadisticaMateriales description]
-     * @param  [type] $area [description]
-     * @return [type]       [description]
+     *
+     * @param  [type] $area
+     * @return [type]
      */
     protected function estadisticaMateriales($area)
     {
@@ -173,14 +173,14 @@ class AreasController extends Controller
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  int      $id
      * @return Response
      */
     public function update(Request $request, $id)
     {
-        $area   = $this->areas->getById($id);
+        $area = $this->areas->getById($id);
         $parent = Area::find($request->get('parent_id'));
-        $tipo   = AreaTipo::find($request->get('tipo_id'));
+        $tipo = AreaTipo::find($request->get('tipo_id'));
 
         $area->fill($request->all());
 

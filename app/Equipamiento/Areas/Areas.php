@@ -5,7 +5,7 @@ namespace Ghi\Equipamiento\Areas;
 use Illuminate\Support\Facades\DB;
 use Ghi\Core\Repositories\BaseRepository;
 
-class AreaRepository extends BaseRepository
+class Areas extends BaseRepository
 {
     /**
      * Obtiene un area por su id

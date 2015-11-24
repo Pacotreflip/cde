@@ -5,7 +5,7 @@ namespace Ghi\Http\Controllers\Api;
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Areas\Area;
-use Ghi\Equipamiento\Areas\AreaRepository;
+use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Http\Controllers\Api\ApiController;
 
 class AreasController extends ApiController
@@ -15,9 +15,9 @@ class AreasController extends ApiController
     /**
      * AreasController constructor.
      *
-     * @param AreaRepository $areas
+     * @param Areas $areas
      */
-    public function __construct(AreaRepository $areas)
+    public function __construct(Areas $areas)
     {
         $this->middleware('auth');
         $this->middleware('context');
