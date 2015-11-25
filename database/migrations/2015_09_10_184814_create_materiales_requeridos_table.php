@@ -30,7 +30,7 @@ class CreateMaterialesRequeridosTable extends Migration
 
             $table->foreign('id_tipo_area')
                 ->references('id')
-                ->on('Equipamiento.area_tipos');
+                ->on('Equipamiento.areas_tipo');
 
             $table->foreign('id_material')
                 ->references('id_material')

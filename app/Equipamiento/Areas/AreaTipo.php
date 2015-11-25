@@ -23,7 +23,7 @@ class AreaTipo extends Node
      */
     public function scopeOnlyLeafs($query)
     {
-        return $query->whereRaw('_lft + 1 = _rgt');
+        return $query->whereRaw('_rgt - _lft = 1');
     }
 
     /**
@@ -53,7 +53,7 @@ class AreaTipo extends Node
      */
     public function areas()
     {
-        return $this->hasMany(Area::class, 'tipo_id');
+        return $this->hasMany(Area::class, 'tipo_id')->orderBy('_lft');
     }
 
     /**
