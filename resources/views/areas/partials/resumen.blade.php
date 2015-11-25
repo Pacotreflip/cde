@@ -1,5 +1,5 @@
 <hr>
-<h4>Conteo de Áreas por Área Tipo en {{ $area->nombre }}</h4>
+<h4>Conteo por Áreas Tipo en {{ $area->nombre }}</h4>
 
 <ul class="list-group">
   @foreach($areas_tipo as $area_tipo)
