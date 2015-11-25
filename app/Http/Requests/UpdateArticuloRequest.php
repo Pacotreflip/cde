@@ -24,11 +24,11 @@ class UpdateArticuloRequest extends Request
     public function rules()
     {
         return [
-            'descripcion'     => 'required|max:255|unique:cadeco.materiales,descripcion,'.$this->route('id').',id_material',
-            'numero_parte'    => 'required|max:255|unique:cadeco.materiales,numero_parte,'.$this->route('id').',id_material',
-            'unidad'          => 'required',
-            'familia'         => 'required',
-            'ficha_tecnica'   => 'mimes:pdf',
+            'descripcion'   => 'required|max:255|unique:cadeco.materiales,descripcion,'.$this->route('id').',id_material',
+            'numero_parte'  => 'max:16|unique:cadeco.materiales,numero_parte,'.$this->route('id').',id_material',
+            'unidad'        => 'required',
+            'familia'       => 'required',
+            'ficha_tecnica' => 'mimes:pdf,png,jpg',
         ];
     }
 

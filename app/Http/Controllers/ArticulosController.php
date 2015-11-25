@@ -121,7 +121,7 @@ class ArticulosController extends Controller
     {
         $material = $this->materiales->getById($id);
         $unidades = $this->materiales->getListaUnidades();
-        $familias = $this->materiales->getListaFamilias($material->tipo_material);
+        $familias = $this->materiales->getListaFamilias($material->tipo_material->getTipoReal());
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
 
         return view('articulos.edit')
