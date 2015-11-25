@@ -12,7 +12,7 @@
       <button type="submit" class="btn btn-default">Aplicar</button>
       
       <a href="{{ route('requerimientos.seleccion', [$tipo]) }}" class="btn btn-success pull-right">
-          <i class="fa fa-plus"></i> Agregar Artículos
+        <i class="fa fa-plus"></i> Agregar Artículos
       </a>
     </div>
 
@@ -29,7 +29,7 @@
           <th>Cantidad Requerida</th>
           <th>Precio Estimado</th>
           <th>Moneda Nativa</th>
-          <th>Moneda Homologada USD ({{ $tipo_cambio }})</th>
+          <th>Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
           <th>Cantidad Comparativa</th>
           <th>Precio Comparativa</th>
           <th>Moneda Nativa</th>
@@ -37,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        @foreach($tipo->materialesRequeridos as $key => $requerido)
+        @foreach($tipo->materialesRequeridos->sortBy('material.descripcion') as $key => $requerido)
           <tr>
             <td><input type="checkbox" name="selected_articulos[{{ $requerido->id }}]" value="{{ $requerido->id }}"></td>
             <td>{{ $key + 1 }}</td>
