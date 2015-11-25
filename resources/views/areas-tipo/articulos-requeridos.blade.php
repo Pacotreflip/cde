@@ -42,7 +42,7 @@
             <td><input type="checkbox" name="selected_articulos[{{ $requerido->id }}]" value="{{ $requerido->id }}"></td>
             <td>{{ $key + 1 }}</td>
             <td>{{ $requerido->material->numero_parte }}</td>
-            <td><a href="{{ route('articulos.edit', [$requerido]) }}">{{ $requerido->material->descripcion }}</a></td>
+            <td><a href="{{ route('articulos.edit', [$requerido->id_material]) }}">{{ $requerido->material->descripcion }}</a></td>
             <td>{{ $requerido->material->unidad }}</td>
             <td>
               <input
