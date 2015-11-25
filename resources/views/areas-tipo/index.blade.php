@@ -2,8 +2,8 @@
 
 @section('content')
   <h1>Áreas Tipo
-      <a href="{{ route('tipos.create', Request::has('tipo') ? ['dentro_de' => Request::get('tipo')] : []) }}" 
-          class="btn btn-success pull-right"><i class="fa fa-plus"></i> Nueva Área Tipo</a>
+    <a href="{{ route('tipos.create', Request::has('tipo') ? ['dentro_de' => Request::get('tipo')] : []) }}" 
+      class="btn btn-success pull-right"><i class="fa fa-plus"></i> Nueva Área Tipo</a>
   </h1>
   <hr>
 
@@ -16,7 +16,8 @@
           <td>
             <a href="{{ route('tipos.index', ['tipo='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
 
-            <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+            <div class="btn-toolbar pull-right">
+
               <div class="btn-group btn-group-xs">
                 <a href="{{ route('tipos.edit', [$descendiente]) }}" class="btn btn-primary btn-xs">
                   <span class="fa fa-pencil"></span>
@@ -40,7 +41,7 @@
                   <input type="hidden" name="_method" value="PATCH">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                  <button type="submit" class="btn btn-warning btn-xs pull-right">
+                  <button type="submit" class="btn btn-warning btn-xs">
                     <span class="fa fa-arrow-up"></span>
                   </button>
                   <input type="hidden" id="move_up" name="move_up" value="1">

@@ -1,11 +1,10 @@
-<h3>Resumen del área</h3>
 <hr>
+<h4>Conteo de Áreas por Área Tipo en {{ $area->nombre }}</h4>
 
-<h4>Conteo de Areas Tipo</h4>
 <ul class="list-group">
-    @foreach($areas_tipo as $area_tipo)
-    <li class="list-group-item">
-        {{ $area_tipo->ruta(' / ') }} <span class="badge">{{ $area_tipo->areasAsignadasDentroDe($area)->count() }}</span>
-    </li>
-    @endforeach
+  @foreach($areas_tipo as $area_tipo)
+  <a class="list-group-item" href="{{ route('tipos.edit', $area_tipo) }}">
+    {{ $area_tipo->ruta(' / ') }} <span class="badge">{{ $area_tipo->areasAsignadasDentroDe($area)->count() }}</span>
+  </a>
+  @endforeach
 </ul>
