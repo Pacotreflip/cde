@@ -24,11 +24,11 @@ class CreateArticuloRequest extends Request
     public function rules()
     {
         return [
-            'descripcion'        => 'required|unique:cadeco.materiales,descripcion',
-            'unidad'             => 'required_if:nueva_unidad,null',
-            'nueva_unidad'       => 'required_without:unidad|unique:cadeco.unidades,unidad',
-            'ficha_tecnica'      => 'mimes:pdf',
-            'familia'         => 'required',
+            'descripcion'   => 'required|unique:cadeco.materiales,descripcion',
+            'unidad'        => 'required_if:nueva_unidad,null',
+            'nueva_unidad'  => 'required_without:unidad|unique:cadeco.unidades,unidad',
+            'ficha_tecnica' => 'mimes:pdf',
+            'familia'       => 'required',
         ];
     }
 }
