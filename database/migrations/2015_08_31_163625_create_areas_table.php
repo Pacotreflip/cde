@@ -30,7 +30,7 @@ class CreateAreasTable extends Migration
 
             $table->foreign('tipo_id')
                 ->references('id')
-                ->on('Equipamiento.area_tipos');
+                ->on('Equipamiento.areas_tipo');
         });
     }
 

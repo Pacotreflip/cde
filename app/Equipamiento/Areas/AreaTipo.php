@@ -23,7 +23,7 @@ class AreaTipo extends Node
      */
     public function scopeOnlyLeafs($query)
     {
-        return $query->whereRaw('_lft + 1 = _rgt');
+        return $query->whereRaw('_rgt - _lft = 1');
     }
 
     /**
@@ -53,7 +53,38 @@ class AreaTipo extends Node
      */
     public function areas()
     {
-        return $this->hasMany(Area::class, 'tipo_id');
+        return $this->hasMany(Area::class, 'tipo_id')->orderBy('_lft');
+    }
+
+    public function areasAsignadasDentroDe(Area $area)
+    {
+        return $this->areas()
+            ->where('_lft', '>', $area->_lft)
+            ->where('_rgt', '<', $area->_rgt)
+            ->get();
+    }
+
+    /**
+     * Obtiene la ruta de esta area tipo.
+     * 
+     * @return string
+     */
+    public function getRutaAttribute()
+    {
+        return $this->ruta(' / ');
+    }
+
+    /**
+     * Genera la ruta de esta area tipo.
+     * 
+     * @param  string $separador
+     * @return string
+     */
+    public function ruta($separador = '/')
+    {
+        return $this->getAncestors()
+            ->push($this)
+            ->implode('nombre', $separador);
     }
 
     /**

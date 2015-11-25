@@ -64,6 +64,20 @@ class Area extends Node
     }
 
     /**
+     * Descendientes de esta area que tienen asignado un area tipo.
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function descendientesConAreaTipo()
+    {
+        return $this->descendants()
+            ->with('tipo')
+            ->whereNotNull('tipo_id')
+            ->get()
+            ->groupBy('tipo_id');
+    }
+
+    /**
      * Mueve esta area dentro de otra area al final.
      *
      * @param Area $parent
