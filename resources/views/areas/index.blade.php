@@ -54,7 +54,7 @@
     </tbody>
   </table>
   
-  @if($area and $areas_tipo)
+  @if($area and count($areas_tipo) > 0)
     @include('areas.partials.resumen')
   @endif
 @stop
