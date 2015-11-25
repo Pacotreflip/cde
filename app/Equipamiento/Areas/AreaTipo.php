@@ -43,7 +43,7 @@ class AreaTipo extends Node
      */
     public function materialesRequeridos()
     {
-        return $this->hasMany(MaterialRequerido::class, 'id_tipo_area');
+        return $this->hasMany(MaterialRequerido::class, 'id_tipo_area')->with('material');
     }
 
     /**
@@ -54,14 +54,6 @@ class AreaTipo extends Node
     public function areas()
     {
         return $this->hasMany(Area::class, 'tipo_id')->orderBy('_lft');
-    }
-
-    public function areasAsignadasDentroDe(Area $area)
-    {
-        return $this->areas()
-            ->where('_lft', '>', $area->_lft)
-            ->where('_rgt', '<', $area->_rgt)
-            ->get();
     }
 
     /**
