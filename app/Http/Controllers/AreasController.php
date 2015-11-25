@@ -53,10 +53,30 @@ class AreasController extends Controller
             $descendientes = $this->areas->getNivelesRaiz();
         }
 
+        $areas_tipo = $this->areasTipoDescendientes($area);
+
         return view('areas.index')
             ->withArea($area)
             ->withDescendientes($descendientes)
-            ->withAncestros($ancestros);
+            ->withAncestros($ancestros)
+            ->withAreasTipo($areas_tipo);
+    }
+
+    /**
+     * Areas tipo asignadas a los descendientes de un area.
+     * 
+     * @param  null|Area $area
+     * @return array|\Illuminate\Database\Eloquent\Collection
+     */
+    protected function areasTipoDescendientes($area)
+    {
+        if (is_null($area)) {
+            return [];
+        }
+
+        $ids_areas_tipo = $area->descendientesConAreaTipo()->keys();
+
+        return AreaTipo::whereIn('id', $ids_areas_tipo)->get();
     }
 
     /**

@@ -68,12 +68,9 @@ class AreasTipo
     {
         $tipos = $this->getAll();
 
-        $lista = [];
-        foreach ($tipos as $tipo) {
-            $lista[$tipo->id] = str_repeat('-', $tipo->depth + 1).''.$tipo->nombre;
-        }
-
-        return $lista;
+        return $tipos->keyBy('id')->map(function ($area_tipo) {
+            return str_repeat('-', $area_tipo->depth + 1).' '.$area_tipo->nombre;
+        })->all();
     }
 
     /**
@@ -83,39 +80,12 @@ class AreasTipo
      */
     public function getListaUltimosNiveles()
     {
-        $leafs = AreaTipo::where('id_obra', $this->context->getId())
+        return AreaTipo::where('id_obra', $this->context->getId())
             ->onlyLeafs()
             ->defaultOrder()
-            ->withDepth()
-            ->get();
-
-        $lista = [];
-
-        foreach ($leafs as $tipo_area) {
-            $lista[$tipo_area->id] = $this->getRutaNodo($tipo_area);
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Genera la ruta de un nodo.
-     * 
-     * @param  AreaTipo   $nodo
-     * @param  string $separador
-     * @return string
-     */
-    protected function getRutaNodo($nodo, $separador = '/')
-    {
-        $ruta = '';
-
-        foreach ($nodo->getAncestors() as $seccion) {
-            $ruta .= $seccion->nombre.$separador;
-        }
-
-        $ruta .= $nodo->nombre;
-
-        return $ruta;
+            ->get()
+            ->lists('ruta', 'id')
+            ->all();
     }
 
     /**

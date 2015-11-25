@@ -43,4 +43,8 @@
       @endforeach
     </tbody>
   </table>
+  
+  @if($area)
+    @include('areas.partials.resumen')
+  @endif
 @stop

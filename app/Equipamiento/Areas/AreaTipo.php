@@ -56,6 +56,37 @@ class AreaTipo extends Node
         return $this->hasMany(Area::class, 'tipo_id')->orderBy('_lft');
     }
 
+    public function areasAsignadasDentroDe(Area $area)
+    {
+        return $this->areas()
+            ->where('_lft', '>', $area->_lft)
+            ->where('_rgt', '<', $area->_rgt)
+            ->get();
+    }
+
+    /**
+     * Obtiene la ruta de esta area tipo.
+     * 
+     * @return string
+     */
+    public function getRutaAttribute()
+    {
+        return $this->ruta(' / ');
+    }
+
+    /**
+     * Genera la ruta de esta area tipo.
+     * 
+     * @param  string $separador
+     * @return string
+     */
+    public function ruta($separador = '/')
+    {
+        return $this->getAncestors()
+            ->push($this)
+            ->implode('nombre', $separador);
+    }
+
     /**
      * Numero de materiales requeridos para este tipo de area.
      * 
