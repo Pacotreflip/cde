@@ -57,6 +57,20 @@ class AreaTipo extends Node
     }
 
     /**
+     * Areas que estan asignadas a este area tipo dentro de otra area.
+     * 
+     * @param  Area   $area
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function areasAsignadasDentroDe(Area $area)
+    {
+        return $this->areas()
+            ->where('_lft', '>', $area->_lft)
+            ->where('_rgt', '<', $area->_rgt)
+            ->get();
+    }
+
+    /**
      * Obtiene la ruta de esta area tipo.
      * 
      * @return string
