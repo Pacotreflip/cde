@@ -1,9 +1,9 @@
 @extends('areas-tipo.layout')
 
 @section('main-content')
-  <form action="{{ '/tipos-area/'.$tipo->id.'/evaluacion-calidad' }}" method="POST" accept-charset="UTF-8">
-    <input name="_token" type="hidden" value="{{ csrf_token() }}">
-    <input name="_method" type="hidden" value="PATCH">
+  <form action="{{ '/areas-tipo/'.$tipo->id.'/evaluacion-calidad' }}" method="POST" accept-charset="UTF-8">
+    {{ csrf_field() }}
+    {{ method_field('PATCH') }}
   
     <h4>Artículos que Pueden Evaluarse</h4>
     <table class="table table-striped table-condensed">
@@ -21,10 +21,10 @@
             <td>{{ str_limit($material->material->descripcion, 70) }}</td>
             <td>
               <label class="radio-inline">
-                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 1, $material->se_evalua) !!} Si
+                {!! Form::radio('materiales['.$material->id_material.'][se_evalua]', 1, $material->se_evalua) !!} Si
               </label>
               <label class="radio-inline">
-                {!! Form::radio('materiales['.$material->id_material.'][evalua]', 0, !$material->se_evalua) !!} No
+                {!! Form::radio('materiales['.$material->id_material.'][se_evalua]', 0, !$material->se_evalua) !!} No
               </label>
             </td>
           </tr>

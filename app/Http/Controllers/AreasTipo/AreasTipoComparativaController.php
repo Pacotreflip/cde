@@ -1,8 +1,9 @@
 <?php
 
-namespace Ghi\Http\Controllers;
+namespace Ghi\Http\Controllers\AreasTipo;
 
 use Ghi\Equipamiento\Moneda;
+use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreasTipo;
 
 class AreasTipoComparativaController extends Controller
