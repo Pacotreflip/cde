@@ -4,9 +4,8 @@ use Ghi\Core\Models\Obra;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
-use Ghi\Equipamiento\Transacciones\ItemTransaccion;
+use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
 class InventarioTest extends \TestCase
@@ -34,9 +33,12 @@ class InventarioTest extends \TestCase
         $obra     = factory(Obra::class)->create();
         $material = factory(Material::class)->create();
         $area     = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
-        $item     = factory(ItemTransaccion::class, 'item-recepcion')->create([
-            'id_area_destino' => $area->id,
-            'id_material'     => $material->id_material,
+        $item     = factory(ItemRecepcion::class)->create([
+            'id_recepcion' => null,
+            'id_item' => null,
+            'id_material' => $material->id_material,
+            'unidad' => $material->unidad,
+            'id_area_almacenamiento' => $area->id,
         ]);
 
         $inventario = $material->creaInventarioEnArea($area, 1, $item);

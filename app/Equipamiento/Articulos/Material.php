@@ -307,27 +307,27 @@ class Material extends Model
         throw new InventarioNoEncontradoException;
     }
 
-    /**
-     * Crea una instancia de inventario de este material en el area indicada.
-     * 
-     * @param  Area $area
-     * @throws InventarioNoEncontradoException
-     * @return Inventario
-     */
-    public function nuevoInventarioEnArea(Area $area)
-    {
-        try {
-            return $this->getInventarioDeArea($area);
-        } catch (InventarioNoEncontradoException $e) {
-            $inventario = $this->inventarios()->getRelated()->newInstance();
-            $inventario->id_obra = $area->id_obra;
-            $inventario->id_area = $area->getKey();
-            $inventario->id_material = $this->getKey();
-            $inventario->cantidad_existencia = 0;
+    // /**
+    //  * Crea una instancia de inventario de este material en el area indicada.
+    //  * 
+    //  * @param  Area $area
+    //  * @throws InventarioNoEncontradoException
+    //  * @return Inventario
+    //  */
+    // public function nuevoInventarioEnArea(Area $area)
+    // {
+    //     try {
+    //         return $this->getInventarioDeArea($area);
+    //     } catch (InventarioNoEncontradoException $e) {
+    //         $inventario = $this->inventarios()->getRelated()->newInstance();
+    //         $inventario->id_obra = $area->id_obra;
+    //         $inventario->id_area = $area->getKey();
+    //         $inventario->id_material = $this->getKey();
+    //         $inventario->cantidad_existencia = 0;
 
-            return $inventario;
-        }
-    }
+    //         return $inventario;
+    //     }
+    // }
 
     /**
      * Crea un inventario de este material en el area indicada.
@@ -337,7 +337,7 @@ class Material extends Model
      * @throws InventarioNoEncontradoException
      * @return Inventario
      */
-    public function creaInventarioEnArea(Area $area, $cantidad, ItemTransaccion $item)
+    public function creaInventarioEnArea(Area $area, $cantidad = 0)
     {
         try {
             return $this->getInventarioDeArea($area);
@@ -354,6 +354,11 @@ class Material extends Model
 
             return $inventario;
         }
+    }
+
+    public function incrementaInventarioEnArea(Area $area, $cantidad)
+    {
+        $inventario = $this->creaInventarioEnArea($area, $cantidad);
     }
 
     /**

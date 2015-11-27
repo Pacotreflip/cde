@@ -11,11 +11,12 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transacciones\Entrega;
-use Ghi\Equipamiento\Areas\AreaTipo as TipoArea;
 use Ghi\Equipamiento\Articulos\Clasificador;
 use Ghi\Equipamiento\Articulos\TipoMaterial;
 use Ghi\Equipamiento\Inventarios\Inventario;
+use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Areas\AreaTipo as TipoArea;
 use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Ghi\Equipamiento\Proveedores\Tipo as TipoProveedor;
 use Ghi\Equipamiento\Transacciones\Tipo as TipoTransaccion;
@@ -200,6 +201,17 @@ $factory->define(Recepcion::class, function (Faker\Generator $faker) {
         'numero_pedido'          => $faker->sentence,
         'persona_recibe'         => $faker->name,
         'observaciones'          => $faker->text,
+    ];
+});
+
+$factory->define(ItemRecepcion::class, function (Faker\Generator $faker) {
+    return [
+        'id_recepcion' => null,
+        'id_item' => null,
+        'id_material' => null,
+        'unidad' => null,
+        'id_area_almacenamiento' => null,
+        'cantidad_recibida' => $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 999999)
     ];
 });
 
