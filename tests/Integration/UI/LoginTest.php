@@ -1,5 +1,7 @@
 <?php
 
+use Ghi\Core\Models\User;
+use Ghi\Core\Models\UsuarioCadeco;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -10,13 +12,10 @@ class LoginTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(\Ghi\Core\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
-        $this->visit('/auth/login')
-            ->seePageIs('/auth/login')
-            ->type($user->usuario, 'usuario')
-            ->type('secret', 'clave')
-            ->press('Iniciar sesión')
+        $this
+            ->inicioSesion()
             ->seePageIs('/obras');
     }
 }

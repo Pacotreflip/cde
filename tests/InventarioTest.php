@@ -4,7 +4,6 @@ use Ghi\Core\Models\Obra;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
-use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
@@ -12,153 +11,179 @@ class InventarioTest extends \TestCase
 {
     use \CadecoDatabaseTransactions;
 
-    /** @test */
-    public function test_un_inventario_puede_ser_creado()
+
+    public function test_un_inventario_no_puede_ser_creado_dos_veces_en_la_misma_area_con_el_mismo_material()
     {
-        $obra     = factory(Obra::class)->create();
+        $obra = factory(Obra::class)->create();
         $material = factory(Material::class)->create();
-        $area     = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        $inventario = $material->nuevoInventarioEnArea($area);
-        $inventario->save();
+        $inventario_uno = Inventario::creaInventario($area, $material, 100);
+        $inventario_dos = Inventario::creaInventario($area, $material, 50);
 
-        $this->assertInstanceOf(Inventario::class, $inventario);
-        $this->assertEquals(0, $inventario->cantidad);
-        $this->assertCount(0, $inventario->movimientos);
+        $this->assertEquals($inventario_uno->id, $inventario_dos->id);
     }
 
-    /** @test */
-    public function test_crea_inventario_con_movimiento_inicial()
+    public function test_un_inventario_con_existencia_no_puede_ser_eliminado()
     {
-        $obra     = factory(Obra::class)->create();
+        $obra = factory(Obra::class)->create();
         $material = factory(Material::class)->create();
-        $area     = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
-        $item     = factory(ItemRecepcion::class)->create([
-            'id_recepcion' => null,
-            'id_item' => null,
-            'id_material' => $material->id_material,
-            'unidad' => $material->unidad,
-            'id_area_almacenamiento' => $area->id,
-        ]);
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        $inventario = $material->creaInventarioEnArea($area, 1, $item);
-        $this->assertEquals(1, $inventario->cantidad);
+        $inventario = Inventario::creaInventario($area, $material, 100);
+
+        $inventario->delete();
+
+        $this->assertTrue(Inventario::where('id', $inventario->id)->exists());
+    }
+
+    public function test_un_inventario_puede_ser_eliminado_cuando_no_tiene_existencia_y_tenga_solo_un_movimiento()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
+        $inventario = Inventario::creaInventario($area, $material, 0);
+
+        $inventario->delete();
+
+        $this->assertFalse(Inventario::where('id', $inventario->id)->exists());
+    }
+
+    public function test_inventario_no_puede_transferir_existencia_a_si_mismo()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
+        $inventario = Inventario::creaInventario($area, $material, 100);
+
+        $inventario->transferirA($inventario, 50);
+
+        $this->assertEquals(100, $inventario->cantidad_existencia);
         $this->assertCount(1, $inventario->movimientos);
     }
 
     /** @test */
-    public function test_incrementa_existencia()
+    public function test_no_pueda_crear_un_inventario_con_numero_negativo()
     {
-        $obra         = factory(Obra::class)->create();
-        $material     = factory(Material::class)->create();
-        $area_origen  = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
-        $area_destino = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        $inventario = factory(Inventario::class)->create([
-            'id_obra'     => $obra->id_obra,
-            'id_material' => $material->id_material,
-            'id_area'     => $area_origen->id,
-            'cantidad'    => 100
-        ]);
+        $this->setExpectedException(\Exception::class);
 
-        $item = factory(ItemTransaccion::class, 'item-recepcion')->create([
-            'id_area_origen'  => $area_origen->id,
-            'id_area_destino' => $area_destino->id,
-            'id_material'     => $material->id_material,
-        ]);
+        $inventario = Inventario::creaInventario($area, $material, -1);
 
-        $inventario->incrementaExistencia(10, $item);
-        $this->assertEquals(110, $inventario->cantidad);
+        $this->assertNotInstanceOf(Inventario::class, $Inventario);
     }
 
     /** @test */
-    public function test_decrementa_existencia()
+    public function test_un_inventario_puede_ser_creado()
     {
-        $material     = factory(Material::class)->create();
-        $area_origen  = factory(Area::class)->create();
-        $area_destino = factory(Area::class)->create(['id_obra' => $area_origen->id_obra]);
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        $inventario = factory(Inventario::class)->create([
-            'id_obra'     => $area_origen->id_obra,
-            'id_material' => $material->id_material,
-            'id_area'     => $area_origen->id,
-            'cantidad'    => 100
-        ]);
+        $inventario = Inventario::creaInventario($area, $material);
 
-        $item = factory(ItemTransaccion::class, 'item-asignacion')->create([
-            'id_area_origen'  => $area_origen->id,
-            'id_area_destino' => $area_destino->id,
-            'id_material'     => $material->id_material,
-        ]);
-
-        $inventario->decrementaExistencia(10, $item);
-        $this->assertEquals(90, $inventario->cantidad);
+        $this->assertInstanceOf(Inventario::class, $inventario);
+        $this->assertEquals(0, $inventario->cantidad_existencia);
+        $this->assertCount(1, $inventario->movimientos, 'El inventario debe tener un movimiento');
     }
 
-    public function test_envia_excepcion_cuando_la_existencia_no_es_suficiente()
+    /** @test */
+    public function test_un_inventario_puede_ser_creado_con_cantidad_inicial()
     {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
+        $inventario = Inventario::creaInventario($area, $material, 10);
+
+        $this->assertInstanceOf(Inventario::class, $inventario);
+        $this->assertEquals(10, $inventario->cantidad_existencia);
+        $this->assertCount(1, $inventario->movimientos, 'El inventario debe tener un movimiento');
+        $this->assertEquals(10, $inventario->movimientos()->first()->cantidad_actual, 'La cantidad actual del movimiento de inventario debe ser 10');
+    }
+
+    /** @test */
+    public function test_un_inventario_puede_incrementar_su_existencia()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
+        $inventario = Inventario::creaInventario($area, $material, 10);
+        $inventario->incrementaExistencia(100);
+
+        $this->assertEquals(110, $inventario->cantidad_existencia);
+    }
+
+    /** @test */
+    public function test_un_inventario_puede_decrementar_su_existencia()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
+        $inventario = Inventario::creaInventario($area, $material, 100);
+        $inventario->decrementaExistencia(10);
+
+        $this->assertEquals(90, $inventario->cantidad_existencia);
+    }
+
+    /** @test */
+    public function test_lanza_excepcion_cuando_la_existencia_no_es_suficiente()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+
         $this->setExpectedException(SinExistenciaSuficienteException::class);
 
-        $material     = factory(Material::class)->create();
-        $area_origen  = factory(Area::class)->create();
-        $area_destino = factory(Area::class)->create(['id_obra' => $area_origen->id_obra]);
+        $inventario = Inventario::creaInventario($area, $material, 100);
+        $inventario->decrementaExistencia(130);
 
-        $inventario = factory(Inventario::class)->create([
-            'id_obra'     => $area_origen->id_obra,
-            'id_material' => $material->id_material,
-            'id_area'     => $area_origen->id,
-            'cantidad'    => 50
-        ]);
-
-        $item = factory(ItemTransaccion::class, 'item-asignacion')->create([
-            'id_area_origen'  => $area_origen->id,
-            'id_area_destino' => $area_destino->id,
-            'id_material'     => $material->id_material,
-            'cantidad'        => 130,
-        ]);
-
-        $inventario->decrementaExistencia(130, $item);
-
-        $this->assertEquals(50, $inventario->cantidad);
-        $this->assertCount(0, $inventario->movimientos);
+        $this->assertEquals(100, $inventario->cantidad_existencia);
+        $this->assertCount(1, $inventario->movimientos);
     }
 
-    public function test_transferencia_entre_areas()
+    /** @test */
+    public function test_el_inventario_debe_registrar_movimientos()
     {
-        $material     = factory(Material::class)->create();
-        $area_origen  = factory(Area::class)->create();
-        $area_destino = factory(Area::class)->create(['id_obra' => $area_origen->id_obra]);
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        // inventario origen con existencia de 10
-        $inventario_origen = factory(Inventario::class)->create([
-            'id_obra'     => $area_origen->id_obra,
-            'id_material' => $material->id_material,
-            'id_area'     => $area_origen->id,
-            'cantidad'    => 10
-        ]);
+        $inventario = Inventario::creaInventario($area, $material, 100);
+        $inventario->incrementaExistencia(10);
+        $inventario->decrementaExistencia(10);
 
-        // inventario destino con existencia de 0
-        $inventario_destino = factory(Inventario::class)->create([
-            'id_obra'     => $area_origen->id_obra,
-            'id_material' => $material->id_material,
-            'id_area'     => $area_destino->id,
-            'cantidad'    => 0
-        ]);
+        $this->assertEquals(100, $inventario->cantidad_existencia);
+        $this->assertCount(3, $inventario->movimientos);
+    }
 
-        // item de una transferencia que sera soporte del movimiento
-        $item = factory(ItemTransaccion::class, 'item-transferencia')->create([
-            'id_area_origen'  => $area_origen->id,
-            'id_area_destino' => $area_destino->id,
-            'id_material'     => $material->id_material,
-            'cantidad'        => 5,
-        ]);
+    /** @test */
+    public function test_transfiere_existencia_entre_inventarios()
+    {
+        $obra = factory(Obra::class)->create();
+        $material = factory(Material::class)->create();
+        $area_origen = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
+        $area_destino = factory(Area::class)->create(['id_obra' => $obra->id_obra]);
 
-        $inventario_origen->transferirA($item->cantidad, $inventario_destino, $item);
+        // inventario origen con existencia de 1000
+        $inventario_origen = Inventario::creaInventario($area_origen, $material, 1000);
 
-        $this->assertEquals(5, $inventario_origen->cantidad, 'La existencia en origen no es 5');
-        $this->assertCount(1, $inventario_origen->movimientos, 'El numero de movimientos en origen debe ser 1');
+        // inventario destino con existencia de 20
+        $inventario_destino = Inventario::creaInventario($area_destino, $material, 20);
 
-        $this->assertEquals(5, $inventario_destino->cantidad, 'La existencia en destino debe ser 5');
-        $this->assertCount(1, $inventario_destino->movimientos, 'El numero de movimientos en destino debe ser 1');
+        $inventario_origen->transferirA($inventario_destino, 200);
+
+        $this->assertEquals(800, $inventario_origen->cantidad_existencia, 'La existencia en origen no es 800');
+        $this->assertCount(2, $inventario_origen->movimientos, 'El numero de movimientos en origen debe ser 2');
+
+        $this->assertEquals(220, $inventario_destino->cantidad_existencia, 'La existencia en destino debe ser 220');
+        $this->assertCount(2, $inventario_destino->movimientos, 'El numero de movimientos en destino debe ser 2');
     }
 }

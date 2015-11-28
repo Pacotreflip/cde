@@ -307,27 +307,23 @@ class Material extends Model
         throw new InventarioNoEncontradoException;
     }
 
-    // /**
-    //  * Crea una instancia de inventario de este material en el area indicada.
-    //  * 
-    //  * @param  Area $area
-    //  * @throws InventarioNoEncontradoException
-    //  * @return Inventario
-    //  */
-    // public function nuevoInventarioEnArea(Area $area)
-    // {
-    //     try {
-    //         return $this->getInventarioDeArea($area);
-    //     } catch (InventarioNoEncontradoException $e) {
-    //         $inventario = $this->inventarios()->getRelated()->newInstance();
-    //         $inventario->id_obra = $area->id_obra;
-    //         $inventario->id_area = $area->getKey();
-    //         $inventario->id_material = $this->getKey();
-    //         $inventario->cantidad_existencia = 0;
+    /**
+     * Crea una instancia de inventario de este material en el area indicada.
+     * 
+     * @param  Area $area
+     * @throws InventarioNoEncontradoException
+     * @return Inventario
+     */
+    protected function nuevoInventarioEnArea(Area $area, $cantidad = 0)
+    {
+        $inventario = $this->inventarios()->getRelated()->newInstance();
+        $inventario->id_obra = $area->id_obra;
+        $inventario->id_area = $area->getKey();
+        $inventario->id_material = $this->getKey();
+        $inventario->cantidad_existencia = $cantidad;
 
-    //         return $inventario;
-    //     }
-    // }
+        return $inventario;
+    }
 
     /**
      * Crea un inventario de este material en el area indicada.
@@ -342,23 +338,25 @@ class Material extends Model
         try {
             return $this->getInventarioDeArea($area);
         } catch (InventarioNoEncontradoException $e) {
-            $inventario = $this->inventarios()->getRelated()->newInstance();
-            $inventario->id_obra = $area->id_obra;
-            $inventario->id_area = $area->getKey();
-            $inventario->id_material = $this->getKey();
-            $inventario->cantidad_existencia = 0;
-
-            if ($inventario->save()) {
-                $inventario->incrementaExistencia($cantidad, $item);
-            }
+            $inventario = $this->nuevoInventarioEnArea($area, $cantidad);
+            $inventario->save();
 
             return $inventario;
         }
     }
 
+    /**
+     * Incrementa el inventario de este material en un area.
+     * 
+     * @param  Area  $area
+     * @param  float $cantidad
+     * @return self
+     */
     public function incrementaInventarioEnArea(Area $area, $cantidad)
     {
-        $inventario = $this->creaInventarioEnArea($area, $cantidad);
+        $this->getInventarioDeArea($area)->incrementaExistencia($cantidad);
+
+        return $this;
     }
 
     /**
@@ -370,7 +368,7 @@ class Material extends Model
      * @param  ItemTransaccion $item
      * @return void
      */
-    public function transferir($cantidad, Area $origen, Area $destino, $item)
+    public function transfiereExistencia($cantidad, Area $origen, Area $destino, $item)
     {
         $inventario_origen = $this->getInventarioDeArea($origen);
         $inventario_destino = $this->nuevoInventarioEnArea($destino, $cantidad);
