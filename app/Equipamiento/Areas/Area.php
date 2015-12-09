@@ -98,9 +98,15 @@ class Area extends Node
      * @param AreaTipo $area_tipo
      * @return Area
      */
-    public function asignaTipo(AreaTipo $area_tipo)
+    public function asignaTipo($area_tipo = null)
     {
-        return $this->tipo()->associate($area_tipo);
+        if (! $area_tipo) {
+            $this->tipo()->dissociate();
+        }
+
+        $this->tipo()->associate($area_tipo);
+
+        return $this;
     }
 
     /**
