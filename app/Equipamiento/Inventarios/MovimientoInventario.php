@@ -10,6 +10,11 @@ class MovimientoInventario extends Model
 
     protected $table = 'Equipamiento.inventario_movimientos';
 
+    protected $casts = [
+        'cantidad_actual' => 'float',
+        'cantidad_anterior' => 'float',
+    ];
+
     /**
      * Inventario relacionado con este movimiento.
      * 
@@ -17,6 +22,6 @@ class MovimientoInventario extends Model
      */
     public function inventario()
     {
-        return $this->belongsTo(Inventario::class);
+        return $this->belongsTo(Inventario::class, 'id_inventario');
     }
 }

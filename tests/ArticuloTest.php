@@ -132,7 +132,7 @@ class ArticuloTest extends \TestCase
         $this->assertCount(1, $material->fotos);
     }
 
-    public function nuevoMaterial($tipo = TipoMaterial::TIPO_MATERIALES)
+    protected function nuevoMaterial($tipo = TipoMaterial::TIPO_MATERIALES)
     {
         $factory = new Factory;
         $unidad = factory(Unidad::class)->create();
