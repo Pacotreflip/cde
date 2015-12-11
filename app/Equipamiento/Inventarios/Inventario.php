@@ -6,11 +6,14 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\ManageDatabaseTransactions;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
 class Inventario extends Model
 {
+    use ManageDatabaseTransactions;
+
     /**
      * @var string
      */
@@ -268,20 +271,5 @@ class Inventario extends Model
         $this->load('movimientos');
 
         return $movimiento;
-    }
-
-    protected function beginTransaction()
-    {
-        DB::connection($this->connection)->beginTransaction();
-    }
-
-    protected function commitTransaction()
-    {
-        DB::connection($this->connection)->commit();
-    }
-
-    protected function rollbackTransaction()
-    {
-        DB::connection($this->connection)->rollback();
     }
 }

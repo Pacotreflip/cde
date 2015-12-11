@@ -36,29 +36,29 @@
       </thead>
       <tbody>
           @foreach($compra->items as $item)
-            @foreach($item->entregas as $entrega)
-            <tr>
-              <td>{{ $item->material->descripcion }}</td>
-              <td>{{ $item->unidad }}</td>
-              <td>{{ $entrega->cantidad }}</td>
-              <td>{{ $item->precio_unitario }}</td>
-              <td>{{ $item->importe }}</td>
-              <td>{{ $entrega->fecha->format('d-m-Y') }}</td>
-              <td>{{ $item->cantidad_recibida }}</td>
-              <td>
-                <div class="progress">
-                  <div
-                    class="progress-bar progress-bar-striped{{ round(($item->cantidad_recibida / $entrega->cantidad) * 100) == 100 ? ' progress-bar-success' : '' }}" 
-                    role="progressbar"
-                    aria-valuenow="{{ ($entrega->cantidad_recibida / $item->cantidad) * 100 }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    style="min-width: 2.5em; width: {{ round(($item->cantidad_recibida / $entrega->cantidad) * 100) < 100 ?: 100 }}%;">
-                    {{ round(($item->cantidad_recibida / $entrega->cantidad) * 100) }}%
+            @foreach($item->recepciones as $itemRecepcion)
+              <tr>
+                <td>{{ $item->material->descripcion }}</td>
+                <td>{{ $item->unidad }}</td>
+                <td>{{ $item->cantidad }}</td>
+                <td>{{ $item->precio_unitario }}</td>
+                <td>{{ $item->importe }}</td>
+                <td>{{ $itemRecepcion->recepcion->fecha_recepcion->format('d-m-Y') }}</td>
+                <td>{{ $item->cantidad_recibida }}</td>
+                <td>
+                  <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ ($itemRecepcion->cantidad_recibida / $item->cantidad) * 100 }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100) < 100 ?: 100 }}%;">
+                      {{ round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100) }}%
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
             @endforeach
           @endforeach
       </tbody>
