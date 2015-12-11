@@ -9,7 +9,6 @@ use Ghi\Equipamiento\Transacciones\Transaccion;
 
 class OrdenesCompraController extends ApiController
 {
-
     /**
      * Display a listing of the resource.
      *
