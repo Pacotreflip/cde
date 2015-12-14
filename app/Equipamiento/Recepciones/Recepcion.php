@@ -117,7 +117,7 @@ class Recepcion extends Model
 
         if ($area) {
             $item->id_area_almacenamiento = $area->id;
-            $inventario = $material->nuevoInventarioEnArea($area);
+            $inventario = $material->creaInventarioEnArea($area);
             $inventario->incrementaExistencia($cantidad, $this->transaccion);
         }
 
