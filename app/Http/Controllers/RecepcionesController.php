@@ -98,13 +98,9 @@ class RecepcionesController extends Controller
      */
     public function store(Requests\CreateRecepcionRequest $request)
     {
-        if ($request->get('opcion_recepcion') === 'almacenar') {
-            $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
-        }
-
-        if ($request->get('opcion_recepcion') === 'asignar') {
-            $recepcion = (new RecibeArticulosAsignacion($request->all(), $this->getObraEnContexto()))->save();
-        }
+        $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
+        
+        // Por implementar recepcion con asignacion
 
         if ($request->ajax()) {
             return response()->json(['path' => route('recepciones.show', $recepcion)]);

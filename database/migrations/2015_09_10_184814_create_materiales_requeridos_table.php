@@ -16,13 +16,13 @@ class CreateMaterialesRequeridosTable extends Migration
             $table->increments('id');
             $table->integer('id_tipo_area')->unsigned()->index();
             $table->integer('id_material')->unsigned()->index();
-            $table->decimal('cantidad_requerida', 9, 2)->default(1);
+            $table->integer('cantidad_requerida')->default(1);
             $table->integer('id_moneda')->unsigned()->nullable()->index();
-            $table->integer('precio_estimado')->default(0)->nullable();
+            $table->decimal('precio_estimado', 9, 2)->default(0)->nullable();
             $table->boolean('se_evalua')->default(false);
             $table->decimal('cantidad_comparativa', 9, 2)->nullable();
             $table->integer('id_moneda_comparativa')->unsigned()->nullable()->index();
-            $table->integer('precio_comparativa')->nullable();
+            $table->decimal('precio_comparativa', 9, 2)->nullable();
             $table->boolean('existe_para_comparativa')->default(true);
             $table->timestamps();
 
