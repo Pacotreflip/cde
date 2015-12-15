@@ -13,6 +13,50 @@ Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
+
+Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
+//    Route::get('/', 'AdminController@welcome');
+//    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);
+//    
+    Route::resource('roles', 'Auth\RoleController', ['names' => [
+            'index' => 'roles_index_path',
+            'create' => 'roles_create_path',
+            'store' => 'roles_store_path',
+            'show' => 'roles_show_path',
+            'edit' => 'roles_edit_path',
+            'update' => 'roles_update_path',
+            'destroy' => 'roles_destroy_path'
+    ]]);
+    
+    Route::resource('users', 'Auth\UserController', ['names' => [
+            'index' => 'users_index_path',
+            'create' => 'users_create_path',
+            'store' => 'users_store_path',
+            'show' => 'users_show_path',
+            'edit' => 'users_edit_path',
+            'update' => 'users_update_path',
+            'destroy' => 'users_destroy_path'
+    ]]);
+    
+    Route::resource('permissions', 'Auth\PermissionController', ['names' => [
+            'index' => 'permissions_index_path',
+            'create' => 'permissions_create_path',
+            'store' => 'permissions_store_path',
+            'show' => 'permissions_show_path',
+            'edit' => 'permissions_edit_path',
+            'update' => 'permissions_update_path',
+            'destroy' => 'permissions_destroy_path'
+    ]]);
+    Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
+    Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
+    Route::post("/assign_permissions/remove", ["as" => "remove_permissions_to_role_store_path", "uses" => "Auth\RoleController@removePermissions"]);
+    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);
+    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);
+    //assign_permissions_to_role
+    
+});
+
+
 // Rutas de tipos de area...
 Route::get('areas-tipo', ['as' => 'tipos.index', 'uses' => 'AreasTipoController@index']);
 Route::get('areas-tipo/nuevo', ['as' => 'tipos.create', 'uses' => 'AreasTipoController@create']);

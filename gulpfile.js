@@ -19,4 +19,6 @@ elixir(function(mix) {
         .copy('node_modules/jstree/src/themes/default/40px.png', 'public/img')
         .copy('node_modules/jstree/src/themes/default/throbber.gif', 'public/img')
         .browserify('app.js');
+    mix.sass('app.scss').version('public/css/app.css');
+    mix.copy('node_modules/bootstrap-sass/assets/fonts','public/build/fonts');
 });
