@@ -6,3 +6,7 @@
         <li><a href="{{ route('users_index_path') }}"><span class="glyphicon glyphicon-search" style="margin-right: 5px"></span>Buscar Usuario</a></li>
     </ul>
 </nav>
+<form id="formulario_assign_role_to_user" method="post" action="#">
+    {{ csrf_field() }}
+    <div id="contenedor_modal_assign_role_to_user"></div>
+</form>

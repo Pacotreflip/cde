@@ -64,12 +64,17 @@
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" >Roles:</label>
                         <div class="col-md-8">
+                            @if(count($user->roles)>0)
                             @foreach($user->roles as $rol)
                             <span class="btn btn-small btn-default" style="margin: 2px">
                             {{ $rol->display_name  }}
                             </span>
                             @endforeach
-                            
+                            @else
+                            <span class="btn btn-small btn-danger" style="margin: 2px">
+                            Sin Roles Asignados
+                            </span>
+                            @endif
                         </div>
 
                     </div>
@@ -77,7 +82,7 @@
                     
                 </div>
                 <div class="panel-footer" style="text-align: right"> 
-                    <a class="btn btn-small btn-info" href="{{ route('users_edit_path', $user->id) }}" title="Modificar Roles"><span class="glyphicon glyphicon-pencil" style="margin-right: 5px"></span>Modificar Roles</a>
+                    <a class="btn btn-small btn-info asignar_roles" href="{{ route('role_to_user_show_path', $user->idusuario) }}" title="Modificar Roles"><span class="glyphicon glyphicon-pencil" style="margin-right: 5px"></span>Modificar Roles</a>
                     
                 </div>
             </div>
@@ -85,4 +90,72 @@
     </div>
 </form>
 @stop
+@section("scripts")
+<script type="text/javascript">
+$("a.asignar_roles").off().on("click", function(e){
+        var href = $(this).attr("href");
+                $.get(href, function(data){
+                    $("#contenedor_modal_assign_role_to_user").html(data);
+                    $("#modal_assign_role_to_user").modal("show");
+                    $(".agrega_roles").off().on("click", function(e){
+                        var postData = $("form#formulario_assign_role_to_user").serialize();
+                        
+                        $.ajax(
+                        {
+                            url : '{{ route("assign_role_to_user_store_path") }}',
+                            type: "POST",
+                            data : postData,
+                            success:function(data) 
+                            {                       
+                                $("#modal_assign_role_to_user").modal("hide");
+                                location.reload();
+                            },
+                            error: function(xhr, textStatus, thrownError) 
+                            {
+                                console.log(xhr.responseText);
+                                var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
 
+                                $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+                                    salida += '<li>'+elem+'</li>';
+                                });
+                                salida += '</ul></div>';
+                                $("#modal_assign_role_to_user div.errores").html(salida);
+                            }
+                        });
+                        e.preventDefault();
+                        
+                    });
+                    $(".quita_roles").off().on("click", function(e){
+                        var postData = $("form#formulario_assign_role_to_user").serialize();
+                        
+                        $.ajax(
+                        {
+                            url : '{{ route("remove_role_to_user_store_path") }}',
+                            type: "POST",
+                            data : postData,
+                            success:function(data) 
+                            {                       
+                                $("#modal_assign_permissions_to_role").modal("hide");
+                                location.reload();
+                            },
+                            error: function(xhr, textStatus, thrownError) 
+                            {
+                                console.log(xhr.responseText);
+                                var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+
+                                $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+                                    salida += '<li>'+elem+'</li>';
+                                });
+                                salida += '</ul></div>';
+                                $("#modal_assign_permissions_to_role div.errores").html(salida);
+                            }
+                        });
+                        e.preventDefault();
+                        
+                    });
+                });
+        e.preventDefault();  
+    });
+
+</script>
+@stop

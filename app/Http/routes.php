@@ -50,10 +50,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
     Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
     Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
     Route::post("/assign_permissions/remove", ["as" => "remove_permissions_to_role_store_path", "uses" => "Auth\RoleController@removePermissions"]);
-    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);    
+    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);
+    Route::get("/users/role/{id}", ["as" => "role_to_user_show_path", "uses" => "Auth\UserController@getFormRole"]);
+    Route::post("/users/assign_role/remove", ["as" => "remove_role_to_user_store_path", "uses" => "Auth\UserController@removeRole"]);
+    Route::post("/users/assign_role/assign", ["as" => "assign_role_to_user_store_path", "uses" => "Auth\UserController@assignRole"]);
 });
 Route::group(["middleware" => ['role:admin']], function () {
-    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);
+    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);//role_to_user_show_path
+    
 });
 // Rutas de tipos de area...
 Route::get('areas-tipo', ['as' => 'tipos.index', 'uses' => 'AreasTipoController@index']);

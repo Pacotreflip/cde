@@ -153,14 +153,39 @@ class UserController extends Controller
     
     public function getLista(Request $request) {
         $term = $request->input("term");
-//        $usuarios = DB::table('igh.usuario')->select(DB::raw('idusuario, nombre'))->
-//                where('concat(nombre," ", apaterno, " ", amaterno)', 'like', '%' . $term . "%")->get();
+
         $usuarios = DB::select("select idusuario, concat(nombre,' ', apaterno, ' ', amaterno) as nombre from igh.usuario "
-                . "where usuario_estado = 2 and ( nombre like '%$term%' or apaterno like '%$term%' or apaterno like '%$term%')");
+                . "where usuario_estado = 2 and ( usuario like '%$term%' or nombre like '%$term%' or apaterno like '%$term%' or apaterno like '%$term%')");
         $return_array = null;
         foreach ($usuarios as $usuario) {
             $return_array[] = array("value" => $usuario->nombre, "id" => $usuario->idusuario);
         }
         return Response::json($return_array);
+    }
+    
+    public function getFormRole($idusuario){
+        $user = User::findOrFail($idusuario);
+        $role_all = Role::all();
+        $role_assigned = $user->roles;
+        $role = $role_all->diff($role_assigned);
+        return view('users.modal_assign_role_to_user',["idusuario"=>$idusuario,"roles_asignados"=>$role_assigned, "roles_disponibles"=>$role]);
+    }
+    public function removeRole(Request $request){
+        $idusuario = $request->idusuario;
+        $user = User::findOrFail($idusuario);
+        $quitar = $request->roles_asignados;
+        foreach ($quitar as $role_id){
+            $role = Role::findOrFail($role_id);
+            $user->roles()->detach($role);
+        }
+    }
+    public function assignRole(Request $request){
+        $idusuario = $request->idusuario;
+        $user = User::findOrFail($idusuario);
+        $asignar = $request->roles_disponibles;
+        foreach ($asignar as $role_id){
+            $role = Role::findOrFail($role_id);
+            $user->attachRole($role);
+        }
     }
 }

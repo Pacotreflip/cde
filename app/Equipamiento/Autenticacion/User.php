@@ -16,6 +16,7 @@ class User extends \Ghi\Core\Models\User implements AuthenticatableContract, Can
 {
     use AuthenticatableIntranetUser,  CanResetPassword, EntrustUserTrait;
     protected $table = 'igh.usuario';
+    protected $primaryKey = 'idusuario';
     
     public function departamento(){
         return $this->hasOne(\Ghi\Departamento::class,"iddepartamento", "iddepartamento");
