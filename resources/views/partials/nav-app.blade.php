@@ -24,7 +24,7 @@
   <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
   <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
   <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>
-@if ($user->hasRole('admin')) 
+@if (Auth::user()->hasRole('admin')) 
 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <span style="margin-left: 5px">Administraci&oacute;n</span> <b class="caret"></b>
