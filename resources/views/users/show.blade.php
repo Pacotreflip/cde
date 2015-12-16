@@ -16,7 +16,7 @@
                 <div class="panel-body">
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" for="nombre_usuario" >Usuario:</label>
-                        <div class="col-md-8"><input type="text" name="nombre_usuario" id="nombre_usuario" class="form-control" value="{{ $user->nombre_usuario }}"></div>
+                        <div class="col-md-8"><input type="text" name="nombre_usuario" id="nombre_usuario" class="form-control" value="{{ $user->usuario }}"></div>
 
                     </div>
                     <div class="form-group" style="overflow: hidden">
@@ -27,29 +27,45 @@
                     
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" for="apellido_paterno" >Apellido Paterno:</label>
-                        <div class="col-md-8"><input type="text" name="apellido_paterno" id="apellido_paterno" class="form-control" value="{{ $user->apellido_paterno }}"></div>
+                        <div class="col-md-8"><input type="text" name="apellido_paterno" id="apellido_paterno" class="form-control" value="{{ $user->apaterno }}"></div>
 
                     </div>
                     
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" for="apellido_materno" >Apellido Materno:</label>
-                        <div class="col-md-8"><input type="text" name="apellido_materno" id="apellido_materno" class="form-control" value="{{ $user->apellido_materno }}"></div>
+                        <div class="col-md-8"><input type="text" name="apellido_materno" id="apellido_materno" class="form-control" value="{{ $user->amaterno }}"></div>
 
                     </div>
                     
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" for="email" >Email:</label>
-                        <div class="col-md-8"><input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}"></div>
+                        <div class="col-md-8"><input type="email" name="email" id="email" class="form-control" value="{{ $user->correo }}"></div>
 
                     </div>
                     
+                    <div class="form-group" style="overflow: hidden">
+                        <label class="col-md-4 control-label" for="email" >Empresa:</label>
+                        <div class="col-md-8"><input type="text" name="empresa" id="empresa" class="form-control" value="{{ $user->empresa->empresa }}"></div>
+
+                    </div>
                     
+                    <div class="form-group" style="overflow: hidden">
+                        <label class="col-md-4 control-label" for="email" >Departamento:</label>
+                        <div class="col-md-8"><input type="text" name="departamento" id="departamento" class="form-control" value="{{ $user->departamento->departamento }}"></div>
+
+                    </div>
+                    
+                    <div class="form-group" style="overflow: hidden">
+                        <label class="col-md-4 control-label" for="email" >Ubicación:</label>
+                        <div class="col-md-8"><input type="text" name="ubicacion" id="ubicacion" class="form-control" value="{{ $user->ubicacion->ubicacion }}"></div>
+
+                    </div>
                     
                     <div class="form-group" style="overflow: hidden">
                         <label class="col-md-4 control-label" >Roles:</label>
                         <div class="col-md-8">
                             @foreach($user->roles as $rol)
-                            <span class="btn btn-small btn-default">
+                            <span class="btn btn-small btn-default" style="margin: 2px">
                             {{ $rol->display_name  }}
                             </span>
                             @endforeach
@@ -61,14 +77,8 @@
                     
                 </div>
                 <div class="panel-footer" style="text-align: right"> 
-                    <a class="btn btn-small btn-info" href="{{ route('users_edit_path', $user->id) }}" title="Modificar"><span class="glyphicon glyphicon-pencil" style="margin-right: 5px"></span>Modificar</a>
-                    <form method="post"  action="{{ route('users_destroy_path', $user->id) }}" style="float: right">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="_method" value="delete">
-                        <button type="submit" class="btn btn-small btn-danger">
-                            <span class="glyphicon glyphicon-trash" style="margin-right: 5px"></span>Eliminar
-                        </button>
-                    </form>
+                    <a class="btn btn-small btn-info" href="{{ route('users_edit_path', $user->id) }}" title="Modificar Roles"><span class="glyphicon glyphicon-pencil" style="margin-right: 5px"></span>Modificar Roles</a>
+                    
                 </div>
             </div>
         </div>

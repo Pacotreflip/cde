@@ -4,6 +4,5 @@
     </div>
     <ul class="nav navbar-nav">
         <li><a href="{{ route('users_index_path') }}"><span class="glyphicon glyphicon-search" style="margin-right: 5px"></span>Buscar Usuario</a></li>
-        <li><a href="{{ route('users_create_path') }}"><span class="glyphicon glyphicon-plus-sign" style="margin-right: 5px"></span>Nuevo Usuario</a>
     </ul>
 </nav>
