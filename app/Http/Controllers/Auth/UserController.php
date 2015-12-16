@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Ghi\Http\Requests\UserStoreRequest;
 use Ghi\Http\Requests\UserUpdateRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class UserController extends Controller
 {
@@ -22,9 +24,10 @@ class UserController extends Controller
      */
     public function index()
     {
-//        $users = User::all();
+//        $users = DB::table('igh.usuario')->select(DB::raw('idusuario, nombre'))->where('usuario_estado', '=', '2')->get();
 //        return view("users.index")
 //        ->with('users', $users);
+//        
         return view("users.index");
     }
 
@@ -150,13 +153,14 @@ class UserController extends Controller
     
     public function getLista(Request $request) {
         $term = $request->input("term");
-        //$usuarios = User::where('nombre', 'like', '%' . $term . "%")->get();
-        $usuarios = DB::table('usuario')->select(DB::raw('idusuario, nombre'))->where('nombre', 'like', '%' . $term . "%")->get();
-        
-//        $return_array = null;
-//        foreach ($usuarios as $usuario) {
-//            $return_array[] = array("value" => $usuario->nombre, "id" => $usuarios->idusuario);
-//        }
-//        return Response::json($return_array);
+//        $usuarios = DB::table('igh.usuario')->select(DB::raw('idusuario, nombre'))->
+//                where('concat(nombre," ", apaterno, " ", amaterno)', 'like', '%' . $term . "%")->get();
+        $usuarios = DB::select("select idusuario, concat(nombre,' ', apaterno, ' ', amaterno) as nombre from igh.usuario "
+                . "where usuario_estado = 2 and ( nombre like '%$term%' or apaterno like '%$term%' or apaterno like '%$term%')");
+        $return_array = null;
+        foreach ($usuarios as $usuario) {
+            $return_array[] = array("value" => $usuario->nombre, "id" => $usuario->idusuario);
+        }
+        return Response::json($return_array);
     }
 }

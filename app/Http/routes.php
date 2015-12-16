@@ -50,13 +50,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
     Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
     Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
     Route::post("/assign_permissions/remove", ["as" => "remove_permissions_to_role_store_path", "uses" => "Auth\RoleController@removePermissions"]);
-    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);
-    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);
-    //assign_permissions_to_role
-    
+    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);    
 });
-
-
+Route::group(["middleware" => ['role:admin']], function () {
+    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);
+});
 // Rutas de tipos de area...
 Route::get('areas-tipo', ['as' => 'tipos.index', 'uses' => 'AreasTipoController@index']);
 Route::get('areas-tipo/nuevo', ['as' => 'tipos.create', 'uses' => 'AreasTipoController@create']);
