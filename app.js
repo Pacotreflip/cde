@@ -22,4 +22,4 @@ require('jquery.inputmask/dist/jquery.inputmask.bundle');
 if ($('#app').length) {
     new Vue(require('./vue-app'));
 }
-//# sourceMappingURL=all.js.map
+//# sourceMappingURL=app.js.map

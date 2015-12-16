@@ -18,7 +18,7 @@
     </div>
 
     <script src="{{ asset("js/app.js") }}"></script>
-
+    <script src="{{ asset("js/jquery-ui.js") }}"></script>
     @yield('scripts')
   </body>
 </html>
