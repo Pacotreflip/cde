@@ -19,4 +19,19 @@ elixir(function(mix) {
         .copy('node_modules/jstree/src/themes/default/40px.png', 'public/img')
         .copy('node_modules/jstree/src/themes/default/throbber.gif', 'public/img')
         .browserify('app.js');
-});
+    mix.sass('app.scss').version('public/css/app.css');
+    mix.copy('node_modules/bootstrap-sass/assets/fonts','public/build/fonts');
+    mix.copy('vendor/bower_components/jquery-ui/themes/smoothness/images','public/build/css/images');
+    //mix.copy('public/js/app.js','resources/assets/js/');
+    mix.copy('vendor/bower_components/jquery-ui/ui/jquery-ui.js','public/js/');
+   // mix.copy('vendor/bower_components/jquery-ui/ui/autocomplete.js','resources/assets/js/');
+    //mix.scripts(['*.js',"app.js"], "public/js/app.js");
+//    mix.task('js', function() 
+//    {
+//      mix.src('vendor/bower_components/jquery-ui/ui/*.js')
+//            .pipe(concatJs('concat.js'))
+//            .pipe(uglify())
+//            .pipe(mix.dest('public/js'))
+//            .pipe(notify("Ha finalizado la task js!"));
+//        });
+    });

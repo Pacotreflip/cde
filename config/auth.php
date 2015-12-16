@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'model' => Ghi\Core\Models\User::class,
+    'model' => \Ghi\Equipamiento\Autenticacion\User::class,
 
     /*
     |--------------------------------------------------------------------------
