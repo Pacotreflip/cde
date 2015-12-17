@@ -13,17 +13,23 @@
         Catalogos <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
+        @if (!Auth::user()->hasRole('consulta_provisional')) 
         <li><a href="{{ route('tipos.index') }}">Áreas Tipo</a></li>
+        @endif
         <li><a href="{{ route('areas.index') }}">Áreas</a></li>
+        @if (!Auth::user()->hasRole('consulta_provisional')) 
         <li><a href="{{ route('clasificadores.index') }}">Clasificadores de Artículo</a></li>
         <li><a href="{{ route('articulos.index') }}">Artículos</a></li>
         <li><a href="{{ route('proveedores.index') }}">Proveedores</a></li>
+        @endif
     </ul>
   </li>
+  @if (!Auth::user()->hasRole('consulta_provisional'))
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
   <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
   <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
   <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>
+  @endif
 @if (Auth::user()->hasRole('admin')) 
 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
