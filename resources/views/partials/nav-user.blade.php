@@ -1,7 +1,7 @@
 @if($signedIn)
   <li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-      <i class="fa fa-user fa-fw"></i> {{ $user->nombre }} {{ $user->apaterno}} <span class="caret"></span>
+      <i class="fa fa-user fa-fw"></i> {{ Auth::user()->present()->nombreCompleto }} <span class="caret"></span>
     </a>
 
     <ul class="dropdown-menu" role="menu">

@@ -142,6 +142,7 @@ return [
         Laracasts\Flash\FlashServiceProvider::class,
         Overtrue\LaravelLang\TranslationServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        'Zizaco\Entrust\EntrustServiceProvider',
 
         /*
          * Application Service Providers...
@@ -205,6 +206,7 @@ return [
         'Context'   => Ghi\Core\Facades\Context::class,
         'Image'     => Intervention\Image\Facades\Image::class,
         'Fractal'   => Ghi\Core\Facades\Fractal::class,
+        'Entrust' => 'Zizaco\Entrust\EntrustFacade',
     ],
 
 ];
