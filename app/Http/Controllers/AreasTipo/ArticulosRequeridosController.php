@@ -1,15 +1,16 @@
 <?php
 
-namespace Ghi\Http\Controllers;
+namespace Ghi\Http\Controllers\AreasTipo;
 
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Ghi\Equipamiento\Moneda;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\TipoCambio;
-use Ghi\Equipamiento\Areas\MaterialRequerido;
+use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreasTipo;
 use Ghi\Equipamiento\Articulos\Materiales;
+use Ghi\Equipamiento\Areas\MaterialRequerido;
 
 class ArticulosRequeridosController extends Controller
 {

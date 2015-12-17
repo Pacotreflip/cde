@@ -47,7 +47,7 @@
         <th>Descripción</th>
         <th>Unidad</th>
         <th>Cantidad Recibida</th>
-        <th>Area Almacenamiento</th>
+        <th>Area Destino</th>
       </tr>
     </thead>
     <tbody>

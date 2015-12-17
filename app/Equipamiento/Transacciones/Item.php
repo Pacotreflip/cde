@@ -67,7 +67,7 @@ class Item extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function entregas()
+    public function recepciones()
     {
         return $this->hasMany(ItemRecepcion::class, 'id_item', 'id_item');
     }

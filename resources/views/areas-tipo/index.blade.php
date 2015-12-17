@@ -11,8 +11,9 @@
 
   <table class="table table-striped">
     <tbody>
-      @foreach($descendientes as $descendiente)
+      @foreach($descendientes as $index => $descendiente)
         <tr>
+          <td>{{ $index + 1 }}</td>
           <td>
             <a href="{{ route('tipos.index', ['tipo='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
 

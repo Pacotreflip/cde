@@ -48,8 +48,6 @@ class Handler extends ExceptionHandler
             if ($e instanceof ReglaNegocioException) {
                 return new JsonResponse([$e->getMessage()], 422);
             }
-
-            return new JsonResponse([$e->getMessage()], 500);
         }
 
         if ($e instanceof ModelNotFoundException) {

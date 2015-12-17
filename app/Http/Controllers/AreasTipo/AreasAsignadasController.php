@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi\Http\Controllers;
+namespace Ghi\Http\Controllers\AreasTipo;
 
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;

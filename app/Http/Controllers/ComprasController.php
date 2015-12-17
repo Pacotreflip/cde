@@ -86,7 +86,7 @@ class ComprasController extends Controller
      */
     public function show($id)
     {
-        $compra = Transaccion::with('items.entregas')->findOrFail($id);
+        $compra = Transaccion::with('items.recepciones')->findOrFail($id);
 
         return view('compras.show')
             ->withCompra($compra);

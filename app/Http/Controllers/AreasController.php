@@ -204,9 +204,7 @@ class AreasController extends Controller
 
         $area->fill($request->all());
 
-        if ($tipo) {
-            $area->asignaTipo($tipo);
-        }
+        $area->asignaTipo($tipo);
         
         if ($parent) {
             $area->moverA($parent);

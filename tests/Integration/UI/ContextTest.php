@@ -6,8 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ContextTest extends TestCase
 {
-    // use DatabaseTransactions;
-    // use \CadecoDatabaseTransactions;
+    use DatabaseTransactions;
 
     public function testLogin()
     {
@@ -16,6 +15,7 @@ class ContextTest extends TestCase
 
         $this->inicioSesion()
             ->seePageIs('/obras')
-            ->click($obra->nombre);
+            ->click($obra->nombre)
+            ->seePageIs('/');
     }
 }

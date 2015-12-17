@@ -6,11 +6,14 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\ManageDatabaseTransactions;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Inventarios\Exceptions\SinExistenciaSuficienteException;
 
 class Inventario extends Model
 {
+    use ManageDatabaseTransactions;
+
     /**
      * @var string
      */
@@ -49,16 +52,14 @@ class Inventario extends Model
     {
         parent::boot();
 
-        static::updating(function ($inventario) {
-            $inventario->cantidadAnterior = $inventario->getOriginal('cantidad_existencia');
-        });
-
-        static::updated(function ($inventario) {
-            $inventario->creaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad_existencia);
-        });
-
         static::created(function ($inventario) {
             $inventario->creaMovimientoInventario($inventario->cantidadAnterior, $inventario->cantidad_existencia);
+        });
+
+        static::deleting(function ($inventario) {
+            if (! $inventario->puedeSerBorrado()) {
+                return false;
+            }
         });
     }
 
@@ -93,6 +94,58 @@ class Inventario extends Model
     }
 
     /**
+     * Crea un nuevo inventario.
+     * 
+     * @param  Area     $area
+     * @param  Material $material
+     * @param  float    $cantidad
+     * @return self
+     */
+    public static function creaInventario(Area $area, Material $material, $cantidad = 0)
+    {
+        if ($cantidad < 0) {
+            throw new \Exception('La cantidad inicial del inventario no puede ser negativa');
+        }
+
+        $existe = static::existeInventario($area, $material);
+
+        if ($existe) {
+            return $existe;
+        }
+
+        $inventario = new static;
+        $inventario->id_obra = $area->id_obra;
+        $inventario->id_area = $area->getKey();
+        $inventario->id_material = $material->getKey();
+        $inventario->cantidad_existencia = $cantidad;
+        $inventario->save();
+
+        return $inventario;
+    }
+
+    /**
+     * Verifica si un inventario existe en un area.
+     * 
+     * @param  Area     $area
+     * @param  Material $material
+     * @return null|Inventario
+     */
+    protected static function existeInventario(Area $area, Material $material)
+    {
+        return static::where('id_area', $area->id)->where('id_material', $material->id_material)->first();
+    }
+
+    /**
+     * Identifica si este inventario puede ser borrado.
+     * 
+     * @return bool
+     */
+    public function puedeSerBorrado()
+    {
+        return $this->cantidad_existencia <= 0 and $this->movimientos->count() === 1;
+    }
+
+    /**
      * Incrementa la existencia de este inventario.
      * 
      * @param  float $cantidad
@@ -100,21 +153,22 @@ class Inventario extends Model
      */
     public function incrementaExistencia($cantidad)
     {
-        $actual = $this->cantidad_existencia;
-        $total = $actual + $cantidad;
+        $cantidad_actual = $this->cantidad_existencia;
+        $cantidad_total = $cantidad_actual + $cantidad;
 
-        if ((float) $total === (float) $actual) {
+        if ((float) $cantidad_total === (float) $cantidad_actual) {
             return $this;
         }
 
-        $this->beginTransaction();
-
         try {
-            if ($this->increments('cantidad_existencia', $total)) {
-                $this->commitTransaction();
+            $this->beginTransaction();
 
-                return $this;
+            if ($this->increment('cantidad_existencia', $cantidad)) {
+                $this->creaMovimientoInventario($cantidad_actual, $cantidad_total);
+                $this->commitTransaction();
             }
+
+            return $this;
         } catch (\Exception $e) {
             $this->rollbackTransaction();
         }
@@ -132,13 +186,14 @@ class Inventario extends Model
     public function decrementaExistencia($decremento)
     {
         if ($this->tieneExistenciaSuficiente($decremento)) {
-            $disponible = $this->cantidad_existencia;
-            $restante = $disponible - $decremento;
+            $cantidad_disponible = $this->cantidad_existencia;
+            $cantidad_restante = $cantidad_disponible - $decremento;
             
-            $this->beginTransaction();
-
             try {
-                if ($this->decrement('cantidad_existencia', $restante)) {
+                $this->beginTransaction();
+
+                if ($this->decrement('cantidad_existencia', $decremento)) {
+                    $this->creaMovimientoInventario($cantidad_disponible, $cantidad_restante);
                     $this->commitTransaction();
                 }
 
@@ -154,17 +209,21 @@ class Inventario extends Model
     /**
      * Transfiere existencia de un inventario a otro.
      *
-     * @param  float $cantidad La cantidad a transferir.
      * @param  Inventario $inventario_destino El inventario destino.
+     * @param  float      $cantidad           La cantidad a transferir.
      * @return bool
      *
      * @throws \Exception
      */
-    public function transferirA($cantidad, Inventario $inventario_destino)
+    public function transferirA(Inventario $inventario_destino, $cantidad)
     {
-        $this->beginTransaction();
+        if ($this->id == $inventario_destino->id) {
+            return false;
+        }
 
         try {
+            $this->beginTransaction();
+
             $this->decrementaExistencia($cantidad);
 
             $inventario_destino->incrementaExistencia($cantidad);
@@ -209,22 +268,8 @@ class Inventario extends Model
         $movimiento->cantidad_anterior = $cantidad_anterior;
         $movimiento->cantidad_actual = $cantidad_actual;
         $this->movimientos()->save($movimiento);
+        $this->load('movimientos');
 
         return $movimiento;
-    }
-
-    protected function beginTransaction()
-    {
-        DB::connection($this->connection)->beginTransaction();
-    }
-
-    protected function commitTransaction()
-    {
-        DB::connection($this->connection)->commit();
-    }
-
-    protected function rollbackTransaction()
-    {
-        DB::connection($this->connection)->rollback();
     }
 }

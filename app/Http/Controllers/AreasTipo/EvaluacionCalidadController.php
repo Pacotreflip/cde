@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi\Http\Controllers;
+namespace Ghi\Http\Controllers\AreasTipo;
 
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
@@ -12,17 +12,17 @@ class EvaluacionCalidadController extends Controller
     /**
      * @var AreasTipo
      */
-    protected $tipos_area;
+    protected $areas_tipo;
 
     /**
-     * @param AreasTipo $tipos_area
+     * @param AreasTipo $areas_tipo
      */
-    public function __construct(AreasTipo $tipos_area)
+    public function __construct(AreasTipo $areas_tipo)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
-        $this->tipos_area = $tipos_area;
+        $this->areas_tipo = $areas_tipo;
 
         parent::__construct();
     }
@@ -35,7 +35,7 @@ class EvaluacionCalidadController extends Controller
      */
     public function index($id)
     {
-        $tipo = $this->tipos_area->getById($id);
+        $tipo = $this->areas_tipo->getById($id);
 
         return view('areas-tipo.evaluacion-calidad')
             ->withTipo($tipo);
@@ -50,8 +50,12 @@ class EvaluacionCalidadController extends Controller
      */
     public function update(Request $request, $id)
     {
-        foreach ($request->get('materiales', []) as $id_material => $material) {
-            $this->tipos_area->getById($id)->materiales()->updateExistingPivot($id_material, ['se_evalua' => $material['evalua']]);
+        $area_tipo = $this->areas_tipo->getById($id);
+
+        foreach ($request->get('materiales', []) as $id_material => $se_evalua) {
+            $area_tipo->materialesRequeridos()
+                ->where('id_material', $id_material)
+                ->update($se_evalua);
         }
 
         return back();
