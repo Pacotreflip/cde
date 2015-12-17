@@ -108,3 +108,50 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
     Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');
 });
+
+
+Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
+//    Route::get('/', 'AdminController@welcome');
+//    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);
+//    
+    Route::resource('roles', 'Auth\RoleController', ['names' => [
+            'index' => 'roles_index_path',
+            'create' => 'roles_create_path',
+            'store' => 'roles_store_path',
+            'show' => 'roles_show_path',
+            'edit' => 'roles_edit_path',
+            'update' => 'roles_update_path',
+            'destroy' => 'roles_destroy_path'
+    ]]);
+    
+    Route::resource('users', 'Auth\UserController', ['names' => [
+            'index' => 'users_index_path',
+            'create' => 'users_create_path',
+            'store' => 'users_store_path',
+            'show' => 'users_show_path',
+            'edit' => 'users_edit_path',
+            'update' => 'users_update_path',
+            'destroy' => 'users_destroy_path'
+    ]]);
+    
+    Route::resource('permissions', 'Auth\PermissionController', ['names' => [
+            'index' => 'permissions_index_path',
+            'create' => 'permissions_create_path',
+            'store' => 'permissions_store_path',
+            'show' => 'permissions_show_path',
+            'edit' => 'permissions_edit_path',
+            'update' => 'permissions_update_path',
+            'destroy' => 'permissions_destroy_path'
+    ]]);
+    Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
+    Route::get("/assign_permissions/{id}", ["as" => "assign_permissions_to_role_create_path", "uses" => "Auth\RoleController@getFormPermissions"]);
+    Route::post("/assign_permissions/remove", ["as" => "remove_permissions_to_role_store_path", "uses" => "Auth\RoleController@removePermissions"]);
+    Route::post("/assign_permissions/assign", ["as" => "assign_permissions_to_role_store_path", "uses" => "Auth\RoleController@assignPermissions"]);
+    Route::get("/users/role/{id}", ["as" => "role_to_user_show_path", "uses" => "Auth\UserController@getFormRole"]);
+    Route::post("/users/assign_role/remove", ["as" => "remove_role_to_user_store_path", "uses" => "Auth\UserController@removeRole"]);
+    Route::post("/users/assign_role/assign", ["as" => "assign_role_to_user_store_path", "uses" => "Auth\UserController@assignRole"]);
+});
+Route::group(["middleware" => ['role:admin']], function () {
+    Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);//role_to_user_show_path
+    
+});
