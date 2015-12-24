@@ -220,21 +220,21 @@ class Inventario extends Model
         if ($this->id == $inventario_destino->id) {
             return false;
         }
-
-        try {
-            $this->beginTransaction();
+//
+//        try {
+            //$this->beginTransaction();
 
             $this->decrementaExistencia($cantidad);
 
             $inventario_destino->incrementaExistencia($cantidad);
 
-            $this->commitTransaction();
+            //$this->commitTransaction();
 
             return true;
-        } catch (\Exception $e) {
-            $this->rollbackTransaction();
-            throw $e;
-        }
+//        } catch (\Exception $e) {
+//            $this->rollbackTransaction();
+//            throw $e;
+//        }
     }
 
     /**

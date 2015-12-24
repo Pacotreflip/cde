@@ -306,6 +306,27 @@ class Material extends Model
 
         throw new InventarioNoEncontradoException;
     }
+    /**
+     * Devuelve inventario del material en el área destino,
+     * si no éxiste inventario en área destino lo crea 
+     * 
+     * @param Area $area
+     * @return Inventario
+     * @throws InventarioNoEncontradoException
+     */
+    
+    public function getInventarioDeAreaDestino(Area $area)
+    {
+        $inventario = $this->inventarios()->where('id_area', $area->getKey())->first();
+
+        if (!$inventario) {
+            $inventario = $this->nuevoInventarioEnArea($area);
+        }
+        if ($inventario) {
+            return $inventario;
+        }
+        throw new InventarioNoEncontradoException;
+    }
 
     /**
      * Crea una instancia de inventario de este material en el area indicada.
@@ -321,7 +342,7 @@ class Material extends Model
         $inventario->id_area = $area->getKey();
         $inventario->id_material = $this->getKey();
         $inventario->cantidad_existencia = $cantidad;
-
+        $inventario->save();
         return $inventario;
     }
 
@@ -368,10 +389,10 @@ class Material extends Model
      * @param  ItemTransaccion $item
      * @return void
      */
-    public function transfiereExistencia($cantidad, Area $origen, Area $destino, $item)
+    public function transfiereExistencia($cantidad, Area $origen, Area $destino)
     {
         $inventario_origen = $this->getInventarioDeArea($origen);
-        $inventario_destino = $this->nuevoInventarioEnArea($destino, $cantidad);
-        $inventario_origen->transferirA($cantidad, $inventario_destino, $item);
+        $inventario_destino = $this->getInventarioDeAreaDestino($destino);
+        $inventario_origen->transferirA($inventario_destino, $cantidad);
     }
 }

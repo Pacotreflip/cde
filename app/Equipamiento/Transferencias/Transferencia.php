@@ -110,7 +110,7 @@ class Transferencia extends Model
         $item->cantidad_transferida = $cantidad;
         $this->items()->save($item);
 
-        $material->transferir($cantidad, $origen, $destino, $item);
+        $material->transfiereExistencia($cantidad, $origen, $destino);
 
         return $item;
     }
