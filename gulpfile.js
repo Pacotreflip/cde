@@ -22,6 +22,7 @@ elixir(function(mix) {
     mix.sass('app.scss').version('public/css/app.css');
     mix.copy('node_modules/bootstrap-sass/assets/fonts','public/build/fonts');
     mix.copy('vendor/bower_components/jquery-ui/themes/smoothness/images','public/build/css/images');
+    mix.copy('node_modules/tablesorter/dist/css/images','public/build/css/images');
     //mix.copy('public/js/app.js','resources/assets/js/');
     mix.copy('vendor/bower_components/jquery-ui/ui/jquery-ui.js','public/js/');
    // mix.copy('vendor/bower_components/jquery-ui/ui/autocomplete.js','resources/assets/js/');

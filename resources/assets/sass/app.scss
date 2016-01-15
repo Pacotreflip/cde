@@ -14,7 +14,10 @@ $roboto-font-path: "../fonts/roboto/";
 @import "vendor/bower_components/font-awesome/scss/font-awesome";
 @import "partials/theme";
 @import "partials/nav";
-
+@import "node_modules/tablesorter/dist/css/theme.grey.min";
+@import "node_modules/tablesorter/dist/css/theme.blue.min";
+@import "node_modules/tablesorter/dist/css/theme.bootstrap.min";
+@import "node_modules/tablesorter/dist/css/theme.metro-dark.min";
 body {
   margin-top: 70px;
 }

@@ -36,6 +36,7 @@ Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], functi
     Route::patch('evaluacion-calidad', 'EvaluacionCalidadController@update');
     // Ruta de comparativa...
     Route::get('comparativa', 'AreasTipoComparativaController@index');
+    Route::post('comparativa', 'AreasTipoComparativaController@consultaFiltrada')->name("comparativa.consulta");
 });
 
 // Rutas de areas...

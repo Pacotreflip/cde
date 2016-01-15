@@ -12,13 +12,15 @@
   <body>
     @include('partials.nav')
 
-    <div class="container">
+    <div class="container" style="width: 98%;">
         @include('flash::message')
         @yield('content')
     </div>
 
     <script src="{{ asset("js/app.js") }}"></script>
     <script src="{{ asset("js/jquery-ui.js") }}"></script>
+    <script src="{{ asset("js/jquery.tablesorter.js") }}"></script>
+    <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
     @yield('scripts')
   </body>
 </html>
