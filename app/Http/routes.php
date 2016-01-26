@@ -37,6 +37,10 @@ Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], functi
     // Ruta de comparativa...
     Route::get('comparativa', 'AreasTipoComparativaController@index');
     Route::post('comparativa', 'AreasTipoComparativaController@consultaFiltrada')->name("comparativa.consulta");
+    
+    Route::get('articulos-requeridos-desde-area/seleccion-area', 'ArticulosRequeridosDesdeAreaController@create')->name('requerimientos.area.seleccion');
+    Route::post('articulos-requeridos-desde-area/seleccion-area', 'ArticulosRequeridosDesdeAreaController@muestraMateriales')->name('requerimientos.articulos.area.seleccionada');
+    Route::post('articulos-requeridos-desde-area/', 'ArticulosRequeridosDesdeAreaController@store')->name('requerimientos.copia.desde.area.store');
 });
 
 // Rutas de areas...

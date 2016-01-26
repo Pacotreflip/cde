@@ -14,6 +14,9 @@
       <a href="{{ route('requerimientos.seleccion', [$tipo]) }}" class="btn btn-success pull-right">
         <i class="fa fa-plus"></i> Agregar Artículos
       </a>
+      <a href="{{ route('requerimientos.area.seleccion', [$tipo]) }}" class="btn btn-success pull-right" style="margin-right: 5px">
+        <i class="fa fa-plus"></i> Agregar Artículos desde Área Tipo Existente
+      </a>
     </div>
 
     <hr>

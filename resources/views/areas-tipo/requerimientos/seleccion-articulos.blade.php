@@ -8,7 +8,11 @@
   
   @include('partials.search-form')
   <br>
-
+  <a href="{{ route('requerimientos.area.seleccion', [$tipo]) }}" class="btn btn-success pull-left" style="margin-right: 5px">
+    <i class="fa fa-plus"></i> Seleccionar Área Tipo a Copiar
+  </a>
+  <br>
+    <br>
   {!! Form::open(['route' => ['requerimientos.store', $tipo]]) !!}
     <table class="table table-striped table-condensed">
       <thead>

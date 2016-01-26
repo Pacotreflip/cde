@@ -646,4 +646,41 @@ group by materiales.id_material,Equipamiento.materiales_requeridos.id,dbo.materi
         $filtros["errores"] = $errores;
         return $filtros;
     }
+    
+    /**
+     * Busqueda de areas_tipo.
+     *
+     * @param string $busqueda Texto a buscar
+     * @param int    $howMany  Numero de areas tipo por pagina
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function buscar($busqueda, $howMany = 30)
+    {
+        $areas_tipo = AreaTipo::all();
+        $ids = [];
+        foreach($areas_tipo as $area_tipo){
+            if(stripos($area_tipo->getRutaAttribute(), $busqueda)!==FALSE){
+                $ids[] = $area_tipo->id;
+            }
+        }
+        $ids_cadena = implode(",", $ids);
+        return AreaTipo::where(function ($query) use($ids_cadena) {
+                $query->whereRaw('id IN ('.$ids_cadena.')');
+            })
+            ->orderBy('nombre')
+            ->paginate($howMany);
+    }
+    
+    /**
+     * Obtiene todos las áreas tipo paginadas.
+     *
+     * @param int $howMany
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllPaginated($howMany = 30)
+    {
+        return AreaTipo::where('id','>','0')
+            ->orderBy('nombre')
+            ->paginate($howMany);
+    }
 }
