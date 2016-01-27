@@ -2,6 +2,8 @@
 
 namespace Ghi\Equipamiento\Articulos;
 
+use Ghi\Equipamiento\Moneda;
+
 class Materiales
 {
     /**
@@ -89,6 +91,19 @@ class Materiales
         return Unidad::selectRaw('unidad AS id, unidad')
             ->orderBy('unidad')
             ->lists('unidad', 'unidad')
+            ->all();
+    }
+    
+    /**
+     * Obtiene una lista de unidades como arreglo.
+     *
+     * @return array
+     */
+    public function getListaMonedas()
+    {
+        return Moneda::selectRaw('id_moneda AS id, nombre as moneda')
+            ->orderBy('moneda')
+            ->lists('moneda', 'id')
             ->all();
     }
 

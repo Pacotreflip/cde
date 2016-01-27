@@ -57,6 +57,36 @@
 </div>
 
 <hr>
+<div class="row">
+  <div class="col-xs-6">
+    <div class="form-group">
+      {!! Form::label('precio_estimado', 'Precio Estimado:') !!}
+      {!! Form::text('precio_estimado', null, ['class' => 'form-control']) !!}
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="form-group">
+        {!! Form::label('moneda', 'Moneda:') !!}
+        {!! Form::select('moneda', $monedas, null, ['class' => 'form-control']) !!}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6">
+    <div class="form-group">
+      {!! Form::label('precio_proyecto_comparativo', 'Precio Proyecto Comparativo:') !!}
+      {!! Form::text('precio_proyecto_comparativo', null, ['class' => 'form-control']) !!}
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="form-group">
+        {!! Form::label('moneda_proyecto_comparativo', 'Moneda Proyecto Comparativo:') !!}
+        {!! Form::select('moneda_proyecto_comparativo', $monedas, null, ['class' => 'form-control']) !!}
+    </div>
+  </div>
+</div>
+<hr>
 
 <div class="form-group">
   {!! Form::submit('Guardar Cambios', ['class' => 'btn btn-primary']) !!}

@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Inventarios\Inventario;
 use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
+use Illuminate\Support\Facades\DB;
 
 class Material extends Model
 {
@@ -235,6 +236,14 @@ class Material extends Model
         $this->ficha_tecnica_nombre = "{$nombre}.{$extension}";
         $this->ficha_tecnica_path = sprintf("%s/%s", $this->directorioBase, $this->ficha_tecnica_nombre);
         $file->move($this->directorioBase, $this->ficha_tecnica_nombre);
+    }
+    
+    public function actualizaPreciosEquipamiento($id_material, $precio_estimado, $moneda, $precio_proyecto_comparativo, $moneda_proyecto_comparativa){
+        DB::connection("cadeco")->update("update Equipamiento.materiales_requeridos set precio_estimado = $precio_estimado, "
+                . "id_moneda = $moneda,"
+                . "precio_comparativa = $precio_proyecto_comparativo, "
+                . "id_moneda_comparativa = $moneda_proyecto_comparativa"
+                . "where id_material = $id_material");
     }
 
     /**

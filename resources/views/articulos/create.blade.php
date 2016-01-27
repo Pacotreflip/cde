@@ -56,6 +56,8 @@
       {!! Form::label('clasificador', 'Clasificador:') !!}
       {!! Form::select('clasificador', $clasificadores, null, ['class' => 'form-control']) !!}
     </div>
+    
+    
 
     <!-- Descripción Larga Form Input -->
     <div class="form-group">

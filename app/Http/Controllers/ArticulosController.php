@@ -14,24 +14,26 @@ use Ghi\Http\Requests\CreateArticuloRequest;
 use Ghi\Http\Requests\UpdateArticuloRequest;
 use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Articulos\ClasificadorRepository;
+use Ghi\Equipamiento\Moneda;
 
 class ArticulosController extends Controller
 {
     protected $materiales;
-
+    protected $monedas;
     protected $clasificadores;
 
     /**
      * @param Materiales $materiales
      * @param ClasificadorRepository $clasificadores
      */
-    public function __construct(Materiales $materiales, ClasificadorRepository $clasificadores)
+    public function __construct(Materiales $materiales, ClasificadorRepository $clasificadores, Moneda $monedas)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->materiales = $materiales;
         $this->clasificadores = $clasificadores;
+        $this->monedas = $monedas;
 
         parent::__construct();
     }
@@ -61,11 +63,12 @@ class ArticulosController extends Controller
         $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
         $tipos = $this->materiales->getListaTipoMateriales();
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
-
-        return view('articulos.create')
+        $monedas = [null => 'Seleccione Moneda'] + $this->materiales->getListaMonedas();
+        return view('articulos.create', ["monedas"=>$monedas])
             ->withClasificadores($clasificadores)
             ->withUnidades($unidades)
             ->withFamilias($familias)
+            ->withMonedas($monedas)
             ->withTipos($tipos);
     }
 
@@ -123,11 +126,13 @@ class ArticulosController extends Controller
         $unidades = $this->materiales->getListaUnidades();
         $familias = $this->materiales->getListaFamilias($material->tipo_material->getTipoReal());
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
-
+        $monedas = [null => 'Seleccione Moneda'] + $this->materiales->getListaMonedas();
+        
         return view('articulos.edit')
             ->withMaterial($material)
             ->withUnidades($unidades)
             ->withFamilias($familias)
+            ->withMonedas($monedas)
             ->withClasificadores($clasificadores);
     }
 
@@ -153,7 +158,7 @@ class ArticulosController extends Controller
         if ($request->hasFile('ficha_tecnica')) {
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
-
+        $material->actualizaPreciosEquipamiento($id,$request->precio_estimado, $request->moneda, $request->precio_proyecto_comparativo, $request->moneda_proyecto_comparativo);
         $this->materiales->save($material);
 
         Flash::success('Los cambios fueron guardados');
