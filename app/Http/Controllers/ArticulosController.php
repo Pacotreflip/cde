@@ -158,7 +158,11 @@ class ArticulosController extends Controller
         if ($request->hasFile('ficha_tecnica')) {
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
-        $material->actualizaPreciosEquipamiento($id,$request->precio_estimado, $request->moneda, $request->precio_proyecto_comparativo, $request->moneda_proyecto_comparativo);
+        $precio_estimado = ($request->precio_estimado == "")? "NULL":$request->precio_estimado;
+        $precio_proyecto_comparativo = ($request->precio_proyecto_comparativo == "")? "NULL":$request->precio_proyecto_comparativo;
+        $moneda = ($request->moneda == "")? "NULL":$request->moneda;
+        $moneda_proyecto_comparativo = ($request->moneda_proyecto_comparativo == "")? "NULL":$request->moneda_proyecto_comparativo;
+        $material->actualizaPreciosEquipamiento($id,$precio_estimado, $moneda, $precio_proyecto_comparativo, $moneda_proyecto_comparativo);
         $this->materiales->save($material);
 
         Flash::success('Los cambios fueron guardados');
