@@ -243,7 +243,7 @@ class Material extends Model
                 . "id_moneda = $moneda,"
                 . "precio_comparativa = $precio_proyecto_comparativo, "
                 . "id_moneda_comparativa = $moneda_proyecto_comparativa"
-                . "where id_material = $id_material");
+                . " where id_material = $id_material");
     }
 
     /**
