@@ -5,18 +5,25 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-6">
+  <div class="col-xs-4">
     <!-- Numero de Parte Form Input -->
     <div class="form-group">
       {!! Form::label('numero_parte', 'Numero de Parte:') !!}
       {!! Form::text('numero_parte', null, ['class' => 'form-control']) !!}
     </div>
   </div>
-  <div class="col-xs-6">
+  <div class="col-xs-4">
     <!-- Unidad Form Input -->
     <div class="form-group">
       {!! Form::label('unidad', 'Unidad:') !!}
       {!! Form::select('unidad', $unidades, null, ['class' => 'form-control']) !!}
+    </div>
+  </div>
+  <div class="col-xs-4">
+    <!-- Unidad Form Input -->
+    <div class="form-group">
+      {!! Form::label('color', 'Color:') !!}
+      {!! Form::text('color', null, ['class' => 'form-control']) !!}
     </div>
   </div>
 </div>
