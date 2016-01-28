@@ -88,13 +88,13 @@ class ArticulosController extends Controller
         }
 
         $familia = Familia::findOrFail($request->get('familia'));
-
         $material = $materiales->make(
             $request->get('descripcion'),
             $request->get('descripcion_larga'),
             $request->get('numero_parte'),
             $unidad,
-            $unidad
+            $unidad,
+            $request->color
         );
 
         if ($request->has('clasificador')) {
