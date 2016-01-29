@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Proveedores\Tipo;
 use Ghi\Equipamiento\Proveedores\Proveedor;
+use Ghi\Http\Requests\CreateProveedorRequest;
 
 class ProveedoresController extends Controller
 {
@@ -47,7 +48,10 @@ class ProveedoresController extends Controller
         return Proveedor::soloProveedores()
                 ->where(function ($query) use ($busqueda) {
                     $query->where('razon_social', 'like', '%' . $busqueda . '%')
-                        ->orWhere('rfc', 'like', '%' . $busqueda . '%');
+                        ->orWhere('rfc', 'like', '%' . $busqueda . '%')
+                        ->orWhere('nombre_corto', 'like', '%' . $busqueda . '%')
+                        ->orWhere('nombre_contacto', 'like', '%' . $busqueda . '%')
+                        ->orWhere('correo', 'like', '%' . $busqueda . '%');
                 })
                 ->orderBy('razon_social')
                 ->paginate(30);
@@ -87,7 +91,7 @@ class ProveedoresController extends Controller
      * @param Requests\CreateProveedorRequest $request
      * @return Response
      */
-    public function store(Requests\CreateProveedorRequest $request)
+    public function store(CreateProveedorRequest $request)
     {
         $proveedor = new Proveedor($request->all());
         $proveedor->tipo_empresa = new Tipo($request->get('tipo_empresa'));

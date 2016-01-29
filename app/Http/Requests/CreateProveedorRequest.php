@@ -24,8 +24,11 @@ class CreateProveedorRequest extends Request
     public function rules()
     {
         return [
-            'razon_social' => 'required|unique:cadeco.empresas,razon_social',
+            'razon_social' => 'required|unique:cadeco.empresas,razon_social|max:255',
+            'nombre_corto' => 'required|unique:cadeco.empresas,nombre_corto|max:60',
             'tipo_empresa' => 'required',
+            'nombre_contacto' => 'max:60|min:10',
+            'correo' => 'email',
         ];
     }
 }

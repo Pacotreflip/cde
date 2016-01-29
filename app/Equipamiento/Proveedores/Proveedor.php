@@ -24,7 +24,7 @@ class Proveedor extends Model
     /**
      * @var array
      */
-    protected $fillable = ['razon_social', 'rfc'];
+    protected $fillable = ['razon_social', 'rfc', 'nombre_corto', 'nombre_contacto', 'correo', 'telefono'];
 
     /**
      * @var bool

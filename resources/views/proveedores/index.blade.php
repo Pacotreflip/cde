@@ -12,8 +12,12 @@
     <thead>
       <tr>
         <th>Razon Social</th>
+        <th>Nombre Corto</th>
         <th>RFC</th>
         <th>Tipo</th>
+        <th>Nombre Contacto</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
       </tr>
     </thead>
     <tbody>
@@ -22,8 +26,14 @@
           <td>
               <a href="{{ route('proveedores.edit', [$proveedor]) }}">{{ $proveedor->razon_social }}</a>
           </td>
+          
+          
+          <td>{{ $proveedor->nombre_corto}}</td>
           <td>{{ $proveedor->rfc }}</td>
           <td>{{ $proveedor->tipo_empresa->getDescripcion() }}</td>
+          <td>{{ $proveedor->nombre_contacto }}</td>
+          <td>{{ $proveedor->telefono }}</td>
+          <td>{{ $proveedor->correo }}</td>
         </tr>
       @endforeach
     </tbody>
