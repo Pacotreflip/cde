@@ -5,6 +5,7 @@ namespace Ghi\Providers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('partials.nav-app', \Ghi\Http\Composers\ObraComposer::class);
+        Validator::extendImplicit('required_if_not', "Ghi\Services\Validation\CustomValidators@requiredIfNot");
+        Validator::extendImplicit('rfc', "Ghi\Services\Validation\CustomValidators@rfc");
     }
 
     /**

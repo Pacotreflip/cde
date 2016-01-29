@@ -29,6 +29,15 @@ class CreateProveedorRequest extends Request
             'tipo_empresa' => 'required',
             'nombre_contacto' => 'max:60|min:10',
             'correo' => 'email',
+            'rfc' => 'rfc'
         ];
+    }
+    public function messages()
+    {
+        $messages = [
+            'rfc.rfc' => 'Ingrese un RFC válido'
+        ];
+
+        return $messages;
     }
 }
