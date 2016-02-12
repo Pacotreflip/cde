@@ -114,16 +114,16 @@ class AreasTipo
         
         
 //        $resultados = DB::connection("cadeco")->select("SELECT        dbo.materiales.descripcion, dbo.materiales.unidad, Equipamiento.materiales_requeridos.cantidad_requerida, 
-//                         Equipamiento.materiales_requeridos.precio_estimado AS importe_estimado, dbo.monedas.id_moneda AS idmoneda_requerida, 
+//                         dbo.materiales.precio_estimado AS importe_estimado, dbo.monedas.id_moneda AS idmoneda_requerida, 
 //                         dbo.monedas.nombre AS moneda_requerida, Equipamiento.materiales_requeridos.cantidad_comparativa, 
-//                         Equipamiento.materiales_requeridos.precio_comparativa AS importe_comparativa, monedas_1.id_moneda AS id_moneda_comparativa, 
+//                         dbo.materiales.precio_proyecto_comparativo AS importe_comparativa, monedas_1.id_moneda AS id_moneda_comparativa, 
 //                         monedas_1.nombre AS moneda_comparativa, Equipamiento.materiales_requeridos.id_tipo_area, Equipamiento.material_clasificadores.id AS id_clasificador, 
 //                         Equipamiento.material_clasificadores.nombre AS clasificador
 //FROM            Equipamiento.material_clasificadores RIGHT OUTER JOIN
 //                         dbo.materiales ON Equipamiento.material_clasificadores.id = dbo.materiales.id_clasificador RIGHT OUTER JOIN
 //                         Equipamiento.materiales_requeridos LEFT OUTER JOIN
-//                         dbo.monedas AS monedas_1 ON Equipamiento.materiales_requeridos.id_moneda_comparativa = monedas_1.id_moneda LEFT OUTER JOIN
-//                         dbo.monedas ON Equipamiento.materiales_requeridos.id_moneda = dbo.monedas.id_moneda ON 
+//                         dbo.monedas AS monedas_1 ON dbo.materiales.id_moneda_proyecto_comparativo = monedas_1.id_moneda LEFT OUTER JOIN
+//                         dbo.monedas ON dbo.materiales.id_moneda = dbo.monedas.id_moneda ON 
 //                         dbo.materiales.id_material = Equipamiento.materiales_requeridos.id_material
 //WHERE        (Equipamiento.materiales_requeridos.id_tipo_area = ?)", array($id_tipo_area));
         
@@ -166,11 +166,11 @@ class AreasTipo
                 , dbo.materiales.descripcion
                 , dbo.materiales.unidad
                 , Equipamiento.materiales_requeridos.cantidad_requerida
-                , Equipamiento.materiales_requeridos.precio_estimado AS importe_estimado
+                , dbo.materiales.precio_estimado AS importe_estimado
                 , dbo.monedas.id_moneda AS idmoneda_requerida
                 , dbo.monedas.nombre AS moneda_requerida
                 , Equipamiento.materiales_requeridos.cantidad_comparativa
-                , Equipamiento.materiales_requeridos.precio_comparativa AS importe_comparativa
+                , dbo.materiales.precio_proyecto_comparativo AS importe_comparativa
                 , monedas_1.id_moneda AS id_moneda_comparativa
                 , monedas_1.nombre AS moneda_comparativa
                 , Equipamiento.materiales_requeridos.id_tipo_area
@@ -217,20 +217,20 @@ class AreasTipo
             FROM
                 Equipamiento.material_clasificadores RIGHT OUTER JOIN
                 dbo.materiales ON Equipamiento.material_clasificadores.id = dbo.materiales.id_clasificador RIGHT OUTER JOIN
-                Equipamiento.materiales_requeridos LEFT OUTER JOIN
-                dbo.monedas AS monedas_1 ON Equipamiento.materiales_requeridos.id_moneda_comparativa = monedas_1.id_moneda LEFT OUTER JOIN
-                dbo.monedas ON Equipamiento.materiales_requeridos.id_moneda = dbo.monedas.id_moneda ON 
-                dbo.materiales.id_material = Equipamiento.materiales_requeridos.id_material
+                Equipamiento.materiales_requeridos ON 
+                dbo.materiales.id_material = Equipamiento.materiales_requeridos.id_material  LEFT OUTER JOIN
+                dbo.monedas AS monedas_1 ON dbo.materiales.id_moneda_proyecto_comparativo = monedas_1.id_moneda LEFT OUTER JOIN
+                dbo.monedas ON dbo.materiales.id_moneda = dbo.monedas.id_moneda  
             JOIN(
                 select 
                     Equipamiento.materiales_requeridos.id ,
-                    case  when Equipamiento.materiales_requeridos.id_moneda > 0 and $id_moneda_esperada > 0 then 
-                    (Equipamiento.materiales_requeridos.precio_estimado * Equipamiento.materiales_requeridos.cantidad_requerida) * (
+                    case  when dbo.materiales.id_moneda > 0 and $id_moneda_esperada > 0 then 
+                    (dbo.materiales.precio_estimado * Equipamiento.materiales_requeridos.cantidad_requerida) * (
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
                     select cast(".$tipos_cambio[2]." as float) as tipo_cambio, 2 as idmoneda union
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio 
-                    where idmoneda = Equipamiento.materiales_requeridos.id_moneda) 
+                    where idmoneda = dbo.materiales.id_moneda) 
                     /
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
@@ -238,13 +238,13 @@ class AreasTipo
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio where idmoneda = $id_moneda_esperada)
                     ) else null end importe_requerido_moneda_comparativa,
 
-                    case  when Equipamiento.materiales_requeridos.id_moneda_comparativa > 0 and $id_moneda_esperada > 0 then 
-                    (Equipamiento.materiales_requeridos.precio_comparativa * Equipamiento.materiales_requeridos.cantidad_comparativa ) * (
+                    case  when dbo.materiales.id_moneda_proyecto_comparativo > 0 and $id_moneda_esperada > 0 then 
+                    (dbo.materiales.precio_proyecto_comparativo * Equipamiento.materiales_requeridos.cantidad_comparativa ) * (
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
                     select cast(".$tipos_cambio[2]." as float) as tipo_cambio, 2 as idmoneda union
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio 
-                    where idmoneda = Equipamiento.materiales_requeridos.id_moneda_comparativa) 
+                    where idmoneda = dbo.materiales.id_moneda_proyecto_comparativo) 
                     /
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
@@ -253,13 +253,13 @@ class AreasTipo
                     ) 
                     else null end importe_comparativa_moneda_comparativa,
                     
-                    case  when Equipamiento.materiales_requeridos.id_moneda > 0 and $id_moneda_esperada > 0 then 
-                    (Equipamiento.materiales_requeridos.precio_estimado ) * (
+                    case  when dbo.materiales.id_moneda > 0 and $id_moneda_esperada > 0 then 
+                    (dbo.materiales.precio_estimado ) * (
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
                     select cast(".$tipos_cambio[2]." as float) as tipo_cambio, 2 as idmoneda union
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio 
-                    where idmoneda = Equipamiento.materiales_requeridos.id_moneda) 
+                    where idmoneda = dbo.materiales.id_moneda) 
                     /
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
@@ -267,13 +267,13 @@ class AreasTipo
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio where idmoneda = $id_moneda_esperada)
                     ) else null end precio_requerido_moneda_comparativa,
 
-                    case  when Equipamiento.materiales_requeridos.id_moneda_comparativa > 0 and $id_moneda_esperada > 0 then 
-                    (Equipamiento.materiales_requeridos.precio_comparativa ) * (
+                    case  when dbo.materiales.id_moneda_proyecto_comparativo > 0 and $id_moneda_esperada > 0 then 
+                    (dbo.materiales.precio_proyecto_comparativo ) * (
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
                     select cast(".$tipos_cambio[2]." as float) as tipo_cambio, 2 as idmoneda union
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio 
-                    where idmoneda = Equipamiento.materiales_requeridos.id_moneda_comparativa) 
+                    where idmoneda = dbo.materiales.id_moneda_proyecto_comparativo) 
                     /
                     (select tipo_cambio from (
                     select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
@@ -281,7 +281,7 @@ class AreasTipo
                     select cast(".$tipos_cambio[3]." as float) as tipo_cambio, 3 as idmoneda) as tipos_cambio where idmoneda = $id_moneda_esperada)
                     ) 
                     else null end precio_comparativa_moneda_comparativa
-		from Equipamiento.materiales_requeridos
+		from Equipamiento.materiales_requeridos join dbo.materiales on(dbo.materiales.id_material = Equipamiento.materiales_requeridos.id_material)
             ) AS importes on(importes.id = Equipamiento.materiales_requeridos.id)
                                                  
 JOIN (
@@ -491,9 +491,9 @@ cast(4 as int) as iderror
 
 WHERE        (Equipamiento.materiales_requeridos.id_tipo_area = ?) $filtros
 group by materiales.id_material,Equipamiento.materiales_requeridos.id,dbo.materiales.descripcion, dbo.materiales.unidad, Equipamiento.materiales_requeridos.cantidad_requerida, 
-                         Equipamiento.materiales_requeridos.precio_estimado , dbo.monedas.id_moneda , 
+                         dbo.materiales.precio_estimado , dbo.monedas.id_moneda , 
                          dbo.monedas.nombre , Equipamiento.materiales_requeridos.cantidad_comparativa, 
-                         Equipamiento.materiales_requeridos.precio_comparativa , monedas_1.id_moneda , 
+                         dbo.materiales.precio_proyecto_comparativo , monedas_1.id_moneda , 
                          monedas_1.nombre , Equipamiento.materiales_requeridos.id_tipo_area, Equipamiento.material_clasificadores.id , 
                          Equipamiento.material_clasificadores.nombre , importes.importe_requerido_moneda_comparativa, 
                          importes.importe_comparativa_moneda_comparativa, 
