@@ -31,8 +31,8 @@ class CreateArticuloRequest extends Request
             'familia'                       => 'required',
             'precio_estimado'               => 'numeric',
             'precio_proyecto_comparativo'   => 'numeric',
-            'moneda'                        => 'required_with:precio_estimado',
-            'moneda_proyecto_comparativo'   => 'required_with:precio_proyecto_comparativo',
+            'id_moneda'                        => 'required_with:precio_estimado',
+            'id_moneda_proyecto_comparativo'   => 'required_with:precio_proyecto_comparativo',
         ];
     }
 }

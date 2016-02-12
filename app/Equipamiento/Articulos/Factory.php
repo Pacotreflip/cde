@@ -15,9 +15,13 @@ class Factory
      * @param int $tipo
      * @return Material
      */
-    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $color, $tipo = TipoMaterial::TIPO_MATERIALES)
+    public function make($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra,  $tipo = TipoMaterial::TIPO_MATERIALES)
     {
-        $material = $this->materialBase($nombre, $descripcion, $numero_parte, $unidad, $unidad_compra,$color, $tipo);
+        $material = $this->materialBase($nombre
+                , $descripcion, $numero_parte
+                , $unidad
+                , $unidad_compra
+                , $tipo);
 
         if ($tipo == TipoMaterial::TIPO_MATERIALES) {
             return $this->nuevoDeTipoMaterial($material);
@@ -50,14 +54,13 @@ class Factory
      * @param Unidad $unidad_compra
      * @param int $tipo
      */
-    protected function materialBase($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $color, $tipo)
+    protected function materialBase($nombre, $descripcion, $numero_parte, Unidad $unidad, Unidad $unidad_compra, $tipo)
     {
         $material = new Material([
-                'descripcion'       => $nombre,
-                'descripcion_larga' => $descripcion,
-                'numero_parte'      => $numero_parte,
-                'codigo_externo'    => $numero_parte,
-                'color'             => $color,
+                'descripcion'                       => $nombre,
+                'descripcion_larga'                 => $descripcion,
+                'numero_parte'                      => $numero_parte,
+                'codigo_externo'                    => $numero_parte,
         ]);
 
         $material->unidad        = $unidad->unidad;
