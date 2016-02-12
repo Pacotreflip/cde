@@ -160,8 +160,8 @@ class ArticulosController extends Controller
         }
         $precio_estimado = ($request->precio_estimado == "")? "NULL":$request->precio_estimado;
         $precio_proyecto_comparativo = ($request->precio_proyecto_comparativo == "")? "NULL":$request->precio_proyecto_comparativo;
-        $moneda = ($request->moneda == "")? "NULL":$request->moneda;
-        $moneda_proyecto_comparativo = ($request->moneda_proyecto_comparativo == "")? "NULL":$request->moneda_proyecto_comparativo;
+        $moneda = ($request->id_moneda == "")? "NULL":$request->id_moneda;
+        $moneda_proyecto_comparativo = ($request->id_moneda_proyecto_comparativo == "")? "NULL":$request->id_moneda_proyecto_comparativo;
         $material->actualizaPreciosEquipamiento($id,$precio_estimado, $moneda, $precio_proyecto_comparativo, $moneda_proyecto_comparativo);
         $this->materiales->save($material);
 

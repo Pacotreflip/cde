@@ -18,8 +18,8 @@ class MaterialRequerido extends Model
         'cantidad_requerida',
         'precio_estimado',
         'cantidad_comparativa',
-        'precio_comparativa',
-        'id_moneda_comparativa',
+        'precio_proyecto_comparativo',
+        'id_moneda_proyecto_comparativo',
         'existe_para_comparativa',
     ];
 
@@ -28,9 +28,9 @@ class MaterialRequerido extends Model
         'cantidad_requerida' => 'int',
         'precio_estimado' => 'float',
         'cantidad_comparativa' => 'int',
-        'precio_comparativa' => 'float',
+        'precio_proyecto_comparativo' => 'float',
         'id_moneda' => 'int',
-        'id_moneda_comparativa' => 'int',
+        'id_moneda_proyecto_comparativo' => 'int',
     ];
 
     /**

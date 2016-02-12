@@ -21,7 +21,7 @@ class Material extends Model
 
     protected $primaryKey = 'id_material';
 
-    protected $fillable = ['descripcion', 'descripcion_larga', 'numero_parte', 'codigo_externo', 'color', ];
+    protected $fillable = ['descripcion', 'descripcion_larga', 'numero_parte', 'codigo_externo', 'color', 'precio_estimado', 'precio_proyecto_comparativo', 'id_moneda', 'id_moneda_proyecto_comparativo' ];
 
     protected $casts = [
         'id_material' => 'int',

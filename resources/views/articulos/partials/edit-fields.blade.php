@@ -73,8 +73,8 @@
   </div>
   <div class="col-xs-6">
     <div class="form-group">
-        {!! Form::label('moneda', 'Moneda:') !!}
-        {!! Form::select('moneda', $monedas, null, ['class' => 'form-control']) !!}
+        {!! Form::label('id_moneda', 'Moneda:') !!}
+        {!! Form::select('id_moneda', $monedas, null, ['class' => 'form-control']) !!}
     </div>
   </div>
 </div>
@@ -88,8 +88,8 @@
   </div>
   <div class="col-xs-6">
     <div class="form-group">
-        {!! Form::label('moneda_proyecto_comparativo', 'Moneda Proyecto Comparativo:') !!}
-        {!! Form::select('moneda_proyecto_comparativo', $monedas, null, ['class' => 'form-control']) !!}
+        {!! Form::label('id_moneda_proyecto_comparativo', 'Moneda Proyecto Comparativo:') !!}
+        {!! Form::select('id_moneda_proyecto_comparativo', $monedas, null, ['class' => 'form-control']) !!}
     </div>
   </div>
 </div>
