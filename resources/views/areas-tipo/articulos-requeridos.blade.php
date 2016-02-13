@@ -76,7 +76,7 @@
               {{ $requerido->material->precio_proyecto_comparativo }}
             </td>
             <td>
-                @if(is_object($requerido->material->moneda))
+                @if(is_object($requerido->material->moneda_proyecto_comparativo))
                  {{ ($requerido->material->moneda_proyecto_comparativo->nombre) }}
                 @endif
             </td>
