@@ -40,7 +40,7 @@ class MaterialRequerido extends Model
      */
     public function getImporteAttribute()
     {
-        return $this->cantidad_requerida * $this->precio_estimado;
+        return $this->cantidad_requerida * $this->material->precio_estimado;
     }
 
     /**
@@ -50,7 +50,7 @@ class MaterialRequerido extends Model
      */
     public function getImporteComparativaAttribute()
     {
-        return $this->cantidad_comparativa * $this->precio_comparativa;
+        return $this->cantidad_comparativa * $this->material->precio_proyecto_comparativo;
     }
 
     /**
@@ -61,11 +61,11 @@ class MaterialRequerido extends Model
      */
     public function getImporteEstimado($tipo_cambio)
     {
-        if (! $this->moneda) {
+        if (! $this->material->moneda) {
             return 0;
         }
         
-        if ($this->moneda->eslocal()) {
+        if ($this->material->moneda->eslocal()) {
             return $this->importe / $tipo_cambio;
         }
 
@@ -80,15 +80,15 @@ class MaterialRequerido extends Model
      */
     public function getPrecioEstimado($tipo_cambio)
     {
-        if (! $this->moneda) {
+        if (! $this->material->moneda) {
             return 0;
         }
         
-        if ($this->moneda->eslocal()) {
-            return $this->precio_estimado / $tipo_cambio;
+        if ($this->material->moneda->eslocal()) {
+            return $this->material->precio_estimado / $tipo_cambio;
         }
 
-        return $this->precio_estimado;
+        return $this->material->precio_estimado;
     }
 
     /**
@@ -99,11 +99,11 @@ class MaterialRequerido extends Model
      */
     public function getImporteComparativa($tipo_cambio)
     {
-        if (! $this->monedaComparativa) {
+        if (! $this->material->moneda_proyecto_comparativo) {
             return 0;
         }
         
-        if ($this->monedaComparativa->eslocal()) {
+        if ($this->material->moneda_proyecto_comparativo->eslocal()) {
             return $this->importe_comparativa / $tipo_cambio;
         }
 
@@ -118,15 +118,15 @@ class MaterialRequerido extends Model
      */
     public function getPrecioComparativa($tipo_cambio)
     {
-        if (! $this->monedaComparativa) {
+        if (! $this->material->moneda_proyecto_comparativo) {
             return 0;
         }
         
-        if ($this->monedaComparativa->eslocal()) {
-            return $this->precio_comparativa / $tipo_cambio;
+        if ($this->material->moneda_proyecto_comparativo->eslocal()) {
+            return $this->material->precio_proyecto_comparativo / $tipo_cambio;
         }
 
-        return $this->precio_comparativa;
+        return $this->material->precio_proyecto_comparativo;
     }
 
     /**

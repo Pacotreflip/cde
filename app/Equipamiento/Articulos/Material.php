@@ -10,6 +10,7 @@ use Ghi\Equipamiento\Transacciones\ItemTransaccion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Illuminate\Support\Facades\DB;
+use Ghi\Equipamiento\Moneda;
 
 class Material extends Model
 {
@@ -403,5 +404,15 @@ class Material extends Model
         $inventario_origen = $this->getInventarioDeArea($origen);
         $inventario_destino = $this->getInventarioDeAreaDestino($destino);
         $inventario_origen->transferirA($inventario_destino, $cantidad);
+    }
+    
+    public function moneda()
+    {
+        return $this->hasOne(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+    
+    public function moneda_proyecto_comparativo()
+    {
+        return $this->hasOne(Moneda::class, "id_moneda", "id_moneda_proyecto_comparativo");
     }
 }

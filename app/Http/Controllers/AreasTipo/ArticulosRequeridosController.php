@@ -152,9 +152,6 @@ class ArticulosRequeridosController extends Controller
     {
         return collect($articulos)->map(function ($articulo) {
             $articulo['cantidad_comparativa'] = $articulo['cantidad_comparativa'] ?: null;
-            $articulo['precio_comparativa'] = $articulo['precio_comparativa'] ?: null;
-            $articulo['id_moneda'] = $articulo['id_moneda'] ?: null;
-            $articulo['id_moneda_comparativa'] = $articulo['id_moneda_comparativa'] ?: null;
 
             if (! array_key_exists('existe_para_comparativa', $articulo)) {
                 $articulo['existe_para_comparativa'] = 0;

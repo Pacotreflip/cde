@@ -32,10 +32,11 @@
           <th>Cantidad Requerida</th>
           <th>Precio Estimado</th>
           <th>Moneda Nativa</th>
-          <th>Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
+          <th>Importe Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
           <th>Cantidad Comparativa</th>
           <th>Precio Comparativa</th>
           <th>Moneda Nativa</th>
+          <th>Importe Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
           <th>Existe para Comparativa?</th>
         </tr>
       </thead>
@@ -54,13 +55,12 @@
                 value="{{ $requerido->cantidad_requerida }}">
             </td>
             <td>
-              <input
-                type="text" class="form-control input-sm" 
-                name="articulos[{{ $requerido->id }}][precio_estimado]" 
-                value="{{ $requerido->precio_estimado }}">
+              {{ $requerido->material->precio_estimado }}
             </td>
             <td>
-              {!! Form::select('articulos['.$requerido->id.'][id_moneda]', $monedas, $requerido->id_moneda, ['placeholder' => 'Elija una moneda...']) !!}
+                @if(is_object($requerido->material->moneda))
+                 {{ ($requerido->material->moneda->nombre) }}
+                @endif
             </td>
             <td class="text-right">
               {{ round($requerido->getImporteEstimado($tipo_cambio), 2) }}
@@ -73,14 +73,15 @@
               >
             </td>
             <td>
-              <input
-                type="text" class="form-control input-sm"
-                name="articulos[{{ $requerido->id }}][precio_comparativa]"
-                value="{{ $requerido->precio_comparativa }}"
-              >
+              {{ $requerido->material->precio_proyecto_comparativo }}
             </td>
             <td>
-              {!! Form::select('articulos['.$requerido->id.'][id_moneda_comparativa]', $monedas, $requerido->id_moneda_comparativa, ['placeholder' => 'Elija una moneda...']) !!}
+                @if(is_object($requerido->material->moneda))
+                 {{ ($requerido->material->moneda_proyecto_comparativo->nombre) }}
+                @endif
+            </td>
+            <td class="text-right">
+              {{ round($requerido->getImporteComparativa($tipo_cambio), 2) }}
             </td>
             <td class="text-center">
               {!! Form::checkbox('articulos['.$requerido->id.'][existe_para_comparativa]', 1, $requerido->existe_para_comparativa) !!}

@@ -176,16 +176,24 @@ class ArticulosController extends Controller
         $material->asignaClasificador($clasificador);
         if($request->precio_estimado>0){
             $material->precio_estimado = $request->precio_estimado;
+            if($request->id_moneda>0){
+                $material->id_moneda = $request->id_moneda;
+            }
+        }else{
+            $material->precio_estimado = 0;
+            $material->id_moneda = null;
         }
         if($request->precio_proyecto_comparativo>0){
             $material->precio_proyecto_comparativo = $request->precio_proyecto_comparativo;
+            if($request->id_moneda_proyecto_comparativo>0){
+                $material->id_moneda_proyecto_comparativo = $request->id_moneda_proyecto_comparativo;
+            }
+        }else{
+            $material->precio_proyecto_comparativo = 0;
+            $material->id_moneda_proyecto_comparativo = null;
         }
-        if($request->id_moneda>0){
-            $material->id_moneda = $request->id_moneda;
-        }
-        if($request->id_moneda_proyecto_comparativo>0){
-            $material->id_moneda_proyecto_comparativo = $request->id_moneda_proyecto_comparativo;
-        }
+        
+        
         
 
         if ($request->hasFile('ficha_tecnica')) {
