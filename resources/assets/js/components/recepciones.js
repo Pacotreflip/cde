@@ -92,7 +92,7 @@ Vue.component('recepcion-screen', {
 
       swal({
         title: "Desea continuar?", 
-        text: "Esta seguro de que la información es correcta?", 
+        text: "¿Esta seguro de que la información es correcta?", 
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Si",
