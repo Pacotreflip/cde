@@ -180,7 +180,7 @@ class ArticulosController extends Controller
                 $material->id_moneda = $request->id_moneda;
             }
         }else{
-            $material->precio_estimado = 0;
+            $material->precio_estimado = null;
             $material->id_moneda = null;
         }
         if($request->precio_proyecto_comparativo>0){
@@ -189,7 +189,7 @@ class ArticulosController extends Controller
                 $material->id_moneda_proyecto_comparativo = $request->id_moneda_proyecto_comparativo;
             }
         }else{
-            $material->precio_proyecto_comparativo = 0;
+            $material->precio_proyecto_comparativo = null;
             $material->id_moneda_proyecto_comparativo = null;
         }
         
