@@ -72,7 +72,7 @@ class RecibeArticulosAsignacion
                         throw new \Exception("No es posible recibir la cantidad indicada para el articulo {$item['descripcion']}");
                     }
 
-                    $recepcion->agregaMaterialRecepcionAsignacion($material, $destino['cantidad'], $itemOrdenCompra->id_item, $area);
+                    $recepcion->agregaMaterial($material, $destino['cantidad'], $itemOrdenCompra->id_item, $area);
                 }
             }
 

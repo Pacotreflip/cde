@@ -26,7 +26,7 @@
             {{ $asignacion->fecha_asignacion->format('d-m-Y H:m') }}
             <small class="text-muted">({{ $asignacion->created_at->diffForHumans() }})</small>
           </td>
-          <td>{{ $asignacion->creado_por }}</td>
+          <td>{{ $asignacion->usuario_registro->present()->nombreCompleto }}</td>
           <td>{{ str_limit($asignacion->observaciones, 70) }}</td>
           <td></td>
         </tr>

@@ -126,34 +126,6 @@ class Recepcion extends Model
         $this->items()->save($item);
     }
     
-    /**
-     * Recibe un material en este folio de recepcion.
-     *
-     * @param Material $material
-     * @param float $cantidad
-     * @param $id_item
-     * @param Area $area
-     */
-    public function agregaMaterialRecepcionAsignacion(Material $material, $cantidad, $id_item, $area = null)
-    {
-        if ($cantidad <= 0) {
-            return;
-        }
-
-        $item = new ItemRecepcion;
-        $item->id_material = $material->id_material;
-        $item->cantidad_recibida = $cantidad;
-        $item->unidad = $material->unidad_compra;
-        $item->id_item = $id_item;
-
-        if ($area) {
-            $item->id_area_almacenamiento = $area->id;
-            
-        }
-
-        $this->items()->save($item);
-    }
-    
     public function usuario_registro(){
         return $this->hasOne(User::class,"idusuario", "id_usuario");
     }

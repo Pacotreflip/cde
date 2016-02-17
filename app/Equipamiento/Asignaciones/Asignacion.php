@@ -88,6 +88,8 @@ class Asignacion extends Model
 
         if ($area_origen) {
             $item->id_area_origen = $area_origen->id;
+            $inventario_origen = $material->getInventarioDeArea($area_origen);
+            $inventario_origen->decrementaExistencia($cantidad);
             
         }
         if ($area_destino) {
