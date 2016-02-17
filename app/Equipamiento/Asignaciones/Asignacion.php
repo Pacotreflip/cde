@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\Autenticacion\User;
 
 class Asignacion extends Model
 {
@@ -95,5 +96,8 @@ class Asignacion extends Model
         }
 
         $this->items()->save($item);
+    }
+    public function usuario_registro(){
+        return $this->hasOne(User::class,"idusuario", "id_usuario");
     }
 }

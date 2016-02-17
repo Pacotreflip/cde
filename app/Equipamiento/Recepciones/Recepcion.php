@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
+use Ghi\Equipamiento\Autenticacion\User;
 
 class Recepcion extends Model
 {
@@ -38,6 +39,7 @@ class Recepcion extends Model
         'orden_embarque',
         'numero_pedimento',
         'persona_recibio',
+        'id_usuario',
         'observaciones',
     ];
 
@@ -150,5 +152,9 @@ class Recepcion extends Model
         }
 
         $this->items()->save($item);
+    }
+    
+    public function usuario_registro(){
+        return $this->hasOne(User::class,"idusuario", "id_usuario");
     }
 }

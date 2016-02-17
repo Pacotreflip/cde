@@ -19,6 +19,7 @@
           <strong>Fecha Recepción:</strong> {{ $recepcion->fecha_recepcion->format('Y-m-d h:m') }} 
             <small class="text-muted">({{ $recepcion->created_at->diffForHumans() }})</small> <br>
           <strong>Persona que Recibió:</strong> {{ $recepcion->persona_recibio }} <br>
+          <strong>Persona que Registró:</strong> {{ $recepcion->usuario_registro->present()->nombreCompleto }} <br>
           <strong>Observaciones:</strong> {{ $recepcion->observaciones }} <br>
         </div>
       </div>

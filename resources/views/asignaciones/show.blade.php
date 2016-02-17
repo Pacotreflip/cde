@@ -13,7 +13,7 @@
         <div class="panel-body">
           <strong>Fecha Asignación:</strong> {{ $asignacion->fecha_asignacion->format('Y-m-d h:m') }} 
             <small class="text-muted">({{ $asignacion->created_at->diffForHumans() }})</small> <br>
-          <strong>Persona que Asigna:</strong> {{ $asignacion->creado_por }} <br>
+          <strong>Persona que Asigna:</strong> {{ $asignacion->usuario_registro->present()->nombreCompleto }} <br>
           <strong>Persona que Valida:</strong>  <br>
           <strong>Observaciones:</strong> {{ $asignacion->observaciones }} <br>
         </div>

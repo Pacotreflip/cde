@@ -135,6 +135,7 @@ class RecibeArticulosAsignacion
         $recepcion->id_empresa = $this->data['proveedor'];
         $recepcion->id_orden_compra = $this->data['orden_compra'];
         $recepcion->creado_por = Auth::user()->usuario;
+        $recepcion->id_usuario = Auth::user()->idusuario;
         $recepcion->save();
 
         return $recepcion;
@@ -150,6 +151,7 @@ class RecibeArticulosAsignacion
         $asignacion->obra()->associate($this->obra);
         $asignacion->id_recepcion = $id_recepcion;
         $asignacion->creado_por = Auth::user()->usuario;
+        $asignacion->id_usuario = Auth::user()->idusuario;
         $asignacion->fecha_asignacion = $this->data["fecha_recepcion"];
         $asignacion->save();
 
