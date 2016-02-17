@@ -96,14 +96,17 @@ class RecepcionesController extends Controller
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function store(Requests\CreateRecepcionRequest $request)
-    {
-        $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
-        
-        // Por implementar recepcion con asignacion
-
-        if ($request->ajax()) {
-            return response()->json(['path' => route('recepciones.show', $recepcion)]);
+    public function store(Requests\CreateRecepcionRequest $request) {
+        if ($request->opcion_recepcion == "asignar") {
+            $recepcion_asignacion = (new RecibeArticulosAsignacion($request->all(), $this->getObraEnContexto()))->save();
+            if ($request->ajax()) {
+                return response()->json(['path' => route('asignaciones.show', $recepcion_asignacion)]);
+            }
+        } elseif ($request->opcion_recepcion == "almacenar") {
+            $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
+            if ($request->ajax()) {
+                return response()->json(['path' => route('recepciones.show', $recepcion)]);
+            }
         }
     }
 

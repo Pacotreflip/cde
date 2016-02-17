@@ -6,6 +6,7 @@ use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Http\Requests\CreateAsignacionRequest;
+use Ghi\Equipamiento\Asignaciones\Asignacion;
 
 class AsignacionesController extends Controller
 {
@@ -22,12 +23,33 @@ class AsignacionesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $asignaciones = [];
+        $asignaciones = $this->buscar($request->buscar);
 
         return view('asignaciones.index')
             ->withAsignaciones($asignaciones);
+    }
+    
+    /**
+     * Busca recepciones de articulos.
+     * 
+     * @param string  $busqueda
+     * @param integer $howMany
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function buscar($busqueda, $howMany = 15)
+    {
+        return Asignacion::where('id_obra', $this->getIdObra())
+            ->where(function ($query) use ($busqueda) {
+                $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('creado_por', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
+                    ;
+            })
+            ->orderBy('numero_folio', 'DESC')
+            ->paginate($howMany);
     }
 
     /**

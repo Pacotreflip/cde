@@ -6,6 +6,7 @@ use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
+use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 
 class Area extends Node
@@ -144,5 +145,13 @@ class Area extends Node
         $ruta .= $this->nombre;
 
         return $ruta;
+    }
+    
+    public function cantidad_asignada($id_material){
+        DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->where('id_area_destino', $this->id_area)
+            ->where('id_material', $id_material)
+            ->sum('cantidad_asignada');
     }
 }

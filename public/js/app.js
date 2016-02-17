@@ -41721,7 +41721,7 @@ Vue.component('recepcion-screen', {
       e.preventDefault();
 
       swal({
-        title: "Desea continuar?",
+        title: "¿Desea continuar?",
         text: "¿Esta seguro de que la información es correcta?",
         type: "warning",
         showCancelButton: true,
