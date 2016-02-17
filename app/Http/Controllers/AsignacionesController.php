@@ -82,7 +82,10 @@ class AsignacionesController extends Controller
      */
     public function show($id)
     {
-        //
+        $asignacion = Asignacion::findOrFail($id);
+
+        return view('asignaciones.show')
+            ->withAsignacion($asignacion);
     }
 
     /**

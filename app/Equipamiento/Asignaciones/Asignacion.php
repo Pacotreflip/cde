@@ -57,7 +57,7 @@ class Asignacion extends Model
      */
     public function recepcion()
     {
-        return $this->belongsTo(Recepcion::class, 'id_recepcion', 'id_recepcion');
+        return $this->belongsTo(Recepcion::class,'id_recepcion', 'id');
     }
 
     public function items()

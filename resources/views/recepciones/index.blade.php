@@ -32,7 +32,7 @@
           <td>
             <a href="{{ route('proveedores.edit', $recepcion->empresa ) }}">{{ $recepcion->empresa->razon_social }}</a>
           </td>
-          <td>{{ $recepcion->persona_recibe }}</td>
+          <td>{{ $recepcion->persona_recibio }}</td>
           <td>{{ str_limit($recepcion->observaciones, 70) }}</td>
           <td></td>
         </tr>

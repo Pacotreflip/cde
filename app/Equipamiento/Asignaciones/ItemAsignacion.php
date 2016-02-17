@@ -1,9 +1,9 @@
 <?php
 
 namespace Ghi\Equipamiento\Asignaciones;
-
+use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
-
+use Ghi\Equipamiento\Articulos\Material;
 class ItemAsignacion extends Model
 {
     protected $connection = 'cadeco';

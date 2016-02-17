@@ -29,7 +29,7 @@
             Referencias
         </div>
         <div class="panel-body">
-          <strong>Np. de Remisión ó Factura:</strong> {{ $recepcion->numero_remision_factura }} <br>
+          <strong>No. de Remisión o Factura:</strong> {{ $recepcion->numero_remision_factura }} <br>
           <strong>Orden de Embarque:</strong> {{ $recepcion->orden_embarque }} <br>
           <strong>Numero de Pedimento:</strong> {{ $recepcion->numero_pedimento }} <br>
         </div>
