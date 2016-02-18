@@ -65,7 +65,9 @@ class AreasController extends ApiController
             'id'          => $area->id,
             'clave'       => $area->clave,
             'nombre'      => $area->nombre,
-            'materiales'  => $this->includeMateriales($area->materiales),
+            'ruta'        => $area->ruta(),
+            'materiales'  => $this->includeMateriales($area->materiales, $area->id),
+            //'materiales_asignados'  => $this->includeMaterialesAsignados($area->materiales_asignados),
         ];
     }
 
@@ -73,12 +75,27 @@ class AreasController extends ApiController
      * @param $materiales
      * @return array
      */
-    protected function includeMateriales($materiales)
+    protected function includeMateriales($materiales, $id_area)
+    {
+        $recursos = [];
+
+        $materiales->map(function ($material) use (&$recursos, $id_area) {
+            $recursos[] = $this->transformMaterial($material,$id_area);
+        });
+        
+        return $recursos;
+    }
+    
+    /**
+     * @param $materiales
+     * @return array
+     */
+    protected function includeMaterialesAsignados($materiales)
     {
         $recursos = [];
 
         $materiales->map(function ($material) use (&$recursos) {
-            $recursos[] = $this->transformMaterial($material);
+            $recursos[] = $this->transformMaterialAsignado($material);
         });
         
         return $recursos;
@@ -88,7 +105,7 @@ class AreasController extends ApiController
      * @param $material
      * @return array
      */
-    protected function transformMaterial($material)
+    protected function transformMaterial($material,$id_area)
     {
         return [
             'id' => $material->id_material,
@@ -97,6 +114,23 @@ class AreasController extends ApiController
             'descripcion' => $material->descripcion,
             'unidad' => $material->unidad,
             'existencia' => $material->pivot->cantidad_existencia,
+            'asignados' => $material->cantidad_asignada($id_area),
+            'esperados' => $material->cantidad_esperada($id_area),
+        ];
+    }
+    
+    /**
+     * @param $material
+     * @return array
+     */
+    protected function transformMaterialAsignado($material)
+    {
+        return [
+            'id' => $material->id_material,
+            'numero_parte' => $material->numero_parte,
+            'descripcion' => $material->descripcion,
+            'unidad' => $material->unidad,
+            'existencia' => $material->pivot->cantidad_asignada,
         ];
     }
 }

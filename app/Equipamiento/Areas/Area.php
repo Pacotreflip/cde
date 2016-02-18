@@ -63,6 +63,18 @@ class Area extends Node
             ->where('Equipamiento.inventarios.cantidad_existencia', '>', 0)
             ->withPivot('id', 'cantidad_existencia');
     }
+    
+    /**
+     * Materiales asignados a esta area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function materiales_asignados()
+    {
+        return $this->belongsToMany(Material::class, 'Equipamiento.asignacion_items', 'id_area_destino', 'id_material')
+            ->withPivot('cantidad_asignada');
+    }
+
 
     /**
      * Descendientes de esta area que tienen asignado un area tipo.
@@ -148,9 +160,9 @@ class Area extends Node
     }
     
     public function cantidad_asignada($id_material){
-        DB::connection($this->connection)
+        return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
-            ->where('id_area_destino', $this->id_area)
+            ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
             ->sum('cantidad_asignada');
     }

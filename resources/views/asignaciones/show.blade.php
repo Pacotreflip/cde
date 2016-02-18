@@ -20,6 +20,7 @@
       </div>
     </div>
     <div class="col-sm-6">
+        @if($asignacion->recepcion)
       <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
             Referencias
@@ -28,6 +29,7 @@
           <strong>No. de Recepción:</strong> #{{ $asignacion->recepcion->numero_folio }} <br>
         </div>
       </div>
+        @endif
     </div>
   </div>
   

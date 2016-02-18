@@ -99,8 +99,10 @@ class RecibeArticulosAsignacion
                     $cantidad_asignada = $area_destino->cantidad_asignada($item['id']);
                     $cantidad_a_asignar = $destino['cantidad'];
                     $cantidad_total_asignada = $cantidad_asignada + $cantidad_a_asignar;
+                    //dd($item['id'], $cantidad_requerida, $cantidad_asignada, $cantidad_total_asignada, $cantidad_a_asignar);
                     if (!($cantidad_requerida>= $cantidad_total_asignada)) {
-                        throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                        trigger_error("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                        //throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
                     }
 
                     $asignacion->agregaMaterial($material, $destino['cantidad'], $area_origen, $area_destino);

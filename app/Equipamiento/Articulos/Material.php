@@ -415,4 +415,18 @@ class Material extends Model
     {
         return $this->hasOne(Moneda::class, "id_moneda", "id_moneda_proyecto_comparativo");
     }
+    
+    public function cantidad_asignada($id_area){
+        return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->where('id_area_destino', $id_area)
+            ->where('id_material', $this->id_material)
+            ->sum('cantidad_asignada');
+    }
+    
+    public function cantidad_esperada($id_area){
+        $area = Area::findOrFail($id_area);
+        $esperados = $area->tipo->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
+        return $esperados;
+    }
 }

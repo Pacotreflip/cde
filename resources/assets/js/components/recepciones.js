@@ -1,6 +1,6 @@
 Vue.component('recepcion-screen', {
   
-  data () {
+  data:function () {
     return {
       recepcionForm: {
         proveedor: '',

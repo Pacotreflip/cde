@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Http\Requests\CreateAsignacionRequest;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
+use Ghi\Equipamiento\Asignaciones\AsignaArticulos;
 
 class AsignacionesController extends Controller
 {
@@ -70,8 +71,10 @@ class AsignacionesController extends Controller
      */
     public function store(CreateAsignacionRequest $request)
     {
-        return $request->get('materiales');
-        return $request->all();
+        $asignacion = (new AsignaArticulos($request->all(), $this->getObraEnContexto()))->save();
+        if ($request->ajax()) {
+            return response()->json(['path' => route('asignaciones.show', $asignacion)]);
+        }
     }
 
     /**
