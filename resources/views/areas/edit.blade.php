@@ -12,18 +12,27 @@
 
   <hr>
   
-  @if($area->tipo)
+  @if($area->materialesRequeridos)
     <table class="table table-condensed table-striped">
+        <caption><h3>Artículos Requeridos</h3></caption>
       <thead>
         <tr>
+            <th style="width: 20px">Relacionado a Área Tipo*</th>
           <th>Descripción</th>
           <th>Unidad</th>
           <th>Cantidad Requerida</th>
         </tr>
       </thead>
       <tbody>
-        @foreach($area->tipo->materialesRequeridos as $material)
+        @foreach($area->materialesRequeridos as $material)
           <tr>
+              <td style="text-align: center">
+                  @if($material->id_material_requerido > 0)
+                  Si
+                  @else
+                  No
+                  @endif
+              </td>
             <td>
               <span data-toggle="tooltip" data-placement="top" title="{{ $material->material->descripcion }}">
                 {{ str_limit($material->material->descripcion, 60) }}
@@ -36,6 +45,12 @@
       </tbody>
     </table>
   @endif
+  <div class="alert alert-info" role="alert">
+    <h4><i class="fa fa-fw fa-exclamation"></i>*:</h4>
+    <p>
+      Si el material requerido del área esta asociado al área tipo éste se modificará / eliminará si se modifica o elimina en la sección de artículos requeridos del área tipo. 
+    </p>
+  </div>
 
   <div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>

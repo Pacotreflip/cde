@@ -15,8 +15,12 @@
   <div class="col-sm-6">
     <!-- Tipo Form Input -->
     <div class="form-group">
+        <div class="alert alert-danger" role="alert">
+            Si modifica el área tipo los artículos esperados del área serán reemplazados por los artículos esperados de la nueva área tipo
+        </div>
       {!! Form::label('tipo_id', 'Área Tipo:') !!}
       {!! Form::select('tipo_id', $tipos, null, ['class' => 'form-control']) !!}
+       
     </div>
 
     <!-- Se encuentra en Form Input -->
