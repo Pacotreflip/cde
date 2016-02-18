@@ -145,4 +145,8 @@ class Area extends Node
 
         return $ruta;
     }
+    
+    public function material_requerido(){
+        return $this->hasMany(MaterialRequeridoArea::class, "id_area");
+    }
 }

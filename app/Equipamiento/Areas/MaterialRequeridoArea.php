@@ -6,31 +6,24 @@ use Ghi\Equipamiento\Moneda;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 
-class MaterialRequerido extends Model
+class MaterialRequeridoArea extends Model
 {
     protected $connection = 'cadeco';
 
-    protected $table = 'Equipamiento.materiales_requeridos';
+    protected $table = 'Equipamiento.materiales_requeridos_area';
 
     protected $fillable = [
         'id_material',
         'id_moneda',
         'cantidad_requerida',
-        'precio_estimado',
         'cantidad_comparativa',
-        'precio_proyecto_comparativo',
-        'id_moneda_proyecto_comparativo',
         'existe_para_comparativa',
     ];
 
     protected $casts = [
         'existe_para_comparativa' => 'bool',
         'cantidad_requerida' => 'int',
-        'precio_estimado' => 'float',
         'cantidad_comparativa' => 'int',
-        'precio_proyecto_comparativo' => 'float',
-        'id_moneda' => 'int',
-        'id_moneda_proyecto_comparativo' => 'int',
     ];
 
     /**
@@ -134,9 +127,9 @@ class MaterialRequerido extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function tipoArea()
+    public function area()
     {
-        return $this->belongsTo(AreaTipo::class, 'id_tipo_area');
+        return $this->belongsTo(Area::class, 'id_area');
     }
 
     /**
@@ -149,28 +142,9 @@ class MaterialRequerido extends Model
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
-    /**
-     * Moneda relacionada con este material requerido.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function moneda()
+    public function material_requerido()
     {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+        return $this->belongsTo(MaterialRequerido::class, 'id_material_requerido');
     }
-
-    /**
-     * Moneda comparativa relacionada con este material requerido.
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function monedaComparativa()
-    {
-        return $this->belongsTo(Moneda::class, 'id_moneda_comparativa', 'id_moneda');
-    }
-    
-    public function materialesRequeridosArea()
-    {
-        return $this->hasMany(MaterialRequeridoArea::class, "id_material_requerido");
-    }
+   
 }
