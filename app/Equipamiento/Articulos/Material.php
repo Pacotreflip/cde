@@ -426,7 +426,11 @@ class Material extends Model
     
     public function cantidad_esperada($id_area){
         $area = Area::findOrFail($id_area);
-        $esperados = $area->tipo->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
-        return $esperados;
+        if($area->tipo){
+            $esperados = $area->tipo->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
+            return $esperados;
+        }else{
+            return 0;
+        }
     }
 }
