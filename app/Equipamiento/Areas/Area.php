@@ -101,8 +101,23 @@ class Area extends Node
     public function asignaTipo($area_tipo = null)
     {
         if (! $area_tipo) {
+            
+//            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+//            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+//                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id);
+//                //meter despues lo de la validación de artículos asignados
+//                $material_requerido->delete();
+//            }
             $this->tipo()->dissociate();
         }else{
+//            if($this->tipo != $area_tipo && $this->tipo){
+//                $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+//                foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+//                    $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id);
+//                    //meter despues lo de la validación de artículos asignados
+//                    $material_requerido->delete();
+//                }
+//            }
             $this->tipo()->associate($area_tipo);
         }
 
