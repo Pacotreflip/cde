@@ -29,7 +29,7 @@
       <div class="col-sm-6">
         <!-- Cantidad Form Input -->
         <div class="form-group">
-          {!! Form::label('cantidad', 'Cuantas va a crear?') !!}
+          {!! Form::label('cantidad', '¿Cuántas áreas va a crear?') !!}
           {!! Form::text('cantidad', 1, ['class' => 'form-control']) !!}
         </div>
       </div>
@@ -44,7 +44,7 @@
 
     <!-- Dentro de que area se van a generar? Form Input -->
     <div class="form-group">
-      {!! Form::label('parent_id', 'Dentro de que área se van a generar?') !!}
+      {!! Form::label('parent_id', '¿Dentro de que área se van a generar?') !!}
       {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
     </div>
   </div>

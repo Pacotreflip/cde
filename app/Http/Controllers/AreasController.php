@@ -106,6 +106,7 @@ class AreasController extends Controller
         $tipo = AreaTipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
         $cantidad_a_crear = $request->get('cantidad', 1);
+        
 
         for ($i = 1; $i <= $cantidad_a_crear; $i++) {
             $nombre = $request->get('nombre');
@@ -129,8 +130,14 @@ class AreasController extends Controller
             if ($parent) {
                 $area->moverA($parent);
             }
-
+            
             $this->areas->save($area);
+            
+            if($tipo){
+                $materiales_requeridos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
+                $area->materialesRequeridos()->saveMany($materiales_requeridos);
+            }
+            
             $rango++;
         }
 

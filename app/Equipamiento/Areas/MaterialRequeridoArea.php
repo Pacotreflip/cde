@@ -14,7 +14,7 @@ class MaterialRequeridoArea extends Model
 
     protected $fillable = [
         'id_material',
-        'id_moneda',
+        'id_material_requerido',
         'cantidad_requerida',
         'cantidad_comparativa',
         'existe_para_comparativa',
