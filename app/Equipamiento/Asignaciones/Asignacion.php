@@ -8,6 +8,7 @@ use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Autenticacion\User;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class Asignacion extends Model
 {
@@ -96,7 +97,10 @@ class Asignacion extends Model
             $item->id_area_destino = $area_destino->id;
             
         }
-
+        $material_requerido = $area_destino->MaterialRequerido->where("id_material", $material->id_material);
+        dd($material_requerido);
+        MaterialRequeridoArea::whereRaw("")->first();
+        
         $this->items()->save($item);
     }
     public function usuario_registro(){

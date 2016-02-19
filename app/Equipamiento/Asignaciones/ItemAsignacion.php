@@ -4,6 +4,7 @@ namespace Ghi\Equipamiento\Asignaciones;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 class ItemAsignacion extends Model
 {
     protected $connection = 'cadeco';
@@ -50,6 +51,10 @@ class ItemAsignacion extends Model
     public function area_destino()
     {
         return $this->belongsTo(Area::class, 'id_area_destino');
+    }
+    
+    public function material_requerido(){
+        return $this->belongsTo(MaterialRequeridoArea::class, "id_material_requerido");
     }
     
 }
