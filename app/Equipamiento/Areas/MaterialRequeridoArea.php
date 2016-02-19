@@ -159,9 +159,13 @@ class MaterialRequeridoArea extends Model
         $this->save();
     }
    
-//    public function delete() {
-//        $materialesRequeridosArea = $this->materialesRequeridosArea;
-//        
-//        parent::delete();
-//    }
+    public function delete() {
+        $materiales_asignados = $this->MaterialesAsignados();
+        if(count($materiales_asignados)>0){
+            $this->desvinculaMaterialRequeridoAreaTipo();
+        }else{
+            parent::delete();
+        }
+        
+    }
 }
