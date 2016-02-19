@@ -76,9 +76,9 @@
         </button>
       </div>
       
-      <pre>
+<!--      <pre>
         @{{ $data.asignacionForm.errors | json 4 }}
-      </pre>
+      </pre>-->
       
         </div>
     </asignacion-screen>

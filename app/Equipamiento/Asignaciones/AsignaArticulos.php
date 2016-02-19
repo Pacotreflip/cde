@@ -43,20 +43,23 @@ class AsignaArticulos
             
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
-
+                $area_origen = Area::findOrFail($this->data['origen']);
                 foreach ($item['destinos'] as $destino) {
-                    $area_origen = Area::findOrFail($destino['id']);
+                    
                     $area_destino = Area::findOrFail($destino['id']);
                     $material_requerido = MaterialRequerido::whereRaw('id_material = '. $item['id'].' and id_tipo_area = '. $area_destino->tipo_id)->first();
                     if(!$material_requerido){
-                        throw new \Exception("No es posible asignar el artículo al área por que no esta requerido.");
+                        //throw new \Exception("No es posible asignar el artículo al área por que no esta requerido.");
+                        throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta()." por que no esta requerido.");
                     }
                     $cantidad_requerida = $material_requerido->cantidad_requerida;
                     $cantidad_asignada = $area_destino->cantidad_asignada($item['id']);
                     $cantidad_a_asignar = $destino['cantidad'];
                     $cantidad_total_asignada = $cantidad_asignada + $cantidad_a_asignar;
+                    $pendiente = $cantidad_requerida-$cantidad_asignada;
                     if (!($cantidad_requerida>= $cantidad_total_asignada)) {
-                        throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                        //throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                        throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta().", la cantidad pendiente de recibir es: $pendiente");
                     }
 
                     $asignacion->agregaMaterial($material, $destino['cantidad'], $area_origen, $area_destino);
