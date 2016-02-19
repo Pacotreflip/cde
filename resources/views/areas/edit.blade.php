@@ -1,72 +1,75 @@
 @extends('layout')
 
 @section('content')
-  @include('areas.partials.breadcrumb', ['ancestros' => $area->getAncestors()])
+@include('areas.partials.breadcrumb', ['ancestros' => $area->getAncestors()])
 
-  <h1>Área</h1>
-  <hr>
+<h1>Área</h1>
+<hr>
 
-  {!! Form::model($area, ['route' => ['areas.update', $area], 'method' => 'PATCH']) !!}
-    @include('areas.partials.edit-fields')
-  {!! Form::close() !!}
+{!! Form::model($area, ['route' => ['areas.update', $area], 'method' => 'PATCH']) !!}
+@include('areas.partials.edit-fields')
+{!! Form::close() !!}
 
-  <hr>
-  
-  @if($area->materialesRequeridos)
-    <table class="table table-condensed table-striped">
-        <caption><h3>Artículos Requeridos</h3></caption>
-      <thead>
+<hr>
+
+@if(count($area->materialesRequeridos)>0)
+<table class="table table-condensed table-striped">
+    <caption><h3>Artículos Requeridos ({{count($area->materialesRequeridos)}})</h3></caption>
+    <thead>
         <tr>
             <th style="width: 20px">Relacionado a Área Tipo*</th>
-          <th>Descripción</th>
-          <th>Unidad</th>
-          <th>Cantidad Requerida</th>
+            <th>No. Parte</th>  
+            <th>Descripción</th>
+            <th>Unidad</th>
+            <th>Cantidad Requerida</th>
         </tr>
-      </thead>
-      <tbody>
+    </thead>
+    <tbody>
         @foreach($area->materialesRequeridos as $material)
-          <tr>
-              <td style="text-align: center">
-                  @if($material->id_material_requerido > 0)
-                  Si
-                  @else
-                  No
-                  @endif
-              </td>
+        <tr>
+            <td style="text-align: center">
+                @if($material->id_material_requerido > 0)
+                Si
+                @else
+                No
+                @endif
+            </td>
+            <td>{{ $material->material->numero_parte }}</td>
             <td>
-              <span data-toggle="tooltip" data-placement="top" title="{{ $material->material->descripcion }}">
-                {{ str_limit($material->material->descripcion, 60) }}
-              </span>
+                <span data-toggle="tooltip" data-placement="top" title="{{ $material->material->descripcion }}">
+                    {{ str_limit($material->material->descripcion, 60) }}
+                </span>
             </td>
             <td>{{ $material->material->unidad }}</td>
             <td>{{ $material->cantidad_requerida }}</td>
-          </tr>
+        </tr>
         @endforeach
-      </tbody>
-    </table>
-  @endif
-  <div class="alert alert-info" role="alert">
+    </tbody>
+</table>
+<div class="alert alert-info" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>*:</h4>
     <p>
-      Si el material requerido del área esta asociado al área tipo éste se modificará / eliminará si se modifica o elimina en la sección de artículos requeridos del área tipo. 
+        Si el material requerido del área esta asociado al área tipo éste se modificará / eliminará si se modifica o elimina en la sección de artículos requeridos del área tipo. 
     </p>
-  </div>
+</div>
+@endif
 
-  <div class="alert alert-danger" role="alert">
+
+<div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>
     <p>
-      Al borrar esta area, todas las subareas contenidas también seran borradas.
+        Al borrar esta area, todas las subareas contenidas también seran borradas.
     </p>
     <p>
-      {!! Form::open(['route' => ['areas.delete', $area], 'method' => 'DELETE']) !!}
+        {!! Form::open(['route' => ['areas.delete', $area], 'method' => 'DELETE']) !!}
         {!! Form::submit('Borrar esta área', ['class' => 'btn btn-danger']) !!}
-      {!! Form::close() !!}
+        {!! Form::close() !!}
     </p>
-  </div>
+</div>
 @stop
 
 @section('scripts')
-  <script>
+<script>
     $('[data-toggle="tooltip"]').tooltip();
-  </script>
+</script>
 @stop

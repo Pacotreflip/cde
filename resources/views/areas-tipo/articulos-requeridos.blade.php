@@ -37,7 +37,8 @@
           <th>Precio Comparativa</th>
           <th>Moneda Nativa</th>
           <th>Importe Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
-          <th>Existe para Comparativa?</th>
+          <th>¿Existe para Comparativa?</th>
+          <th>Eliminar</th>
         </tr>
       </thead>
       <tbody>
@@ -85,6 +86,9 @@
             </td>
             <td class="text-center">
               {!! Form::checkbox('articulos['.$requerido->id.'][existe_para_comparativa]', 1, $requerido->existe_para_comparativa) !!}
+            </td>
+            <td class="text-center">
+                <input type="checkbox" name="selected_articulos_eliminar[]" value="{{ $requerido->id }}">
             </td>
           </tr>
         @endforeach

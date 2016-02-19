@@ -174,7 +174,7 @@ class AreaTipo extends Node
      */
     public function agregaArticuloRequerido($id_material)
     {
-        $this->materialesRequeridos()->create([
+        $material_requerido = new MaterialRequerido([
             'id_material' => $id_material,
             'cantidad_requerida' => 1,
             'precio_estimado' => 0.0,
@@ -182,8 +182,8 @@ class AreaTipo extends Node
             'precio_comparativa' => null,
             'existe_para_comparativa' => true,
         ]);
-
-        return $this;
+        $this->materialesRequeridos()->save($material_requerido);
+        return $material_requerido;
     }
 
     /**
