@@ -116,14 +116,6 @@ class ArticulosRequeridosController extends Controller
         $tipo = $this->tipos_area->getById($id);
         $articulos = $request->get('articulos', []);
         
-        $articulos_eliminar = $request->get('selected_articulos_eliminar', []);
-        
-        foreach ($articulos_eliminar as $id_articulo_eliminar) {
-            MaterialRequeridoArea::where("id_material_requerido",$id_articulo_eliminar)->delete();
-            $articulo_requerido = MaterialRequerido::findOrFail($id_articulo_eliminar);
-            $articulo_requerido->delete();
-        }
-
         if ($this->seEliminanArticulos($request)) {
             $tipo->quitaMaterialesRequeridos($request->get('selected_articulos', []));
         }
@@ -136,7 +128,6 @@ class ArticulosRequeridosController extends Controller
             if($articulo_requerido){
                 $articulo_requerido->update($articulo);
                 $materiales_requeridos_areas = MaterialRequeridoArea::where("id_material_requerido",$articulo_requerido->id)->get();
-                //dd($materiales_requeridos_areas);
                 foreach($materiales_requeridos_areas as $material_requerido_areas){
                     $material_requerido_areas->cantidad_requerida = $articulo_requerido->cantidad_requerida;
                     $material_requerido_areas->cantidad_comparativa = $articulo_requerido->cantidad_comparativa;
