@@ -11,6 +11,7 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreasTipo;
 use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Areas\MaterialRequerido;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class ArticulosRequeridosController extends Controller
 {
@@ -65,11 +66,23 @@ class ArticulosRequeridosController extends Controller
     public function store($id, Request $request)
     {
         $tipo = $this->tipos_area->getById($id);
-
+        $materiales_requeridos = [];
         foreach ($request->get('materiales') as $id_material) {
-            $tipo->agregaArticuloRequerido($id_material);
+            $materiales_requeridos[] = $tipo->agregaArticuloRequerido($id_material);
         }
-
+        $tipo->areas->each(function($area) use($materiales_requeridos)
+        {
+            foreach ($materiales_requeridos as $material_requerido) {
+                $material_requerido_area[] = new MaterialRequeridoArea([
+                    'id_material'=>$material_requerido->id_material,
+                    'id_material_requerido'=>$material_requerido->id,
+                    'cantidad_requerida'=>$material_requerido->cantidad_requerida,
+                    'cantidad_comparativa'=>$material_requerido->cantidad_comparativa,
+                    'existe_para_comparativa'=>$material_requerido->existe_para_comparativa,
+                ]);
+            }
+            $area->materialesRequeridos()->saveMany($material_requerido_area);
+        }); 
         return redirect()->route('requerimientos.edit', [$id]);
     }
 
@@ -102,7 +115,7 @@ class ArticulosRequeridosController extends Controller
     {
         $tipo = $this->tipos_area->getById($id);
         $articulos = $request->get('articulos', []);
-
+        
         if ($this->seEliminanArticulos($request)) {
             $tipo->quitaMaterialesRequeridos($request->get('selected_articulos', []));
         }
@@ -111,7 +124,16 @@ class ArticulosRequeridosController extends Controller
         $articulos = $this->asignaValoresDefault($articulos);
 
         foreach ($articulos as $id_articulo => $articulo) {
-            MaterialRequerido::find($id_articulo)->update($articulo);
+            $articulo_requerido = MaterialRequerido::findOrFail($id_articulo);
+            if($articulo_requerido){
+                $articulo_requerido->update($articulo);
+                $materiales_requeridos_areas = MaterialRequeridoArea::where("id_material_requerido",$articulo_requerido->id)->get();
+                foreach($materiales_requeridos_areas as $material_requerido_areas){
+                    $material_requerido_areas->cantidad_requerida = $articulo_requerido->cantidad_requerida;
+                    $material_requerido_areas->cantidad_comparativa = $articulo_requerido->cantidad_comparativa;
+                    $material_requerido_areas->update();
+                }
+            }
         }
 
         Flash::success('Los cambios fueron guardados');

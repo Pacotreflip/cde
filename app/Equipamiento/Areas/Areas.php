@@ -77,6 +77,7 @@ class Areas extends BaseRepository
      */
     public function delete(Area $area)
     {
+        $area->materialesRequeridos()->delete();
         return $area->delete();
     }
 

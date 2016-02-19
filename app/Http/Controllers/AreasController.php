@@ -10,6 +10,7 @@ use Ghi\Equipamiento\Areas\AreaTipo;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Areas\AreasTipo;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class AreasController extends Controller
 {
@@ -106,6 +107,7 @@ class AreasController extends Controller
         $tipo = AreaTipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
         $cantidad_a_crear = $request->get('cantidad', 1);
+        
 
         for ($i = 1; $i <= $cantidad_a_crear; $i++) {
             $nombre = $request->get('nombre');
@@ -129,8 +131,14 @@ class AreasController extends Controller
             if ($parent) {
                 $area->moverA($parent);
             }
-
+            
             $this->areas->save($area);
+            
+            if($tipo){
+                $materiales_requeridos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
+                $area->materialesRequeridos()->saveMany($materiales_requeridos);
+            }
+            
             $rango++;
         }
 
@@ -203,6 +211,15 @@ class AreasController extends Controller
         $tipo = AreaTipo::find($request->get('tipo_id'));
 
         $area->fill($request->all());
+        
+        if($area->tipo != $tipo && $area->tipo){
+            $materiales_requeridos_tipo = $area->tipo->materialesRequeridos;
+            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $area->id ." and id_material_requerido = ". $material_requerido_tipo->id);
+                //meter despues lo de la validación de artículos asignados
+                $material_requerido->delete();
+            }
+        }
 
         $area->asignaTipo($tipo);
         
@@ -221,6 +238,11 @@ class AreasController extends Controller
         }
 
         $this->areas->save($area);
+        
+        if($tipo){
+            $materiales_requeridos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
+            $area->materialesRequeridos()->saveMany($materiales_requeridos);
+        }
 
         Flash::success('Los cambios fueron guardados.');
 

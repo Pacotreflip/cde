@@ -1,4 +1,4 @@
-@extends('areas-tipo.layout')
+@extends('areas-tipo.layout_menu_hr')
 
 @section('main-content')
   {!! Form::open(['route' => ['requerimientos.update', $tipo], 'method' => 'PATCH']) !!}
@@ -37,7 +37,7 @@
           <th>Precio Comparativa</th>
           <th>Moneda Nativa</th>
           <th>Importe Moneda Homologada USD ({{ round($tipo_cambio, 2) }})</th>
-          <th>Existe para Comparativa?</th>
+          <th>¿Existe para Comparativa?</th>
         </tr>
       </thead>
       <tbody>
@@ -86,6 +86,7 @@
             <td class="text-center">
               {!! Form::checkbox('articulos['.$requerido->id.'][existe_para_comparativa]', 1, $requerido->existe_para_comparativa) !!}
             </td>
+            
           </tr>
         @endforeach
       </tbody>

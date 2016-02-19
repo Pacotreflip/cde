@@ -114,10 +114,72 @@ class Area extends Node
     public function asignaTipo($area_tipo = null)
     {
         if (! $area_tipo) {
+            
+//            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+//            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+//                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id);
+//                //meter despues lo de la validación de artículos asignados
+//                $material_requerido->delete();
+//            }
             $this->tipo()->dissociate();
+        }else{
+//            if($this->tipo != $area_tipo && $this->tipo){
+//                $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+//                foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+//                    $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id);
+//                    //meter despues lo de la validación de artículos asignados
+//                    $material_requerido->delete();
+//                }
+//            }
+            $this->tipo()->associate($area_tipo);
         }
 
-        $this->tipo()->associate($area_tipo);
+        
+
+        return $this;
+    }
+    
+    /**
+     * Agrega materiales requeridos a esta area.
+     *
+     * @param AreaTipo $area_tipo
+     * @return Area
+     */
+    public function getArticuloRequeridoDesdeAreaTipo(AreaTipo $area_tipo )
+    {
+        $materiales_requeridos = $area_tipo->materialesRequeridos;
+        $materiales_requeridos_area = [];
+        foreach($materiales_requeridos as $material_requerido){
+            $materiales_requeridos_area [] = new MaterialRequeridoArea([
+                'id_material' => $material_requerido->id_material,
+                'id_material_requerido' => $material_requerido->id,
+                'cantidad_requerida' => $material_requerido->cantidad_requerida,
+                'cantidad_comparativa' => $material_requerido->cantidad_comparativa,
+                'existe_para_comparativa' => $material_requerido->existe_para_comparativa,
+            ]);
+        }
+        
+        return $materiales_requeridos_area;
+    }
+    
+    /**
+     * Agrega materiales requeridos a esta area.
+     *
+     * @param $id_material
+     * @return Area
+     */
+    public function agregaArticuloRequerido($id_material, MaterialRequerido $material_requerido = null, $cantidad_requerida = 1, $cantidad_comparativa = null, $existe_para_comparativa = true)
+    {
+        if($material_requerido){
+            $this->materialesRequeridos()->create([
+            'id_material' => $id_material,
+            'id_material_requerido' => $id_material_requerido,
+            'cantidad_requerida' => $cantidad_requerida,
+            'cantidad_comparativa' => $cantidad_comparativa,
+            'existe_para_comparativa' => $existe_para_comparativa,
+        ]);
+        }
+        
 
         return $this;
     }
@@ -165,5 +227,7 @@ class Area extends Node
             ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
             ->sum('cantidad_asignada');
+    public function materialesRequeridos(){
+        return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
 }
