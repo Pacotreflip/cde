@@ -40,8 +40,8 @@
   <div class="col-xs-6">
     <!-- Clasificador Form Input -->
     <div class="form-group">
-        {!! Form::label('clasificador', 'Clasificador:') !!}
-        {!! Form::select('clasificador', $clasificadores, null, ['class' => 'form-control']) !!}
+        {!! Form::label('id_clasificador', 'Clasificador:') !!}
+        {!! Form::select('id_clasificador', $clasificadores, null, ['class' => 'form-control']) !!}
     </div>
   </div>
 </div>
