@@ -220,14 +220,15 @@ class Area extends Node
 
         return $ruta;
     }
-    
+    public function materialesRequeridos(){
+        return $this->hasMany(MaterialRequeridoArea::class, "id_area");
+    }
     public function cantidad_asignada($id_material){
         return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
             ->sum('cantidad_asignada');
-    public function materialesRequeridos(){
-        return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
+    
 }
