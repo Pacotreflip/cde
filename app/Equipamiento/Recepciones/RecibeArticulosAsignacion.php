@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\Item;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
-use Ghi\Equipamiento\Areas\MaterialRequerido;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class RecibeArticulosAsignacion
@@ -91,18 +91,23 @@ class RecibeArticulosAsignacion
                 foreach ($item['destinos'] as $destino) {
                     $area_origen = Area::findOrFail($destino['id']);
                     $area_destino = Area::findOrFail($destino['id']);
-                    $material_requerido = MaterialRequerido::whereRaw('id_material = '. $item['id'].' and id_tipo_area = '. $area_destino->tipo_id)->first();
+                    $material_requerido = MaterialRequeridoArea::whereRaw('id_material = '. $item['id'].' and id_area = '. $area_destino->id)->first();
                     if(!$material_requerido){
-                        throw new \Exception("No es posible asignar el artículo al área por que no esta requerido.");
+                        //trigger_error("No es posible asignar el artículo al área por que no esta requerido.");
+                        throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta()." por que no esta requerido.");
                     }
                     $cantidad_requerida = $material_requerido->cantidad_requerida;
                     $cantidad_asignada = $area_destino->cantidad_asignada($item['id']);
                     $cantidad_a_asignar = $destino['cantidad'];
                     $cantidad_total_asignada = $cantidad_asignada + $cantidad_a_asignar;
+                    $pendiente = $cantidad_requerida-$cantidad_asignada;
                     //dd($item['id'], $cantidad_requerida, $cantidad_asignada, $cantidad_total_asignada, $cantidad_a_asignar);
                     if (!($cantidad_requerida>= $cantidad_total_asignada)) {
-                        trigger_error("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                        //trigger_error("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta().", la cantidad pendiente de recibir es: $pendiente");
+                        //" ." , la cantidad pendiente es {$cantidad_requerida-$cantidad_asignada}"
                         //throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
+                         throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta().", la cantidad pendiente de recibir es: $pendiente");
+
                     }
 
                     $asignacion->agregaMaterial($material, $destino['cantidad'], $area_origen, $area_destino);
