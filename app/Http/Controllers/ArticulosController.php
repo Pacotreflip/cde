@@ -167,7 +167,8 @@ class ArticulosController extends Controller
     {
         $material = $this->materiales->getById($id);
         $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
-        $clasificador = Clasificador::find($request->get('clasificador'));
+        $clasificador = Clasificador::find($request->get('id_clasificador'));
+        
         $familia = Familia::findOrFail($request->get('familia'));
 
         $material->fill($request->all());
@@ -204,6 +205,7 @@ class ArticulosController extends Controller
         $moneda = ($request->id_moneda == "")? "NULL":$request->id_moneda;
         $moneda_proyecto_comparativo = ($request->id_moneda_proyecto_comparativo == "")? "NULL":$request->id_moneda_proyecto_comparativo;
         $material->actualizaPreciosEquipamiento($id,$precio_estimado, $moneda, $precio_proyecto_comparativo, $moneda_proyecto_comparativo);
+        
         $this->materiales->save($material);
 
         Flash::success('Los cambios fueron guardados');
