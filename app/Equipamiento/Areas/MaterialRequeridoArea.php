@@ -5,7 +5,7 @@ namespace Ghi\Equipamiento\Areas;
 use Ghi\Equipamiento\Moneda;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
-
+use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 class MaterialRequeridoArea extends Model
 {
     protected $connection = 'cadeco';
@@ -146,5 +146,26 @@ class MaterialRequeridoArea extends Model
     {
         return $this->belongsTo(MaterialRequerido::class, 'id_material_requerido');
     }
+    
+    public function MaterialesAsignados()
+    {
+        $materiales_asignados = ItemAsignacion::whereRaw("id_material =" . $this->id_material . " and id_area_destino = ". $this->id_area)->get();
+        return $materiales_asignados;
+        
+    }
+    
+    public function desvinculaMaterialRequeridoAreaTipo(){
+        $this->material_requerido()->dissociate();
+        $this->save();
+    }
    
+    public function delete() {
+        $materiales_asignados = $this->MaterialesAsignados();
+        if(count($materiales_asignados)>0){
+            $this->desvinculaMaterialRequeridoAreaTipo();
+        }else{
+            parent::delete();
+        }
+        
+    }
 }

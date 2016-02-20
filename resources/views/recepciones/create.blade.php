@@ -71,7 +71,7 @@
           </div>
         </div>
 
-        <h4>Como recibirá los articulos?</h4>
+        <h4>¿Como recibirá los articulos?</h4>
         <div class="form-group">
           <label class="radio-inline">
             <input type="radio" id="opcion1" name="opcion_recepcion" value="almacenar" checked v-model="recepcionForm.opcion_recepcion"> Se Almacenan

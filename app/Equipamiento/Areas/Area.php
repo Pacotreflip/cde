@@ -6,7 +6,9 @@ use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
+use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
+use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 
 class Area extends Node
 {
@@ -62,6 +64,18 @@ class Area extends Node
             ->where('Equipamiento.inventarios.cantidad_existencia', '>', 0)
             ->withPivot('id', 'cantidad_existencia');
     }
+    
+    /**
+     * Materiales asignados a esta area.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function materiales_asignados()
+    {
+        return $this->belongsToMany(Material::class, 'Equipamiento.asignacion_items', 'id_area_destino', 'id_material')
+            ->withPivot('cantidad_asignada');
+    }
+
 
     /**
      * Descendientes de esta area que tienen asignado un area tipo.
@@ -207,8 +221,20 @@ class Area extends Node
 
         return $ruta;
     }
-    
     public function materialesRequeridos(){
         return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
+    
+    public function materialesAsignados(){
+        return $this->hasMany(ItemAsignacion::class, "id_area_destino");
+    }
+    
+    public function cantidad_asignada($id_material){
+        return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->where('id_area_destino', $this->id)
+            ->where('id_material', $id_material)
+            ->sum('cantidad_asignada');
+    }
+    
 }

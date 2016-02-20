@@ -194,7 +194,11 @@ class AreaTipo extends Node
     public function quitaMaterialesRequeridos(array $ids)
     {
         foreach ($ids as $id_articulo) {
-            MaterialRequeridoArea::where("id_material_requerido",$id_articulo)->delete();
+            /*se hace de este modo para validar antes de eliminar si hay artículos recibidos de este tipo */
+            $materiales_requeridos_areas = MaterialRequeridoArea::where("id_material_requerido",$id_articulo)->get();
+            foreach($materiales_requeridos_areas as $material_requerido_area){
+                $material_requerido_area->delete();
+            }
             $this->materialesRequeridos->find($id_articulo)->delete();
         }
     }

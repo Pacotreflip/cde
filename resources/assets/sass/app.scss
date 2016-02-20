@@ -18,6 +18,8 @@ $roboto-font-path: "../fonts/roboto/";
 @import "node_modules/tablesorter/dist/css/theme.blue.min";
 @import "node_modules/tablesorter/dist/css/theme.bootstrap.min";
 @import "node_modules/tablesorter/dist/css/theme.metro-dark.min";
+@import "node_modules/sweetalert/dev/sweetalert";
+@import "node_modules/dropzone/src/dropzone";
 body {
   margin-top: 70px;
 }

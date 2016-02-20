@@ -13,7 +13,7 @@ Vue.component('global-errors', {
       if (typeof errors === 'object') {
           this.errors = _.flatten(_.toArray(errors));
       } else {
-          this.errors.push('Un error grave ocurrio. Por favor intente otra ves.');
+          this.errors.push('Un error grave ocurrio. Por favor intente otra vez.');
       }
     }
   }

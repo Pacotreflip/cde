@@ -81,6 +81,7 @@ class RecibeArticulosAlmacen
         $recepcion->id_empresa = $this->data['proveedor'];
         $recepcion->id_orden_compra = $this->data['orden_compra'];
         $recepcion->creado_por = Auth::user()->usuario;
+        $recepcion->id_usuario = Auth::user()->idusuario;
         $recepcion->save();
 
         return $recepcion;

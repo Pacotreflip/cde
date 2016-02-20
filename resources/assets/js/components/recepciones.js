@@ -1,6 +1,6 @@
 Vue.component('recepcion-screen', {
   
-  data () {
+  data:function () {
     return {
       recepcionForm: {
         proveedor: '',
@@ -91,8 +91,8 @@ Vue.component('recepcion-screen', {
       e.preventDefault();
 
       swal({
-        title: "Desea continuar?", 
-        text: "Esta seguro de que la información es correcta?", 
+        title: "¿Desea continuar?", 
+        text: "¿Esta seguro de que la información es correcta?", 
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Si",

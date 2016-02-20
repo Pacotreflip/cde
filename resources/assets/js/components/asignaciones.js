@@ -4,9 +4,14 @@ Vue.component('asignacion-screen', {
     return {
       asignacionForm: {
         origen: '',
+        nombre_area:'',
         materiales: [],
         errors: [],
       },
+      area: {
+        materiales: []
+      },
+      ruta_area: '',
       cargando: false,
       asignando: false,
     }
@@ -14,6 +19,14 @@ Vue.component('asignacion-screen', {
 
   components: {
     'areas-tree': require('./areas-jstree.js')
+  },
+  
+  computed: {
+    articulosAAsignar () {
+      return this.area.materiales.filter(function(material) {
+        return material.destinos.length;
+      });
+    }
   },
 
   methods: {
@@ -44,37 +57,56 @@ Vue.component('asignacion-screen', {
       var id_area = data.node.id;
       this.asignacionForm.origen = id_area;
       this.cargando = true;
+      this.compra = {materiales: [] };
+      
       this.asignacionForm.materiales = [];
 
       this.$http.get('/api/areas/' + id_area)
         .success(function (area) {
+          this.ruta_area = area.ruta;
+          this.asignacionForm.nombre_area = area.nombre;
           this.cargando = false;
 
           area.materiales.forEach(function (material) {
             material.destinos = [];
           });
-
-          this.asignacionForm.materiales = area.materiales || [];
+          this.area.materiales = area.materiales 
+         this.asignacionForm.materiales = area.materiales || [];
         })
         .error(function (errors) {
           this.cargandoInventarios = false;
           App.setErrorsOnForm(this.transferenciaForm, errors);
         });
     },
+    
+    /**
+     * Confirma si se reciben los articulos.
+     */
+    confirmaAsignacion: function (e) {
+      e.preventDefault();
+
+      swal({
+        title: "¿Desea continuar con la asignación?", 
+        text: "¿Esta seguro de que la información es correcta?", 
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        confirmButtonColor: "#ec6c62"
+      }, () => this.asignar() );
+    },
 
     /**
      * Envia un request para generar la asignacion de materiales.
      */
-    asignar: function (e) {
-      e.preventDefault();
-
-      this.asignacionForm.errors = [];
+    asignar: function () {
       this.asignando = true;
+      this.asignacionForm.errors = [];
+      this.asignacionForm.materiales = this.articulosAAsignar;
 
       this.$http.post('/asignaciones', this.asignacionForm)
           .success(function (response) {
-            this.asignando = false;
-            console.log(response);
+            window.location = response.path;
           })
           .error(function (errors) {
             this.asignando = false;

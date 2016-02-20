@@ -12,7 +12,16 @@
             if (typeof errors === 'object') {
                 form.errors = _.flatten(_.toArray(errors));
             } else {
-                form.errors.push('Un error grave ocurrió. Por favor intente otra ves.');
+                var ind1 = errors.indexOf('<span class="exception_message">');
+                var cad1 = errors.substring(ind1);
+                var ind2 = cad1.indexOf('</span>');
+                var cad2 = cad1.substring(32,ind2);
+                if(cad2 != ""){
+                    form.errors.push( cad2);
+                }else{
+                    form.errors.push('Un error grave ocurrió. Por favor intente otra vez.');
+                }
+                
             }
         }
     }
