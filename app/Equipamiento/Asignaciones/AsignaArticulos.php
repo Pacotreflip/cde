@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\Item;
-use Ghi\Equipamiento\Areas\MaterialRequerido;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class AsignaArticulos
@@ -47,7 +47,7 @@ class AsignaArticulos
                 foreach ($item['destinos'] as $destino) {
                     
                     $area_destino = Area::findOrFail($destino['id']);
-                    $material_requerido = MaterialRequerido::whereRaw('id_material = '. $item['id'].' and id_tipo_area = '. $area_destino->tipo_id)->first();
+                    $material_requerido = MaterialRequeridoArea::whereRaw('id_material = '. $item['id'].' and id_area = '. $area_destino->id)->first();
                     if(!$material_requerido){
                         //throw new \Exception("No es posible asignar el artículo al área por que no esta requerido.");
                         throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta()." por que no esta requerido.");
