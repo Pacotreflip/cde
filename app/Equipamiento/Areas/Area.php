@@ -8,6 +8,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
+use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 
 class Area extends Node
 {
@@ -223,6 +224,11 @@ class Area extends Node
     public function materialesRequeridos(){
         return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
+    
+    public function materialesAsignados(){
+        return $this->hasMany(ItemAsignacion::class, "id_area_destino");
+    }
+    
     public function cantidad_asignada($id_material){
         return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')

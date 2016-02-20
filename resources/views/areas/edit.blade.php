@@ -22,9 +22,11 @@
             <th>Descripción</th>
             <th>Unidad</th>
             <th>Cantidad Requerida</th>
+            <th>Cantidad Asignada</th>
         </tr>
     </thead>
     <tbody>
+        
         @foreach($area->materialesRequeridos as $material)
         <tr>
             <td style="text-align: center">
@@ -42,6 +44,11 @@
             </td>
             <td>{{ $material->material->unidad }}</td>
             <td>{{ $material->cantidad_requerida }}</td>
+            <td>
+                @if($area->materialesAsignados()->where("id_material", $material->id_material)->first())
+                {{ $area->materialesAsignados()->where("id_material", $material->id_material)->sum('cantidad_asignada') }}
+                @endif
+            </td>
         </tr>
         @endforeach
     </tbody>

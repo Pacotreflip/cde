@@ -97,9 +97,8 @@ class Asignacion extends Model
             $item->id_area_destino = $area_destino->id;
             
         }
-        $material_requerido = $area_destino->MaterialRequerido->where("id_material", $material->id_material);
-        dd($material_requerido);
-        MaterialRequeridoArea::whereRaw("")->first();
+        $material_requerido = $area_destino->materialesRequeridos()->where("id_material", $material->id_material)->first();
+        $item->id_material_requerido = $material_requerido->id;
         
         $this->items()->save($item);
     }
