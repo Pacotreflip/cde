@@ -154,6 +154,13 @@ class MaterialRequeridoArea extends Model
         
     }
     
+    public function cantidadMaterialesAsignados()
+    {
+        $materiales_asignados = ItemAsignacion::whereRaw("id_material =" . $this->id_material . " and id_area_destino = ". $this->id_area)->sum("cantidad_asignada");
+        return (float)$materiales_asignados;
+        
+    }
+    
     public function desvinculaMaterialRequeridoAreaTipo(){
         $this->material_requerido()->dissociate();
         $this->save();

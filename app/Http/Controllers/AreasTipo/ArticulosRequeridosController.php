@@ -5,6 +5,7 @@ namespace Ghi\Http\Controllers\AreasTipo;
 use Ghi\Http\Requests;
 use Laracasts\Flash\Flash;
 use Ghi\Equipamiento\Moneda;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\TipoCambio;
 use Ghi\Http\Controllers\Controller;
@@ -65,6 +66,7 @@ class ArticulosRequeridosController extends Controller
      */
     public function store($id, Request $request)
     {
+        //DB::connection('cadeco')->beginTransaction();
         $tipo = $this->tipos_area->getById($id);
         $materiales_requeridos = [];
         foreach ($request->get('materiales') as $id_material) {
@@ -73,15 +75,23 @@ class ArticulosRequeridosController extends Controller
         $tipo->areas->each(function($area) use($materiales_requeridos)
         {
             foreach ($materiales_requeridos as $material_requerido) {
-                $material_requerido_area[] = new MaterialRequeridoArea([
-                    'id_material'=>$material_requerido->id_material,
-                    'id_material_requerido'=>$material_requerido->id,
-                    'cantidad_requerida'=>$material_requerido->cantidad_requerida,
-                    'cantidad_comparativa'=>$material_requerido->cantidad_comparativa,
-                    'existe_para_comparativa'=>$material_requerido->existe_para_comparativa,
-                ]);
+                $materiales_requeridos_areas = [];
+                $material_requerido_area = $area->materialesRequeridos->where("id_material",$material_requerido->id_material)->first();
+                if($material_requerido_area){
+                    if($material_requerido_area->cantidad_requerida == $material_requerido->cantidad_requerida){
+                        $material_requerido_area->associate($material_requerido);
+                    }
+                }else{
+                    $materiales_requeridos_areas[] = new MaterialRequeridoArea([
+                        'id_material'=>$material_requerido->id_material,
+                        'id_material_requerido'=>$material_requerido->id,
+                        'cantidad_requerida'=>$material_requerido->cantidad_requerida,
+                        'cantidad_comparativa'=>$material_requerido->cantidad_comparativa,
+                        'existe_para_comparativa'=>$material_requerido->existe_para_comparativa,
+                    ]);
+                }
             }
-            $area->materialesRequeridos()->saveMany($material_requerido_area);
+            $area->materialesRequeridos()->saveMany($materiales_requeridos_areas);
         }); 
         return redirect()->route('requerimientos.edit', [$id]);
     }
@@ -113,6 +123,7 @@ class ArticulosRequeridosController extends Controller
      */
     public function update(Request $request, $id)
     {
+        DB::connection('cadeco')->beginTransaction();
         $tipo = $this->tipos_area->getById($id);
         $articulos = $request->get('articulos', []);
         
@@ -129,13 +140,37 @@ class ArticulosRequeridosController extends Controller
                 $articulo_requerido->update($articulo);
                 $materiales_requeridos_areas = MaterialRequeridoArea::where("id_material_requerido",$articulo_requerido->id)->get();
                 foreach($materiales_requeridos_areas as $material_requerido_areas){
-                    $material_requerido_areas->cantidad_requerida = $articulo_requerido->cantidad_requerida;
+                    $cantidad_materiales_asignados = $material_requerido_areas->cantidadMaterialesAsignados();
+                    if(!($cantidad_materiales_asignados<=$articulo_requerido->cantidad_requerida)){
+                        $material_requerido_areas->cantidad_requerida = $cantidad_materiales_asignados;
+                        $material_requerido_areas->desvinculaMaterialRequeridoAreaTipo();
+                    }else{
+                        $material_requerido_areas->cantidad_requerida = $articulo_requerido->cantidad_requerida;
+                    }
                     $material_requerido_areas->cantidad_comparativa = $articulo_requerido->cantidad_comparativa;
                     $material_requerido_areas->update();
+                    
                 }
+                //Vincular materiales requeridos áreas con materiales requeridos si la cantidad en ambas son iguales.
+                $tipo->areas->each(function($area) use($articulo_requerido)
+                {
+//                    $materiales_requeridos_areas = $area->materialesRequeridos->where("id_material", $articulo_requerido->id_material)->all();
+//                    foreach($materiales_requeridos_areas as $material_requerido_area){
+//                        if($material_requerido_area->cantidad_requerida == $articulo_requerido->cantidad_requerida){
+//                            $material_requerido_area->id_material_requerido = $articulo_requerido->id;
+//                            $material_requerido_area->save();
+//                        }
+//                    }
+                    $area->materialesRequeridos->where("id_material", $articulo_requerido->id_material)->each(function($material_requerido) use($articulo_requerido){
+                        if($material_requerido->cantidad_requerida == $articulo_requerido->cantidad_requerida){
+                            $material_requerido->id_material_requerido = $articulo_requerido->id;
+                            $material_requerido->save();
+                        }
+                    });
+                });
             }
         }
-
+        DB::connection('cadeco')->commit();
         Flash::success('Los cambios fueron guardados');
 
         return redirect()->route('requerimientos.edit', [$id]);
