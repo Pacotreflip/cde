@@ -154,13 +154,6 @@ class ArticulosRequeridosController extends Controller
                 //Vincular materiales requeridos áreas con materiales requeridos si la cantidad en ambas son iguales.
                 $tipo->areas->each(function($area) use($articulo_requerido)
                 {
-//                    $materiales_requeridos_areas = $area->materialesRequeridos->where("id_material", $articulo_requerido->id_material)->all();
-//                    foreach($materiales_requeridos_areas as $material_requerido_area){
-//                        if($material_requerido_area->cantidad_requerida == $articulo_requerido->cantidad_requerida){
-//                            $material_requerido_area->id_material_requerido = $articulo_requerido->id;
-//                            $material_requerido_area->save();
-//                        }
-//                    }
                     $area->materialesRequeridos->where("id_material", $articulo_requerido->id_material)->each(function($material_requerido) use($articulo_requerido){
                         if($material_requerido->cantidad_requerida == $articulo_requerido->cantidad_requerida){
                             $material_requerido->id_material_requerido = $articulo_requerido->id;

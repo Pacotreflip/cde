@@ -251,10 +251,8 @@ class AreasController extends Controller
             $materiales_requeridos_candidatos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
             foreach($materiales_requeridos_candidatos as $material_requerido_candidato){
                 $material_requerido = $area->materialesRequeridos->where("id_material", $material_requerido_candidato->id_material)->first();
-                
                 if($material_requerido != null){
                     if($material_requerido->cantidad_requerida == $material_requerido_candidato->cantidad_requerida){
-                        
                         $material_requerido->id_material_requerido = $material_requerido_candidato->id_material_requerido;
                         $material_requerido->save();
                     }
