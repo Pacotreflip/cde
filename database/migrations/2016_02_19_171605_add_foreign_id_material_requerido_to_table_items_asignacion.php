@@ -25,7 +25,7 @@ class AddForeignIdMaterialRequeridoToTableItemsAsignacion extends Migration
     public function down()
     {
         Schema::table('Equipamiento.asignacion_items', function (Blueprint $table) {
-            $table->dropForeing("equipamiento_asignacion_items_id_material_requerido_foreign");
+            $table->dropForeign("equipamiento_asignacion_items_id_material_requerido_foreign");
         });
     }
 }
