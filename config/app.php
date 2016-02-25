@@ -143,6 +143,10 @@ return [
         Overtrue\LaravelLang\TranslationServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         'Zizaco\Entrust\EntrustServiceProvider',
+        
+        Ghidev\Fpdf\FpdfServiceProvider::class,
+        Ghidev\Fpdf\RotationServiceProvider::class,
+        Ghidev\Fpdf\MC_TableServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -207,6 +211,9 @@ return [
         'Image'     => Intervention\Image\Facades\Image::class,
         'Fractal'   => Ghi\Core\Facades\Fractal::class,
         'Entrust' => 'Zizaco\Entrust\EntrustFacade',
+        'Fpdf'      => Ghidev\Fpdf\Facades\Fpdf::class,
+        'Rotation'    => Ghidev\Fpdf\Facades\Rotation::class,
+        'MC_Table'  => Ghidev\Fpdf\Facades\MC_Table::class,
     ],
 
 ];

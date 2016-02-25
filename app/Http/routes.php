@@ -160,3 +160,7 @@ Route::group(["middleware" => ['role:admin']], function () {
     Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);//role_to_user_show_path
     
 });
+
+//PDF Routes
+Route::get('PDF/recepciones/{id}', 'PDFController@recepciones')->name('pdf.recepciones');
+
