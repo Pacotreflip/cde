@@ -57,4 +57,8 @@ class ItemAsignacion extends Model
         return $this->belongsTo(MaterialRequeridoArea::class, "id_material_requerido");
     }
     
+    public function validacion(){
+        return $this->hasOne(AsignacionItemsValidados::class, "id_item_validacion", "id");
+    }
+    
 }
