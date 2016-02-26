@@ -161,6 +161,15 @@ class MaterialRequeridoArea extends Model
         
     }
     
+    public function cantidadMaterialesPendientes()
+    {
+        $cantidad_materiales_asignados = $this->cantidadMaterialesAsignados();
+        $cantidad_materiales_requeridos = $this->cantidad_requerida;
+        $cantidad_materiales_pendientes = $cantidad_materiales_requeridos - $cantidad_materiales_asignados;
+        return (float)$cantidad_materiales_pendientes;
+        
+    }
+    
     public function desvinculaMaterialRequeridoAreaTipo(){
         $this->material_requerido()->dissociate();
         $this->save();

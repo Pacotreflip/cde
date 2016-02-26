@@ -7,6 +7,7 @@ use Ghi\Core\Repositories\BaseRepository;
 
 class Areas extends BaseRepository
 {
+    var $lista_areas = [];
     /**
      * Obtiene un area por su id
      *
@@ -68,6 +69,77 @@ class Areas extends BaseRepository
 
         return $lista;
     }
+    
+    
+    
+    /**
+     * Obtiene una lista de areas cerrables como un arreglo
+     *
+     * @return array
+     */
+    public function getListaAreasCerrables()
+    {
+//        $areas = $this->getAll();
+//
+//        $i = 1;
+//        foreach ($areas as $area) {
+//            $lista[$i] = [
+//                "id"=>$area->id,
+//                "area"=>str_repeat('- ', $area->depth).' '.$area->nombre,
+//                "cerrable"=>0,
+//            ];
+//            if($area->area_padre){
+//                $lista[$i]["id_padre"] = $area->area_padre->id;
+//            }
+//            $i++;
+//        }
+        //Area::where('id_obra', $this->context->getId());
+        //dd($this->context->getId());
+        $areas = Area::whereRaw('parent_id is null and id_obra = ?', [$this->context->getId()])
+                ->defaultOrder()->withDepth()->get();
+        //$areas = Area::where("parent_id",null)->get();
+        $area = $areas[0];
+        $this->lista_areas[] = $this->areaArreglo($area);
+        $this->obtieneHijos($area);
+
+//        $i = 1;
+//        foreach ($area->areas_hijas as $area) {
+//            $lista[$i] = [
+//                "id"=>$area->id,
+//                "area"=>str_repeat('- ', $area->depth).' '.$area->nombre,
+//                "cerrable"=>0,
+//            ];
+//            if($area->area_padre){
+//                $lista[$i]["id_padre"] = $area->area_padre->id;
+//            }
+//            $i++;
+//        }
+        return $this->lista_areas;
+    }
+    
+    public function areaArreglo(Area $area){
+        $area_arreglo = [
+            "id"=>$area->id,
+            "area"=>str_repeat('- ', $area->depth).' '.$area->nombre,
+            "cerrable"=>$area->esCerrable(),
+            "profundidad"=>$area->depth,
+        ];
+        if($area->area_padre){
+            $area_arreglo["id_padre"] = $area->area_padre->id;
+        }
+        return $area_arreglo;
+    }
+    
+    public function obtieneHijos($area){
+        $hijos = $area->areas_hijas()->defaultOrder()->withDepth()->get();
+        foreach($hijos as $hijo){
+            $this->lista_areas[] = $this->areaArreglo($hijo);
+            if($hijo->areas_hijas){
+                $this->obtieneHijos($hijo);
+            }
+        }
+        
+    }
 
     /**
      * Elimina un area
@@ -113,6 +185,8 @@ class Areas extends BaseRepository
      */
     public function getHijosDe($id)
     {
-        return $this->getById($id)->children()->defaultOrder()->get();
+        //return $this->getById($id)->children()->defaultOrder()->get();
+        $area = Area::find($id);
+        return $area->areas_hijas()->defaultOrder()->get();
     }
 }

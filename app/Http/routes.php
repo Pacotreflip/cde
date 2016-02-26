@@ -160,3 +160,18 @@ Route::group(["middleware" => ['role:admin']], function () {
     Route::get("/users/getList", ["as" => "usuarios_get_lista", "uses" => "Auth\UserController@getLista"]);//role_to_user_show_path
     
 });
+
+Route::group(["middleware" => ['permission:cierre_area']], function () {
+    Route::get("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
+    
+    Route::post("/cierres/regresa/areas/{parametro}", ["as" => "cierre.get.areas", "uses" => "CierresController@getAreas"]);
+    Route::resource('cierres', 'CierresController', ['names' => [
+            'index' => 'cierres.index',
+            'create' => 'cierres.create',
+            'store' => 'cierres.store',
+            'show' => 'cierres.show',
+            'edit' => 'cierres.edit',
+            'update' => 'cierres.update',
+            'destroy' => 'cierres.destroy'
+    ]]);
+});
