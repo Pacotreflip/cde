@@ -234,7 +234,7 @@ class PDF extends Rotation {
     function Footer() {
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
-        $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Recepciones.'), 0, 0, 'L');
+        $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
         $this->Cell(6.5, .4, '', 0, 0, 'C');
         $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
 
