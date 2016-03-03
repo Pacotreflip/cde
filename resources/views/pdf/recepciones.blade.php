@@ -162,7 +162,10 @@ class PDF extends Rotation {
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Registró:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->usuario_registro->present()->nombreCompleto), '', 1, 'L');
-
+        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Observaciones:'), '', 0, 'LB');
+        $this->SetFont('Arial', '', $this->txtContenidoTam);
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->observaciones), '', 1, 'L');
     }
     
     function referencias($x_inicial){
