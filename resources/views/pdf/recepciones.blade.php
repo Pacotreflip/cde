@@ -153,7 +153,7 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha Recepción:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->fecha_recepcion->format('Y-m-d h:m') . ' (' . $this->recepcion->created_at->diffForHumans() . ')'), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->fecha_recepcion->format('Y-m-d h:m')), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Recibió:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
@@ -234,9 +234,14 @@ class PDF extends Rotation {
     function Footer() {
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
-        $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
+        $this->SetFont('Arial', '', $this->txtFooterTam);
+        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta: ' . date('Y-m-d g:i a')), 0, 0, 'L');
+        $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->Cell(6.5, .4, '', 0, 0, 'C');
         $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->SetY($this->GetPageHeight() - 1.3);
+        $this->SetFont('Arial', 'B', $this->txtFooterTam);
+        $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
 
     }
 }
