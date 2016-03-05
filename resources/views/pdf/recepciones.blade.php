@@ -22,8 +22,6 @@ class PDF extends Rotation {
     }
     
     function header() {
-        
-        
 
         $this->titulos();
         
@@ -101,10 +99,8 @@ class PDF extends Rotation {
         $this->SetAligns("C");
         $this->SetFont('Arial', '', $this->txtSubtitleTam);
         $this->Row(Array(utf8_decode('Artículos Recibidos')));
-        $this->Ln();
-        
-        
-        
+        $this->Ln(0.5);
+
         if($this->encola == "items"){
            
             $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
@@ -162,10 +158,6 @@ class PDF extends Rotation {
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Registró:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->usuario_registro->present()->nombreCompleto), '', 1, 'L');
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Observaciones:'), '', 0, 'LB');
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->observaciones), '', 1, 'L');
     }
     
     function referencias($x_inicial){
@@ -234,6 +226,29 @@ class PDF extends Rotation {
 
     }
     
+    function observaciones(){
+        $this->Ln(0.5);
+        $this->SetWidths(array(19.5));
+        $this->SetRounds(array('12'));
+        $this->SetRadius(array(0.2));
+        $this->SetFills(array('180,180,180'));
+        $this->SetTextColors(array('0,0,0'));
+        $this->SetHeights(array(0.3));
+        $this->SetFont('Arial', '', 6);
+        $this->SetAligns(array('C'));
+        $this->Row(array("Observaciones"));
+        $this->SetRounds(array('34'));
+        $this->SetRadius(array(0.2));
+        $this->SetAligns(array('J'));
+        $this->SetStyles(array('DF'));
+        $this->SetFills(array('255,255,255'));
+        $this->SetTextColors(array('0,0,0'));
+        $this->SetHeights(array(0.35));
+        $this->SetFont('Arial', '', 6);
+        $this->SetWidths(array(19.5));
+        $this->Row(array('  '.$this->recepcion->observaciones));
+    }
+    
     function Footer() {
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
@@ -254,7 +269,7 @@ $pdf->SetMargins(1, 0.5, 1);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->items();
-
+$pdf->observaciones();
 $pdf->Output();
 exit; 
 

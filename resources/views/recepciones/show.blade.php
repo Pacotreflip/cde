@@ -73,11 +73,7 @@
   </table>
   
   <hr>
-  
-<!--  <a href="{{ route('pdf.recepciones', $recepcion) }}" type="button"  class="btn btn-success">
-      <i class="fa fa-file-pdf-o"></i>
-      Generar PDF
-  </a>-->
+   
   <button type="button" class="btn btn-success" data-toggle="modal" data-target="#PDFrecepciones"><i class="fa fa-file-pdf-o"></i> Generar PDF</button>
     
   <div class="modal fade" id="PDFrecepciones" tabindex="-1" role="dialog" aria-labelledby="PDF Recepciones">

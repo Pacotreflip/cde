@@ -2,14 +2,10 @@
 
 namespace Ghi\Http\Controllers;
 
-use Ghi\Http\Requests;
 use Illuminate\Http\Request;
-use Ghi\Equipamiento\Areas\Areas;
-use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Recepciones\Recepcion;
-use Ghi\Equipamiento\Transacciones\Transaccion;
-use Ghi\Equipamiento\Recepciones\RecibeArticulosAlmacen;
-use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
+use Ghi\Equipamiento\Transferencias\Transferencia;
+
 
 class PDFController extends Controller
 {
@@ -32,6 +28,9 @@ class PDFController extends Controller
         $recepcion = Recepcion::findOrFail($id);
         return view('pdf.recepciones')->withRecepcion($recepcion);        
     }
-
- 
+    public function transferencias($id)
+    {
+        $transferencia = Transferencia::findOrFail($id);
+        return view('pdf.transferencias')->withTransferencia($transferencia);        
+    } 
 }
