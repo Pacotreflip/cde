@@ -64,4 +64,5 @@
       </tbody>
     </table>
   </div>
+@include('pdf/modal', ['modulo' => 'compras', 'titulo' => 'Compra de Artículos', 'ruta' => route('pdf.compras', $compra),])
 @stop

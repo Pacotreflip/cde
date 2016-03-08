@@ -74,4 +74,5 @@
       @endforeach
     </tbody>
   </table>
+@include('pdf/modal', ['modulo' => 'asignaciones', 'titulo' => 'Asignación de Artículos - # '.$asignacion->numero_folio, 'ruta' => route('pdf.asignaciones', $asignacion),])  
 @stop

@@ -5,6 +5,8 @@ namespace Ghi\Http\Controllers;
 use Illuminate\Http\Request;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transferencias\Transferencia;
+use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Asignaciones\Asignacion;
 
 
 class PDFController extends Controller
@@ -28,9 +30,22 @@ class PDFController extends Controller
         $recepcion = Recepcion::findOrFail($id);
         return view('pdf.recepciones')->withRecepcion($recepcion);        
     }
+    
     public function transferencias($id)
     {
         $transferencia = Transferencia::findOrFail($id);
         return view('pdf.transferencias')->withTransferencia($transferencia);        
+    }
+    
+    public function compras($id)
+    {
+        $compra = Transaccion::with('items.recepciones')->findOrFail($id);
+        return view('pdf.compras')->withCompra($compra);        
+    }
+    
+    public function asignaciones($id)
+    {
+        $asignacion = Asignacion::findOrFail($id);
+        return view('pdf.asignaciones')->withAsignacion($asignacion);
     } 
 }

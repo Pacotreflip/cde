@@ -10,6 +10,7 @@ class PDF extends Rotation {
     var $encola = "";
     
     function __construct($p,$cm,$Letter, $recepcion) {
+        
         parent::__construct($p,$cm,$Letter);
         $this->SetAutoPageBreak(true,3);
         $this->recepcion = $recepcion;
@@ -45,7 +46,6 @@ class PDF extends Rotation {
         $y_final_2 = $this->getY();
  
         $alto1 = abs($y_final_1 - $y_inicial);
-        $alto2 = abs($y_final_2 - $y_inicial);
         
         //Redondear Bordes Detalles Recepción
         $this->SetWidths(array(0.55 * $this->WeightTotal));
@@ -85,7 +85,7 @@ class PDF extends Rotation {
         $this->referencias($x_inicial);
         
         //Obtener Y despues de las dos tablas
-        $this->setY($y_final_1>$y_final_2 ? $y_final_1 : $y_final_2 );
+        $this->setY($y_final_1 > $y_final_2 ? $y_final_1 : $y_final_2 );
         $this->Ln(1);
         
         //Título artículos recibidos
@@ -102,24 +102,33 @@ class PDF extends Rotation {
         $this->Ln(0.5);
 
         if($this->encola == "items"){
-           
-            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
             $this->SetFont('Arial', '', 6);
-            $this->SetStyles(array('DF','DF', 'DF', 'FD', 'DF', 'DF'));
-            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
+            $this->SetStyles(array('DF', 'DF', 'DF', 'FD', 'DF', 'DF'));
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
             $this->SetRounds(array('1', '', '', '', '', '2'));
             $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
             $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.6));
             $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
-            $this->Row(array("#", "No. Parte", utf8_decode("Descripción"), "Unidad", "Cantidad Recibida", "Area Destino"));
+            $this->Row(array("#", "No. Parte", utf8_decode("Descripción"), "Unidad", "Cantidad Recibida", utf8_decode("Área Destino")));
             $this->SetRounds(array('', '', '', '', '', ''));
             $this->SetRadius(array(0, 0, 0, 0, 0, 0));
             $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
             $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
+        } else if ($this->encola == "observaciones") {
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('J'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.3));
+            $this->SetFont('Arial', '', 6);
+            $this->SetWidths(array(19.5));           
         }
     }
     
@@ -129,15 +138,15 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtTitleTam);
         $this->CellFitScale(0.6 * $this->WeightTotal, 1.5, utf8_decode('Recepción de Artículos - # ' . $this->recepcion->numero_folio) , 0, 1, 'L', 0);
         $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
-        $this->CellFitScale(0.6 * $this->WeightTotal,.7, utf8_decode('Orden de Compra # ' . $this->recepcion->compra->numero_folio) , 0, 1, 'L', 0);   
+        $this->CellFitScale(0.6 * $this->WeightTotal,.7, utf8_decode('Orden de Compra - # ' . $this->recepcion->compra->numero_folio) , 0, 1, 'L', 0);   
         $this->Line(1, $this->GetY() + 0.5, $this->WeightTotal + 1, $this->GetY() + 0.5);
         $this->Ln(1);
         
         //Detalles de la Recepción y Referencias (Titulos)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-        $this->Cell(0.55 * $this->WeightTotal,.7,utf8_decode('Detalles de la Recepción'),0,0,'L');
-        $this->Cell(.5);
-        $this->Cell(0.425 * $this->WeightTotal,.7,'Referencias',0,1,'L');
+        $this->Cell(0.55 * $this->WeightTotal, .7, utf8_decode('Detalles de la Recepción'), 0, 0, 'L');
+        $this->Cell(0.5);
+        $this->Cell(0.425 * $this->WeightTotal, .7, 'Referencias', 0, 1, 'L');
     }
     
     function detallesRecepcion(){
@@ -166,87 +175,94 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.2125 * $this->WeightTotal, 0.5, utf8_decode('No. de Remisión o Factura:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->numero_remision_factura), '', 1, 'C');
+        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->numero_remision_factura), '', 1, 'L');
 
         $this->setX($x_inicial + 0.55 * $this->WeightTotal + 0.5);
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.2125 * $this->WeightTotal, 0.5, utf8_decode('Orden de Embarque:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->orden_embarque), '', 1, 'C');
+        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->orden_embarque), '', 1, 'L');
 
         $this->setX($x_inicial + 0.55 * $this->WeightTotal + 0.5);
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.2125 * $this->WeightTotal, 0.5, utf8_decode('Número de Pedimiento:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->numero_pedimento), '', 1, 'C');
-
+        $this->CellFitScale(0.2125 * $this->WeightTotal, 0.5, utf8_decode($this->recepcion->numero_pedimento), '', 1, 'L');
     }
     
     function items(){
        
         $numItems = $this->recepcion->items->count();
-        $i = 1;
-                
-        $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
-        $this->SetFont('Arial', '', 6);
-        $this->SetStyles(array('DF','DF', 'DF', 'FD', 'DF', 'DF'));
-        $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
-        $this->SetRounds(array('1', '', '', '', '', '2'));
-        $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
-        $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
-        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
-        $this->SetHeights(array(0.6));
-        $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
-        $this->Row(array('#', "No. Parte", utf8_decode("Descripción"), "Unidad", "Cantidad Recibida", "Area Destino"));
          
-        foreach($this->recepcion->items as $item){
+        if ($numItems > 0) {
+            
+            $i = 1;
+
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
             $this->SetFont('Arial', '', 6);
-            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
-            $this->encola="items";
-            $this->SetRounds(array('', '', '', '', '', ''));
-            $this->SetRadius(array(0, 0, 0, 0, 0, 0));
-            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+            $this->SetStyles(array('DF', 'DF', 'DF', 'FD', 'DF', 'DF'));
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
+            $this->SetRounds(array('1', '', '', '', '', '2'));
+            $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
+            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
-            $this->SetHeights(array(0.35));
+            $this->SetHeights(array(0.6));
             $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
+            $this->Row(array('#', "No. Parte", utf8_decode("Descripción"), "Unidad", "Cantidad Recibida", utf8_decode("Área Destino")));
+         
+            foreach($this->recepcion->items as $item){
+                $this->SetFont('Arial', '', 6);
+                $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
+                $this->encola = "items";
+                $this->SetRounds(array('', '', '', '', '', ''));
+                $this->SetRadius(array(0, 0, 0, 0, 0, 0));
+                $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+                $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+                $this->SetHeights(array(0.35));
+                $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
 
-            if ($i == $numItems ) {
-                $this->SetRounds(array('4', '', '', '', '', '3'));
-                $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
-            }
+                if ($i == $numItems ) {
+                    $this->SetRounds(array('4', '', '', '', '', '3'));
+                    $this->SetRadius(array(0.2, 0, 0, 0, 0, 0.2));
+                }
 
-            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.35 * $this->WeightTotal,0.1 * $this->WeightTotal,0.1 * $this->WeightTotal,0.3 * $this->WeightTotal));
-            $this->encola = "items";
-            $this->Row(array($i, $item->material->numero_parte, $item->material->descripcion,$item->material->unidad, $item->cantidad_recibida, $item->area->ruta()));
+                $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.35 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.3 * $this->WeightTotal));
+                $this->encola = "items";
+                $this->Row(array($i, utf8_decode($item->material->numero_parte), utf8_decode($item->material->descripcion), utf8_decode($item->material->unidad), utf8_decode($item->cantidad_recibida), utf8_decode($item->area->ruta())));
            
-            $i++;
-
+                $i++;
+            }
+        } else {
+            $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
+            $this->Ln(1);  
         }
-        $this->encola="";
-
     }
     
     function observaciones(){
-        $this->Ln(0.5);
-        $this->SetWidths(array(19.5));
-        $this->SetRounds(array('12'));
-        $this->SetRadius(array(0.2));
-        $this->SetFills(array('180,180,180'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetHeights(array(0.3));
-        $this->SetFont('Arial', '', 6);
-        $this->SetAligns(array('C'));
-        $this->Row(array("Observaciones"));
-        $this->SetRounds(array('34'));
-        $this->SetRadius(array(0.2));
-        $this->SetAligns(array('J'));
-        $this->SetStyles(array('DF'));
-        $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetHeights(array(0.35));
-        $this->SetFont('Arial', '', 6);
-        $this->SetWidths(array(19.5));
-        $this->Row(array('  '.$this->recepcion->observaciones));
+        
+        if($this->recepcion->observaciones){
+            $this->Ln(0.5);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.3));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C'));
+            $this->Row(array("Observaciones"));
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('J'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.35));
+            $this->SetFont('Arial', '', 6);
+            $this->SetWidths(array(19.5));
+            $this->encola = "observaciones";
+            $this->Row(array('  ' . $this->recepcion->observaciones));
+        }      
     }
     
     function Footer() {
@@ -260,7 +276,6 @@ class PDF extends Rotation {
         $this->SetY($this->GetPageHeight() - 1.3);
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
-
     }
 }
 
@@ -270,7 +285,7 @@ $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->items();
 $pdf->observaciones();
-$pdf->Output();
+$pdf->Output('I', 'CDE - Recepción - # '.$pdf->recepcion->numero_folio.'.pdf', 1);
 exit; 
 
 ?>

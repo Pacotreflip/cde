@@ -164,4 +164,6 @@ Route::group(["middleware" => ['role:admin']], function () {
 //PDF Routes
 Route::get('PDF/recepciones/{id}', 'PDFController@recepciones')->name('pdf.recepciones');
 Route::get('PDF/transferencias/{id}', 'PDFController@transferencias')->name('pdf.transferencias');
+Route::get('PDF/compras/{id}', 'PDFController@compras')->name('pdf.compras');
+Route::get('PDF/asignaciones/{id}', 'PDFController@asignaciones')->name('pdf.asignaciones');
 
