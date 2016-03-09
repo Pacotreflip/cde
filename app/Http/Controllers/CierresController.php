@@ -11,7 +11,10 @@ use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAlmacen;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
 use Ghi\Equipamiento\Cierres\Cierres;
-use \Ghi\Equipamiento\Areas\Area;
+use Ghi\Equipamiento\Areas\Area;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
+use Ghi\Equipamiento\Asignaciones\AsignacionItemsValidados;
+use Illuminate\Support\Facades\Auth;
 class CierresController extends Controller
 {
     public function __construct()
@@ -69,9 +72,9 @@ class CierresController extends Controller
 
         //$areas_arreglo = $areas->getListaAreasCerrables();
         //dd($areas);
-
-        return view('cierres.create')
-            ;
+        $areas = [];
+        return view('cierres.create')->withAreas($areas);
+            
     }
 
     /**
@@ -133,5 +136,65 @@ class CierresController extends Controller
             $i++;
         }
         return response()->json($salida);
+    }
+    
+    public function getAreasSeleccionadas(Request $request){
+        $areas = [];
+        foreach($request->id_area as $id_area){
+            $areas[] = Area::findOrFail($id_area);
+        }
+        return view('cierres.create')->withAreas($areas);
+    }
+    
+    public function getFormularioValidacionArea($id_area){
+        $area = Area::findOrFail($id_area);
+        $i = 1;
+        return view('cierres.modal_valida_area')->withArea($area)
+                ->withI($i);
+    }
+    public function validarAsignaciones(Request $request){
+        $articulos_validados_anteriores = $request->idarticulo_requerido_validado;
+        $articulos_validar = $request->idarticulo_requerido;
+        if(!$articulos_validar){
+            $articulos_validar = [];
+        }
+        if(!$articulos_validados_anteriores){
+            $articulos_validados_anteriores = [];
+        }
+        foreach($articulos_validar as $idarticulo_requerido){
+            $articulo_requerido = MaterialRequeridoArea::findOrFail($idarticulo_requerido);
+            foreach($articulo_requerido->itemsAsignacion as $itemAsignacion){
+                $asignacion_item_validado = AsignacionItemsValidados::whereRaw("id_item_asignacion =" . $itemAsignacion->id )->first();
+                
+                if(!$asignacion_item_validado){
+                    AsignacionItemsValidados::create(["id_item_asignacion"=>$itemAsignacion->id, "id_usuario"=>Auth::id()]);
+                }
+            }
+        }
+        
+        foreach($articulos_validados_anteriores as $idarticulo_validado_anterior){
+            if(!in_array($idarticulo_validado_anterior, $articulos_validar)){
+                $articulo_requerido_quitar = MaterialRequeridoArea::findOrFail($idarticulo_validado_anterior);
+                foreach($articulo_requerido_quitar->itemsAsignacion as $itemAsignacion){
+                    $asignacion_item_validado_anterior = AsignacionItemsValidados::whereRaw("id_item_asignacion =" . $itemAsignacion->id )->first();
+
+                    if($asignacion_item_validado_anterior){
+                        $asignacion_item_validado_anterior->delete();
+                    }
+                }
+            }
+        }
+    }
+    public function validarTodasAsignaciones(Request $request, $id_area){
+        $area = Area::findOrFail($id_area);
+        foreach($area->materialesRequeridos as $articulo_requerido){
+            foreach($articulo_requerido->itemsAsignacion as $itemAsignacion){
+                $asignacion_item_validado = AsignacionItemsValidados::whereRaw("id_item_asignacion =" . $itemAsignacion->id )->first();
+                
+                if(!$asignacion_item_validado){
+                    AsignacionItemsValidados::create(["id_item_asignacion"=>$itemAsignacion->id, "id_usuario"=>Auth::id()]);
+                }
+            }
+        }
     }
 }

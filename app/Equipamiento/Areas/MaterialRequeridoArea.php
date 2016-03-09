@@ -1,11 +1,12 @@
 <?php
 
 namespace Ghi\Equipamiento\Areas;
-
+use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Moneda;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
+use Ghi\Equipamiento\Asignaciones\AsignacionItemsValidados;
 class MaterialRequeridoArea extends Model
 {
     protected $connection = 'cadeco';
@@ -160,6 +161,9 @@ class MaterialRequeridoArea extends Model
         return (float)$materiales_asignados;
         
     }
+    public function itemsAsignacion(){
+        return $this->hasMany(ItemAsignacion::class, "id_material_requerido");
+    }
     
     public function cantidadMaterialesPendientes()
     {
@@ -182,6 +186,16 @@ class MaterialRequeridoArea extends Model
         }else{
             parent::delete();
         }
+        
+    }
+    
+    public function cantidadAsignacionesValidadas()
+    {
+        return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+            ->where('Equipamiento.asignacion_items.id_material_requerido', $this->id)
+            ->sum('cantidad_asignada');
         
     }
 }

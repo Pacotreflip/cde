@@ -58,7 +58,7 @@ class ItemAsignacion extends Model
     }
     
     public function validacion(){
-        return $this->hasOne(AsignacionItemsValidados::class, "id_item_validacion", "id");
+        return $this->hasOne(AsignacionItemsValidados::class, "id_item_asignacion", "id");
     }
     
 }

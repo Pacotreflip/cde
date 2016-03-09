@@ -21,18 +21,22 @@
                     </div>
 
 
-
+                <form id="formulario_busqueda_area" method="post" action="{{ route("cierre.get.areas") }}">
+                {{ csrf_field() }}
                     <div class="row" >
                         <div class="col-md-10">
                             <input name="busqueda_area" id="busqueda_area" type="text" class="form-control"  value="" />                            
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary" type="submit" v-bind:disabled="asignando" @click="confirmaAsignacion">
+                            <button class="btn btn-primary" type="submit">
                                 <span><i class="fa fa-search"></i> Buscar</span>
                             </button>
                         </div>
                     </div>
+                </form>
                     <hr />
+                    <form id="formulario_carga_areas" method="post" action="{{ route("cierre.carga.areas") }}">
+                {{ csrf_field() }}
                     <div class="row" >
                         <div class="col-md-12" id="areas_encontradas" style="display: none">
                             <table class="table table-striped table-hover" id="areas_seleccionadas">
@@ -59,12 +63,12 @@
             </table>
                         </div>
                     </div>
-
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove-sign" style="margin-right: 5px"></span>Cerrar</button>
-                <button type="submit" class="btn btn-success" ><span class="glyphicon glyphicon-plus-sign" style="margin-right: 5px"></span>Agregar</button>
+                <button type="button" id="btn_carga_areas" class="btn btn-success" ><span class="glyphicon glyphicon-plus-sign" style="margin-right: 5px"></span>Agregar</button>
             </div>
         </div>
     </div>

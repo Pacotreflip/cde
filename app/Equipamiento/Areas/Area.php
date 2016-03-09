@@ -246,14 +246,14 @@ class Area extends Node
         if($id_material > 0){
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_validacion')
+            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
             ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
             ->sum('cantidad_asignada');
         }else{
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_validacion')
+            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
             ->where('id_area_destino', $this->id)
             ->sum('cantidad_asignada');
         }

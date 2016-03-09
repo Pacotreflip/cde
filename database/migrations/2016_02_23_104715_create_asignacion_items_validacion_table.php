@@ -14,13 +14,13 @@ class CreateAsignacionItemsValidacionTable extends Migration
     {
         Schema::create('Equipamiento.asignacion_item_validacion', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('id_item_validacion')->unsigned();
+            $table->integer('id_item_asignacion')->unsigned();
             $table->integer('id_usuario');
             $table->timestamps();
             
-            $table->unique(['id_item_validacion']);
+            $table->unique(['id_item_asignacion']);
             
-            $table->foreign('id_item_validacion')
+            $table->foreign('id_item_asignacion')
                 ->references('id')
                 ->on('Equipamiento.asignacion_items');
         });
