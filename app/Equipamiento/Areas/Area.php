@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Inventarios\Inventario;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
+use Ghi\Equipamiento\Cierres\CierrePartida;
 
 class Area extends Node
 {
@@ -305,5 +306,7 @@ class Area extends Node
         return $this->ruta(' / ');
     }
 
-    
+    public function cierre_partida(){
+        return $this->hasOne(CierrePartida::class, "id_area");
+    }
 }

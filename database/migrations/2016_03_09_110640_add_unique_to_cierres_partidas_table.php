@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddObservacionesToCierresPartidasTable extends Migration
+class AddUniqueToCierresPartidasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddObservacionesToCierresPartidasTable extends Migration
     public function up()
     {
         Schema::table('Equipamiento.cierres_partidas', function (Blueprint $table) {
-            $table->text('observaciones')->nullable();
+            $table->unique("id_area");
         });
     }
 
@@ -25,7 +25,7 @@ class AddObservacionesToCierresPartidasTable extends Migration
     public function down()
     {
         Schema::table('Equipamiento.cierres_partidas', function (Blueprint $table) {
-            $table->dropColumn("observaciones");
+            $table->dropUnique("equipamiento_cierres_partidas_id_area_unique");
         });
     }
 }

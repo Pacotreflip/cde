@@ -35,8 +35,15 @@
                     </div>
                 </form>
                     <hr />
-                    <form id="formulario_carga_areas" method="post" action="{{ route("cierre.carga.areas") }}">
+                    <form id="formulario_carga_areas" method="post" action="{{ route("cierre.create.areas") }}">
                 {{ csrf_field() }}
+                <div class="row">
+                    <div class="col-md-12" id="error_areas_encontradas" style="display: none">
+                        <div class="alert alert-danger" role="alert">
+                        No se encontraron áreas con el parametro de búsqueda ingresado.
+                        </div>
+                    </div>
+                </div>
                     <div class="row" >
                         <div class="col-md-12" id="areas_encontradas" style="display: none">
                             <table class="table table-striped table-hover" id="areas_seleccionadas">

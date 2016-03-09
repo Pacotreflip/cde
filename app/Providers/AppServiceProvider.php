@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('partials.nav-app', \Ghi\Http\Composers\ObraComposer::class);
         Validator::extendImplicit('required_if_not', "Ghi\Services\Validation\CustomValidators@requiredIfNot");
         Validator::extendImplicit('rfc', "Ghi\Services\Validation\CustomValidators@rfc");
+        Validator::extendImplicit('mayor_a_cero', "Ghi\Services\Validation\CustomValidators@mayorACero");
     }
 
     /**

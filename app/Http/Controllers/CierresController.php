@@ -15,6 +15,7 @@ use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Asignaciones\AsignacionItemsValidados;
 use Illuminate\Support\Facades\Auth;
+use Ghi\Http\Requests\CreateCierreRequest;
 class CierresController extends Controller
 {
     public function __construct()
@@ -66,13 +67,15 @@ class CierresController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function create(Areas $areas)
+    public function create(Request $request)
     {
-        
-
-        //$areas_arreglo = $areas->getListaAreasCerrables();
-        //dd($areas);
         $areas = [];
+        if(count($request->id_area)>0){
+            foreach($request->id_area as $id_area){
+                $areas[] = Area::findOrFail($id_area);
+            }
+        }
+        
         return view('cierres.create')->withAreas($areas);
             
     }
@@ -84,18 +87,10 @@ class CierresController extends Controller
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function store(Requests\CreateRecepcionRequest $request) {
-        if ($request->opcion_recepcion == "asignar") {
-            $recepcion_asignacion = (new RecibeArticulosAsignacion($request->all(), $this->getObraEnContexto()))->save();
-            if ($request->ajax()) {
-                return response()->json(['path' => route('asignaciones.show', $recepcion_asignacion)]);
-            }
-        } elseif ($request->opcion_recepcion == "almacenar") {
-            $recepcion = (new RecibeArticulosAlmacen($request->all(), $this->getObraEnContexto()))->save();
-            if ($request->ajax()) {
-                return response()->json(['path' => route('recepciones.show', $recepcion)]);
-            }
-        }
+    public function store(CreateCierreRequest $request) {
+        $cierres = new Cierres();
+        $cierres->generarCierre($request->all(), $this->getObraEnContexto());
+        return response()->json(['path' => route('cierres.index')]);
     }
 
     /**
@@ -106,10 +101,9 @@ class CierresController extends Controller
      */
     public function show($id)
     {
-        $recepcion = Recepcion::findOrFail($id);
-
-        return view('recepciones.show')
-            ->withRecepcion($recepcion);
+        $cierre = Cierre::findOrFail($id);
+        return view('cierres.show')
+            ->withCierre($cierre);
     }
     
     public function getFormularioBusquedaAreas(){
@@ -132,6 +126,16 @@ class CierresController extends Controller
                 $salida[$i]["articulos_asignados"] = $area->cantidad_asignada();
                 $salida[$i]["articulos_requeridos"] = $area->cantidad_requerida();
                 $salida[$i]["articulos_validados"] = $area->cantidad_validada();
+                if($area->cierre_partida){
+                    $salida[$i]["cerrada"] = 1;
+                    $salida[$i]["cierre"] = "# ".$area->cierre_partida->cierre->numero_folio;
+                    $salida[$i]["fecha_cierre"] = $area->cierre_partida->cierre->fecha_cierre->format('d-m-Y H:m');
+                }else{
+                    $salida[$i]["cerrada"] = 0;
+                    $salida[$i]["cierre"] = "";
+                    $salida[$i]["fecha_cierre"] = "";
+                }
+                
             }
             $i++;
         }
@@ -140,8 +144,10 @@ class CierresController extends Controller
     
     public function getAreasSeleccionadas(Request $request){
         $areas = [];
-        foreach($request->id_area as $id_area){
-            $areas[] = Area::findOrFail($id_area);
+        if(count($request->id_area)>0){
+            foreach($request->id_area as $id_area){
+                $areas[] = Area::findOrFail($id_area);
+            }
         }
         return view('cierres.create')->withAreas($areas);
     }

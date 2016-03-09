@@ -13,7 +13,7 @@ class AddObservacionesToCierresTable extends Migration
     public function up()
     {
         Schema::table('Equipamiento.cierres', function (Blueprint $table) {
-            $table->text('observaciones');
+            $table->text('observaciones')->nullable();
         });
     }
 

@@ -29,7 +29,8 @@ class AddIdObraToCierresTable extends Migration
     public function down()
     {
         Schema::table('Equipamiento.cierres', function (Blueprint $table) {
-            $table->dropForeign('cierres_id_obra_foreign');
+            $table->dropForeign('equipamiento_cierres_id_obra_foreign');
+            $table->dropIndex('equipamiento_cierres_id_obra_index');
             $table->dropColumn("id_obra");
         });
     }

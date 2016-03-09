@@ -37,4 +37,12 @@ class CierrePartida extends Model
     public function cierre(){
         return $this->belongsTo(Cierre::class, "id_cierre");
     }
+    
+     /**
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cierre_partida_asignacion(){
+        return $this->hasMany(CierrePartidaAsignacion::class, "id_cierre_partida");
+    }
 }

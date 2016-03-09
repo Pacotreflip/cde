@@ -15,7 +15,7 @@ class CreateCierresPartidasAsignacionesTable extends Migration
         Schema::create('Equipamiento.cierres_partidas_asignaciones', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('id_cierre_partida')->unsigned();
-            $table->integer('id_asginacion_item_validacion')->unsigned();
+            $table->integer('id_asignacion_item_validacion')->unsigned();
             $table->timestamps();
             
             $table->foreign('id_cierre_partida')

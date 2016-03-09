@@ -169,7 +169,7 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
     Route::get("/cierres/validar_asignaciones/area/{id}", ["as" => "cierre.valida.asignaciones.area", "uses" => "CierresController@getFormularioValidacionArea"]);
     Route::post("/cierres/regresa/areas/{parametro}", ["as" => "cierre.get.areas", "uses" => "CierresController@getAreas"]);
     Route::post("/cierres/carga/areas/", ["as" => "cierre.carga.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
-    
+    Route::post("/cierres/create", ["as" => "cierre.create.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
     Route::resource('cierres', 'CierresController', ['names' => [
             'index' => 'cierres.index',
             'create' => 'cierres.create',
