@@ -23,6 +23,7 @@
             <th>Unidad</th>
             <th>Cantidad Requerida</th>
             <th>Cantidad Asignada</th>
+            <th>Asignaciones Validadas</th>
         </tr>
     </thead>
     <tbody>
@@ -43,12 +44,13 @@
                 </span>
             </td>
             <td>{{ $material->material->unidad }}</td>
-            <td>{{ $material->cantidad_requerida }}</td>
-            <td>
+            <td style="text-align: right">{{ $material->cantidad_requerida }}</td>
+            <td style="text-align: right">
                 @if($area->materialesAsignados()->where("id_material", $material->id_material)->first())
                 {{ $area->materialesAsignados()->where("id_material", $material->id_material)->sum('cantidad_asignada') }}
                 @endif
             </td>
+            <td style="text-align: right">{{ $material->cantidadAsignacionesValidadas() }}</td>
         </tr>
         @endforeach
     </tbody>
