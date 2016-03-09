@@ -106,12 +106,18 @@ class CierresController extends Controller
             ->withCierre($cierre);
     }
     
-    public function getFormularioBusquedaAreas(){
-        return view('cierres.modal_busqueda_areas');
+    public function getFormularioBusquedaAreas(Request $request){
+        $ids_areas = $request->id_area;
+        
+        return view('cierres.modal_busqueda_areas')->with("ids_areas", $ids_areas);
     }
     public function getAreas(Request $request){
         $parametro = $request->busqueda_area;
         $cierres = new \Ghi\Equipamiento\Cierres\Cierres();
+        $id_areas = $request->id_area;
+        if($id_areas == null){
+            $id_areas = [];
+        }
         $lista = $cierres->buscar($parametro);
         $salida = [];
         $i = 0;
@@ -136,9 +142,16 @@ class CierresController extends Controller
                     $salida[$i]["fecha_cierre"] = "";
                 }
                 
+                if(in_array($area->id, $id_areas)){
+                    $salida[$i]["checked"] = "1";
+                }else{
+                    $salida[$i]["checked"] = "0";
+                }
+                
             }
+           
             $i++;
-        }
+        } 
         return response()->json($salida);
     }
     

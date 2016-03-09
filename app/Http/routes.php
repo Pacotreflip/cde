@@ -165,7 +165,7 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
     //cierre.valida.asignaciones.area
     Route::post("/cierres/validar_asignaciones", ["as" => "cierre.validar.asignaciones", "uses" => "CierresController@validarAsignaciones"]);
     Route::post("/cierres/validar_todas_asignaciones/{id}", ["as" => "cierre.validar.todas.asignaciones.area", "uses" => "CierresController@validarTodasAsignaciones"]);
-    Route::get("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
+    Route::post("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
     Route::get("/cierres/validar_asignaciones/area/{id}", ["as" => "cierre.valida.asignaciones.area", "uses" => "CierresController@getFormularioValidacionArea"]);
     Route::post("/cierres/regresa/areas/{parametro}", ["as" => "cierre.get.areas", "uses" => "CierresController@getAreas"]);
     Route::post("/cierres/carga/areas/", ["as" => "cierre.carga.areas", "uses" => "CierresController@getAreasSeleccionadas"]);

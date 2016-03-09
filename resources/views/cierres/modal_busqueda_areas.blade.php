@@ -23,6 +23,11 @@
 
                 <form id="formulario_busqueda_area" method="post" action="{{ route("cierre.get.areas") }}">
                 {{ csrf_field() }}
+                @if(is_array($ids_areas))
+                    @foreach($ids_areas as $id_areas)
+                    <input type="hidden" name="id_area[]" value="{{$id_areas}}" />
+                    @endforeach
+                @endif
                     <div class="row" >
                         <div class="col-md-10">
                             <input name="busqueda_area" id="busqueda_area" type="text" class="form-control"  value="" />                            
@@ -37,6 +42,12 @@
                     <hr />
                     <form id="formulario_carga_areas" method="post" action="{{ route("cierre.create.areas") }}">
                 {{ csrf_field() }}
+                
+                @if(is_array($ids_areas))
+                    @foreach($ids_areas as $id_areas)
+                    <input type="hidden" name="id_area[]" value="{{$id_areas}}" />
+                    @endforeach
+                @endif
                 <div class="row">
                     <div class="col-md-12" id="error_areas_encontradas" style="display: none">
                         <div class="alert alert-danger" role="alert">

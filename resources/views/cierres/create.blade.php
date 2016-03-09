@@ -120,15 +120,30 @@
     });
     $("button#modalAreas").off().on("click", function (e) {
         ruta = "{{ route("cierre.busqueda.areas") }}";
-        $.get(ruta, function (data) {
-            $("#modal_busqueda_area").html(data);
-            $("#modalBusquedaAreas").modal("show");
-            preparaFormularioBusquedaArea();
-            $("#btn_carga_areas").off().on("click", function (e) {
-                e.preventDefault();
-                $("form#formulario_carga_areas").submit();
-            });
-            //preparaFormularioCargaArea();
+        var postData = $("#cierre_store").serialize();
+//        $.get(ruta, function (data) {
+//            $("#modal_busqueda_area").html(data);
+//            $("#modalBusquedaAreas").modal("show");
+//            preparaFormularioBusquedaArea();
+//            $("#btn_carga_areas").off().on("click", function (e) {
+//                e.preventDefault();
+//                $("form#formulario_carga_areas").submit();
+//            });
+//        });
+        $.ajax({
+            url: ruta,
+            type: "post",
+            data: postData,
+            success: function (data)
+            {
+               $("#modal_busqueda_area").html(data);
+                $("#modalBusquedaAreas").modal("show");
+                preparaFormularioBusquedaArea();
+                $("#btn_carga_areas").off().on("click", function (e) {
+                    e.preventDefault();
+                    $("form#formulario_carga_areas").submit();
+                });
+            }
         });
         e.preventDefault();
     });
@@ -238,10 +253,19 @@
                         $.each(data, function (key, val) {
                             var newTR = $("div#areas_encontradas table tbody tr.template").clone().removeClass('template').addClass("no_template").css("display", "");
                             if (val.cerrable == 1 && val.cerrada == 0) {
-                                chk = $('<input />', {type: 'checkbox', id: 'cb' + val.id, value: val.id, name: "id_area[]", class: "chk_id_area"});
-                                newTR.find(".id_area").append(chk);
+                                if(val.checked == 0){
+                                    chk = $('<input />', {type: 'checkbox', id: 'cb' + val.id, value: val.id, name: "id_area[]", class: "chk_id_area"});
+                                    newTR.find(".id_area").append(chk);
+                                }else if(val.checked == 1){
+                                    chk = "<span class = 'glyphicon glyphicon-check' ></span>";
+                                    newTR.find(".id_area").html(chk);
+                                }
+                                
                             }else if (val.cerrable == 1 && val.cerrada == 1) {
-                                chk = "<span class = 'glyphicon glyphicon-check' data-toggle='tooltip' title='Cierre "+val.cierre+" ["+val.fecha_cierre+"]'></span>";
+                                chk = "<span class = 'glyphicon glyphicon-lock' data-toggle='tooltip' title='Cierre "+val.cierre+" ["+val.fecha_cierre+"]'></span>";
+                                newTR.find(".id_area").html(chk);
+                            }else if (val.cerrable == 0 ) {
+                                chk = "<span class = 'glyphicon glyphicon-ban-circle' data-toggle='tooltip' title='El área no puede cerrarse porque no tiene asignados todos los artículos requeridos'></span>";
                                 newTR.find(".id_area").html(chk);
                             }
                             newTR.find(".clave").html(val.clave);
@@ -256,7 +280,7 @@
                     }else{
                         $("div#error_areas_encontradas").css("display", "block");
                         $("div#areas_encontradas").css("display", "none");
-                        $("div#areas_encontradas table tbody").children().remove();
+                        $("div#areas_encontradas table tbody").find("tr.no_template").remove();
                     }
                 },
                 error: function (xhr, textStatus, thrownError)
