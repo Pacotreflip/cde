@@ -48,4 +48,10 @@ class PDFController extends Controller
         $asignacion = Asignacion::findOrFail($id);
         return view('pdf.asignaciones')->withAsignacion($asignacion);
     } 
+    
+     public function cierre($id)
+    {
+        $cierre = Cierre::findOrFail($id);
+        return view('pdf.cierre')->withCierre($cierre);
+    } 
 }
