@@ -16,8 +16,13 @@
       @foreach($descendientes as $descendiente)
         <tr>
           <td>
+              @if(count($descendiente->areas_hijas)>0)
             <a href="{{ route('areas.index', ['area='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
-
+            @else
+            <a href="{{ route('areas.edit', [$descendiente]) }}" >{{ $descendiente->nombre }}</a>
+            @endif
+            
+            
             <div class="btn-toolbar pull-right">
             @if (!Auth::user()->hasRole('consulta_provisional'))    
               <div class="btn-group btn-group-xs">
