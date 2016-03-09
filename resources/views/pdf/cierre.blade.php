@@ -246,5 +246,3 @@ $pdf->Output('I', 'CDE - Cierre de Area #'.$pdf->cierre->numero_folio.'.pdf', 1)
 exit; 
 
 ?>
-
-       
