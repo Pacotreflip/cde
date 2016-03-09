@@ -23,7 +23,7 @@ class CreateCierresPartidasAsignacionesTable extends Migration
                 ->on('Equipamiento.cierres_partidas')
                 ->onDelete('cascade');
             
-            $table->foreign('id_asginacion_item_validacion')
+            $table->foreign('id_asiginacion_item_validacion')
                 ->references('id')
                 ->on('Equipamiento.asignacion_item_validacion');
         });
