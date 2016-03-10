@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Moneda;
+use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 
 class Material extends Model
 {
@@ -428,5 +429,9 @@ class Material extends Model
         $area = Area::findOrFail($id_area);
         $esperados = $area->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
         return $esperados;
+    }
+    
+    public function items_asignacion(){
+        return $this->hasMany(ItemAsignacion::class, $foreignKey, $localKey);
     }
 }

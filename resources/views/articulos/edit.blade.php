@@ -30,6 +30,49 @@
   </form>
 
   <br>
+  <div class="row">
+      <div class="col-md-6">
+      <h1>Asignados</h1>
+<hr>
+<br>
+
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Área</th>  
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        
+        <tr>
+        </tr>
+    </tbody>
+</table>
+
+    </div>
+      <div class="col-md-6">
+      <h1>Almacenados</h1>
+<hr>
+<br>
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Área</th>  
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        
+        <tr>
+        </tr>
+    </tbody>
+</table>
+    </div>
+  </div>
+  
 @stop
 
 @section('scripts')
