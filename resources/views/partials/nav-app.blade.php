@@ -30,6 +30,9 @@
   <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
   <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>
   @endif
+  @if (Auth::user()->can('cierre_area')) 
+  <li><a href="{{ route('cierres.index') }}">Cierre</a></li>
+  @endif
 @if (Auth::user()->hasRole('admin')) 
 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Inventarios\Inventario;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
+use Ghi\Equipamiento\Cierres\CierrePartida;
 
 class Area extends Node
 {
@@ -228,13 +229,84 @@ class Area extends Node
     public function materialesAsignados(){
         return $this->hasMany(ItemAsignacion::class, "id_area_destino");
     }
-    
-    public function cantidad_asignada($id_material){
-        return DB::connection($this->connection)
+    public function cantidad_requerida($id_material = ""){
+        if($id_material > 0){
+            return DB::connection($this->connection)
+            ->table('Equipamiento.materiales_requeridos_area')
+            ->where('id_area', $this->id)
+            ->where('id_material', $id_material)
+            ->sum('cantidad_requerida');
+        }else{
+            return DB::connection($this->connection)
+            ->table('Equipamiento.materiales_requeridos_area')
+            ->where('id_area', $this->id)
+            ->sum('cantidad_requerida');
+        }
+    }
+    public function cantidad_validada($id_material = ""){
+        if($id_material > 0){
+            return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+            ->where('id_area_destino', $this->id)
+            ->where('id_material', $id_material)
+            ->sum('cantidad_asignada');
+        }else{
+            return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+            ->where('id_area_destino', $this->id)
+            ->sum('cantidad_asignada');
+        }
+    }
+    public function cantidad_asignada($id_material = ""){
+        if($id_material > 0){
+            return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
             ->sum('cantidad_asignada');
+        }else{
+            return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->where('id_area_destino', $this->id)
+            ->sum('cantidad_asignada');
+        }
     }
     
+    public function area_padre(){
+        return $this->belongsTo(Area::class, "parent_id");
+    }
+    
+    public function areas_hijas(){
+        return $this->hasMany(Area::class, "parent_id", "id");
+    }
+    public function esCerrable(){
+        $cerrable = 0;
+        $materiales_requeridos = $this->materialesRequeridos;
+        if(count($materiales_requeridos)>0){
+            $cerrable = 1;
+            foreach($materiales_requeridos as $material_requerido){
+                if(abs($material_requerido->cantidadMaterialesPendientes())>0.1){
+                    $cerrable = 0;
+                    break;
+                }
+            }
+        }
+        return $cerrable;
+    }
+    
+    /**
+     * Obtiene la ruta de esta area tipo.
+     * 
+     * @return string
+     */
+    public function getRutaAttribute()
+    {
+        return $this->ruta(' / ');
+    }
+
+    public function cierre_partida(){
+        return $this->hasOne(CierrePartida::class, "id_area");
+    }
 }

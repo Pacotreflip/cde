@@ -39,7 +39,16 @@
 </div>
 
 <hr>
-
+@if($area->cierre_partida)
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-lock" style="padding-right: 5px"></span>
+    Área cerrada: <strong>Cierre # {{$area->cierre_partida->cierre->numero_folio}}</strong>
+    {{ $area->cierre_partida->cierre->usuario->present()->nombreCompleto }}
+    [{{ $area->cierre_partida->cierre->fecha_cierre->format('d-m-Y H:m') }}
+            <small >({{ $area->cierre_partida->cierre->created_at->diffForHumans() }})]</small>
+</div>
+@else
 <div class="form-group">
   {!! Form::submit('Guardar Cambios', ['class' => 'btn btn-primary']) !!}
 </div>
+@endif

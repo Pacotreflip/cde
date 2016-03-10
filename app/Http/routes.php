@@ -161,6 +161,25 @@ Route::group(["middleware" => ['role:admin']], function () {
     
 });
 
+Route::group(["middleware" => ['permission:cierre_area']], function () {
+    //cierre.valida.asignaciones.area
+    Route::post("/cierres/validar_asignaciones", ["as" => "cierre.validar.asignaciones", "uses" => "CierresController@validarAsignaciones"]);
+    Route::post("/cierres/validar_todas_asignaciones/{id}", ["as" => "cierre.validar.todas.asignaciones.area", "uses" => "CierresController@validarTodasAsignaciones"]);
+    Route::post("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
+    Route::get("/cierres/validar_asignaciones/area/{id}", ["as" => "cierre.valida.asignaciones.area", "uses" => "CierresController@getFormularioValidacionArea"]);
+    Route::post("/cierres/regresa/areas/{parametro}", ["as" => "cierre.get.areas", "uses" => "CierresController@getAreas"]);
+    Route::post("/cierres/carga/areas/", ["as" => "cierre.carga.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
+    Route::post("/cierres/create", ["as" => "cierre.create.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
+    Route::resource('cierres', 'CierresController', ['names' => [
+            'index' => 'cierres.index',
+            'create' => 'cierres.create',
+            'store' => 'cierres.store',
+            'show' => 'cierres.show',
+            'edit' => 'cierres.edit',
+            'update' => 'cierres.update',
+            'destroy' => 'cierres.destroy'
+    ]]);
+});
 //PDF Routes
 Route::get('PDF/recepciones/{id}', 'PDFController@recepciones')->name('pdf.recepciones');
 Route::get('PDF/transferencias/{id}', 'PDFController@transferencias')->name('pdf.transferencias');

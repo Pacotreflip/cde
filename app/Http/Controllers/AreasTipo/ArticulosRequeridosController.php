@@ -74,24 +74,29 @@ class ArticulosRequeridosController extends Controller
         }
         $tipo->areas->each(function($area) use($materiales_requeridos)
         {
-            foreach ($materiales_requeridos as $material_requerido) {
-                $materiales_requeridos_areas = [];
-                $material_requerido_area = $area->materialesRequeridos->where("id_material",$material_requerido->id_material)->first();
-                if($material_requerido_area){
-                    if($material_requerido_area->cantidad_requerida == $material_requerido->cantidad_requerida){
-                        $material_requerido_area->associate($material_requerido);
+            if(!$area->cierre_partida){
+                $entra = 0;
+                foreach ($materiales_requeridos as $material_requerido) {
+                    $materiales_requeridos_areas = [];
+                    $material_requerido_area = $area->materialesRequeridos->where("id_material",$material_requerido->id_material)->first();
+                    if($material_requerido_area){
+                        if($material_requerido_area->cantidad_requerida == $material_requerido->cantidad_requerida){
+                            $material_requerido_area->associate($material_requerido);
+                        }
+                    }else{
+                        
+                        $materiales_requerido_area = new MaterialRequeridoArea([
+                            'id_material'=>$material_requerido->id_material,
+                            'id_material_requerido'=>$material_requerido->id,
+                            'cantidad_requerida'=>$material_requerido->cantidad_requerida,
+                            'cantidad_comparativa'=>$material_requerido->cantidad_comparativa,
+                            'existe_para_comparativa'=>$material_requerido->existe_para_comparativa,
+                        ]);
+                        $area->materialesRequeridos()->save($materiales_requerido_area);
+                        $entra++;
                     }
-                }else{
-                    $materiales_requeridos_areas[] = new MaterialRequeridoArea([
-                        'id_material'=>$material_requerido->id_material,
-                        'id_material_requerido'=>$material_requerido->id,
-                        'cantidad_requerida'=>$material_requerido->cantidad_requerida,
-                        'cantidad_comparativa'=>$material_requerido->cantidad_comparativa,
-                        'existe_para_comparativa'=>$material_requerido->existe_para_comparativa,
-                    ]);
                 }
             }
-            $area->materialesRequeridos()->saveMany($materiales_requeridos_areas);
         }); 
         return redirect()->route('requerimientos.edit', [$id]);
     }
