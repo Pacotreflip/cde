@@ -1,5 +1,5 @@
 <hr>
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#PDF{{$modulo}}"><i class="fa fa-file-pdf-o"></i> Generar PDF</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#PDF{{$modulo}}"><i class="fa fa-file-pdf-o"></i> Ver Formato PDF</button>
 
 <div class="modal fade" id="PDF{{$modulo}}" tabindex="-1" role="dialog" aria-labelledby="PDF {{$modulo}}">
     <div class="modal-dialog modal-lg" id="mdialTamanio">
