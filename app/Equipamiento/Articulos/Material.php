@@ -12,6 +12,7 @@ use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
+use Ghi\Equipamiento\Areas\Areas;
 
 class Material extends Model
 {
@@ -432,6 +433,10 @@ class Material extends Model
     }
     
     public function items_asignacion(){
-        return $this->hasMany(ItemAsignacion::class, $foreignKey, $localKey);
+        return $this->hasMany(ItemAsignacion::class, "id_material", "id_material");
+    }
+    public function areas_asignacion(){
+        return $this->hasMany("Equipamiento.asignacion_items", "id_material", "id_material")
+            ->leftJoin("equipamiento.areas", "");
     }
 }
