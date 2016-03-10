@@ -7,6 +7,7 @@ use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transferencias\Transferencia;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
+use Ghi\Equipamiento\Cierres\Cierre;
 
 
 class PDFController extends Controller
@@ -49,9 +50,9 @@ class PDFController extends Controller
         return view('pdf.asignaciones')->withAsignacion($asignacion);
     } 
     
-     public function cierre($id)
+     public function cierres($id)
     {
         $cierre = Cierre::findOrFail($id);
-        return view('pdf.cierre')->withCierre($cierre);
+        return view('pdf.cierres')->withCierre($cierre);
     } 
 }

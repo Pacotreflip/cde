@@ -180,10 +180,11 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
             'destroy' => 'cierres.destroy'
     ]]);
 });
+
 //PDF Routes
 Route::get('PDF/recepciones/{id}', 'PDFController@recepciones')->name('pdf.recepciones');
 Route::get('PDF/transferencias/{id}', 'PDFController@transferencias')->name('pdf.transferencias');
 Route::get('PDF/compras/{id}', 'PDFController@compras')->name('pdf.compras');
 Route::get('PDF/asignaciones/{id}', 'PDFController@asignaciones')->name('pdf.asignaciones');
-Route::get('PDF/cierre/{id}', 'PDFController@cierre')->name('pdf.cierre');
+Route::get('PDF/cierres/{id}', 'PDFController@cierres')->name('pdf.cierres');
 

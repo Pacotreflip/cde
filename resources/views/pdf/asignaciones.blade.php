@@ -54,6 +54,27 @@ class PDF extends Rotation {
         $this->setY($y_inicial);
         $this->Row(array(""));
         
+        if($this->asignacion->recepcion){
+        
+            //Redondear Bordes Referencias
+            $this->SetWidths(array(0.425  * $this->WeightTotal));
+            $this->SetRounds(array('1234'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array($alto));
+            $this->SetStyles(array('DF'));
+            $this->SetAligns("L");
+            $this->SetFont('Arial', '', $this->txtContenidoTam);
+            $this->setY($y_inicial);
+            $this->setX($x_inicial+ 0.55 * $this->WeightTotal + 0.5);
+            $this->Row(array(""));
+
+            $this->setY($y_inicial);
+            $this->setX(0.35 * $this->WeightTotal + 0.5);
+            $this->referencias($x_inicial);
+        }
+        
         //Tabla Detalles de la Asignacion
         $this->setY($y_inicial);
         $this->setX($x_inicial);      
@@ -118,7 +139,12 @@ class PDF extends Rotation {
         
         //Detalles de la Asignación (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-        $this->Cell(0.55 * $this->WeightTotal, 0.7, utf8_decode('Detalles de la Asignación'), 0, 1, 'L');
+        $this->Cell(0.55 * $this->WeightTotal, 0.7, utf8_decode('Detalles de la Asignación'), 0, $this->asignacion->recepcion ? 0 : 1, 'L');
+       
+        if($this->asignacion->recepcion){
+            $this->Cell(0.5);
+            $this->Cell(0.425 * $this->WeightTotal, .7, 'Referencias', 0, 1, 'L');
+        }
     }
     
     function detallesAsignacion(){
@@ -135,6 +161,15 @@ class PDF extends Rotation {
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Valida:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, '', '', 1, 'L');
+    }
+    
+    function referencias($x_inicial){
+        
+        $this->setX($x_inicial + 0.55 * $this->WeightTotal + 0.5);
+        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->Cell(0.12 * $this->WeightTotal, 0.5, utf8_decode('No. de Recepción:'), '', 0, 'L');
+        $this->SetFont('Arial', '', $this->txtContenidoTam);
+        $this->CellFitScale(0.225 * $this->WeightTotal, 0.5, utf8_decode('# ' . $this->asignacion->recepcion->numero_folio), '', 1, 'L');
     }
     
     function items(){

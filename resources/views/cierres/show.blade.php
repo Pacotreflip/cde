@@ -43,4 +43,5 @@
       @endforeach
     </tbody>
   </table>
+@include('pdf/modal', ['modulo' => 'cierres', 'titulo' => 'Cierre de área - # '.$cierre->numero_folio, 'ruta' => route('pdf.cierres', $cierre),])  
 @stop
