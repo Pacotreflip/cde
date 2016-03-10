@@ -94,7 +94,7 @@ class PDF extends Rotation {
             $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
-            $this->SetAligns(array('C', 'C', 'C', 'C'));
+            $this->SetAligns(array('C', 'L', 'L', 'R'));
         } else if ($this->encola == "observaciones") {
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
@@ -126,11 +126,11 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('No. Folio:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->numero_folio), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode('# ' . $this->cierre->numero_folio), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha de Cierre:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m')), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m A')), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Cierra:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
@@ -167,7 +167,7 @@ class PDF extends Rotation {
                 $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255'));
                 $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0'));
                 $this->SetHeights(array(0.35));
-                $this->SetAligns(array('C', 'C', 'C', 'C'));
+                $this->SetAligns(array('C', 'L', 'L', 'R'));
 
                 if ($i == $numPartidas ) {
                     $this->SetRounds(array('4', '', '', '3'));
@@ -176,7 +176,7 @@ class PDF extends Rotation {
 
                 $this->SetWidths(array(0.05 * $this->WeightTotal, 0.3 * $this->WeightTotal, 0.5 * $this->WeightTotal, 0.15 * $this->WeightTotal));
                 $this->encola = "items";
-                $this->Row(array($i, utf8_decode($partida->area->clave), utf8_decode($partida->area->ruta),$partida->area->cantidad_validada()));
+                $this->Row(array($i, utf8_decode($partida->area->clave), utf8_decode($partida->area->ruta),number_format(utf8_decode($partida->area->cantidad_validada()),0,'.',',')));
 
                 $i++;
             }
@@ -218,7 +218,7 @@ class PDF extends Rotation {
             $this->SetFont('Arial', '', 6);
             $this->SetWidths(array(19.5));
             $this->encola = "observaciones";
-            $this->Row(array('  '.$this->cierre->observaciones));       
+            $this->Row(array($this->cierre->observaciones));       
         }  
     }
         

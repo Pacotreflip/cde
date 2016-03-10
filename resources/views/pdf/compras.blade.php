@@ -94,7 +94,7 @@ class PDF extends Rotation {
             $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
-            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
+            $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R', 'C', 'R', 'C'));
         } else if ($this->encola == "observaciones") {
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
@@ -126,11 +126,11 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('No. Folio:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->compra->numero_folio), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode('# ' . $this->compra->numero_folio), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->compra->fecha->format('d-M-Y h:m')), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->compra->fecha->format('d-M-Y h:m A')), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Proveedor:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
@@ -172,7 +172,7 @@ class PDF extends Rotation {
                     $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
                     $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
                     $this->SetHeights(array(0.35));
-                    $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
+                    $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R', 'C', 'R', 'C'));
 
                     if ($i == $numItems ) {
                         $this->SetRounds(array('4', '', '', '', '', '', '', '', '3'));
@@ -181,7 +181,7 @@ class PDF extends Rotation {
 
                     $this->SetWidths(array(0.05 * $this->WeightTotal, 0.32 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal));            $this->encola="items";
                     $this->encola = "items";
-                    $this->Row(array($i, utf8_decode($item->material->descripcion), utf8_decode($item->unidad), utf8_decode($item->cantidad), utf8_decode($item->precio_unitario), utf8_decode($item->importe), utf8_decode($itemRecepcion->recepcion->fecha_recepcion->format('d-m-Y')), utf8_decode($item->cantidad_recibida), utf8_decode(round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100)."%")));
+                    $this->Row(array($i, utf8_decode($item->material->descripcion), utf8_decode($item->unidad), number_format(utf8_decode($item->cantidad),0,'.',','), number_format(utf8_decode($item->precio_unitario),2,'.',','), number_format(utf8_decode($item->importe),2,'.',','), utf8_decode($itemRecepcion->recepcion->fecha_recepcion->format('d-m-Y')), utf8_decode($item->cantidad_recibida), utf8_decode(round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100)."%")));
 
                     $i++;
                 }
@@ -215,7 +215,7 @@ class PDF extends Rotation {
             $this->SetFont('Arial', '', 6);
             $this->SetWidths(array(19.5));
             $this->encola = "observaciones";
-            $this->Row(array('  '.$this->compra->observaciones));
+            $this->Row(array($this->compra->observaciones));
         }
     }
         

@@ -115,7 +115,7 @@ class PDF extends Rotation {
             $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
-            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C'));
+            $this->SetAligns(array('C', 'L', 'L', 'L', 'R', 'L', 'L'));
         } else if ($this->encola == "observaciones") {
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
@@ -152,7 +152,7 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha Asignación:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->asignacion->fecha_asignacion->format('Y-m-d h:m')), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->asignacion->fecha_asignacion->format('Y-m-d h:m A')), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Asigna:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
@@ -202,7 +202,7 @@ class PDF extends Rotation {
                 $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
                 $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
                 $this->SetHeights(array(0.35));
-                $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C'));
+                $this->SetAligns(array('C', 'L', 'L', 'L', 'R', 'L', 'L'));
 
                 if ($i == $numItems ) {
                     $this->SetRounds(array('4', '', '', '', '', '', '3'));
@@ -211,7 +211,7 @@ class PDF extends Rotation {
 
                 $this->SetWidths(array(0.05 * $this->WeightTotal, 0.09 * $this->WeightTotal, 0.5 * $this->WeightTotal, 0.09 * $this->WeightTotal, 0.09 * $this->WeightTotal, 0.09 * $this->WeightTotal, 0.09 * $this->WeightTotal));
                 $this->encola = "items";
-                $this->Row(array($i, utf8_decode($item->material->numero_parte), utf8_decode($item->material->descripcion), utf8_decode($item->material->unidad), utf8_decode($item->cantidad_asignada), utf8_decode($this->OrigDest($item->area_origen)), utf8_decode($this->OrigDest($item->area_destino))));
+                $this->Row(array($i, utf8_decode($item->material->numero_parte), utf8_decode($item->material->descripcion), utf8_decode($item->material->unidad), number_format(utf8_decode($item->cantidad_asignada),0,'.',','), utf8_decode($this->OrigDest($item->area_origen)), utf8_decode($this->OrigDest($item->area_destino))));
 
                 $i++;
             }
@@ -253,7 +253,7 @@ class PDF extends Rotation {
             $this->SetFont('Arial', '', 6);
             $this->SetWidths(array(19.5));
             $this->encola = "observaciones";
-            $this->Row(array('  '.$this->asignacion->observaciones));       
+            $this->Row(array($this->asignacion->observaciones));       
         }  
     }
         
