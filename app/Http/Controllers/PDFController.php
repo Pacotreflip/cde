@@ -53,6 +53,9 @@ class PDFController extends Controller
      public function cierres($id)
     {
         $cierre = Cierre::findOrFail($id);
+        foreach($cierre->partidas as $partidas){
+            dd( $partidas->cierre_partida_asignacion);
+        }
         return view('pdf.cierres')->withCierre($cierre);
     } 
 }
