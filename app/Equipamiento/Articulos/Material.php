@@ -495,4 +495,12 @@ class Material extends Model
     public function material_requerido_area(){
         return $this->hasMany(MaterialRequeridoArea::class, "id_material", "id_material");
     }
+    
+    public function porcentaje_suministro(){
+        return ($this->getTotalExistencias() / $this->getTotalEsperado()) * 100;
+    }
+    
+    public function porcentaje_asignacion(){
+        return ($this->cantidad_asignada() / $this->cantidad_esperada()) * 100;
+    }
 }

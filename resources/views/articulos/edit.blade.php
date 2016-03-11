@@ -53,13 +53,13 @@
                 
                 <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_suministro()) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ ($material->getTotalExistencias() / $material->getTotalEsperado()) * 100 }}"
+                      aria-valuenow="{{ $material->porcentaje_suministro() }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) < 100 ?: 100 }}%;">
-                      {{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) }}%
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro()) < 100 ?: 100 }}%;">
+                      {{ round($material->porcentaje_suministro()) }}%
                     </div>
                   </div>
           
@@ -102,13 +102,13 @@
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ ($material->cantidad_asignada() / $material->cantidad_esperada()) * 100 }}"
+                      aria-valuenow="{{ $material->porcentaje_asignacion() }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) < 100 ?: 100 }}%;">
-                      {{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) }}%
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_asignacion()) < 100 ?: 100 }}%;">
+                      {{ round($material->porcentaje_asignacion()) }}%
                     </div>
                   </div>
                    
