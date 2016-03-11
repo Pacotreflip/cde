@@ -47,8 +47,9 @@ class ArticulosController extends Controller
     public function index(Request $request)
     {
         $materiales = $this->materiales->buscar($request->get('buscar'), 15);
-
+        $idobra = $this->getObraEnContexto()->id_obra;
         return view('articulos.index')
+            ->with("idobra",$idobra)
             ->withMateriales($materiales);
     }
 
@@ -147,12 +148,13 @@ class ArticulosController extends Controller
         $familias = $this->materiales->getListaFamilias($material->tipo_material->getTipoReal());
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
         $monedas = [null => 'Seleccione Moneda'] + $this->materiales->getListaMonedas();
-        
+        $idobra = $this->getObraEnContexto()->id_obra;
         return view('articulos.edit')
             ->withMaterial($material)
             ->withUnidades($unidades)
             ->withFamilias($familias)
             ->withMonedas($monedas)
+            ->with("idobra",$idobra)
             ->withClasificadores($clasificadores);
     }
 

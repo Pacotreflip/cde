@@ -41,25 +41,25 @@
                   <h4>
                   <small class="text-muted">
           [
-          Articulos Esperados: {{$material->getTotalEsperado()}}  
+          Articulos Esperados: {{$material->getTotalEsperado($idobra)}}  
           Articulos Suministrados: {{$material->getTotalExistencias()}}
           ]</small>
                   </h4> </div>
           </div>
           <div class="row">
               <div class="col-md-12">
-                @if($material->getTotalEsperado() > 0)
+                @if($material->getTotalEsperado($idobra) > 0)
                 
                 
                 <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_suministro()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_suministro($idobra)) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $material->porcentaje_suministro() }}"
+                      aria-valuenow="{{ $material->porcentaje_suministro($idobra) }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro()) < 100 ?: 100 }}%;">
-                      {{ round($material->porcentaje_suministro()) }}%
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro($idobra)) < 100 ?: 100 }}%;">
+                      {{ round($material->porcentaje_suministro($idobra)) }}%
                     </div>
                   </div>
           

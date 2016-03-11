@@ -262,12 +262,13 @@ class Material extends Model
         return $this->hasMany(Inventario::class, 'id_material', 'id_material');
     }
     
-    public function getTotalEsperado(){
+    public function getTotalEsperado($id_obra){
         return DB::connection($this->connection)
             ->table('dbo.items')
             ->join('dbo.transacciones',"dbo.items.id_transaccion","=", "dbo.transacciones.id_transaccion")
             ->where('dbo.transacciones.tipo_transaccion', "19")
             ->where('dbo.items.id_material', $this->id_material)
+            ->where('dbo.transacciones.id_obra', $id_obra)
             ->sum('dbo.items.cantidad');
     }
 
@@ -496,8 +497,8 @@ class Material extends Model
         return $this->hasMany(MaterialRequeridoArea::class, "id_material", "id_material");
     }
     
-    public function porcentaje_suministro(){
-        return ($this->getTotalExistencias() / $this->getTotalEsperado()) * 100;
+    public function porcentaje_suministro($id_obra){
+        return ($this->getTotalExistencias() / $this->getTotalEsperado($id_obra)) * 100;
     }
     
     public function porcentaje_asignacion(){

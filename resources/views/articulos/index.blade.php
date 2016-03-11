@@ -17,6 +17,8 @@
         <th>Unidad</th>
         <th>Familia</th>
         <th>Clasificación</th>
+        <th>% Suministro</th>
+        <th>% Asignacion</th>
       </tr>
     </thead>
     <tbody>
@@ -36,6 +38,44 @@
               @if($material->clasificador)
                   {{ $material->clasificador->nombre }}
               @endif
+            </td>
+            <td>
+              @if($material->getTotalEsperado($idobra) > 0)
+                
+                
+                <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_suministro($idobra)) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $material->porcentaje_suministro($idobra) }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro($idobra)) < 100 ?: 100 }}%;">
+                      {{ round($material->porcentaje_suministro($idobra)) }}%
+                    </div>
+                  </div>
+          
+                @endif
+            </td>
+            <td>
+              @if($material->cantidad_esperada() > 0)
+          
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($material->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $material->porcentaje_asignacion() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_asignacion()) < 100 ?: 100 }}%;">
+                      {{ round($material->porcentaje_asignacion()) }}%
+                    </div>
+                  </div>
+                   
+                   
+                   
+                   @endif
             </td>
         </tr>
       @endforeach
