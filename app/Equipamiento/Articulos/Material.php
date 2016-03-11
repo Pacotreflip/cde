@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 use Ghi\Equipamiento\Areas\Areas;
+use Illuminate\Database\Eloquent\Collection;
 
 class Material extends Model
 {
@@ -436,7 +437,25 @@ class Material extends Model
         return $this->hasMany(ItemAsignacion::class, "id_material", "id_material");
     }
     public function areas_asignacion(){
-        return $this->hasMany("Equipamiento.asignacion_items", "id_material", "id_material")
-            ->leftJoin("equipamiento.areas", "");
+        $items_asignacion = $this->items_asignacion;
+        $areas = [];
+        foreach($items_asignacion as $item_asignacion){
+            $areas[] = $item_asignacion->area_destino;
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
+    }
+    public function areas_almacenacion(){
+        $inventarios = $this->inventarios;
+        $areas = [];
+        foreach($inventarios as $inventario){
+            if($inventario->cantidad_existencia>0){
+                $areas[] = $inventario->area;
+            }
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
     }
 }
