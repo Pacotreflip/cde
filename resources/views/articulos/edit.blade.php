@@ -49,7 +49,7 @@
     <tbody>
         @foreach($material->areas_requerido() as $area)
         <tr>
-            <td>{{$area->nombre}}</td>
+            <td>{{$area->ruta}}</td>
             <td style="text-align: right">{{$area->cantidad_requerida($material->id_material)}}</td>
             <td style="text-align: right">{{$area->cantidad_asignada($material->id_material)}}</td>
             <td style="text-align: right">{{$area->cantidad_requerida($material->id_material) - $area->cantidad_asignada($material->id_material)}}</td>
@@ -77,7 +77,7 @@
     <tbody>
         @foreach($material->areas_almacenacion() as $area)
         <tr>
-            <td>{{$area->nombre}}</td>
+            <td>{{$area->ruta}}</td>
             <td style="text-align: right">{{$area->getInventarioDeMaterial($material)->cantidad_existencia}}</td>
         </tr>
         @endforeach
