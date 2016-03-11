@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Moneda;
+use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
+use Ghi\Equipamiento\Areas\Areas;
+use Illuminate\Database\Eloquent\Collection;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class Material extends Model
 {
@@ -428,5 +432,44 @@ class Material extends Model
         $area = Area::findOrFail($id_area);
         $esperados = $area->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
         return $esperados;
+    }
+    
+    public function items_asignacion(){
+        return $this->hasMany(ItemAsignacion::class, "id_material", "id_material");
+    }
+    public function areas_asignacion(){
+        $items_asignacion = $this->items_asignacion;
+        $areas = [];
+        foreach($items_asignacion as $item_asignacion){
+            $areas[] = $item_asignacion->area_destino;
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
+    }
+    public function areas_almacenacion(){
+        $inventarios = $this->inventarios;
+        $areas = [];
+        foreach($inventarios as $inventario){
+            if($inventario->cantidad_existencia>0){
+                $areas[] = $inventario->area;
+            }
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
+    }
+    public function areas_requerido(){
+        $materiales_requeridos_area = $this->material_requerido_area;
+        $areas = [];
+        foreach($materiales_requeridos_area as $material_requerido_area){
+            $areas[] = $material_requerido_area->area;
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
+    }
+    public function material_requerido_area(){
+        return $this->hasMany(MaterialRequeridoArea::class, "id_material", "id_material");
     }
 }

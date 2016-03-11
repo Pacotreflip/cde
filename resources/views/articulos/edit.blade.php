@@ -30,13 +30,70 @@
   </form>
 
   <br>
+  <div class="row">
+      @if(count($material->areas_asignacion()))
+      <div class="col-md-6">
+      <h3>Requerido / Asignado En:</h3>
+<hr>
+<br>
+
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Área</th>  
+            <th>Cantidad Requerida</th>
+            <th>Cantidad Asignada</th>
+            <th>Cantidad Pendiente</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($material->areas_requerido() as $area)
+        <tr>
+            <td>{{$area->nombre}}</td>
+            <td style="text-align: right">{{$area->cantidad_requerida($material->id_material)}}</td>
+            <td style="text-align: right">{{$area->cantidad_asignada($material->id_material)}}</td>
+            <td style="text-align: right">{{$area->cantidad_requerida($material->id_material) - $area->cantidad_asignada($material->id_material)}}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+    </div>
+      @endif
+      @if(count($material->areas_almacenacion()))
+      
+      
+      <div class="col-md-6">
+      <h3>Almacenado en: </h3>
+<hr>
+<br>
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Área</th>  
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($material->areas_almacenacion() as $area)
+        <tr>
+            <td>{{$area->nombre}}</td>
+            <td style="text-align: right">{{$area->getInventarioDeMaterial($material)->cantidad_existencia}}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+    </div>
+      @endif
+  </div>
+  
 @stop
 
 @section('scripts')
   <script>
     Dropzone.options.dropzone = {
       paramName: "foto",
-      dictDefaultMessage: "Arrastra fotografias aqui para subirlas"
+      dictDefaultMessage: "<h2 style='color:#bbb'><span class='glyphicon glyphicon-picture' style='padding-right:5px'></span>Arraste las fotografías a esta zona para asociarlas al artículo.</h2>"
     };
   </script>
 @stop

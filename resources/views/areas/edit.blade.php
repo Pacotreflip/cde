@@ -63,7 +63,34 @@
 </div>
 @endif
 
-
+<div class="row">
+    @if($area->cantidad_almacenada()>0)
+    <div class="col-md-6">
+        <h3>Artículos Almacenados</h3>
+        <hr>
+        <br>
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Artículo</th>  
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($area->inventarios as $inventario)
+                @if($inventario->cantidad_existencia > 0)
+                <tr>
+                    <td>{{$inventario->material->descripcion}}</td>
+                    <td style="text-align: right">{{$inventario->cantidad_existencia}}</td>
+                </tr>
+                @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</div>
+@if(!$area->inventarios && !($area->cantidad_asignada()) >0))
 <div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>
     <p>
@@ -75,6 +102,19 @@
         {!! Form::close() !!}
     </p>
 </div>
+@elseif($area->inventarios && !($area->cantidad_asignada() >0))
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene movimientos de inventario asociados. Estos movimientos se generan durante las recepciones y transferencias de almacén.
+</div>
+@elseif(!$area->inventarios && ($area->cantidad_asignada() >0))
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados.
+</div>
+@elseif($area->inventarios && ($area->cantidad_asignada() >0))
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados y movimientos de inventario relacionados.
+</div>
+@endif
 @stop
 
 @section('scripts')

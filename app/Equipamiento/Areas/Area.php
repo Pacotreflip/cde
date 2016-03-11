@@ -274,6 +274,13 @@ class Area extends Node
         }
     }
     
+    public function cantidad_almacenada(){
+        return DB::connection($this->connection)
+            ->table('Equipamiento.inventarios')
+            ->where('id_area', $this->id)
+            ->sum('cantidad_existencia');
+    }
+    
     public function area_padre(){
         return $this->belongsTo(Area::class, "parent_id");
     }
