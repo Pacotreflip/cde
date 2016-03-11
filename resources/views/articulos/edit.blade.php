@@ -33,7 +33,7 @@
   <div class="row">
       @if(count($material->areas_asignacion()))
       <div class="col-md-6">
-      <h2>Asignados</h2>
+      <h3>Asignados</h3>
 <hr>
 <br>
 
@@ -61,7 +61,7 @@
       
       
       <div class="col-md-6">
-      <h2>Almacenados</h2>
+      <h3>Almacenados</h3>
 <hr>
 <br>
 <table class="table table-condensed table-striped">
