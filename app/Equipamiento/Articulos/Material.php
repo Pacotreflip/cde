@@ -14,6 +14,7 @@ use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 use Ghi\Equipamiento\Areas\Areas;
 use Illuminate\Database\Eloquent\Collection;
+use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class Material extends Model
 {
@@ -457,5 +458,18 @@ class Material extends Model
         $areas_unique = array_unique($areas);
         $areas_collection = new Collection($areas_unique);
         return $areas_collection;
+    }
+    public function areas_requerido(){
+        $materiales_requeridos_area = $this->material_requerido_area;
+        $areas = [];
+        foreach($materiales_requeridos_area as $material_requerido_area){
+            $areas[] = $material_requerido_area->area;
+        }
+        $areas_unique = array_unique($areas);
+        $areas_collection = new Collection($areas_unique);
+        return $areas_collection;
+    }
+    public function material_requerido_area(){
+        return $this->hasMany(MaterialRequeridoArea::class, "id_material", "id_material");
     }
 }

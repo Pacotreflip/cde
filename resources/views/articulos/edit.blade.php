@@ -33,7 +33,7 @@
   <div class="row">
       @if(count($material->areas_asignacion()))
       <div class="col-md-6">
-      <h3>Asignados</h3>
+      <h3>Requerido / Asignado En:</h3>
 <hr>
 <br>
 
@@ -41,15 +41,18 @@
     <thead>
         <tr>
             <th>Área</th>  
-            <th>Cantidad</th>
+            <th>Cantidad Requerida</th>
+            <th>Cantidad Asignada</th>
+            <th>Cantidad Pendiente</th>
         </tr>
     </thead>
     <tbody>
-        
-        @foreach($material->areas_asignacion() as $area)
+        @foreach($material->areas_requerido() as $area)
         <tr>
             <td>{{$area->nombre}}</td>
+            <td style="text-align: right">{{$area->cantidad_requerida($material->id_material)}}</td>
             <td style="text-align: right">{{$area->cantidad_asignada($material->id_material)}}</td>
+            <td style="text-align: right">{{$area->cantidad_requerida($material->id_material) - $area->cantidad_asignada($material->id_material)}}</td>
         </tr>
         @endforeach
     </tbody>
@@ -61,7 +64,7 @@
       
       
       <div class="col-md-6">
-      <h3>Almacenados</h3>
+      <h3>Almacenado en: </h3>
 <hr>
 <br>
 <table class="table table-condensed table-striped">
