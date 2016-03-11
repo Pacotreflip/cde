@@ -58,7 +58,7 @@
                       aria-valuenow="{{ $material->porcentaje_suministro($idobra) }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro($idobra)) < 100 ?: 100 }}%;">
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_suministro($idobra)) }}%;">
                       {{ round($material->porcentaje_suministro($idobra)) }}%
                     </div>
                   </div>
@@ -107,7 +107,7 @@
                       aria-valuenow="{{ $material->porcentaje_asignacion() }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($material->porcentaje_asignacion()) < 100 ?: 100 }}%;">
+                      style="min-width: 2.5em; width: {{ round($material->porcentaje_asignacion()) }}%;">
                       {{ round($material->porcentaje_asignacion()) }}%
                     </div>
                   </div>
