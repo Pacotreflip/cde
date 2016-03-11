@@ -16,7 +16,7 @@ use Ghi\Equipamiento\Areas\Areas;
 use Illuminate\Database\Eloquent\Collection;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Transacciones\Transaccion;
-use Ghi\Equipamiento\Recepciones;
+use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 
 class Material extends Model
 {

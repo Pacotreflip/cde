@@ -42,7 +42,7 @@
                   <small class="text-muted">
           [
           Articulos Esperados: {{$material->getTotalEsperado($idobra)}}  
-          Articulos Suministrados: {{$material->getTotalExistencias()}}
+          Articulos Suministrados: {{$material->getTotalRecibido()}}
           ]</small>
                   </h4> </div>
           </div>
