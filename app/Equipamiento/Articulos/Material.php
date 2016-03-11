@@ -16,6 +16,7 @@ use Ghi\Equipamiento\Areas\Areas;
 use Illuminate\Database\Eloquent\Collection;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Recepciones;
 
 class Material extends Model
 {
@@ -281,6 +282,16 @@ class Material extends Model
     {
         return $this->inventarios->sum('cantidad_existencia');
     }
+    
+    /**
+     * Obtiene la cantidad de existencias totales de este material.
+     * 
+     * @return float
+     */
+    public function getTotalRecibido()
+    {
+        return $this->items_recepcion->sum('cantidad_recibida');
+    }
 
     /**
      * Obtiene la existencia de este material en un area.
@@ -461,6 +472,9 @@ class Material extends Model
     public function items_asignacion(){
         return $this->hasMany(ItemAsignacion::class, "id_material", "id_material");
     }
+    public function items_recepcion(){
+        return $this->hasMany(ItemRecepcion::class, "id_material", "id_material");
+    }
     public function areas_asignacion(){
         $items_asignacion = $this->items_asignacion;
         $areas = [];
@@ -498,7 +512,7 @@ class Material extends Model
     }
     
     public function porcentaje_suministro($id_obra){
-        return ($this->getTotalExistencias() / $this->getTotalEsperado($id_obra)) * 100;
+        return ($this->getTotalRecibido() / $this->getTotalEsperado($id_obra)) * 100;
     }
     
     public function porcentaje_asignacion(){
