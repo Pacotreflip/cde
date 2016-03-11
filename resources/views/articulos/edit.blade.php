@@ -31,7 +31,7 @@
 
   <br>
   <div class="row">
-      @if(count($material->areas_asignacion()))
+      @if(count($material->areas_requerido()))
       <div class="col-md-6">
       <h3>Requerido / Asignado En:</h3>
 <hr>
