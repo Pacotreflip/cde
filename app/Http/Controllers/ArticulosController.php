@@ -15,7 +15,7 @@ use Ghi\Http\Requests\UpdateArticuloRequest;
 use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Articulos\ClasificadorRepository;
 use Ghi\Equipamiento\Moneda;
-
+use Ghi\Equipamiento\Compras\Compras;
 class ArticulosController extends Controller
 {
     protected $materiales;

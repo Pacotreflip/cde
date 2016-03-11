@@ -30,6 +30,111 @@
   </form>
 
   <br>
+  <hr>
+  <div class="row">
+      <div class="col-md-6">
+          <div class="row">
+              <div class="col-md-6">
+                  <h4><strong>Estado de suministro:</strong>
+              </div>
+              <div class="col-md-6">
+                  <h4>
+                  <small class="text-muted">
+          [
+          Articulos Esperados: {{$material->getTotalEsperado()}}  
+          Articulos Suministrados: {{$material->getTotalExistencias()}}
+          ]</small>
+                  </h4> </div>
+          </div>
+          <div class="row">
+              <div class="col-md-12">
+                @if($material->getTotalEsperado() > 0)
+                
+                
+                <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ ($material->getTotalExistencias() / $material->getTotalEsperado()) * 100 }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) < 100 ?: 100 }}%;">
+                      {{ round(($material->getTotalExistencias() / $material->getTotalEsperado()) * 100) }}%
+                    </div>
+                  </div>
+          
+                @endif
+              </div>
+              
+          
+      </div>
+      
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="col-md-6">
+          <div class="row">
+              <div class="col-md-6">
+                 <h4>
+                        <strong>Estado de asignacion:</strong> 
+                    </h4>
+              </div>
+              <div class="col-md-6">
+                  <h4>
+                  <small class="text-muted">
+          [
+          Articulos Requeridos: {{$material->cantidad_esperada()}}  
+          Articulos Asignados: {{$material->cantidad_asignada()}}
+          ]</small>
+                  </h4> </div>
+          </div>
+          
+           <div class="row">  
+               <div class="col-md-12">
+                   @if($material->cantidad_esperada() > 0)
+          
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ ($material->cantidad_asignada() / $material->cantidad_esperada()) * 100 }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) < 100 ?: 100 }}%;">
+                      {{ round(($material->cantidad_asignada() / $material->cantidad_esperada()) * 100) }}%
+                    </div>
+                  </div>
+                   
+                   
+                   
+                   @endif
+               </div>
+           </div>
+      
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  </div>
+  
+  
+    <hr>
+  
+  
   <div class="row">
       @if(count($material->areas_requerido()))
       <div class="col-md-6">

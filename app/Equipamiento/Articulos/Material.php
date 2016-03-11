@@ -15,6 +15,7 @@ use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 use Ghi\Equipamiento\Areas\Areas;
 use Illuminate\Database\Eloquent\Collection;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
+use Ghi\Equipamiento\Transacciones\Transaccion;
 
 class Material extends Model
 {
@@ -260,6 +261,15 @@ class Material extends Model
     {
         return $this->hasMany(Inventario::class, 'id_material', 'id_material');
     }
+    
+    public function getTotalEsperado(){
+        return DB::connection($this->connection)
+            ->table('dbo.items')
+            ->join('dbo.transacciones',"dbo.items.id_transaccion","=", "dbo.transacciones.id_transaccion")
+            ->where('dbo.transacciones.tipo_transaccion', "19")
+            ->where('dbo.items.id_material', $this->id_material)
+            ->sum('dbo.items.cantidad');
+    }
 
     /**
      * Obtiene la cantidad de existencias totales de este material.
@@ -420,18 +430,31 @@ class Material extends Model
         return $this->hasOne(Moneda::class, "id_moneda", "id_moneda_proyecto_comparativo");
     }
     
-    public function cantidad_asignada($id_area){
-        return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->where('id_area_destino', $id_area)
-            ->where('id_material', $this->id_material)
-            ->sum('cantidad_asignada');
+    public function cantidad_asignada($id_area = null){
+        if($id_area > 0){
+            return DB::connection($this->connection)
+                ->table('Equipamiento.asignacion_items')
+                ->where('id_area_destino', $id_area)
+                ->where('id_material', $this->id_material)
+                ->sum('cantidad_asignada');
+        }else{
+            return DB::connection($this->connection)
+                ->table('Equipamiento.asignacion_items')
+                ->where('id_material', $this->id_material)
+                ->sum('cantidad_asignada');
+        }
     }
     
-    public function cantidad_esperada($id_area){
-        $area = Area::findOrFail($id_area);
-        $esperados = $area->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
-        return $esperados;
+    public function cantidad_esperada($id_area = null){
+        if($id_area > 0){
+            $area = Area::findOrFail($id_area);
+            $esperados = $area->materialesRequeridos()->where('id_material', $this->id_material)->sum('cantidad_requerida');
+            return $esperados;
+        }else{
+            $esperados = $this->material_requerido_area->sum('cantidad_requerida');
+            return $esperados;
+        }
+        
     }
     
     public function items_asignacion(){
