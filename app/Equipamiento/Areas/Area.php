@@ -29,6 +29,8 @@ class Area extends Node
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    private $arr_areas_hijas ;
+    
     public function obra()
     {
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
@@ -229,47 +231,72 @@ class Area extends Node
     public function materialesAsignados(){
         return $this->hasMany(ItemAsignacion::class, "id_area_destino");
     }
+    
+    public function getIdsDescendientes(){
+        $this->arr_areas_hijas[] = $this;
+        $this->getHijas($this);
+        $id = [];
+        foreach($this->arr_areas_hijas as $area_hija){
+            $id[] = $area_hija->id;
+        }
+        return $id;
+    }
+    private function getHijas(Area $area){
+        
+        $areas_hijas = $area->areas_hijas;
+       // dd($area, $areas_hijas);
+        if($areas_hijas){
+            foreach($areas_hijas as $area_hija){
+                $this->arr_areas_hijas[] = $area_hija;
+                $this->getHijas($area_hija);
+            }
+        }
+    }
+    public function cantidad_asignada($id_material = ""){
+        $ids_area = $this->getIdsDescendientes();
+        if($id_material > 0){
+            return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->where('id_material', $id_material)
+            ->whereIn('id_area_destino', $ids_area)
+            ->sum('cantidad_asignada');
+        }else{
+            return DB::connection($this->connection)
+            ->table('Equipamiento.asignacion_items')
+            ->whereIn('id_area_destino', $ids_area)
+            ->sum('cantidad_asignada');
+        }
+    }
     public function cantidad_requerida($id_material = ""){
+        $ids_area = $this->getIdsDescendientes();
+        //dd($ids_area);
         if($id_material > 0){
             return DB::connection($this->connection)
             ->table('Equipamiento.materiales_requeridos_area')
-            ->where('id_area', $this->id)
             ->where('id_material', $id_material)
+            ->whereIn('id_area', $ids_area)
             ->sum('cantidad_requerida');
         }else{
             return DB::connection($this->connection)
             ->table('Equipamiento.materiales_requeridos_area')
-            ->where('id_area', $this->id)
+            ->whereIn('id_area', $ids_area)
             ->sum('cantidad_requerida');
         }
     }
     public function cantidad_validada($id_material = ""){
+        $ids_area = $this->getIdsDescendientes();
         if($id_material > 0){
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->where('id_area_destino', $this->id)
             ->where('id_material', $id_material)
+            ->whereIn('id_area_destino', $ids_area)
             ->sum('cantidad_asignada');
         }else{
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->where('id_area_destino', $this->id)
-            ->sum('cantidad_asignada');
-        }
-    }
-    public function cantidad_asignada($id_material = ""){
-        if($id_material > 0){
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->where('id_area_destino', $this->id)
-            ->where('id_material', $id_material)
-            ->sum('cantidad_asignada');
-        }else{
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->where('id_area_destino', $this->id)
+            ->whereIn('id_area_destino', $ids_area)
             ->sum('cantidad_asignada');
         }
     }
@@ -315,5 +342,13 @@ class Area extends Node
 
     public function cierre_partida(){
         return $this->hasOne(CierrePartida::class, "id_area");
+    }
+    
+    public function porcentaje_asignacion(){
+        return ($this->cantidad_asignada() / $this->cantidad_requerida()) * 100;
+    }
+    
+    public function porcentaje_validacion(){
+        return ($this->cantidad_validada() / $this->cantidad_asignada()) * 100;
     }
 }

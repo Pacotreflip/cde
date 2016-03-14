@@ -23,7 +23,49 @@
             @endif
             
             
-            <div class="btn-toolbar pull-right">
+            
+          </td>
+          <td style="width: 150px; text-align: center">
+              @if($descendiente->cantidad_requerida() > 0)
+              <small class="text-muted">Estado Asignación:</small><br />
+                
+                <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $descendiente->porcentaje_asignacion() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_asignacion()) }}%;">
+                      {{ round($descendiente->porcentaje_asignacion()) }}%
+                    </div>
+                  </div>
+          
+                @endif
+            </td>
+            <td style="width: 150px; text-align: center" >
+              @if($descendiente->cantidad_validada() > 0)
+              <small class="text-muted">Estado Validación:</small><br />
+          
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_validacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $descendiente->porcentaje_validacion() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_validacion()) }}%;">
+                      {{ round($descendiente->porcentaje_validacion()) }}%
+                    </div>
+                  </div>
+                   
+                   
+                   
+                   @endif
+            </td>
+            <td style="width: 100px">
+                <div class="btn-toolbar pull-right">
             @if (!Auth::user()->hasRole('consulta_provisional'))    
               <div class="btn-group btn-group-xs">
                 <a href="{{ route('areas.edit', [$descendiente]) }}" class="btn btn-primary btn-xs">
@@ -59,7 +101,7 @@
                 @endif
               </div>
             </div>
-          </td>
+            </td>
         </tr>
       @endforeach
     </tbody>

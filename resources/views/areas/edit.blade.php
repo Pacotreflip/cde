@@ -115,6 +115,94 @@
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados y movimientos de inventario relacionados.
 </div>
 @endif
+<hr>
+
+  <div class="row">
+
+      <div class="col-md-6">
+          <div class="row">
+              <div class="col-md-6">
+                 <h4>
+                        <strong>Estado de asignación:</strong> 
+                    </h4>
+              </div>
+              <div class="col-md-6">
+                  <h4>
+                  <small class="text-muted">
+          [
+          Articulos Requeridos: {{$area->cantidad_requerida()}}  
+          Articulos Asignados: {{$area->cantidad_asignada()}}
+          ]</small>
+                  </h4> </div>
+          </div>
+          
+           <div class="row">  
+               <div class="col-md-12">
+                   @if($area->cantidad_requerida() > 0)
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $area->porcentaje_asignacion() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($area->porcentaje_asignacion()) }}%;">
+                      {{ round($area->porcentaje_asignacion()) }}%
+                    </div>
+                  </div>
+                   
+                   @endif
+               </div>
+           </div>
+      
+      </div>
+      
+      
+      <div class="col-md-6">
+          <div class="row">
+              <div class="col-md-6">
+                 <h4>
+                        <strong>Estado de validación:</strong> 
+                    </h4>
+              </div>
+              <div class="col-md-6">
+                  <h4>
+                  <small class="text-muted">
+          [
+          Articulos Asignados: {{$area->cantidad_asignada()}}  
+          Articulos validados: {{$area->cantidad_validada()}}
+          ]</small>
+                  </h4> </div>
+          </div>
+          
+           <div class="row">  
+               <div class="col-md-12">
+                   @if($area->cantidad_asignada() > 0)
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_validacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $area->porcentaje_validacion() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($area->porcentaje_validacion()) }}%;">
+                      {{ round($area->porcentaje_validacion()) }}%
+                    </div>
+                  </div>
+                   
+                   @endif
+               </div>
+           </div>
+      
+      </div>
+      
+  </div>
+
+<hr>
+
+
 @stop
 
 @section('scripts')
