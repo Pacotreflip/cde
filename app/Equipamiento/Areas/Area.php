@@ -254,51 +254,74 @@ class Area extends Node
     }
     public function cantidad_asignada($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        if($id_material > 0){
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->where('id_material', $id_material)
-            ->whereIn('id_area_destino', $ids_area)
-            ->sum('cantidad_asignada');
-        }else{
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->whereIn('id_area_destino', $ids_area)
-            ->sum('cantidad_asignada');
+        $ciclos = count($ids_area)/2000;
+        $cantidad = 0;
+        for($i = 0; $i<=$ciclos; $i++){
+            $ids = array_slice($ids_area, $i*2000, 2000);
+            if($id_material > 0){
+                $cantidad += DB::connection($this->connection)
+                ->table('Equipamiento.asignacion_items')
+                ->where('id_material', $id_material)
+                ->whereIn('id_area_destino', $ids)
+                ->sum('cantidad_asignada');
+            }else{
+                $cantidad += DB::connection($this->connection)
+                ->table('Equipamiento.asignacion_items')
+                ->whereIn('id_area_destino', $ids)
+                ->sum('cantidad_asignada');
+            }
         }
+        return $cantidad;
     }
     public function cantidad_requerida($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        //dd($ids_area);
-        if($id_material > 0){
-            return DB::connection($this->connection)
-            ->table('Equipamiento.materiales_requeridos_area')
-            ->where('id_material', $id_material)
-            ->whereIn('id_area', $ids_area)
-            ->sum('cantidad_requerida');
-        }else{
-            return DB::connection($this->connection)
-            ->table('Equipamiento.materiales_requeridos_area')
-            ->whereIn('id_area', $ids_area)
-            ->sum('cantidad_requerida');
+        $ciclos = count($ids_area)/2000;
+        $cantidad = 0;
+        
+        for($i = 0; $i<=$ciclos; $i++){
+            $ids = array_slice($ids_area, $i*2000, 2000);
+            if($id_material > 0){
+                $cantidad += DB::connection($this->connection)
+                ->table('Equipamiento.materiales_requeridos_area')
+                ->where('id_material', $id_material)
+                ->whereIn('id_area', $ids)
+                ->sum('cantidad_requerida');
+            }else{
+                $cantidad += DB::connection($this->connection)
+                ->table('Equipamiento.materiales_requeridos_area')
+                ->whereIn('id_area', $ids)
+                ->sum('cantidad_requerida');
+            }
         }
+        
+        
+        return $cantidad;
     }
     public function cantidad_validada($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        if($id_material > 0){
+        $ciclos = count($ids_area)/2000;
+        $cantidad = 0;
+        
+        for($i = 0; $i<=$ciclos; $i++){
+            $ids = array_slice($ids_area, $i*2000, 2000);
+            if($id_material > 0){
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
             ->where('id_material', $id_material)
-            ->whereIn('id_area_destino', $ids_area)
+            ->whereIn('id_area_destino', $ids)
             ->sum('cantidad_asignada');
         }else{
             return DB::connection($this->connection)
             ->table('Equipamiento.asignacion_items')
             ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->whereIn('id_area_destino', $ids_area)
+            ->whereIn('id_area_destino', $ids)
             ->sum('cantidad_asignada');
         }
+        }
+        
+        
+        return $cantidad;
     }
     
     public function cantidad_almacenada(){
