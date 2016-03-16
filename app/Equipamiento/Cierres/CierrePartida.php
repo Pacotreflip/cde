@@ -3,7 +3,7 @@
 namespace Ghi\Equipamiento\Cierres;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Areas\Area;
-
+use Ghi\Equipamiento\Entregas\EntregaPartida;
 class CierrePartida extends Model
 {
     /**
@@ -44,5 +44,9 @@ class CierrePartida extends Model
      */
     public function cierre_partida_asignacion(){
         return $this->hasMany(CierrePartidaAsignacion::class, "id_cierre_partida");
+    }
+    
+    public function entrega_partida(){
+        return $this->hasOne(EntregaPartida::class, "id_cierre_partida");
     }
 }

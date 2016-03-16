@@ -374,4 +374,8 @@ class Area extends Node
     public function porcentaje_validacion(){
         return ($this->cantidad_validada() / $this->cantidad_asignada()) * 100;
     }
+    
+    public function documentos(){
+        return $this->hasMany(AreaDocumento::class, "id_area");
+    }
 }
