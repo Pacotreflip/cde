@@ -162,7 +162,6 @@ Route::group(["middleware" => ['role:admin']], function () {
 });
 
 Route::group(["middleware" => ['permission:cierre_area']], function () {
-    //cierre.valida.asignaciones.area
     Route::post("/cierres/validar_asignaciones", ["as" => "cierre.validar.asignaciones", "uses" => "CierresController@validarAsignaciones"]);
     Route::post("/cierres/validar_todas_asignaciones/{id}", ["as" => "cierre.validar.todas.asignaciones.area", "uses" => "CierresController@validarTodasAsignaciones"]);
     Route::post("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
@@ -178,6 +177,25 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
             'edit' => 'cierres.edit',
             'update' => 'cierres.update',
             'destroy' => 'cierres.destroy'
+    ]]);
+});
+
+Route::group(["middleware" => ['permission:entrega_area']], function () {
+    Route::post("/entregas/validar_asignaciones", ["as" => "entrega.validar.asignaciones", "uses" => "EntregasController@validarAsignaciones"]);
+    Route::post("/entregas/validar_todas_asignaciones/{id}", ["as" => "entrega.validar.todas.asignaciones.area", "uses" => "EntregasController@validarTodasAsignaciones"]);
+    Route::post("/entregas/busqueda/areas", ["as" => "entrega.busqueda.areas", "uses" => "EntregasController@getFormularioBusquedaAreas"]);
+    Route::get("/entregas/validar_asignaciones/area/{id}", ["as" => "entrega.valida.asignaciones.area", "uses" => "EntregasController@getFormularioValidacionArea"]);
+    Route::post("/entregas/regresa/areas/{parametro}", ["as" => "entrega.get.areas", "uses" => "EntregasController@getAreas"]);
+    Route::post("/entregas/carga/areas/", ["as" => "entrega.carga.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
+    Route::post("/entregas/create", ["as" => "entrega.create.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
+    Route::resource('entregas', 'EntregasController', ['names' => [
+            'index' => 'entregas.index',
+            'create' => 'entregas.create',
+            'store' => 'entregas.store',
+            'show' => 'entregas.show',
+            'edit' => 'entregas.edit',
+            'update' => 'entregas.update',
+            'destroy' => 'entregas.destroy'
     ]]);
 });
 

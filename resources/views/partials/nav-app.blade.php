@@ -33,6 +33,9 @@
   @if (Auth::user()->can('cierre_area')) 
   <li><a href="{{ route('cierres.index') }}">Cierre</a></li>
   @endif
+  @if (Auth::user()->can('entrega_area')) 
+  <li><a href="{{ route('entregas.index') }}">Entrega</a></li>
+  @endif
 @if (Auth::user()->hasRole('admin')) 
 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
