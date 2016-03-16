@@ -441,20 +441,66 @@ class Material extends Model
     {
         return $this->hasOne(Moneda::class, "id_moneda", "id_moneda_proyecto_comparativo");
     }
-    
-    public function cantidad_asignada($id_area = null){
-        if($id_area > 0){
-            return DB::connection($this->connection)
-                ->table('Equipamiento.asignacion_items')
-                ->where('id_area_destino', $id_area)
-                ->where('id_material', $this->id_material)
-                ->sum('cantidad_asignada');
-        }else{
-            return DB::connection($this->connection)
-                ->table('Equipamiento.asignacion_items')
-                ->where('id_material', $this->id_material)
-                ->sum('cantidad_asignada');
+    public function ubicacion_asignada($id_area = null){
+        if(is_array($id_area)){
+            $areas = [];
+            $ids_area = $id_area;
+            $ciclos = ceil(count($ids_area)/2000);
+            for($i = 0; $i<=$ciclos; $i++){
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                $resultado =  DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->join('Equipamiento.areas',"Equipamiento.asignacion_items.id_area_destino", "=", "Equipamiento.areas.id")
+                    ->where('id_material', $this->id_material)
+                    ->whereIn('id_area_destino', $ids)
+                    ->get();
+               
+//                $resultado =  DB::connection($this->connection)
+//                    ->table('Equipamiento.areas')
+//                    ->whereIn('id', $ids)
+//                    ->get();
+                
+                foreach ($resultado as $res){
+                    $areas[] = $res->id_area_destino;
+                }
+            }
+            $areas_unique = array_unique($areas);
+            $areas_ruta = [];
+            foreach($areas_unique as $id_area){
+                $areas_ruta[] = Area::findOrFail($id_area)->ruta();
+            }
+            //dd($areas_ruta);
+            return implode(" , ", $areas_ruta);
         }
+    }
+    public function cantidad_asignada($id_area = null){
+        $cantidad = 0;
+        if(is_array($id_area)){
+            $ids_area = $id_area;
+            $ciclos = ceil(count($ids_area)/2000);
+            for($i = 0; $i<=$ciclos; $i++){
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                $cantidad += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_material', $this->id_material)
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+            }
+        }else{
+            if($id_area > 0){
+                $cantidad = DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_area_destino', $id_area)
+                    ->where('id_material', $this->id_material)
+                    ->sum('cantidad_asignada');
+            }else{
+                $cantidad = DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_material', $this->id_material)
+                    ->sum('cantidad_asignada');
+            }
+        }
+        return $cantidad;
     }
     
     public function cantidad_esperada($id_area = null){

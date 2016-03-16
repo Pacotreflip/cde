@@ -72,13 +72,23 @@ class EntregasController extends Controller
     public function create(Request $request)
     {
         $areas = [];
+        $articulos = [];
+        $i = 0;
         if(count($request->id_area)>0){
             foreach($request->id_area as $id_area){
-                $areas[] = Area::findOrFail($id_area);
+                $objArea = Area::findOrFail($id_area);
+                $areas[] = $objArea;
+                $articulos_areas = $objArea->materialesAsignados();
+                foreach($articulos_areas as $articulo_area){
+                    $articulos[$i] = $articulo_area;
+                    $i++;
+                }
             }
         }
-        
-        return view('entregas.create')->withAreas($areas);
+        $areas_unique = array_unique($areas);
+        return view('entregas.create')
+        ->with("id_areas", $request->id_area)
+                ->with("i",1)->with("articulos", $articulos)->with("i2", 1)->withAreas($areas_unique);
             
     }
 
@@ -130,7 +140,7 @@ class EntregasController extends Controller
                 $salida[$i]["clave"] = $area->clave;
                 $salida[$i]["descripcion_ruta"] = $area->getRutaAttribute() . $area->nombre;
                 $salida[$i]["ruta"] = $area->getRutaAttribute();
-                $salida[$i]["cerrable"] = $area->esCerrable();
+                
                 $salida[$i]["articulos_asignados"] = $area->cantidad_asignada();
                 $salida[$i]["articulos_requeridos"] = $area->cantidad_requerida();
                 $salida[$i]["articulos_validados"] = $area->cantidad_validada();
@@ -138,10 +148,24 @@ class EntregasController extends Controller
                     $salida[$i]["cerrada"] = 1;
                     $salida[$i]["cierre"] = "# ".$area->cierre_partida->cierre->numero_folio;
                     $salida[$i]["fecha_cierre"] = $area->cierre_partida->cierre->fecha_cierre->format('d-m-Y H:m');
+                    
+                    if($area->cierre_partida->entrega_partida){
+                        $salida[$i]["entregada"] = 1;
+                        $salida[$i]["entrega"] = "# ".$area->cierre_partida->entrega_partida->entrega->numero_folio;
+                        $salida[$i]["fecha_entrega"] = $area->cierre_partida->entrega_partida->entrega->fecha_entrega->format('d-m-Y H:m');
+                    }else{
+                        $salida[$i]["entregada"] = 0;
+                        $salida[$i]["entrega"] = "";
+                        $salida[$i]["fecha_entrega"] = "";
+                    }
+                    
+                    
                 }else{
                     $salida[$i]["cerrada"] = 0;
-                    $salida[$i]["cierre"] = "";
                     $salida[$i]["fecha_cierre"] = "";
+                    $salida[$i]["entregada"] = 0;
+                    $salida[$i]["entrega"] = "";
+                    $salida[$i]["fecha_entrega"] = "";
                 }
                 
                 if(in_array($area->id, $id_areas)){
@@ -159,12 +183,25 @@ class EntregasController extends Controller
     
     public function getAreasSeleccionadas(Request $request){
         $areas = [];
+        $articulos = [];
+        $i = 0;
         if(count($request->id_area)>0){
             foreach($request->id_area as $id_area){
-                $areas[] = Area::findOrFail($id_area);
+                $objArea = Area::findOrFail($id_area);
+                $areas[] = $objArea;
+                $articulos_asignados = $objArea->materialesAsignados;
+                foreach($articulos_asignados as $articulo_asignado){
+                    $articulos[$i] = $articulo_asignado->material;
+                    $i++;
+                }
             }
         }
-        return view('entregas.create')->withAreas($areas);
+        $articulos_unique = array_unique($articulos);
+        $articulos_col = new \Illuminate\Support\Collection($articulos);
+        $areas_unique = array_unique($areas);
+        return view('entregas.create')
+        ->with("id_areas", $request->id_area)
+        ->with("articulos", $articulos_unique)->with("i", 1)->with("i2", 1)->withAreas($areas_unique);
     }
     
     public function getFormularioValidacionArea($id_area){

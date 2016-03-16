@@ -254,7 +254,7 @@ class Area extends Node
     }
     public function cantidad_asignada($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        $ciclos = count($ids_area)/2000;
+        $ciclos = ceil(count($ids_area)/2000);
         $cantidad = 0;
         for($i = 0; $i<=$ciclos; $i++){
             $ids = array_slice($ids_area, $i*2000, 2000);
@@ -275,7 +275,7 @@ class Area extends Node
     }
     public function cantidad_requerida($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        $ciclos = count($ids_area)/2000;
+        $ciclos = ceil(count($ids_area)/2000);
         $cantidad = 0;
         
         for($i = 0; $i<=$ciclos; $i++){
@@ -299,7 +299,7 @@ class Area extends Node
     }
     public function cantidad_validada($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
-        $ciclos = count($ids_area)/2000;
+        $ciclos = ceil(count($ids_area)/2000);
         $cantidad = 0;
         
         for($i = 0; $i<=$ciclos; $i++){
@@ -351,6 +351,14 @@ class Area extends Node
             }
         }
         return $cerrable;
+    }
+    
+    public function esEntregable(){
+        $entregable = 0;
+        if(count($this->cierre_partida)>0){
+            $entregable = 1;
+        }
+        return $entregable;
     }
     
     /**

@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-<h1>Nuevo Entrega de Áreas
+<h1>Nueva Entrega de Áreas
     <a href="{{ route('entregas.index') }}" class="btn btn-success pull-right"><i class="glyphicon glyphicon-chevron-left"></i> Regresar</a>
 </h1>
 <hr>
@@ -9,12 +9,41 @@
 <div id="app">
     <global-errors></global-errors>
     <form action="{{ route('entregas.store') }}" method="POST" accept-charset="UTF-8" id="entrega_store">
-            <input name="_token" type="hidden" value="{{ csrf_token() }}">
+        <input name="_token" type="hidden" value="{{ csrf_token() }}">
+        @foreach($areas as $area)
+        <input type="hidden" name="id_area[]" value="{{$area->id}}" />
+        @endforeach
     <div>
+        <div class="row" style="margin-bottom: 15px">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label class="control-label" >Fecha de Entrega:</label>
+                    <input type="date" style="width: 100%" name="fecha_entrega" class="form-control" value="{{ date('Y-m-d') }}" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="col-md-1 control-label" v-model="observaciones" >Concepto:</label>
+                    <textarea style="width: 100%" name="concepto" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label class="col-md-1 control-label" v-model="observaciones" >Entrega:</label>
+                    <input type="text" style="width: 100%" name="entrega" class="form-control" value="{{ Auth::user()->present()->nombreCompleto }}" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label class="col-md-1 control-label" v-model="observaciones" >Recibe:</label>
+                    <input type="text" style="width: 100%" name="entrega" class="form-control" />
+                </div>
+            </div>
+        </div>
         <div class="row  alert alert-info" role="alert">
             <div class="col-md-10" >
                 <div >
-                    <i class="glyphicon glyphicon-exclamation-sign" style="margin-right: 5px"></i><strong>Atención:</strong> Sólo pueden cerrarse áreas que tengan asignados la totalidad de insumos requeridos.
+                    <i class="glyphicon glyphicon-exclamation-sign" style="margin-right: 5px"></i><strong>Atención:</strong> Sólo pueden entregarse áreas que se encuentren cerradas.
                 </div>
             </div>
             <div class="col-md-2" style="text-align: right">
@@ -25,60 +54,45 @@
         </div>
         
             <table class="table table-striped table-bordered" id="areas_seleccionadas">
+                <caption>Artículos entregados</caption>
                 <thead>
                     <tr>
-                        <th style="text-align: center">Clave</th>
-                        <th style="text-align: center">Área</th>
-                        <th style="text-align: center">Artículos Requeridos</th>
-                        <th style="text-align: center">Artículos Asignados</th>
-                        <th style="text-align: center">Artículos Validados</th>
-                        <th style="width: 150px; text-align: center">Validar Todas Las Asignaciones Pendientes</th>
-                        <th style="width: 30px"></th>
+                        <th style="text-align: center; width: 20px">#</th>
+                        <th style="text-align: center">Familia</th>
+                        <th style="text-align: center">Descripción</th>
+                        <th style="text-align: center">Unidad</th>
+                        <th style="text-align: center; width: 150px">Cantidad Entregada</th>
+                        <th style="text-align: center">Ubicación</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($areas as $area)
+                    @foreach($articulos as $articulo)
                     <tr>
                         <td>
-                            {{$area->clave}}
+                            {{$i++}}
                         </td>
                         <td>
-                            {{$area->nombre}}
-                            <input type="hidden" name="id_area[]" value="{{$area->id}}" />
+                            {{$articulo->familia()["descripcion"]}}
+                        </td>
+                        <td>
+                            {{$articulo->descripcion}}
                         </td>
                         <td style="text-align: right">
-                            {{$area->cantidad_requerida()}}
+                            {{$articulo->unidad}}
                         </td>
                         <td style="text-align: right">
-                            {{$area->cantidad_asignada()}}
+                            {{$articulo->cantidad_asignada($id_areas)}}
                         </td>
                         <td style="text-align: right">
 
-                            @if(!($area->cantidad_validada() == $area->cantidad_asignada()))
-
-                            <input type="hidden" name="validacion_completa[]" value="0" />
-                            <a href="{{ route('entrega.valida.asignaciones.area', [$area->id]) }}" class="validarArea btn btn-small btn-info">{{ $area->cantidad_validada() }}</a>
-                            @else
-                            <a href="{{ route('entrega.valida.asignaciones.area', [$area->id]) }}" class="validarArea btn btn-small btn-info">{{ $area->cantidad_validada() }}</a>
-                            <input type="hidden" name="validacion_completa[]" value="1" />
-                            @endif
+                           {{$articulo->ubicacion_asignada($id_areas)}}
                         </td>
-                        <td style="text-align: center">
-                            @if(!($area->cantidad_validada() == $area->cantidad_asignada()))
-
-
-                            <a href="{{ route('entrega.validar.todas.asignaciones.area', [$area->id]) }}" class="validarTodaAsignacionArea btn btn-small btn-danger">Validar Todo</a>
-                            @endif
-                        </td>
-                        <td style="text-align: center">
-                            <button type="button" class="btn btn-small btn-default elimina_fila">
-                                <span class="glyphicon glyphicon-minus-sign" style=""></span>
-                            </button>
-                        </td>
+                        
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+        
         <div class="form-group" style="overflow: hidden">
                         <div class="row">
                             <label class="col-md-2 control-label" v-model="observaciones" >Observaciones:</label>
@@ -106,6 +120,44 @@
 
     </div>
             </form>
+    <form id="formulario_recarga_areas" method="post" action="{{ route("entrega.create.areas") }}">
+                {{ csrf_field() }}
+        <div class="row  ">
+            <div class="col-md-6" >
+        <table class="table table-striped table-bordered" id="areas_seleccionadas">
+            <caption>Áreas Seleccionadas</caption>
+                <thead>
+                    <tr>
+                        <th style="text-align: center; width: 20px">#</th>
+                        <th style="text-align: center">Clave</th>
+                        <th style="text-align: center">Área</th>
+                        <th style="width: 30px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($areas as $area)
+                    <tr>
+                        <td>
+                            {{$i2++}}
+                        </td>
+                        <td>
+                            {{$area->clave}}
+                        </td>
+                        <td>
+                            {{$area->ruta()}}
+                            <input type="hidden" name="id_area[]" value="{{$area->id}}" />
+                        </td>
+                        <td style="text-align: center">
+                            <button type="button" class="btn btn-small btn-default elimina_fila">
+                                <span class="glyphicon glyphicon-minus-sign" style=""></span>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            </div></div>
+        </form>
 </div>
 
 <div id="modal_busqueda_area"></div>
@@ -116,20 +168,12 @@
 <script>
     $("button.elimina_fila").off().on("click", function (e) {
         $(this).parents("tr").remove();
+        $("#formulario_recarga_areas").submit();
         e.preventDefault();
     });
     $("button#modalAreas").off().on("click", function (e) {
         ruta = "{{ route("entrega.busqueda.areas") }}";
         var postData = $("#entrega_store").serialize();
-//        $.get(ruta, function (data) {
-//            $("#modal_busqueda_area").html(data);
-//            $("#modalBusquedaAreas").modal("show");
-//            preparaFormularioBusquedaArea();
-//            $("#btn_carga_areas").off().on("click", function (e) {
-//                e.preventDefault();
-//                $("form#formulario_carga_areas").submit();
-//            });
-//        });
         $.ajax({
             url: ruta,
             type: "post",
@@ -252,7 +296,17 @@
                         $("div#error_areas_encontradas").css("display", "none");
                         $.each(data, function (key, val) {
                             var newTR = $("div#areas_encontradas table tbody tr.template").clone().removeClass('template').addClass("no_template").css("display", "");
-                            if (val.cerrable == 1 && val.cerrada == 0) {
+                            console.log(val.cerrada +"-"+ val.entregada);
+                            if(val.cerrada == 0 && val.entregada == 0){
+                                
+                                chk = "<span class = 'fa fa-unlock' data-toggle='tooltip' title='Él área no ha pasado por el proceso de cierre'></span>";
+                                newTR.find(".id_area").html(chk);
+                                
+                            }else if(val.cerrada == 0 && val.entregada == 1){
+                                chk = "<span class = 'fa fa-unlock' data-toggle='tooltip' title='Él área no ha pasado por el proceso de cierre'></span>";
+                                newTR.find(".id_area").html(chk);
+                            }
+                            else if(val.cerrada == 1 && val.entregada == 0){
                                 if(val.checked == 0){
                                     chk = $('<input />', {type: 'checkbox', id: 'cb' + val.id, value: val.id, name: "id_area[]", class: "chk_id_area"});
                                     newTR.find(".id_area").append(chk);
@@ -260,14 +314,12 @@
                                     chk = "<span class = 'glyphicon glyphicon-check' ></span>";
                                     newTR.find(".id_area").html(chk);
                                 }
-                                
-                            }else if (val.cerrable == 1 && val.cerrada == 1) {
-                                chk = "<span class = 'glyphicon glyphicon-lock' data-toggle='tooltip' title='Entrega "+val.entrega+" ["+val.fecha_entrega+"]'></span>";
-                                newTR.find(".id_area").html(chk);
-                            }else if (val.cerrable == 0 ) {
-                                chk = "<span class = 'glyphicon glyphicon-ban-circle' data-toggle='tooltip' title='El área no puede cerrarse porque no tiene asignados todos los artículos requeridos'></span>";
+                            }
+                            else if(val.cerrada == 1 && val.entregada == 1){
+                                chk = "<span class = 'glyphicon glyphicon-ok-circle' data-toggle='tooltip' title='Entrega "+val.entrega+" ["+val.fecha_entrega+"]'></span>";
                                 newTR.find(".id_area").html(chk);
                             }
+                            
                             newTR.find(".clave").html(val.clave);
                             newTR.find(".area").html(val.ruta);
                             newTR.find(".articulos_requeridos").html(val.articulos_requeridos);

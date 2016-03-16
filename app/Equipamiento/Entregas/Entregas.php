@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Auth;
 class Entregas {
     
     public function buscar($busqueda){
-        $areas = Area::has('materialesRequeridos')->get();
+        //$areas = Area::has('cierre_partida')->get();
+        $areas = Area::all();
         $ids = [];
         foreach($areas as $area){
             if(stripos($area->getRutaAttribute(), $busqueda)!==FALSE){
