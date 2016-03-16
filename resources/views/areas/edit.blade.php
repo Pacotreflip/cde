@@ -90,7 +90,7 @@
     </div>
     @endif
 </div>
-@if(!$area->inventarios && !($area->cantidad_asignada()) >0))
+@if(!(count($area->inventarios)>0) && !($area->cantidad_asignada() >0))
 <div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>
     <p>
@@ -102,15 +102,15 @@
         {!! Form::close() !!}
     </p>
 </div>
-@elseif($area->inventarios && !($area->cantidad_asignada() >0))
+@elseif(count($area->inventarios)>0 && !($area->cantidad_asignada() >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene movimientos de inventario asociados. Estos movimientos se generan durante las recepciones y transferencias de almacén.
 </div>
-@elseif(!$area->inventarios && ($area->cantidad_asignada() >0))
+@elseif(!(count($area->inventarios)>0) && ($area->cantidad_asignada() >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados.
 </div>
-@elseif($area->inventarios && ($area->cantidad_asignada() >0))
+@elseif((count($area->inventarios)>0) && ($area->cantidad_asignada() >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados y movimientos de inventario relacionados.
 </div>

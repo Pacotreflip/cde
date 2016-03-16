@@ -15,7 +15,14 @@
         <tr>
           <td>{{ $index + 1 }}</td>
           <td>
-            <a href="{{ route('tipos.index', ['tipo='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
+                @if(count($descendiente->areas_hijas)>0)
+                    <a href="{{ route('tipos.index', ['tipo='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
+                @else
+                    <a href="{{ route('tipos.edit', [$descendiente]) }}" >{{ $descendiente->nombre }}</a>
+                @endif
+          </td>
+          <td>
+            
 
             <div class="btn-toolbar pull-right">
 

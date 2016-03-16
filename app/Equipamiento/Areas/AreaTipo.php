@@ -202,4 +202,12 @@ class AreaTipo extends Node
             $this->materialesRequeridos->find($id_articulo)->delete();
         }
     }
+    
+    public function area_padre(){
+        return $this->belongsTo(AreaTipo::class, "parent_id");
+    }
+    
+    public function areas_hijas(){
+        return $this->hasMany(AreaTipo::class, "parent_id", "id");
+    }
 }
