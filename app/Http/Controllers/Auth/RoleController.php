@@ -42,7 +42,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'=>'required|unique:permissions|min:5|max:100',
+            'name'=>'required|unique:roles|min:5|max:100',
             'display_name'=>'required|min:5|max:50',
             'description'=>'min:20|max:240',
         ],
