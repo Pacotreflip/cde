@@ -4,17 +4,21 @@ use Ghidev\Fpdf\Rotation;
 
 class PDF extends Rotation {
     
-    var $cierre;
+    var $cierre, $articulos;
+    var $numPartidas, $numArticulos;
     var $WeightTotal;
     var $txtTitleTam, $txtSubtitleTam, $txtSeccionTam, $txtContenidoTam, $txtFooterTam;
-    var $encola = "";
+    var $encola = "", $areaEncola = null;
     
-    function __construct($p,$cm,$Letter, $cierre) {
+    function __construct($p,$cm,$Letter, $cierre, $articulos) {
         
         parent::__construct($p,$cm,$Letter);
         $this->SetAutoPageBreak(true,3);
         $this->cierre = $cierre;
+        $this->articulos = $articulos;
+        $this->numPartidas = $this->cierre->partidas->count();
         $this->WeightTotal = $this->GetPageWidth() - 2;
+        $this->numArticulos = $this->totalArticulos();
         $this->txtTitleTam = 18;
         $this->txtSubtitleTam = 13;
         $this->txtSeccionTam = 9;
@@ -63,19 +67,6 @@ class PDF extends Rotation {
         $this->setY($y_final);
         $this->Ln(1);
         
-//        //Título artículos Asignados
-//        $this->SetWidths(array($this->WeightTotal));
-//        $this->SetRounds(array('1234'));
-//        $this->SetRadius(array(0.3));
-//        $this->SetFills(array('0,0,0'));
-//        $this->SetTextColors(array('255,255,255'));
-//        $this->SetHeights(array(.7));
-//        $this->SetStyles(array('DF'));
-//        $this->SetAligns("C");
-//        $this->SetFont('Arial', '', $this->txtSubtitleTam);
-//        $this->Row(Array(utf8_decode('Areas Cerradas')));
-//        $this->Ln(0.5);
-        
         if($this->encola == "items"){
             
             //Título artículos Asignados
@@ -101,7 +92,7 @@ class PDF extends Rotation {
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.3));
             $this->SetAligns(array('C', 'C', 'C', 'C'));
-            $this->Row(array('#', 'Clave', utf8_decode("Área"), utf8_decode("Asignaciones Validadas")));
+            $this->Row(array('#', 'Clave', utf8_decode("No. Parte"), utf8_decode("Asignaciones Validadas")));
 
             $this->SetRounds(array('', '', '', ''));
             $this->SetRadius(array(0, 0, 0, 0));
@@ -110,7 +101,9 @@ class PDF extends Rotation {
             $this->SetHeights(array(0.35));
             $this->SetAligns(array('C', 'L', 'L', 'R'));
         } else if ($this->encola == "observaciones") {
-            $this->SetRounds(array('34'));
+            $this->Ln(.5);
+            $this->SetAligns(array('C'));
+            $this->SetRounds(array('1234'));
             $this->SetRadius(array(0.2));
             $this->SetAligns(array('J'));
             $this->SetStyles(array('DF'));
@@ -119,28 +112,139 @@ class PDF extends Rotation {
             $this->SetHeights(array(0.3));
             $this->SetFont('Arial', '', 6);
             $this->SetWidths(array(19.5));           
+        } else if ($this->encola == "articulos"){
+            
+//            //Título artículos Por area
+//            $this->SetWidths(array($this->WeightTotal));
+//            $this->SetRounds(array('0'));
+//            $this->SetRadius(array(0));
+//            $this->SetFills(array('0,0,0'));
+//            $this->SetTextColors(array('255,255,255'));
+//            $this->SetHeights(array(.7));
+//            $this->SetStyles(array('DF'));
+//            $this->SetAligns("C");
+//            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+//            $this->Row(Array(utf8_decode('Asignaciones')));
+            $this->SetWidths(array(0));
+                $this->SetFills(array('255,255,255'));
+                $this->SetTextColors(array('1,1,1'));
+                $this->SetRounds(array('0'));
+                $this->SetRadius(array(0));
+                $this->SetHeights(array(0));
+                $this->Row(Array(''));
+                $this->SetFont('Arial', 'B', $this->txtSeccionTam);
+                $this->SetTextColors(array('255,255,255'));
+                $this->CellFitScale(0.7 * $this->WeightTotal, 1, utf8_decode($this->areaEncola), 0, 0, 'L');
+            
+            $this->Ln(1);
+            
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+            $this->SetFont('Arial', '', 6);
+            $this->SetStyles(array('DF', 'DF', 'FD', 'DF', 'DF'));
+            $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+            $this->SetRounds(array('1', '', '', '', '2'));
+            $this->SetRadius(array(0.2, 0, 0, 0, 0.2));
+            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+            $this->SetHeights(array(0.3));
+            $this->SetAligns(array('C', 'C', 'C', 'C', 'C'));
+            $this->Row(array('#', utf8_decode("No. Parte"), utf8_decode("Descripción"), utf8_decode("Unidad"), utf8_decode("Cantidad")));
+            
+            $this->SetRounds(array('', '', '', '', ''));
+            $this->SetRadius(array(0, 0, 0, 0, 0));
+            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+            $this->SetHeights(array(0.35));
+            $this->SetAligns(array('C', 'L', 'L', 'L', 'R'));
         }
     }
-    function detalleArticulos(){
-        $this->encola = "";
-        $this->AddPage();
-        
-        //Título artículos Por area
-        $this->SetWidths(array($this->WeightTotal));
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(0.3));
-        $this->SetFills(array('0,0,0'));
-        $this->SetTextColors(array('255,255,255'));
-        $this->SetHeights(array(.7));
-        $this->SetStyles(array('DF'));
-        $this->SetAligns("C");
-        $this->SetFont('Arial', '', $this->txtSubtitleTam);
-        $this->Row(Array(utf8_decode('Asignaciones por Área')));
-        $this->Ln(0.5);
-        
-        
-        
+    
+    function detalleArticulosArea(){ 
+//         //Título artículos Por area
+//                $this->SetWidths(array($this->WeightTotal));
+//                $this->SetRounds(array('0'));
+//                $this->SetRadius(array(0));
+//                $this->SetFills(array('0,0,0'));
+//                $this->SetTextColors(array('255,255,255'));
+//                $this->SetHeights(array(.7));
+//                $this->SetStyles(array('DF'));
+//                $this->SetAligns("C");
+//                $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+//                $this->Row(Array(utf8_decode('Asignaciones')));
+        foreach($this->cierre->partidas as $partida){
+            $this->encola = "";
+            $this->areaEncola = $partida->area->ruta();
+            $num_articulos_x_area = 0;
+            $total = 0;
+            foreach($this->articulos as $articulo){
+                if($articulo->id_area == $partida->id_area){
+                    $num_articulos_x_area ++;
+                    $total += $articulo->cantidad_asignada;
+                }
+            }
+
+            if($num_articulos_x_area > 0){
+                
+                $i = 1;
+                        
+                $this->SetWidths(array(0));
+                $this->SetFills(array('255,255,255'));
+                $this->SetTextColors(array('1,1,1'));
+                $this->SetRounds(array('0'));
+                $this->SetRadius(array(0));
+                $this->SetHeights(array(0));
+                $this->Row(Array(''));
+                $this->SetFont('Arial', 'B', $this->txtSeccionTam);
+                $this->SetTextColors(array('255,255,255'));
+                $this->CellFitScale(0.7 * $this->WeightTotal, 1, utf8_decode($this->areaEncola), 0, 0, 'L');
+                $this->CellFitScale(0.2 * $this->WeightTotal, 1, utf8_decode('Total de Artículos :'), 0, 0, 'R');
+                $this->CellFitScale(0.1 * $this->WeightTotal, 1, $total, 0, 1, 'R');
+
+
+                $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+                $this->SetFont('Arial', '', 6);
+                $this->SetStyles(array('DF', 'DF', 'FD', 'DF', 'DF'));
+                $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+                $this->SetRounds(array('1', '', '', '', '2'));
+                $this->SetRadius(array(0.2, 0, 0, 0, 0.2));
+                $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
+                $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+                $this->SetHeights(array(0.3));
+                $this->SetAligns(array('C', 'C', 'C', 'C', 'C'));
+                $this->Row(array('#', utf8_decode("No. Parte"), utf8_decode("Descripción"), utf8_decode("Unidad"), utf8_decode("Cantidad")));
+                
+                foreach($this->articulos as $articulo){
+                    if($articulo->id_area == $partida->id_area){
+                        $this->SetFont('Arial', '', 6);
+                        $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+                        $this->encola="articulos";
+                        $this->areaEncola = $partida->area->ruta();
+                        $this->SetRounds(array('', '', '', '', ''));
+                        $this->SetRadius(array(0, 0, 0, 0, 0));
+                        $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+                        $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+                        $this->SetHeights(array(0.35));
+                        $this->SetAligns(array('C', 'L', 'L', 'L', 'R'));
+
+                        if ($i == $num_articulos_x_area) {
+                            $this->SetRounds(array('4', '', '', '', '3'));
+                            $this->SetRadius(array(0.2, 0, 0, 0, 0.2));
+                        }
+
+                        $this->SetWidths(array(0.05 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.65 * $this->WeightTotal, 0.1 * $this->WeightTotal, 0.1 * $this->WeightTotal));
+                        $this->encola = "articulos";
+                        $this->Row(array($i, utf8_decode($articulo->numero_parte), utf8_decode($articulo->descripcion), $articulo->unidad, $articulo->cantidad_asignada));
+                        
+                        $i++;
+                    }
+                }
+            } else {
+                $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
+                $this->Ln(1);
+            }
+        }
     }
+    
     function titulos (){
         
         // Título
@@ -163,19 +267,30 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha de Cierre:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m A')), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m A')), '', 1, 'L');$this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Total de Artículos:'), '', 0, 'L');
+        $this->SetFont('Arial', '', $this->txtContenidoTam);
+        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->numArticulos), '', 1, 'L');  
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Persona que Cierra:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->cierre->usuario->present()->nombreCompleto), '', 1, 'L');
     }
     
+    function totalArticulos(){
+        $total = 0;
+        foreach($this->articulos as $articulo){
+            $total += $articulo->cantidad_asignada;
+            
+        }
+        return $total;
+    }
+    
     function items(){
         
-        $numPartidas = $this->cierre->partidas->count();
         $i = 1;
 
-        if ($numPartidas > 0) {
+        if ($this->numPartidas > 0) {
         
             $i = 1;
             //Título artículos Asignados
@@ -214,7 +329,7 @@ class PDF extends Rotation {
                 $this->SetHeights(array(0.35));
                 $this->SetAligns(array('C', 'L', 'L', 'R'));
 
-                if ($cont == 99 ) {
+                if ($i == $this->numPartidas ) {
                     $this->SetRounds(array('4', '', '', '3'));
                     $this->SetRadius(array(0.2, 0, 0, 0.2));
                 }
@@ -230,15 +345,6 @@ class PDF extends Rotation {
             $this->Ln(1);
         }
     }
-    
-//    function OrigDest($area){
-//        
-//        if ($area){
-//            return $area->ruta();
-//        } else {
-//            return 'N/A';
-//        }    
-//    }
     
     function observaciones(){
         
@@ -281,14 +387,13 @@ class PDF extends Rotation {
     }
 }
 
-$pdf = new PDF('p', 'cm', 'Letter', $cierre);
+$pdf = new PDF('p', 'cm', 'Letter', $cierre, $articulos);
 $pdf->SetMargins(1, 0.5, 1);
 $pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->items();
+$pdf->detalleArticulosArea();
 $pdf->observaciones();
-$pdf->detalleArticulos();
-$pdf->Output('I', 'CDE - Cierre de Area #'.$pdf->cierre->numero_folio.'.pdf', 1);
+$pdf->Output('I', 'Cierre_de_area_'.$pdf->cierre->numero_folio.'.pdf', 1);
 exit; 
 
 ?>
