@@ -17,6 +17,8 @@ class CreateEntregasTable extends Migration
             $table->integer('id_obra')->unsigned();
             $table->integer('numero_folio')->unsigned();
             $table->datetime('fecha_entrega');
+            $table->char('entrega',100);
+            $table->char('recibe',100);
             $table->text('observaciones')->nullable();
             $table->integer('id_usuario')->unsigned();
             $table->timestamps();
