@@ -119,21 +119,18 @@
 
   <div class="row">
 
-      <div class="col-md-6">
+      <div class="col-md-3">
           <div class="row">
-              <div class="col-md-6">
-                 <h4>
-                        <strong>Estado de asignación:</strong> 
-                    </h4>
-              </div>
-              <div class="col-md-6">
-                  <h4>
-                  <small class="text-muted">
+              <div class="col-md-12">
+                 <h5>
+                        <strong>Estado Asignación de Artículos Esperados:</strong> 
+                    
+                  
           [
-          Articulos Requeridos: {{$area->cantidad_requerida()}}  
-          Articulos Asignados: {{$area->cantidad_asignada()}}
-          ]</small>
-                  </h4> </div>
+           {{number_format($area->cantidad_asignada(),2,".", ",")}} / 
+           {{number_format($area->cantidad_requerida(),2,".", ",")}}
+          ]
+                  </h5> </div>
           </div>
           
            <div class="row">  
@@ -159,21 +156,19 @@
       </div>
       
       
-      <div class="col-md-6">
+      <div class="col-md-3">
           <div class="row">
-              <div class="col-md-6">
-                 <h4>
-                        <strong>Estado de validación:</strong> 
-                    </h4>
-              </div>
-              <div class="col-md-6">
-                  <h4>
-                  <small class="text-muted">
+              
+               <div class="col-md-12">
+                 <h5>
+                        <strong>Estado Validación de Artículos Asignados:</strong> 
+                    
+                  
           [
-          Articulos Asignados: {{$area->cantidad_asignada()}}  
-          Articulos validados: {{$area->cantidad_validada()}}
-          ]</small>
-                  </h4> </div>
+           {{number_format($area->cantidad_validada(),2,".", ",")}} / 
+           {{number_format($area->cantidad_asignada(),2,".", ",")}}
+          ]
+                  </h5> </div>
           </div>
           
            <div class="row">  
@@ -189,6 +184,87 @@
                       aria-valuemax="100"
                       style="min-width: 2.5em; width: {{ round($area->porcentaje_validacion()) }}%;">
                       {{ round($area->porcentaje_validacion()) }}%
+                    </div>
+                  </div>
+                   
+                   @endif
+               </div>
+           </div>
+      
+      </div>
+      
+      
+      <div class="col-md-3">
+          <div class="row">
+              
+              <div class="col-md-12">
+                 <h5>
+                        <strong>Estado de Cierre de Áreas Validadas:</strong> 
+                    
+                  
+          [
+           {{number_format($area->cantidad_areas_cerradas(),2,".", ",")}} / 
+           {{number_format($area->cantidad_areas_cerrables(),2,".", ",")}}
+          ]
+                  </h5> </div>
+              
+              
+              
+          </div>
+          
+           <div class="row">  
+               <div class="col-md-12">
+                   @if($area->cantidad_areas_cerrables() > 0)
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_cierre()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $area->porcentaje_cierre() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($area->porcentaje_cierre()) }}%;">
+                      {{ round($area->porcentaje_cierre()) }}%
+                    </div>
+                  </div>
+                   
+                   @endif
+               </div>
+           </div>
+      
+      </div>
+      
+      <div class="col-md-3">
+          <div class="row">
+              
+              <div class="col-md-12">
+                 <h5>
+                        <strong>Estado de Entrega de Áreas Cerradas:</strong> 
+                    
+                  
+          [
+           {{number_format($area->cantidad_areas_entregadas(),2,".", ",")}} / 
+           {{number_format($area->cantidad_areas_cerradas(),2,".", ",")}}
+          ]
+                  </h5> </div>
+              
+              
+              
+          </div>
+          
+           <div class="row">  
+               <div class="col-md-12">
+                   @if($area->cantidad_areas_cerradas() > 0)
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_entrega()) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $area->porcentaje_entrega() }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($area->porcentaje_entrega()) }}%;">
+                      {{ round($area->porcentaje_entrega()) }}%
                     </div>
                   </div>
                    
