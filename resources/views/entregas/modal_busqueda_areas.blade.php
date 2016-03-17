@@ -42,7 +42,11 @@
                     <hr />
                     <form id="formulario_carga_areas" method="post" action="{{ route("entrega.create.areas") }}">
                 {{ csrf_field() }}
-                
+                <input type="hidden" name="fecha_entrega" value="{{$fecha_entrega}}" />
+                <input type="hidden" name="concepto" value="{{$concepto}}" />
+                <input type="hidden" name="entrega" value="{{$entrega}}" />
+                <input type="hidden" name="recibe" value="{{$recibe}}" />
+                <input type="hidden" name="observaciones" value="{{$observaciones}}" />
                 @if(is_array($ids_areas))
                     @foreach($ids_areas as $id_areas)
                     <input type="hidden" name="id_area[]" value="{{$id_areas}}" />

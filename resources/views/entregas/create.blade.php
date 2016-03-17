@@ -18,25 +18,25 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label class="control-label" >Fecha de Entrega:</label>
-                    <input type="date" style="width: 100%" name="fecha_entrega" class="form-control" value="{{ date('Y-m-d') }}" />
+                    <input type="date" style="width: 100%" name="fecha_entrega" class="form-control" value="{{ $fecha_entrega }}" />
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label class="col-md-1 control-label" v-model="observaciones" >Concepto:</label>
-                    <textarea style="width: 100%" name="concepto" class="form-control"></textarea>
+                    <textarea style="width: 100%" name="concepto" class="form-control" >{{$concepto}}</textarea>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label class="col-md-1 control-label" v-model="observaciones" >Entrega:</label>
-                    <input type="text" style="width: 100%" name="entrega" class="form-control" value="{{ Auth::user()->present()->nombreCompleto }}" />
+                    <input type="text" style="width: 100%" name="entrega" class="form-control" value="{{$entrega}}" />
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label class="col-md-1 control-label" v-model="observaciones" >Recibe:</label>
-                    <input type="text" style="width: 100%" name="entrega" class="form-control" />
+                    <input type="text" style="width: 100%" name="recibe" class="form-control" value="{{$recibe}}" />
                 </div>
             </div>
         </div>
@@ -73,6 +73,7 @@
                         </td>
                         <td>
                             {{$articulo->familia()["descripcion"]}}
+                            <input type="hidden" name="id_articulo[]" value="{{$articulo->id_material}}" />
                         </td>
                         <td>
                             {{$articulo->descripcion}}
@@ -102,7 +103,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea style="width: 100%" name="observaciones" class="form-control"></textarea>
+                                <textarea style="width: 100%" name="observaciones" class="form-control">{{$observaciones}}</textarea>
                             </div>
                            
                             

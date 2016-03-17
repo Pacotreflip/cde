@@ -85,10 +85,23 @@ class EntregasController extends Controller
                 }
             }
         }
+        $fecha_entrega =  ($request->fecha_entrega == "")?date('Y-m-d'):$request->fecha_entrega;
+        $concepto =  $request->concepto;
+        $recibe =  $request->recibe;
+        $entrega = ($request->entrega == "")? Auth::user()->present()->nombreCompleto: $request->entrega;
+        $observaciones =  $request->observaciones;
         $areas_unique = array_unique($areas);
         return view('entregas.create')
         ->with("id_areas", $request->id_area)
-                ->with("i",1)->with("articulos", $articulos)->with("i2", 1)->withAreas($areas_unique);
+                ->with("fecha_entrega", $fecha_entrega)
+                ->with("concepto", $concepto)
+                ->with("observaciones", $observaciones)
+                ->with("recibe", $recibe)
+                ->with("entrega", $entrega)
+                ->with("i",1)
+                ->with("articulos", $articulos)
+                ->with("i2", 1)->
+                withAreas($areas_unique);
             
     }
 
@@ -120,8 +133,18 @@ class EntregasController extends Controller
     
     public function getFormularioBusquedaAreas(Request $request){
         $ids_areas = $request->id_area;
-        
-        return view('entregas.modal_busqueda_areas')->with("ids_areas", $ids_areas);
+        $fecha_entrega =  ($request->fecha_entrega == "")?date('Y-m-d'):$request->fecha_entrega;
+        $concepto =  $request->concepto;
+        $recibe =  $request->recibe;
+        $entrega = ($request->entrega == "")? Auth::user()->present()->nombreCompleto: $request->entrega;
+        $observaciones =  $request->observaciones;
+        return view('entregas.modal_busqueda_areas')
+                ->with("ids_areas", $ids_areas)
+                ->with("fecha_entrega", $fecha_entrega)
+                ->with("concepto", $concepto)
+                ->with("observaciones", $observaciones)
+                ->with("recibe", $recibe)
+                ->with("entrega", $entrega);
     }
     public function getAreas(Request $request){
         $parametro = $request->busqueda_area;
@@ -198,10 +221,29 @@ class EntregasController extends Controller
         }
         $articulos_unique = array_unique($articulos);
         $articulos_col = new \Illuminate\Support\Collection($articulos);
+//        $areas_unique = array_unique($areas);
+//        return view('entregas.create')
+//        ->with("id_areas", $request->id_area)
+//        ->with("articulos", $articulos_unique)->with("i", 1)->with("i2", 1)->withAreas($areas_unique);
+        
+        
+        $fecha_entrega =  ($request->fecha_entrega == "")?date('Y-m-d'):$request->fecha_entrega;
+        $concepto =  $request->concepto;
+        $observaciones =  $request->observaciones;
+        $recibe =  $request->recibe;
+        $entrega = ($request->entrega == "")? Auth::user()->present()->nombreCompleto: $request->entrega;
         $areas_unique = array_unique($areas);
         return view('entregas.create')
         ->with("id_areas", $request->id_area)
-        ->with("articulos", $articulos_unique)->with("i", 1)->with("i2", 1)->withAreas($areas_unique);
+                ->with("fecha_entrega", $fecha_entrega)
+                ->with("concepto", $concepto)
+                ->with("observaciones", $observaciones)
+                ->with("recibe", $recibe)
+                ->with("entrega", $entrega)
+                ->with("i",1)
+                ->with("articulos", $articulos)
+                ->with("i2", 1)->
+                withAreas($areas_unique);
     }
     
     public function getFormularioValidacionArea($id_area){
