@@ -221,12 +221,7 @@ class EntregasController extends Controller
         }
         $articulos_unique = array_unique($articulos);
         $articulos_col = new \Illuminate\Support\Collection($articulos);
-//        $areas_unique = array_unique($areas);
-//        return view('entregas.create')
-//        ->with("id_areas", $request->id_area)
-//        ->with("articulos", $articulos_unique)->with("i", 1)->with("i2", 1)->withAreas($areas_unique);
-        
-        
+      
         $fecha_entrega =  ($request->fecha_entrega == "")?date('Y-m-d'):$request->fecha_entrega;
         $concepto =  $request->concepto;
         $observaciones =  $request->observaciones;
@@ -241,7 +236,7 @@ class EntregasController extends Controller
                 ->with("recibe", $recibe)
                 ->with("entrega", $entrega)
                 ->with("i",1)
-                ->with("articulos", $articulos)
+                ->with("articulos", $articulos_unique)
                 ->with("i2", 1)->
                 withAreas($areas_unique);
     }

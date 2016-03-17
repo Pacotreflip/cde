@@ -61,4 +61,39 @@ class Entrega extends Model
     public function obra(){
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
     }
+    public function ids_areas(){
+        $partidas = $this->partidas;
+        $ids_area = [];
+        foreach ($partidas as $partida){
+            $ids_area[] = $partida->cierre_partida->area->id;
+            
+        }
+        $ids_area_un = array_unique($ids_area);
+        return $ids_area_un;
+    }
+    public function partida_articulos(){
+        $salida = [];
+        $partidas = $this->partidas;
+        $id_areas = $this->ids_areas();
+        $i = 0;
+        foreach ($partidas as $partida){
+            foreach($partida->cierre_partida->area->materialesAsignados as $articulo_asignado){
+                $articulos[$i] = $articulo_asignado->material;
+                $i++;
+            }
+        }
+        $articulos_unique = array_unique($articulos);
+        $ia = 0;
+        foreach($articulos_unique as $articulo){
+            $salida[$ia]["i"] = $ia+1;
+            $salida[$ia]["familia"] = $articulo->familia()["descripcion"];
+            $salida[$ia]["descripcion"] = $articulo->descripcion;
+            $salida[$ia]["unidad"] = $articulo->unidad;
+            $salida[$ia]["cantidad_asignada"] = $articulo->cantidad_asignada($id_areas);
+            $salida[$ia]["ubicacion_asignada"] = $articulo->ubicacion_asignada($id_areas);
+            $ia++;
+        }
+        $salida_col = new \Illuminate\Support\Collection($salida);
+        return $salida;
+    }
 }
