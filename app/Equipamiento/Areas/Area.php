@@ -338,16 +338,17 @@ class Area extends Node
         return $this->hasMany(Area::class, "parent_id", "id");
     }
     public function esCerrable(){
-        $cerrable = 0;
-        $materiales_requeridos = $this->materialesRequeridos;
-        if(count($materiales_requeridos)>0){
-            $cerrable = 1;
-            foreach($materiales_requeridos as $material_requerido){
-                if(abs($material_requerido->cantidadMaterialesPendientes())>0.1){
-                    $cerrable = 0;
-                    break;
-                }
+        $cerrable = 1;
+        $materiales_requeridos = $this->materialesRequeridos->sum("cantidad_requerida");
+        
+        //dd($materiales_requeridos, $materiales_asignados);
+        if($materiales_requeridos > 0){
+            $materiales_asignados = $this->materialesAsignados->sum("cantidad_asignada");
+            if(abs($materiales_requeridos-$materiales_asignados)>0.1){
+                $cerrable = 0;
             }
+        }else{
+            $cerrable = 0;
         }
         return $cerrable;
     }
@@ -391,7 +392,7 @@ class Area extends Node
         $this->getHijas($this);
         $id = [];
         foreach($this->arr_areas_hijas as $area_hija){
-            if($area_hija->esCerrable()){
+            if($area_hija->esCerrable() == 1){
                 $id[] = $area_hija->id;
             }
         }
