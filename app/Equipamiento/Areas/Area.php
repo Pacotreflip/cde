@@ -38,6 +38,7 @@ class Area extends Node
     private $cantidad_almacenada = null;
     private $cantidad_areas_cerrables = null;
     private $cantidad_areas_cerradas = null;
+    private $cantidad_areas_entregadas = null;
     
     
     public function obra()
@@ -436,8 +437,34 @@ class Area extends Node
         return $this->cantidad_areas_cerradas;
     }
     
+    public function cantidad_areas_entregadas(){
+        if($this->cantidad_areas_entregadas == null){
+            $this->getHijas($this);
+            $this->arr_areas_hijas[$this->id]["terminado"] = 1;
+            $id = [];
+            foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
+                if($area_hija->entrega_partida()){
+                    $id[] = $area_hija->id;
+                }
+            }
+            $this->cantidad_areas_entregadas = count($id);
+        }
+        return $this->cantidad_areas_entregadas;
+    }
+    public function entrega_partida(){
+        if($this->cierre_partida){
+            return $this->cierre_partida->entrega_partida;
+        }else{
+            return false;
+        }
+    }
     public function porcentaje_cierre(){
         
         return ($this->cantidad_areas_cerradas() / $this->cantidad_areas_cerrables()) * 100;
+    }
+    
+    public function porcentaje_entrega(){
+        
+        return ($this->cantidad_areas_entregadas() / $this->cantidad_areas_cerradas()) * 100;
     }
 }
