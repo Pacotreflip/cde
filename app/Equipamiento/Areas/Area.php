@@ -231,25 +231,28 @@ class Area extends Node
     public function materialesAsignados(){
         return $this->hasMany(ItemAsignacion::class, "id_area_destino");
     }
-    
+    private function getHijas(Area $area){
+        if(!isset($this->arr_areas_hijas[$this->id]["terminado"])){
+            $this->arr_areas_hijas[$this->id]["areas"][$this->id] = $this;
+            $areas_hijas = $area->areas_hijas;
+            if($areas_hijas){
+                foreach($areas_hijas as $area_hija){
+                    $this->arr_areas_hijas[$this->id]["areas"][$area_hija->id] = $area_hija;
+                    $this->getHijas($area_hija);
+                }
+            }
+            
+        }
+    }
     public function getIdsDescendientes(){
-        $this->arr_areas_hijas = [];
+        //$this->arr_areas_hijas = [];
         $this->getHijas($this);
+        $this->arr_areas_hijas[$this->id]["terminado"] = 1;
         $id = [];
-        foreach($this->arr_areas_hijas as $area_hija){
+        foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
             $id[] = $area_hija->id;
         }
         return $id;
-    }
-    private function getHijas(Area $area){
-        $this->arr_areas_hijas[$this->id] = $this;
-        $areas_hijas = $area->areas_hijas;
-        if($areas_hijas){
-            foreach($areas_hijas as $area_hija){
-                $this->arr_areas_hijas[$area_hija->id] = $area_hija;
-                $this->getHijas($area_hija);
-            }
-        }
     }
     public function cantidad_asignada($id_material = ""){
         $ids_area = $this->getIdsDescendientes();
@@ -388,10 +391,11 @@ class Area extends Node
     }
     
     public function cantidad_areas_cerrables(){
-        $this->arr_areas_hijas = [];
+        //$this->arr_areas_hijas = [];
         $this->getHijas($this);
+        $this->arr_areas_hijas[$this->id]["terminado"] = 1;
         $id = [];
-        foreach($this->arr_areas_hijas as $area_hija){
+        foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
             if($area_hija->esCerrable() == 1){
                 $id[] = $area_hija->id;
             }
@@ -400,10 +404,11 @@ class Area extends Node
     }
     
     public function cantidad_areas_cerradas(){
-        $this->arr_areas_hijas = [];
+        //$this->arr_areas_hijas = [];
         $this->getHijas($this);
+        $this->arr_areas_hijas[$this->id]["terminado"] = 1;
         $id = [];
-        foreach($this->arr_areas_hijas as $area_hija){
+        foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
             if($area_hija->cierre_partida){
                 $id[] = $area_hija->id;
             }
