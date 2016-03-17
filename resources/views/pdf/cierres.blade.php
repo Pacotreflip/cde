@@ -13,7 +13,7 @@ class PDF extends Rotation {
     function __construct($p,$cm,$Letter, $cierre, $articulos) {
         
         parent::__construct($p,$cm,$Letter);
-        $this->SetAutoPageBreak(true,3);
+        $this->SetAutoPageBreak(true,4.5);
         $this->cierre = $cierre;
         $this->articulos = $articulos;
         $this->numPartidas = $this->cierre->partidas->count();
@@ -65,7 +65,7 @@ class PDF extends Rotation {
         
         //Obtener Y despues de la tabla
         $this->setY($y_final);
-        $this->Ln(1);
+        $this->Ln(0.5);
         
         if($this->encola == "items"){
             
@@ -238,6 +238,7 @@ class PDF extends Rotation {
                         $i++;
                     }
                 }
+                $this->encola = "";
             } else {
                 $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
                 $this->Ln(1);
@@ -250,8 +251,8 @@ class PDF extends Rotation {
         // Título
         $this->SetFont('Arial', 'B', $this->txtTitleTam);
         $this->CellFitScale(0.6 * $this->WeightTotal, 1.5, utf8_decode('Cierre de Áreas - # '.$this->cierre->numero_folio), 0, 1, 'L', 0);
-        $this->Line(1, $this->GetY() + 0.5, $this->WeightTotal + 1, $this->GetY() + 0.5);
-        $this->Ln(1);
+        $this->Line(1, $this->GetY(), $this->WeightTotal + 1, $this->GetY());
+        $this->Ln(0.5);
         
         //Detalles de la Asignación (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
@@ -317,7 +318,6 @@ class PDF extends Rotation {
             $this->SetHeights(array(0.3));
             $this->SetAligns(array('C', 'C', 'C', 'C'));
             $this->Row(array('#', 'Clave', utf8_decode("Área"), utf8_decode("Asignaciones Validadas")));
-            for($cont = 0; $cont < 100; $cont++){
             foreach($this->cierre->partidas as $partida){
                 $this->SetFont('Arial', '', 6);
                 $this->SetWidths(array(0.05 * $this->WeightTotal, 0.3 * $this->WeightTotal, 0.5 * $this->WeightTotal, 0.15 * $this->WeightTotal));
@@ -338,8 +338,9 @@ class PDF extends Rotation {
                 $this->encola = "items";
                 $this->Row(array($i, utf8_decode($partida->area->clave), utf8_decode($partida->area->ruta),number_format(utf8_decode($partida->area->cantidad_validada()),0,'.',',')));
 
-            $i++;}
+            $i++;
             }
+            $this->encola = "";
         } else {
             $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ÁREAS POR MOSTRAR'), 1, 0, 'C');
             $this->Ln(1);
@@ -348,8 +349,12 @@ class PDF extends Rotation {
     
     function observaciones(){
         
+        $this->elcola = "";
+        
         if($this->cierre->observaciones){
-            $this->Ln(.5);
+            if($this->GetY() > $this->GetPageHeight() - 5){
+            $this->AddPage();
+        }
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
             $this->SetRadius(array(0.2));
@@ -372,8 +377,21 @@ class PDF extends Rotation {
             $this->Row(array(utf8_decode($this->cierre->observaciones)));       
         }  
     }
+    
+    function firma(){
+        $this->SetY(-4);  
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
+        $this->SetX(0.75 * $this->WeightTotal + 1);
+        $this->Cell(0.25 * $this->WeightTotal, 0.4, utf8_decode('PERSONA QUE CIERRA'), 'TRLB', 1, 'C', 1);
+        $this->SetX(0.75 * $this->WeightTotal + 1);
+        $this->Cell(0.25 * $this->WeightTotal, 1.5, '', 'RLB', 1, 'C');
+        $this->SetX(0.75 * $this->WeightTotal + 1);
+        $this->Cell(0.25 * $this->WeightTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
+    }
         
     function Footer() {
+        $this->firma();
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', $this->txtFooterTam);
@@ -392,6 +410,7 @@ $pdf->SetMargins(1, 0.5, 1);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->detalleArticulosArea();
+$pdf->Ln(0.5);
 $pdf->observaciones();
 $pdf->Output('I', 'Cierre_de_area_'.$pdf->cierre->numero_folio.'.pdf', 1);
 exit; 
