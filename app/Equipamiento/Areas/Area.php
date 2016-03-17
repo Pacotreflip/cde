@@ -233,7 +233,7 @@ class Area extends Node
     }
     
     public function getIdsDescendientes(){
-        $this->arr_areas_hijas[] = $this;
+        $this->arr_areas_hijas = [];
         $this->getHijas($this);
         $id = [];
         foreach($this->arr_areas_hijas as $area_hija){
@@ -243,6 +243,7 @@ class Area extends Node
     }
     private function getHijas(Area $area){
         
+        $this->arr_areas_hijas[] = $this;
         $areas_hijas = $area->areas_hijas;
        // dd($area, $areas_hijas);
         if($areas_hijas){
@@ -385,5 +386,36 @@ class Area extends Node
     
     public function documentos(){
         return $this->hasMany(AreaDocumento::class, "id_area");
+    }
+    
+    public function cantidad_areas_cerrables(){
+        $this->arr_areas_hijas = [];
+        $this->getHijas($this);
+        $id = [];
+        $areas_hijas_unique = array_unique($this->arr_areas_hijas);
+        foreach($areas_hijas_unique as $area_hija){
+            if($area_hija->esCerrable()){
+                $id[] = $area_hija->id;
+            }
+        }
+        return count($id);
+    }
+    
+    public function cantidad_areas_cerradas(){
+        $this->arr_areas_hijas = [];
+        $this->getHijas($this);
+        $id = [];
+        $areas_hijas_unique = array_unique($this->arr_areas_hijas);
+        foreach($areas_hijas_unique as $area_hija){
+            if($area_hija->cierre_partida){
+                $id[] = $area_hija->id;
+            }
+        }
+        return count($id);
+    }
+    
+    public function porcentaje_cierre(){
+        
+        return ($this->cantidad_areas_cerradas() / $this->cantidad_areas_cerrables()) * 100;
     }
 }
