@@ -172,6 +172,9 @@ class PDF extends Rotation {
 //                $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
 //                $this->Row(Array(utf8_decode('Asignaciones')));
         foreach($this->cierre->partidas as $partida){
+             if($this->GetY() > $this->GetPageHeight() - 6){
+            $this->AddPage();
+        }
             $this->encola = "";
             $this->areaEncola = $partida->area->ruta();
             $num_articulos_x_area = 0;
@@ -352,7 +355,7 @@ class PDF extends Rotation {
         $this->elcola = "";
         
         if($this->cierre->observaciones){
-            if($this->GetY() > $this->GetPageHeight() - 5){
+            if($this->GetY() > $this->GetPageHeight() - 6){
             $this->AddPage();
         }
             $this->SetWidths(array(19.5));
