@@ -31,6 +31,15 @@ class Area extends Node
      */
     private $arr_areas_hijas ;
     
+    
+    private $cantidad_asignada = null;
+    private $cantidad_requerida= null ;
+    private $cantidad_validada = null;
+    private $cantidad_almacenada = null;
+    private $cantidad_areas_cerrables = null;
+    private $cantidad_areas_cerradas = null;
+    
+    
     public function obra()
     {
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
@@ -255,82 +264,88 @@ class Area extends Node
         return $id;
     }
     public function cantidad_asignada($id_material = ""){
-        $ids_area = $this->getIdsDescendientes();
-        $ciclos = ceil(count($ids_area)/2000);
-        $cantidad = 0;
-        for($i = 0; $i<=$ciclos; $i++){
-            $ids = array_slice($ids_area, $i*2000, 2000);
-            if($id_material > 0){
-                $cantidad += DB::connection($this->connection)
-                ->table('Equipamiento.asignacion_items')
-                ->where('id_material', $id_material)
-                ->whereIn('id_area_destino', $ids)
-                ->sum('cantidad_asignada');
-            }else{
-                $cantidad += DB::connection($this->connection)
-                ->table('Equipamiento.asignacion_items')
-                ->whereIn('id_area_destino', $ids)
-                ->sum('cantidad_asignada');
+        if($this->cantidad_asignada == null){
+            $ids_area = $this->getIdsDescendientes();
+            $ciclos = ceil(count($ids_area)/2000);
+            $this->cantidad_asignada = 0;
+            for($i = 0; $i<=$ciclos; $i++){
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                if($id_material > 0){
+                    $this->cantidad_asignada += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_material', $id_material)
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+                }else{
+                    $this->cantidad_asignada += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+                }
             }
         }
-        return $cantidad;
+        return $this->cantidad_asignada;
     }
     public function cantidad_requerida($id_material = ""){
-        $ids_area = $this->getIdsDescendientes();
-        $ciclos = ceil(count($ids_area)/2000);
-        $cantidad = 0;
-        
-        for($i = 0; $i<=$ciclos; $i++){
-            $ids = array_slice($ids_area, $i*2000, 2000);
-            if($id_material > 0){
-                $cantidad += DB::connection($this->connection)
-                ->table('Equipamiento.materiales_requeridos_area')
-                ->where('id_material', $id_material)
-                ->whereIn('id_area', $ids)
-                ->sum('cantidad_requerida');
-            }else{
-                $cantidad += DB::connection($this->connection)
-                ->table('Equipamiento.materiales_requeridos_area')
-                ->whereIn('id_area', $ids)
-                ->sum('cantidad_requerida');
+        if($this->cantidad_requerida == null){
+            $ids_area = $this->getIdsDescendientes();
+            $ciclos = ceil(count($ids_area)/2000);
+            $this->cantidad_requerida = 0;
+
+            for($i = 0; $i<=$ciclos; $i++){
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                if($id_material > 0){
+                    $this->cantidad_requerida += DB::connection($this->connection)
+                    ->table('Equipamiento.materiales_requeridos_area')
+                    ->where('id_material', $id_material)
+                    ->whereIn('id_area', $ids)
+                    ->sum('cantidad_requerida');
+                }else{
+                    $this->cantidad_requerida += DB::connection($this->connection)
+                    ->table('Equipamiento.materiales_requeridos_area')
+                    ->whereIn('id_area', $ids)
+                    ->sum('cantidad_requerida');
+                }
+            }
+        }
+        return $this->cantidad_requerida;
+    }
+    public function cantidad_validada($id_material = ""){
+        if($this->cantidad_validada == null){
+            $ids_area = $this->getIdsDescendientes();
+            $ciclos = ceil(count($ids_area)/2000);
+            $this->cantidad_validada = 0;
+
+            for($i = 0; $i<=$ciclos; $i++){
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                if($id_material > 0){
+                    $this->cantidad_validada += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+                    ->where('id_material', $id_material)
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+                }else{
+                    $this->cantidad_validada += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+                }
             }
         }
         
-        
-        return $cantidad;
-    }
-    public function cantidad_validada($id_material = ""){
-        $ids_area = $this->getIdsDescendientes();
-        $ciclos = ceil(count($ids_area)/2000);
-        $cantidad = 0;
-        
-        for($i = 0; $i<=$ciclos; $i++){
-            $ids = array_slice($ids_area, $i*2000, 2000);
-            if($id_material > 0){
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->where('id_material', $id_material)
-            ->whereIn('id_area_destino', $ids)
-            ->sum('cantidad_asignada');
-        }else{
-            return DB::connection($this->connection)
-            ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->whereIn('id_area_destino', $ids)
-            ->sum('cantidad_asignada');
-        }
-        }
-        
-        
-        return $cantidad;
+        return $this->cantidad_validada;
     }
     
     public function cantidad_almacenada(){
-        return DB::connection($this->connection)
-            ->table('Equipamiento.inventarios')
-            ->where('id_area', $this->id)
-            ->sum('cantidad_existencia');
+        if($this->cantidad_almacenada == null){
+            $this->cantidad_almacenada = DB::connection($this->connection)
+                ->table('Equipamiento.inventarios')
+                ->where('id_area', $this->id)
+                ->sum('cantidad_existencia');
+        }
+        return $this->cantidad_almacenada;
     }
     
     public function area_padre(){
@@ -391,29 +406,34 @@ class Area extends Node
     }
     
     public function cantidad_areas_cerrables(){
-        //$this->arr_areas_hijas = [];
-        $this->getHijas($this);
-        $this->arr_areas_hijas[$this->id]["terminado"] = 1;
-        $id = [];
-        foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
-            if($area_hija->esCerrable() == 1){
-                $id[] = $area_hija->id;
+        
+        if($this->cantidad_areas_cerrables == null){
+            $this->getHijas($this);
+            $this->arr_areas_hijas[$this->id]["terminado"] = 1;
+            $id = [];
+            foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
+                if($area_hija->esCerrable() == 1){
+                    $id[] = $area_hija->id;
+                }
             }
+            $this->cantidad_areas_cerrables = count($id);
         }
-        return count($id);
+        return $this->cantidad_areas_cerrables;
     }
     
     public function cantidad_areas_cerradas(){
-        //$this->arr_areas_hijas = [];
-        $this->getHijas($this);
-        $this->arr_areas_hijas[$this->id]["terminado"] = 1;
-        $id = [];
-        foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
-            if($area_hija->cierre_partida){
-                $id[] = $area_hija->id;
+        if($this->cantidad_areas_cerradas == null){
+            $this->getHijas($this);
+            $this->arr_areas_hijas[$this->id]["terminado"] = 1;
+            $id = [];
+            foreach($this->arr_areas_hijas[$this->id]["areas"] as $area_hija){
+                if($area_hija->cierre_partida){
+                    $id[] = $area_hija->id;
+                }
             }
+            $this->cantidad_areas_cerradas = count($id);
         }
-        return count($id);
+        return $this->cantidad_areas_cerradas;
     }
     
     public function porcentaje_cierre(){
