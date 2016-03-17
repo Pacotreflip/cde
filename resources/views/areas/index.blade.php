@@ -51,7 +51,7 @@
             <td style="text-align: right; width: 230px">
                 @if($descendiente->cantidad_validada() > 0)
               <small class="text-muted">Estado Validación ({{$descendiente->cantidad_validada()}}/{{number_format($descendiente->cantidad_asignada(),2,".", ",")}}):</small>
-              @endif;
+              @endif
           </td>
             <td style="width: 150px; text-align: center" >
               @if($descendiente->cantidad_validada() > 0)
