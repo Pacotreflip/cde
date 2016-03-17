@@ -41,54 +41,48 @@ class Entregas {
     
     public function generarEntrega(array $data, Obra $obra){
         DB::connection('cadeco')->beginTransaction();
-        $cierre = $this->creaEntrega($data, $obra);
+        $entrega = $this->creaEntrega($data, $obra);
 
         foreach ($data['id_area'] as $id_area) {
-            $cierre_partida = new EntregaPartida();
-            $cierre_partida->id_cierre = $cierre->id;
-            $cierre_partida->id_area = $id_area;
-            $cierre_partida->save();
-            
-            $asignacion_item_validaciones = DB::connection('cadeco')
-            ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->where('id_area_destino', $id_area)
-            ->get();
-            
-            foreach($asignacion_item_validaciones as $asignacion_item_validacion){
-                $cierre_partida_asignacion = new EntregaPartidaAsignacion();
-                $cierre_partida_asignacion->id_cierre_partida = $cierre_partida->id;
-                $cierre_partida_asignacion->id_asignacion_item_validacion = $asignacion_item_validacion->id;
-                $cierre_partida_asignacion->save();
-            }
-            
-            if ($cierre_partida->cierre_partida_asignacion->count() === 0) {
+            $entrega_partida = new EntregaPartida();
+            $entrega_partida->id_entrega = $entrega->id;
+            $area =  Area::find($id_area);
+            if($area->cierre_partida){
+                $id_cierre_partida = $area->cierre_partida->id;
+            }else{
                 DB::connection('cadeco')->rollback();
-                throw new \Exception("Hubo un error al registrar el cierre de áreas..");
+                throw new \Exception("Hubo un error al registrar la entrega de áreas.");
             }
+            
+            
+            $entrega_partida->id_cierre_partida = $id_cierre_partida;
+            $entrega_partida->save();
+            
+            
             
         }
 
-        if ($cierre->partidas->count() === 0) {
+        if ($entrega->partidas->count() === 0) {
             DB::connection('cadeco')->rollback();
             throw new \Exception("Hubo un error al registrar el cierre de áreas.");
         }
 
-        $cierre->save();
+        $entrega_partida->save();
 
 
         DB::connection('cadeco')->commit();
     }
     
     private function creaEntrega($datos, $obra){
-        $cierre = new Entrega();
-        $cierre->obra()->associate($obra);
-        $cierre->id_usuario = Auth::user()->idusuario;
-        $cierre->observaciones = $datos["observaciones"];
-        $carbon = new \Carbon\Carbon();
-        $cierre->fecha_cierre = $carbon->now();
-        $cierre->save();
+        $entrega = new Entrega();
+        $entrega->obra()->associate($obra);
+        $entrega->id_usuario = Auth::user()->idusuario;
+        $entrega->fecha_entrega = $datos["fecha_entrega"];
+        $entrega->entrega = $datos["entrega"];
+        $entrega->recibe = $datos["recibe"];
+        $entrega->observaciones = $datos["observaciones"];
+        $entrega->save();
 
-        return $cierre;
+        return $entrega;
     }
 }
