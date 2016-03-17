@@ -215,7 +215,7 @@ class PDF extends Rotation {
             $this->SetFont('Arial', '', 6);
             $this->SetWidths(array(19.5));
             $this->encola = "observaciones";
-            $this->Row(array($this->compra->observaciones));
+            $this->Row(array(utf8_decode($this->compra->observaciones)));
         }
     }
         
