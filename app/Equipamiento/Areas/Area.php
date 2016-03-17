@@ -242,13 +242,11 @@ class Area extends Node
         return $id;
     }
     private function getHijas(Area $area){
-        
-        $this->arr_areas_hijas[] = $this;
+        $this->arr_areas_hijas[$this->id] = $this;
         $areas_hijas = $area->areas_hijas;
-       // dd($area, $areas_hijas);
         if($areas_hijas){
             foreach($areas_hijas as $area_hija){
-                $this->arr_areas_hijas[] = $area_hija;
+                $this->arr_areas_hijas[$area_hija->id] = $area_hija;
                 $this->getHijas($area_hija);
             }
         }
@@ -392,8 +390,7 @@ class Area extends Node
         $this->arr_areas_hijas = [];
         $this->getHijas($this);
         $id = [];
-        $areas_hijas_unique = array_unique($this->arr_areas_hijas);
-        foreach($areas_hijas_unique as $area_hija){
+        foreach($this->arr_areas_hijas as $area_hija){
             if($area_hija->esCerrable()){
                 $id[] = $area_hija->id;
             }
@@ -405,8 +402,7 @@ class Area extends Node
         $this->arr_areas_hijas = [];
         $this->getHijas($this);
         $id = [];
-        $areas_hijas_unique = array_unique($this->arr_areas_hijas);
-        foreach($areas_hijas_unique as $area_hija){
+        foreach($this->arr_areas_hijas as $area_hija){
             if($area_hija->cierre_partida){
                 $id[] = $area_hija->id;
             }
