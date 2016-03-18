@@ -5,16 +5,16 @@ use Ghidev\Fpdf\Rotation;
 class PDF extends Rotation {
     
     var $transferencia;
-    var $WeightTotal;
+    var $WidthTotal;
     var $txtTitleTam, $txtSubtitleTam, $txtSeccionTam, $txtContenidoTam, $txtFooterTam;
     var $encola = "";
     
     function __construct($p,$cm,$Letter, $transferencia) {
         
         parent::__construct($p,$cm,$Letter);
-        $this->SetAutoPageBreak(true,3);
+        $this->SetAutoPageBreak(true,4.5);
         $this->transferencia = $transferencia;
-        $this->WeightTotal = $this->GetPageWidth() - 2;
+        $this->WidthTotal = $this->GetPageWidth() - 2;
         $this->txtTitleTam = 18;
         $this->txtSubtitleTam = 13;
         $this->txtSeccionTam = 9;
@@ -25,6 +25,7 @@ class PDF extends Rotation {
     function header() {
         
         $this->titulos();
+        $this->logo();
         
         //Obtener Posiciones despues de los títulos
         $y_inicial = $this->getY();
@@ -42,7 +43,7 @@ class PDF extends Rotation {
         $alto = abs($y_final - $y_inicial);
         
         //Redondear Bordes Detalles Transferencia
-        $this->SetWidths(array(0.55 * $this->WeightTotal));
+        $this->SetWidths(array(0.55 * $this->WidthTotal));
         $this->SetRounds(array('1234'));
         $this->SetRadius(array(0.2));
         $this->SetFills(array('255,255,255'));
@@ -61,28 +62,24 @@ class PDF extends Rotation {
         
         //Obtener Y despues de la tabla
         $this->setY($y_final);
-        $this->Ln(1);
-        
-        //Título artículos Transferidos
-        $this->SetWidths(array($this->WeightTotal));
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(0.3));
-        $this->SetFills(array('0,0,0'));
-        $this->SetTextColors(array('255,255,255'));
-        $this->SetHeights(array(.7));
-        $this->SetStyles(array('DF'));
-        $this->SetAligns("C");
-        $this->SetFont('Arial', '', $this->txtSubtitleTam);
-        $this->Row(Array(utf8_decode('Artículos Transferidos')));
         $this->Ln(0.5);
         
-        
-        
         if($this->encola == "items"){
-            $this->SetWidths(array(0.035 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+            $this->SetWidths(array(0));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('1,1,1'));
+            $this->SetRounds(array('0'));
+            $this->SetRadius(array(0));
+            $this->SetHeights(array(0));
+            $this->Row(Array(''));
+            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+            $this->SetTextColors(array('255,255,255'));
+            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS TRANSFERIDOS'), 0, 1, 'C');
+            
+            $this->SetWidths(array(0.035 * $this->WidthTotal, 0.1 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);
             $this->SetStyles(array('DF','DF', 'DF', 'FD', 'DF', 'DF', 'DF'));
-            $this->SetWidths(array(0.035 * $this->WeightTotal, 0.085 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+            $this->SetWidths(array(0.035 * $this->WidthTotal, 0.085 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
             $this->SetRounds(array('1', '', '', '', '', '', '2'));
             $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0.2));
             $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
@@ -97,7 +94,9 @@ class PDF extends Rotation {
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
             $this->SetAligns(array('C', 'L', 'L', 'L', 'R', 'L', 'L'));
-        } else if ($this->encola == "observaciones") {
+        } 
+        else if ($this->encola == "observaciones") {
+            $this->Ln(0.5);
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
             $this->SetAligns(array('J'));
@@ -106,7 +105,7 @@ class PDF extends Rotation {
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.3));
             $this->SetFont('Arial', '', 6);
-            $this->SetWidths(array(19.5));           
+            $this->SetWidths(array($this->WidthTotal));           
         }
     }
     
@@ -114,29 +113,29 @@ class PDF extends Rotation {
         
         // Título
         $this->SetFont('Arial', 'B', $this->txtTitleTam);
-        $this->CellFitScale(0.6 * $this->WeightTotal, 1.5, utf8_decode('Transferencia de Artículos - # ' . $this->transferencia->numero_folio), 0, 1, 'L', 0);
-        $this->Line(1, $this->GetY() + 0.5, $this->WeightTotal + 1, $this->GetY() + 0.5);
-        $this->Ln(1);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Transferencia de Artículos - # ' . $this->transferencia->numero_folio), 0, 1, 'L', 0);
+        $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
+        $this->Ln(0.5);
         
         //Detalles de la Transferencia (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-        $this->Cell(0.55 * $this->WeightTotal,.7,utf8_decode('Detalle de la Transferencia'),0,1,'L');
+        $this->Cell(0.55 * $this->WidthTotal,.7,utf8_decode('Detalle de la Transferencia'),0,1,'L');
     }
     
     function detallesTransferencia(){
         
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('No. Folio:'), '', 0, 'L');
+        $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('No. Folio:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode('# ' . $this->transferencia->numero_folio), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode('# ' . $this->transferencia->numero_folio), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Fecha:'), '', 0, 'L');
+        $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Fecha:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->transferencia->fecha_transferencia->format('d-M-Y h:m')), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->transferencia->fecha_transferencia->format('d-M-Y h:m')), '', 1, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.15 * $this->WeightTotal, 0.5, utf8_decode('Creada Por:'), '', 0, 'LB');
+        $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Creada Por:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WeightTotal, 0.5, utf8_decode($this->transferencia->creado_por), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->transferencia->creado_por), '', 1, 'L');
     }
     
     function items(){
@@ -146,11 +145,22 @@ class PDF extends Rotation {
         if($numItems > 0){   
         
             $i = 1;
+            
+            $this->SetWidths(array(0));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('1,1,1'));
+            $this->SetRounds(array('0'));
+            $this->SetRadius(array(0));
+            $this->SetHeights(array(0));
+            $this->Row(Array(''));
+            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+            $this->SetTextColors(array('255,255,255'));
+            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS TRANSFERIDOS'), 0, 1, 'C');
                 
-            $this->SetWidths(array(0.035 * $this->WeightTotal, 0.1 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+            $this->SetWidths(array(0.035 * $this->WidthTotal, 0.1 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);
             $this->SetStyles(array('DF','DF', 'DF', 'FD', 'DF', 'DF', 'DF'));
-            $this->SetWidths(array(0.035 * $this->WeightTotal, 0.085 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+            $this->SetWidths(array(0.035 * $this->WidthTotal, 0.085 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
             $this->SetRounds(array('1', '', '', '', '', '', '2'));
             $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0.2));
             $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
@@ -161,7 +171,7 @@ class PDF extends Rotation {
 
             foreach($this->transferencia->items as $item){
                 $this->SetFont('Arial', '', 6);
-                $this->SetWidths(array(0.035 * $this->WeightTotal, 0.085 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+                $this->SetWidths(array(0.035 * $this->WidthTotal, 0.085 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
                 $this->encola="items";
                 $this->SetRounds(array('', '', '', '', '', '', ''));
                 $this->SetRadius(array(0, 0, 0, 0, 0, 0, 0));
@@ -175,12 +185,14 @@ class PDF extends Rotation {
                     $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0.2));
                 }
 
-                $this->SetWidths(array(0.035 * $this->WeightTotal, 0.085 * $this->WeightTotal,0.4 * $this->WeightTotal,0.09 * $this->WeightTotal,0.09 * $this->WeightTotal,0.15 * $this->WeightTotal,0.15 * $this->WeightTotal));
+                $this->SetWidths(array(0.035 * $this->WidthTotal, 0.085 * $this->WidthTotal,0.4 * $this->WidthTotal,0.09 * $this->WidthTotal,0.09 * $this->WidthTotal,0.15 * $this->WidthTotal,0.15 * $this->WidthTotal));
                 $this->encola = "items";
+//                for($cont = 0; $cont < 50; $cont ++){
                 $this->Row(array($i, utf8_decode($item->material->numero_parte), utf8_decode($item->material->descripcion), utf8_decode($item->material->unidad), number_format(utf8_decode($item->cantidad_transferida),0,'.',','), utf8_decode($this->OrigDest($item->origen)),utf8_decode($this->OrigDest($item->destino))));
-
+//                }
                 $i++;
             }
+            $this->encola = "";
         } else {
             $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
             $this->Ln(1);
@@ -199,9 +211,13 @@ class PDF extends Rotation {
     
     function observaciones(){
         
+        $this->encola = "";
+
         if($this->transferencia->observaciones){
-            $this->Ln(.5);
-            $this->SetWidths(array(19.5));
+            if($this->GetY() > $this->GetPageHeight() - 5){
+                $this->AddPage();
+            }
+            $this->SetWidths(array($this->WidthTotal));
             $this->SetRounds(array('12'));
             $this->SetRadius(array(0.2));
             $this->SetFills(array('180,180,180'));
@@ -218,10 +234,14 @@ class PDF extends Rotation {
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.35));
             $this->SetFont('Arial', '', 6);
-            $this->SetWidths(array(19.5));
+            $this->SetWidths(array($this->WidthTotal));
             $this->encola = "observaciones";
             $this->Row(array(utf8_decode($this->transferencia->observaciones)));    
         }
+    }
+    
+    function logo(){
+        $this->image(public_path('img/logo_hc.jpg'), $this->WidthTotal - 2, 0.5, 3, 1.5);       
     }
         
     function Footer() {
@@ -243,8 +263,9 @@ $pdf->SetMargins(1, 0.5, 1);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->items();
+$pdf->Ln(0.5);
 $pdf->observaciones();
-$pdf->Output('I', 'CDE - Transferencia - # '.$pdf->transferencia->numero_folio.'.pdf', 1);
+$pdf->Output('I', 'Transferencia_'.$pdf->transferencia->numero_folio.'.pdf', 1);
 exit; 
 
 ?>
