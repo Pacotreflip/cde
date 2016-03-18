@@ -387,12 +387,12 @@ class PDF extends Rotation {
         $this->SetY(-4);  
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
-        $this->SetX(0.75 * $this->WeightTotal + 1);
-        $this->Cell(0.25 * $this->WeightTotal, 0.4, utf8_decode('CIERRA'), 'TRLB', 1, 'C', 1);
-        $this->SetX(0.75 * $this->WeightTotal + 1);
-        $this->Cell(0.25 * $this->WeightTotal, 1.5, '', 'RLB', 1, 'C');
-        $this->SetX(0.75 * $this->WeightTotal + 1);
-        $this->Cell(0.25 * $this->WeightTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
+        $this->SetX(0.75 * $this->WidthTotal + 1);
+        $this->Cell(0.25 * $this->WidthTotal, 0.4, utf8_decode('CIERRA'), 'TRLB', 1, 'C', 1);
+        $this->SetX(0.75 * $this->WidthTotal + 1);
+        $this->Cell(0.25 * $this->WidthTotal, 1.5, '', 'RLB', 1, 'C');
+        $this->SetX(0.75 * $this->WidthTotal + 1);
+        $this->Cell(0.25 * $this->WidthTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
     }
         
     function logo(){
