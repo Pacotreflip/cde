@@ -247,6 +247,18 @@ class PDF extends Rotation {
             }
             $this->encola = "";
         } else {
+            $this->SetWidths(array(0));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('1,1,1'));
+            $this->SetRounds(array('0'));
+            $this->SetRadius(array(0));
+            $this->SetHeights(array(0));
+            $this->Row(Array(''));
+            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+            $this->SetTextColors(array('255,255,255'));
+            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS RECIBIDOS'), 0, 1, 'C');
+            
+            $this->SetFont('Arial', 'B', $this->txtContenidoTam);
             $this->CellFitScale($this->WidthTotal, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
             $this->Ln(1);  
         }
