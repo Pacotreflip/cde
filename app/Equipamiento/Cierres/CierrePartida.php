@@ -49,4 +49,13 @@ class CierrePartida extends Model
     public function entrega_partida(){
         return $this->hasOne(EntregaPartida::class, "id_cierre_partida");
     }
+    
+    public function cantidad_validada(){
+        $cierres_partidas_asignacion = $this->cierre_partida_asignacion;
+        $cantidad_validada = 0;
+        foreach($cierres_partidas_asignacion as $cierre_partida_asignacion){
+            $cantidad_validada+= $cierre_partida_asignacion->asignacion_item_validacion->item_asignacion->cantidad_asignada;
+        }
+        return($cantidad_validada);
+    }
 }

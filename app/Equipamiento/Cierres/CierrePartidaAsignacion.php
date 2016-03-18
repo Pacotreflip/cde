@@ -38,4 +38,7 @@ class CierrePartidaAsignacion extends Model
     public function cierre_partida(){
         return $this->belongsTo(CierrePartida::class, "id_cierre_partida");
     }
+    public function asignacion_item_validacion(){
+        return $this->belongsTo(AsignacionItemsValidados::class, "id_asignacion_item_validacion");
+    }
 }

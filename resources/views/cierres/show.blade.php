@@ -29,7 +29,7 @@
       <tr>
         <th>Clave</th>
         <th>Área</th>
-        <th>No. Artículos Validados</th>
+        <th>No. de Artículos</th>
       </tr>
     </thead>
     <tbody>
@@ -37,8 +37,7 @@
         <tr>
           <td>{{ $partida->area->clave }}</td>
           <td>{{ $partida->area->ruta }}</td>
-          <td>{{ $partida->area->cantidad_validada() }}</td>
-          
+          <td>{{ $partida->cantidad_validada() }}</td>
         </tr>
       @endforeach
     </tbody>
