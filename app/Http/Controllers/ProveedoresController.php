@@ -9,6 +9,8 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Proveedores\Tipo;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Http\Requests\CreateProveedorRequest;
+use Illuminate\Support\Facades\DB;
+use \Ghi\Equipamiento\Proveedores\Sucursal;
 
 class ProveedoresController extends Controller
 {
@@ -45,12 +47,17 @@ class ProveedoresController extends Controller
      */
     protected function buscar($busqueda)
     {
-        return Proveedor::soloProveedores()
+        return Proveedor::soloProveedores()->join('sucursales','sucursales.id_empresa', '=', 'empresas.id_empresa')
                 ->where(function ($query) use ($busqueda) {
-                    $query->where('razon_social', 'like', '%' . $busqueda . '%')
-                        ->orWhere('rfc', 'like', '%' . $busqueda . '%')
-                        ->orWhere('nombre_corto', 'like', '%' . $busqueda . '%')
-                        ->orWhere('nombre_contacto', 'like', '%' . $busqueda . '%')
+                    $query
+                        
+                        ->where('empresas.razon_social', 'like', '%' . $busqueda . '%')
+                        ->orWhere('empresas.rfc', 'like', '%' . $busqueda . '%')
+                        ->orWhere('empresas.nombre_corto', 'like', '%' . $busqueda . '%')
+                        ->orWhere('empresas.nombre_contacto', 'like', '%' . $busqueda . '%')
+                        ->orWhere('sucursales.contacto', 'like', '%' . $busqueda . '%')
+                        ->orWhere('sucursales.email', 'like', '%' . $busqueda . '%')
+                        ->orWhere('sucursales.telefono', 'like', '%' . $busqueda . '%')
                         ->orWhere('correo', 'like', '%' . $busqueda . '%');
                 })
                 ->orderBy('razon_social')
@@ -93,12 +100,20 @@ class ProveedoresController extends Controller
      */
     public function store(CreateProveedorRequest $request)
     {
+        DB::connection('cadeco')->beginTransaction();
         $proveedor = new Proveedor($request->all());
         $proveedor->tipo_empresa = new Tipo($request->get('tipo_empresa'));
         $proveedor->save();
+        $sucursal = new Sucursal();
+        $sucursal->descripcion = "MATRIZ";
+        $sucursal->contacto = $request->nombre_contacto;
+        $sucursal->email = $request->correo;
+        $sucursal->telefono = $request->telefono;
+        $sucursal->id_empresa = $proveedor->id_empresa;
+        $sucursal->save();
 
         Flash::success('El proveedor fue agregado.');
-
+        DB::connection('cadeco')->commit();
         return redirect()->route('proveedores.index');
     }
 

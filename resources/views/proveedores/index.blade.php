@@ -31,9 +31,15 @@
           <td>{{ $proveedor->nombre_corto}}</td>
           <td>{{ $proveedor->rfc }}</td>
           <td>{{ $proveedor->tipo_empresa->getDescripcion() }}</td>
-          <td>{{ $proveedor->nombre_contacto }}</td>
-          <td>{{ $proveedor->telefono }}</td>
-          <td>{{ $proveedor->correo }}</td>
+          @if(count($proveedor->sucursales)>0)
+          <td>{{ $proveedor->sucursales->first()->contacto }}</td>
+          <td>{{ $proveedor->sucursales->first()->telefono }}</td>
+          <td>{{ $proveedor->sucursales->first()->email }}</td>
+          @else
+          <td></td>
+          <td></td>
+          <td></td>
+          @endif
         </tr>
       @endforeach
     </tbody>

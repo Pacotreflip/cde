@@ -24,7 +24,7 @@ class Proveedor extends Model
     /**
      * @var array
      */
-    protected $fillable = ['razon_social', 'rfc', 'nombre_corto', 'nombre_contacto', 'correo', 'telefono'];
+    protected $fillable = ['razon_social', 'rfc', 'nombre_corto'];
 
     /**
      * @var bool
@@ -65,5 +65,9 @@ class Proveedor extends Model
         ];
 
         return $query->whereIn('tipo_empresa', $tipos);
+    }
+    
+    public function sucursales(){
+        return $this->hasMany(Sucursal::class, "id_empresa", "id_empresa");
     }
 }
