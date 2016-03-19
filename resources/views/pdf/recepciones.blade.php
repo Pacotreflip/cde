@@ -97,9 +97,9 @@ class PDF extends Rotation {
             $this->SetRadius(array(0));
             $this->SetHeights(array(0));
             $this->Row(Array(''));
-            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+            $this->SetFont('Arial', 'B', $this->txtSeccionTam);
             $this->SetTextColors(array('255,255,255'));
-            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS RECIBIDOS'), 0, 1, 'C');
+            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS RECIBIDOS'), 0, 1, 'L');
             
             $this->SetWidths(array(0.04  * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.36 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.07 * $this->WidthTotal, 0.33 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);
@@ -206,9 +206,9 @@ class PDF extends Rotation {
             $this->SetRadius(array(0));
             $this->SetHeights(array(0));
             $this->Row(Array(''));
-            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
+            $this->SetFont('Arial', 'B', $this->txtSeccionTam);
             $this->SetTextColors(array('255,255,255'));
-            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS RECIBIDOS'), 0, 1, 'C');
+            $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS RECIBIDOS'), 0, 1, 'L');
             
             $this->SetWidths(array(0.04  * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.36 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.07 * $this->WidthTotal, 0.33 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);

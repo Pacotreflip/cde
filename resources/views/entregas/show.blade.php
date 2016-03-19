@@ -8,7 +8,7 @@
     <div class="col-sm-6">
       <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
-            Detalles del Entrega
+            Detalles de la Entrega
         </div>
         <div class="panel-body">
           <strong>Fecha Entrega:</strong> {{ $entrega->fecha_entrega->format('Y-m-d h:m') }} 
@@ -25,7 +25,7 @@
   
   <hr>
 
-  <h3>Árticulos Entregados</h3>
+  <h3>Artículos Entregados</h3>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -64,4 +64,5 @@
       @endforeach
     </tbody>
   </table>
+@include('pdf/modal', ['modulo' => 'entregas', 'titulo' => 'Entrega de Áreas - # '.$entrega->numero_folio, 'ruta' => route('pdf.entregas', $entrega),])  
 @stop

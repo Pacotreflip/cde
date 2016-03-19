@@ -45,24 +45,21 @@ class PDF extends Rotation {
          
         $alto = abs($y_final - $y_inicial);
         
+        $this->RoundedRect($x_inicial, $y_inicial, 0.55 * $this->WidthTotal, $alto, 0.2);
+
         //Redondear Bordes Detalles Asignacion
-        $this->SetWidths(array(0.55 * $this->WidthTotal));
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(0.2));
-        $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetHeights(array($alto));
-        $this->SetStyles(array('DF'));
-        $this->SetAligns("L");
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->setY($y_inicial);
-        $this->Row(array(""));
-        
-        //Tabla Detalles de la Asignacion
-        $this->setY($y_inicial);
-        $this->setX($x_inicial);      
-        $this->detallesCierre();
-        
+//        $this->SetWidths(array(0.55 * $this->WidthTotal));
+//        $this->SetRounds(array('1234'));
+//        $this->SetRadius(array(0.2));
+//        $this->SetFills(array('255,255,255'));
+//        $this->SetTextColors(array('0,0,0'));
+//        $this->SetHeights(array($alto));
+//        $this->SetStyles(array('DF'));
+//        $this->SetAligns("L");
+//        $this->SetFont('Arial', '', $this->txtContenidoTam);
+//        $this->setY($y_inicial);
+//        $this->Row(array(""));
+                
         //Obtener Y despues de la tabla
         $this->setY($y_final);
         $this->Ln(0.5);
@@ -128,15 +125,15 @@ class PDF extends Rotation {
 //            $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
 //            $this->Row(Array(utf8_decode('Asignaciones')));
             $this->SetWidths(array(0));
-                $this->SetFills(array('255,255,255'));
-                $this->SetTextColors(array('1,1,1'));
-                $this->SetRounds(array('0'));
-                $this->SetRadius(array(0));
-                $this->SetHeights(array(0));
-                $this->Row(Array(''));
-                $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-                $this->SetTextColors(array('255,255,255'));
-                $this->CellFitScale(0.7 * $this->WidthTotal, 1, utf8_decode($this->areaEncola), 0, 0, 'L');
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('1,1,1'));
+            $this->SetRounds(array('0'));
+            $this->SetRadius(array(0));
+            $this->SetHeights(array(0));
+            $this->Row(Array(''));
+            $this->SetFont('Arial', 'B', $this->txtSeccionTam);
+            $this->SetTextColors(array('255,255,255'));
+            $this->CellFitScale(0.7 * $this->WidthTotal, 1, utf8_decode($this->areaEncola), 0, 0, 'L');
             
             $this->Ln(1);
             
@@ -274,7 +271,8 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Fecha de Cierre:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m A')), '', 1, 'L');$this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->cierre->fecha_cierre->format('Y-m-d h:m A')), '', 1, 'L');
+        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Total de Artículos:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->numArticulos), '', 1, 'L');  
