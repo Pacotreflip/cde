@@ -45,21 +45,21 @@
         <!-- Rfc Form Input -->
         <div class="form-group">
             {!! Form::label('nombre_contacto', 'Nombre de Contacto:') !!}
-            {!! Form::text('nombre_contacto', null, ['class' => 'form-control']) !!}
+            {!! Form::text('nombre_contacto', $proveedor->sucursales->first()->contacto, ['class' => 'form-control']) !!}
         </div>
     </div>
     <div class="col-xs-4">
         <!-- Rfc Form Input -->
         <div class="form-group">
             {!! Form::label('correo', 'Correo:') !!}
-            {!! Form::text('correo', null, ['class' => 'form-control', 'email']) !!}
+            {!! Form::text('correo', $proveedor->sucursales->first()->email, ['class' => 'form-control', 'email']) !!}
         </div>
     </div>
     <div class="col-xs-4">
         <!-- Tipo Form Input -->
         <div class="form-group">
             {!! Form::label('telefono', 'Teléfono:') !!}
-            {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
+            {!! Form::text('telefono', $proveedor->sucursales->first()->telefono, ['class' => 'form-control']) !!}
         </div>
     </div>
 </div>

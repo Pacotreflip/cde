@@ -146,6 +146,13 @@ class ProveedoresController extends Controller
         $proveedor->fill($request->all());
         $proveedor->tipo_empresa = new Tipo($request->get('tipo_empresa'));
         $proveedor->save();
+        
+        $sucursal = $proveedor->sucursales->first();
+        $sucursal->descripcion = "MATRIZ";
+        $sucursal->contacto = $request->nombre_contacto;
+        $sucursal->email = $request->correo;
+        $sucursal->telefono = $request->telefono;
+        $sucursal->save();
 
         Flash::success('Los cambios fueron guardados');
 
