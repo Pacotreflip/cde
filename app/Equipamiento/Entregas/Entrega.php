@@ -18,7 +18,7 @@ class Entrega extends Model
     /**
      * @var array
      */
-    protected $fillable = ['fecha_entrega', 'id_obra', 'id_usuario', 'observaciones'];
+    protected $fillable = ['fecha_entrega', 'id_obra', 'id_usuario', 'observaciones', 'concepto'];
     protected $dates = ['fecha_entrega'];
     
     /**

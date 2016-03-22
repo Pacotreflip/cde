@@ -9,6 +9,10 @@ use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
 use Ghi\Equipamiento\Cierres\Cierre;
 use Illuminate\Support\Facades\DB;
+use Ghi\Equipamiento\Entregas\Entregas;
+use Ghi\Equipamiento\Entregas\Entrega;
+
+
 
 
 
@@ -51,6 +55,12 @@ class PDFController extends Controller
         $asignacion = Asignacion::findOrFail($id);
         return view('pdf.asignaciones')->withAsignacion($asignacion);
     } 
+    
+    public function entregas($id)
+    {
+        $entrega = Entrega::findOrFail($id);
+        return view('pdf.entregas')->withEntrega($entrega);        
+    }
     
     
     public function articulosCierre($id){

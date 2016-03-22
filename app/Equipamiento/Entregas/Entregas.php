@@ -81,6 +81,7 @@ class Entregas {
         $entrega->entrega = $datos["entrega"];
         $entrega->recibe = $datos["recibe"];
         $entrega->observaciones = $datos["observaciones"];
+        $entrega->concepto = $datos["concepto"];
         $entrega->save();
 
         return $entrega;

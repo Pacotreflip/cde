@@ -205,4 +205,5 @@ Route::get('PDF/transferencias/{id}', 'PDFController@transferencias')->name('pdf
 Route::get('PDF/compras/{id}', 'PDFController@compras')->name('pdf.compras');
 Route::get('PDF/asignaciones/{id}', 'PDFController@asignaciones')->name('pdf.asignaciones');
 Route::get('PDF/cierres/{id}', 'PDFController@cierres')->name('pdf.cierres');
+Route::get('PDF/entregas/{id}', 'PDFController@entregas')->name('pdf.entregas');
 
