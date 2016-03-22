@@ -202,9 +202,9 @@ class PDF extends Rotation {
         $this->SetX(0.625 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
         $this->SetX(0.125 * $this->GetPageWidth());
-        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->entrega)), 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->entrega)), 'TRLB', 0, 'C', 1);
         $this->SetX(0.625 * $this->GetPageWidth());
-        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->recibe)), 'TRLB', 1, 'C', 1);
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->recibe)), 'TRLB', 1, 'C', 1);
     }
     
     function logo(){

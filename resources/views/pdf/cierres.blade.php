@@ -390,7 +390,7 @@ class PDF extends Rotation {
         $this->SetX(0.75 * $this->WidthTotal + 1);
         $this->Cell(0.25 * $this->WidthTotal, 1.5, '', 'RLB', 1, 'C');
         $this->SetX(0.75 * $this->WidthTotal + 1);
-        $this->Cell(0.25 * $this->WidthTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(0.25 * $this->WidthTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
     }
         
     function logo(){
