@@ -296,7 +296,7 @@ class PDF extends Rotation {
     }
     
     function logo(){
-        $this->image(public_path('img/logo_hc.jpg'), $this->WidthTotal - 2, 0.5, 3, 1.5);       
+        $this->image(public_path('img/logo_hc.png'), $this->WidthTotal - 2, 0.5, 3, 1.5);       
     } 
    
     function Footer() {

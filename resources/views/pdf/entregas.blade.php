@@ -25,20 +25,20 @@ class PDF extends Rotation {
     }
     
     function header() {
-        $this->titulos();
+        $this->encabezados();
         $this->logo();
         
         $y_inicial = $this->getY();
         $x_inicial = $this->getX();
         $this->setY($y_inicial);
         $this->setX($x_inicial);
-        $this->detallesEntrega();
-        $y_final = $this->getY();
+
+        $y_final = $this->entrega->concepto ? $this->concepto() : $this->gety();
         $this->setY($y_inicial);
-        $alto = abs($y_final - $y_inicial);
-        $this->RoundedRect($x_inicial, $y_inicial, 0.5 * $this->WidthTotal, $alto, 0.2);
+//        $alto = abs($y_final - $y_inicial);
+//        $this->entrega->concepto ? $this->Rect($x_inicial, $y_inicial, 0.5 * $this->WidthTotal, $alto) : 0;
         $this->setY($y_final);
-        $this->Ln(0.5);       
+        $this->Ln(0.5);
         
         if($this->encola == "items") {
             $this->SetWidths(array(0));
@@ -87,7 +87,7 @@ class PDF extends Rotation {
         }
     }
     
-    function titulos (){
+    function encabezados (){
         
         // Título
         $this->SetFont('Arial', 'B', $this->txtTitleTam);
@@ -95,38 +95,43 @@ class PDF extends Rotation {
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
         
-        //Detalles de la Asignación (Titulo)
-        $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-        $this->Cell(0.55 * $this->WidthTotal, 0.7, utf8_decode('Detalles de la Entrega'), 0, 1, 'L');
+        //Concepto (Titulo)
+        if($this->entrega->concepto) {
+            $this->SetFont('Arial', 'B', $this->txtSeccionTam);
+            $this->Cell(0.5 * $this->WidthTotal, 0.7, utf8_decode('Concépto'), 0, 0, 'L');
+        }
+        
+        $this->SetFont('Arial', '', $this->txtFooterTam);
+        $this->Cell($this->entrega->concepto ? 0.5 * $this->WidthTotal : $this->WidthTotal, 0.7, utf8_decode('Fecha: ' . $this->entrega->fecha_entrega->format('d/m/Y')), 0, 1, 'R'); 
+
     }
     
-    function detallesEntrega() {
+    function concepto() {
         
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Fecha de Entrega:'), '', 0, 'L');
+//        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+//        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Fecha de Entrega:'), '', 0, 'L');
+//        $this->SetFont('Arial', '', $this->txtContenidoTam);
+//        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->fecha_entrega->format('Y-m-d h:m A')), '', 1, 'L');
+//        
+//        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+//        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Entrega:'), '', 0, 'LB');
+//        $this->SetFont('Arial', '', $this->txtContenidoTam);
+//        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->entrega), '', 1, 'L');
+//        
+//        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+//        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Recibe:'), '', 0, 'LB');
+//        $this->SetFont('Arial', '', $this->txtContenidoTam);
+//        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->recibe), '', 1, 'L');
+//                
+//        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+//        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Registro Entrega:'), '', 0, 'LB');
+//        $this->SetFont('Arial', '', $this->txtContenidoTam);
+//        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->usuario->present()->nombreCompleto), '', 1, 'L');
+//  
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->fecha_entrega->format('Y-m-d h:m A')), '', 1, 'L');
+        $this->Write(0.4, utf8_decode($this->entrega->concepto));
         
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Entrega:'), '', 0, 'LB');
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->entrega), '', 1, 'L');
-        
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Recibe:'), '', 0, 'LB');
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->recibe), '', 1, 'L');
-        
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Concepto:'), '', 0, 'LB');
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->concepto), '', 1, 'L');
-        
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.2 * $this->WidthTotal, 0.5, utf8_decode('Persona que Registro Entrega:'), '', 0, 'LB');
-        $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->entrega->usuario->present()->nombreCompleto), '', 1, 'L');
-  
+        return $this->GetY() + 0.4;
     }
     
     function items() {        
@@ -208,7 +213,7 @@ class PDF extends Rotation {
     }
     
     function logo(){
-        $this->image(public_path('img/logo_hc.jpg'), $this->WidthTotal - 2, 0.5, 3, 1.5);       
+        $this->image(public_path('img/logo_hc.png'), $this->WidthTotal - 2, 0.5, 3, 1.5);       
     }
     
     function observaciones() {
@@ -240,20 +245,21 @@ class PDF extends Rotation {
             $this->Row(array(utf8_decode($this->entrega->observaciones)));       
         }  
     } 
-    
+        
     function Footer() {
+        
         $this->firma();
-        $this->SetFont('Arial', 'B', $this->txtFooterTam);
-        $this->SetY($this->GetPageHeight() - 1);
+        
+        $this->SetY(-1.25);
         $this->SetFont('Arial', '', $this->txtFooterTam);
-        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta: ' . date('Y-m-d g:i a')), 0, 0, 'L');
+        $this->SetY(-1);
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
-        $this->Cell(6.5, .4, '', 0, 0, 'C');
-        $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-        $this->SetY($this->GetPageHeight() - 1.3);
-        $this->SetFont('Arial', 'B', $this->txtFooterTam);
-        $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
-    }
+        $this->Cell(0.5 * $this->WidthTotal, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
+        $this->Cell(0.5 * $this->WidthTotal, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->SetY(- 1.25);
+        $this->SetFont('Arial', '', $this->txtFooterTam);  
+        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta: ' . date('Y-m-d g:i a') . '    Registró: ' . $this->entrega->usuario->present()->nombreCompleto), 0, 0, 'L');
+    }      
 }
 
 $pdf = new PDF('p', 'cm', 'Letter', $entrega);
