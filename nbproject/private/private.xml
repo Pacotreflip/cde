@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/www/control-equipamiento/.env</file>
-            <file>file:/E:/www/control-equipamiento/config/app.php</file>
-            <file>file:/E:/www/control-equipamiento/config/cache.php</file>
-            <file>file:/E:/www/control-equipamiento/resources/views/partials/nav-app.blade.php</file>
-            <file>file:/E:/www/control-equipamiento/config/auth.php</file>
-            <file>file:/E:/www/control-equipamiento/app/Equipamiento/Autenticacion/User.php</file>
-            <file>file:/E:/www/control-equipamiento/config/database.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/config/database.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/routes.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/pages/obras.blade.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Controllers/PagesController.php</file>
         </group>
     </open-files>
 </project-private>
