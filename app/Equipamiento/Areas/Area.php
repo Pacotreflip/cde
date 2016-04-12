@@ -22,7 +22,7 @@ class Area extends Node
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'clave', 'descripcion'];
+    protected $fillable = ['nombre', 'clave', 'descripcion', 'id_obra'];
 
     /**
      * Obra relacionada con esta area.
