@@ -4,7 +4,7 @@ namespace Ghi\Http\Requests;
 
 use Ghi\Http\Requests\Request;
 
-class CreateAreaRequest extends Request
+class UpdateAreaRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,17 +25,15 @@ class CreateAreaRequest extends Request
     {
         return [
             'nombre' => 'required',
-            'cantidad' => 'integer|min:1',
-            'rango_inicial' => 'integer|min:1',
             'tipo_id' => 'integer',
-            'almacen_id'=>'unique:cadeco.Equipamiento.areas,id_almacen'
+            'almacen_id'=>'unique:cadeco.Equipamiento.areas,id_almacen,'. $this->area_id
         ];
     }
     
     public function messages()
     {
         $messages = [
-            'almacen_id.unique' => 'Un almacén del módulo de órdenes de compra del SAO sólo puede estar relacionado a una ubicación del módulo de equipamiento.'
+            'almacen_id.unique' => 'Un almacén del módulo de ordebes de compra del SAO sólo puede estar relacionado a una ubicación del módulo de equipamiento.'
         ];
 
         return $messages;

@@ -55,6 +55,11 @@ class Area extends Node
     {
         return $this->belongsTo(AreaTipo::class, 'tipo_id');
     }
+    
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
+    }
 
     /**
      * Inventarios relacionados con esta area.

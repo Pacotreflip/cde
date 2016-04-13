@@ -29,6 +29,12 @@ class Areas extends BaseRepository
         return Area::where('id_obra', $this->context->getId())
             ->defaultOrder()->withDepth()->get();
     }
+    
+    public function getAlmacenesAll()
+    {
+        return Almacen::where('id_obra', $this->context->getId())
+            ->get();
+    }
 
     /**
      * Obtiene las areas que son raiz
@@ -65,6 +71,18 @@ class Areas extends BaseRepository
         $lista = [null => 'Inicio'];
         foreach ($areas as $area) {
             $lista[$area->id] = str_repeat('- ', $area->depth).' '.$area->nombre;
+        }
+
+        return $lista;
+    }
+    
+    public function getListaAlmacenes()
+    {
+        $almacenes = $this->getAlmacenesAll();
+        $lista["-1"] = "NO RELACIONAR";
+        $lista["0"] = ">>>>>CREAR NUEVO ALMACÉN EN SAO<<<<<";
+        foreach ($almacenes as $almacen) {
+            $lista[$almacen->id_almacen] = $almacen->descripcion;
         }
 
         return $lista;

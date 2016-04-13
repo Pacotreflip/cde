@@ -4,12 +4,17 @@
     <div class="form-group">
       {!! Form::label('nombre', 'Nombre:') !!}
       {!! Form::text('nombre', null, ['class' => 'form-control']) !!}
+      <input type="hidden" name="area_id" id="area_id" value="{{$area->id}}">
     </div>
 
     <!-- Clave Form Input -->
     <div class="form-group">
       {!! Form::label('clave', 'Clave:') !!}
       {!! Form::text('clave', null, ['class' => 'form-control']) !!}
+    </div>
+    <div class="form-group">
+      {!! Form::label('almacen_id', 'Relacionar con almacén en SAO') !!}
+      {!! Form::select('almacen_id', $almacenes, $area->id_almacen, ['class' => 'form-control']) !!}
     </div>
   </div>
   <div class="col-sm-6">
@@ -58,6 +63,7 @@
 </div>
 @endif
 @else
+@include('partials.errors')
 <div class="form-group">
   {!! Form::submit('Guardar Cambios', ['class' => 'btn btn-primary']) !!}
 </div>

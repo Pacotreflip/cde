@@ -16,6 +16,9 @@
       @foreach($descendientes as $descendiente)
         <tr>
           <td>
+              @if(count($descendiente->almacen) == 1)
+              <span class="glyphicon glyphicon-home" style="padding: 5px" title="Relacionado con almacén en SAO ({{$descendiente->almacen->descripcion}})" data-toggle="tooltip" ></span>
+              @endif
               @if(count($descendiente->areas_hijas)>0)
             <a href="{{ route('areas.index', ['area='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
             @else
@@ -169,4 +172,11 @@
   @if($area and count($areas_tipo) > 0)
     @include('areas.partials.resumen')
   @endif
+@stop
+@section('scripts')
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 @stop
