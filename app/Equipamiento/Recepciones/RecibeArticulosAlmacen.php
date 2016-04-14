@@ -15,6 +15,10 @@ class RecibeArticulosAlmacen
     protected $data;
 
     protected $obra;
+    
+    protected $transacciones = null;
+    
+    protected $preparacion_transferencias = null;
 
     /**
      * @param array $data
@@ -105,60 +109,217 @@ class RecibeArticulosAlmacen
     protected function preparaDatosTransacciones(){
         $items_a_procesar = $this->data["materiales"];
         $items = "";
+        $this->transacciones["entrada"]["datos"] = [
+            "id_antecedente"=>$this->data["orden_compra"],
+            "id_empresa"=>$this->getEmpresaOC($this->data["orden_compra"]),
+            "id_sucursal"=>$this->getSucursalOC($this->data["orden_compra"]),
+            "id_moneda"=>$this->getMonedaOC($this->data["orden_compra"]),
+            "fecha"=>$this->data["fecha_recepcion"],
+            "id_obra"=>$this->obra->id_obra,
+            "observaciones"=>$this->data["observaciones"],
+            "referencia"=>$this->data["numero_remision_factura"],
+        ]; 
         foreach($items_a_procesar as $item_a_procesar){
             $cantidad_procesar = $this->acumuladoCantidadRecibir($item_a_procesar);
             $cantidad_disponible_entrada = $this->getCantidadDisponibleEntrada($item_a_procesar);
             $existencia_almacen = $this->getExistenciasAlmacen($item_a_procesar);
-            //$datos_entrada = $this->getPartidasDisponiblesEntradaSAO($item_a_procesar["id_item"]);
             if(($cantidad_procesar-($cantidad_disponible_entrada + $existencia_almacen))>0.01){
                throw new \Exception("No es posible recibir la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en el SAO: Disponible Entrada: {$cantidad_disponible_entrada}; Disponible Transferencia: {$existencia_almacen}");
             }
-            //dd($this->obra->id_obra, $this->data,$cantidad_disponible_entrada, $existencia_almacen);
-            
             
             while($cantidad_procesar > 0){
-                if($cantidad_procesar <= $datos_entrada["cantidad_pendiente"]){
-                
-                }else{
-
+                $datos_partida_entrada_sao = $this->getPartidasDisponiblesEntradaSAO($item_a_procesar["id_item"]);
+                if($cantidad_procesar <= $cantidad_disponible_entrada){
+                    foreach($item_a_procesar["destinos"] as $destinos){
+                        $this->transacciones["entrada"]["items"][] = [
+                            "id_antecedente"=>$this->data["orden_compra"],
+                            "item_antecedente"=>$datos_partida_entrada_sao["id_item"],
+                            "id_material"=>$datos_partida_entrada_sao["id_material"],
+                            "unidad"=>$datos_partida_entrada_sao["unidad"],
+                            "numero"=>1,
+                            "cantidad"=>$destinos["cantidad"],
+                            "cantidad_material"=>$datos_partida_entrada_sao["cantidad_pendiente"],
+                            "saldo"=>$destinos["cantidad"] * $datos_partida_entrada_sao["precio_unitario"],
+                            "precio_unitario"=> $datos_partida_entrada_sao["precio_unitario"],
+                            "anticipo"=>$datos_partida_entrada_sao["anticipo"],
+                            "cantidad_original"=>$destinos["cantidad"],
+                            "estado"=>0,
+                            "importe"=>$destinos["cantidad"] * $datos_partida_entrada_sao["precio_unitario"],
+                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                        ];
+                        $cantidad_procesar = $cantidad_procesar - $destinos["cantidad"];
+                        $cantidad_disponible_entrada = $cantidad_disponible_entrada - $destinos["cantidad"];
+                    }
+                }else if($cantidad_procesar > $cantidad_disponible_entrada && $cantidad_disponible_entrada > 0){
+                    foreach($item_a_procesar["destinos"] as $destinos){
+                        $this->transacciones["entrada"]["items"][] = [
+                            "id_antecedente"=>$this->data["orden_compra"],
+                            "item_antecedente"=>$datos_partida_entrada_sao["id_item"],
+                            "id_material"=>$datos_partida_entrada_sao["id_material"],
+                            "unidad"=>$datos_partida_entrada_sao["unidad"],
+                            "numero"=>1,
+                            "cantidad"=>$destinos["cantidad"],
+                            "cantidad_material"=>$datos_partida_entrada_sao["cantidad_pendiente"],
+                            "saldo"=>$destinos["cantidad"] * $datos_partida_entrada_sao["precio_unitario"],
+                            "precio_unitario"=> $datos_partida_entrada_sao["precio_unitario"],
+                            "anticipo"=>$datos_partida_entrada_sao["anticipo"],
+                            "cantidad_original"=>$destinos["cantidad"],
+                            "estado"=>0,
+                            "importe"=>$destinos["cantidad"] * $datos_partida_entrada_sao["precio_unitario"],
+                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                        ];
+                        $cantidad_procesar = $cantidad_procesar - $destinos["cantidad"];
+                        $cantidad_disponible_entrada = $cantidad_disponible_entrada - $destinos["cantidad"];
+                        if($cantidad_procesar > 0 && $cantidad_disponible_entrada == 0){
+                            $existencias_por_almacen = $this->getExistenciasXAlmacen($item_a_procesar);
+                            foreach($existencias_por_almacen as $existencia_por_almacen){
+                                if($cantidad_procesar<= $existencia_por_almacen["saldo"]){
+                                    $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["id_almacen"] = $existencia_por_almacen["id_almacen"];
+                                    $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["cantidad"] = $cantidad_procesar;
+                                    $cantidad_procesar = 0;
+                                }else{
+                                    $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["id_almacen"] = $existencia_por_almacen["id_almacen"];
+                                    $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["cantidad"] = $existencia_por_almacen["cantidad"];
+                                    $cantidad_procesar = $cantidad_procesar - $existencia_por_almacen["cantidad"];
+                                }
+                                
+                            }
+                        }
+                    }
+                    
+                }else if($cantidad_procesar > $cantidad_disponible_entrada && !($cantidad_disponible_entrada > 0)){
+                    foreach($item_a_procesar["destinos"] as $destinos){
+                        $existencias_por_almacen = $this->getExistenciasXAlmacen($item_a_procesar);
+                        foreach($existencias_por_almacen as $existencia_por_almacen){
+                            if($cantidad_procesar<= $existencia_por_almacen["saldo"]){
+                                $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["id_almacen"] = $existencia_por_almacen["id_almacen"];
+                                $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["cantidad"] = $cantidad_procesar;
+                                $cantidad_procesar = 0;
+                            }else{
+                                $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["id_almacen"] = $existencia_por_almacen["id_almacen"];
+                                $arreglo_para_transferencias[$existencia_por_almacen["id_almacen"]]["cantidad"] = $existencia_por_almacen["cantidad"];
+                                $cantidad_procesar = $cantidad_procesar - $existencia_por_almacen["cantidad"];
+                            }
+                        }
+                    }
                 }
             }
             
         }
-        
-        //dd($partidas_entrada_sao);
-        #obtener cantidad pendiente del material en esa oc
-        
+        foreach($arreglo_para_transferencias as $arreglo_para_transferencia){
+            $this->transacciones["transferencia"]["datos"] = [
+                "id_antecedente"=>$this->data["orden_compra"],
+                "id_empresa"=>$this->getEmpresaOC($this->data["orden_compra"]),
+                "id_sucursal"=>$this->getSucursalOC($this->data["orden_compra"]),
+                "id_moneda"=>$this->getMonedaOC($this->data["orden_compra"]),
+                "fecha"=>$this->data["fecha_recepcion"],
+                "id_obra"=>$this->obra->id_obra,
+                "observaciones"=>$this->data["observaciones"],
+                "referencia"=>$this->data["numero_remision_factura"],
+            ]; 
+        } 
         return $datos;
+    }
+    protected function getIdAlmacenSAODeArea($id_area){
+        $area = Area::findOrFail($id_area);
+        $almacen = $area->almacen;
+        if($almacen){
+            $id_almacen = $almacen->id_almacen;
+        }else{
+            $nombre_almacen = strtoupper(substr(str_replace(" / ", " / ", $area->area_padre->ruta),0,(255-(strlen($area->nombre)))) . " / " .$area->nombre);
+            $almacen = new Almacen([
+                "descripcion"=>$nombre_almacen,
+                "tipo_almacen"=>"0",
+            ]);
+            $almacen->obra()->associate($this->obra);
+            $almacen->save();
+            $area->almacen()->associate($almacen);
+            $id_almacen = $almacen->id_almacen;
+        }
+        return $id_almacen;
+    }
+    protected function getPartidasTransferencia($id_item_oc){
+        
+    }
+    protected function getMonedaOC($id_oc){
+        $resultado = DB::connection("cadeco")->select('
+        SELECT
+            id_moneda
+        FROM
+            transacciones
+        WHERE
+            id_transaccion = '.$id_oc.' 
+        ');
+        return $resultado[0]->id_moneda;
+    }
+    protected function getEmpresaOC($id_oc){
+        $resultado = DB::connection("cadeco")->select('
+        SELECT
+            id_empresa
+        FROM
+            transacciones
+        WHERE
+            id_transaccion = '.$id_oc.' 
+        ');
+        return $resultado[0]->id_empresa;
+    }
+    protected function getSucursalOC($id_oc){
+        $resultado = DB::connection("cadeco")->select('
+        SELECT
+            id_sucursal
+        FROM
+            transacciones
+        WHERE
+            id_transaccion = '.$id_oc.' 
+        ');
+        return $resultado[0]->id_sucursal;
     }
     protected function getCantidadDisponibleEntrada($item_procesar){
          $resultado = DB::connection("cadeco")->select('
         SELECT
             c.[cantidad] - c.[surtida] AS cantidad_pendiente
-            
         FROM
             ItemsComprados as c join items as i on(i.id_item = c.id_item)
         WHERE
             i.id_item = '.$item_procesar["id_item"].' 
-        
-        
         ');
         return $resultado[0]->cantidad_pendiente;
     }
     protected function getExistenciasAlmacen($item_procesar){
-         $resultado = DB::connection("cadeco")->select('
-        SELECT
-              sum(inventarios.saldo) as existencias
-        FROM
-            inventarios join items  on(items.id_material = inventarios.id_material)
-            join almacenes on(almacenes.id_almacen = inventarios.id_almacen)
-        WHERE
-            almacenes.id_obra = '.$this->obra->id_obra.' AND
-            items.id_item = '.$item_procesar["id_item"].' 
-        
+        $resultado = DB::connection("cadeco")->select('
+            SELECT
+                  sum(inventarios.saldo) as existencias
+            FROM
+                inventarios join items  on(items.id_material = inventarios.id_material)
+                join almacenes on(almacenes.id_almacen = inventarios.id_almacen)
+            WHERE
+                almacenes.id_obra = '.$this->obra->id_obra.' AND
+                items.id_item = '.$item_procesar["id_item"].' 
         ');
         return $resultado[0]->existencias;
     }
+    
+    protected function getExistenciasXAlmacen($item_procesar){
+        $resultado = DB::connection("cadeco")->select('
+            SELECT
+                inventario.id_lote as id_lote,
+                inventarios.saldo as existencias
+            FROM
+                inventarios join items  on(items.id_material = inventarios.id_material)
+                join almacenes on(almacenes.id_almacen = inventarios.id_almacen)
+            WHERE
+                almacenes.id_obra = '.$this->obra->id_obra.' AND
+                items.id_item = '.$item_procesar["id_item"].' AND
+                inventario.saldo > 0
+        ');
+        $existencias = null;
+        foreach($resultado as $row){
+            $existencias[$row->id_lote]["id_lote"] = $row->id_lote;
+            $existencias[$row->id_lote]["cantidad"] = $row->existencias;
+        }
+        return $existencias;
+    }
+    
     protected function getPartidasDisponilesTransferenciaSAO($item_procesar){
         
     }
