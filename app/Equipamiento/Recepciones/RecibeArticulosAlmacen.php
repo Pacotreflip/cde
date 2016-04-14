@@ -111,10 +111,7 @@ class RecibeArticulosAlmacen
             $existencia_almacen = $this->getExistenciasAlmacen($item_a_procesar);
             //$datos_entrada = $this->getPartidasDisponiblesEntradaSAO($item_a_procesar["id_item"]);
             if(($cantidad_procesar-($cantidad_disponible_entrada + $existencia_almacen))>0.01){
-                throw new \Exception("No es posible recibir la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en el SAO:"
-                . "
-                -Disponible Entrada: {$cantidad_disponible_entrada}
-                -Disponible Transferencia: {$existencia_almacen}");
+               throw new \Exception("No es posible recibir la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en el SAO: Disponible Entrada: {$cantidad_disponible_entrada}; Disponible Transferencia: {$existencia_almacen}");
             }
             //dd($this->obra->id_obra, $this->data,$cantidad_disponible_entrada, $existencia_almacen);
             
