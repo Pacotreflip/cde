@@ -239,6 +239,17 @@ class Area extends Node
 
         return $ruta;
     }
+    public function soloRuta($separator = '/')
+    {
+        $ruta = '';
+
+        foreach ($this->getAncestors() as $area) {
+            $ruta .= $area->nombre.$separator;
+        }
+
+
+        return $ruta;
+    }
     public function materialesRequeridos(){
         return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
