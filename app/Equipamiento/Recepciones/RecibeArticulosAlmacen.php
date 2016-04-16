@@ -48,11 +48,9 @@ class RecibeArticulosAlmacen
         try {
             DB::connection('cadeco')->beginTransaction();
             $proceso_sao = $this->procesoSAO();
-            dd($proceso_sao);
+            //dd($proceso_sao);
             $recepcion = $this->creaRecepcion();
-            foreach($proceso_sao as $transaccion){
-                
-            }
+            
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
                 $itemOrdenCompra = Item::findOrFail($item['id_item']);
@@ -73,6 +71,19 @@ class RecibeArticulosAlmacen
             }
 
             $recepcion->save();
+            
+            foreach($proceso_sao as $transaccion){
+                DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones')->insert(
+                    ['id_recepcion' => $recepcion->id, 'id_transaccion' => $transaccion->id_transaccion]
+                );
+            }
+            foreach($recepcion->items as $item){
+                foreach($this->items_ids[$item->id_material] as $k=>$v){
+                    DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones_items')->insert(
+                        ['id_item_recepcion' => $item->id, 'id_item_transaccion' => $v]
+                    );
+                }
+            }
             
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -113,6 +124,11 @@ class RecibeArticulosAlmacen
             $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
         }
         //dd($transacciones);
+        foreach ($transacciones as $transaccion){
+            foreach($transaccion->items as $item){
+                $this->items_ids[$item->id_material][] = $item->id_item;
+            }
+        }
         return $transacciones;
     }
     protected function preparaDatosTransacciones(){
