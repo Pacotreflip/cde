@@ -16,11 +16,9 @@ class TransferenciaAlmacen extends Model
     protected $fillable = [
         'tipo_transaccion',
         'fecha',
-        'id_empresa',
-        'id_sucursal',
-        'id_moneda',
-        'observaciones',
+        'id_almacen',
         'referencia',
+        'observaciones',
     ];
     
     public static function boot()

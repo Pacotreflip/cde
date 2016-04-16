@@ -20,6 +20,15 @@ class TransferenciaAlmacenItem extends Model
      * @var string
      */
     protected $primaryKey = 'id_item';
+    
+    protected $fillable = [
+        'id_material',
+        'unidad',
+        'cantidad',
+        'id_almacen',
+    ];
+    
+    public $timestamps = false;
 
     /**
      * @var array

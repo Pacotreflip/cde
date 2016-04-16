@@ -40,11 +40,12 @@ class EntradaAlmacenItem extends Model
         'saldo',
         'precio_unitario',
         'anticipo',
-        'cantidad_original',
+        'cantidad_original1',
         'estado',
         'importe',
+        'id_almacen',
     ];
-    
+    public $timestamps = false;
     public function entrada_almacen()
     {
         return $this->belongsTo(EntradaAlmacen::class, 'id_transaccion', 'id_transaccion');

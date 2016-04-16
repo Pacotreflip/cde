@@ -21,6 +21,10 @@ class RecibeArticulosAlmacen
     
     protected $preparacion_transferencias = null;
     
+    protected $preparacion_entrada;
+    
+    protected $items_ids = null;
+    
     
 
     /**
@@ -44,7 +48,7 @@ class RecibeArticulosAlmacen
         try {
             DB::connection('cadeco')->beginTransaction();
             $proceso_sao = $this->procesoSAO();
-            
+            dd($proceso_sao);
             $recepcion = $this->creaRecepcion();
             foreach($proceso_sao as $transaccion){
                 
@@ -99,18 +103,19 @@ class RecibeArticulosAlmacen
     
     protected function procesoSAO(){
         $this->preparaDatosTransacciones();
-        dd($this->data,$this->transacciones);
+        //dd($this->data,$this->transacciones);
         
-        foreach($datos_transacciones["entradas_almacen"] as $datos_entrada){
+        foreach($this->transacciones["entrada"] as $datos_entrada){
             $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);
         }
-        foreach($datos_transacciones["transferencias_almacen"] as $datos_transferencia){
+       
+        foreach($this->transacciones["transferencias"] as $datos_transferencia){
             $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
         }
+        //dd($transacciones);
         return $transacciones;
     }
     protected function preparaDatosTransacciones(){
-        $no_transferencia = 0;
         $items_a_procesar = $this->data["materiales"];
         
         foreach($items_a_procesar as $item_a_procesar){
@@ -121,13 +126,12 @@ class RecibeArticulosAlmacen
             if(($this->cantidad_procesar-($this->cantidad_disponible_entrada + $this->existencia_almacen))>0.01){
                throw new \Exception("No es posible recibir la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en el SAO: Disponible Entrada: {$this->cantidad_disponible_entrada}; Disponible Transferencia: {$this->existencia_almacen}");
             }
-            //dd($this->cantidad_procesar,$this->cantidad_disponible_entrada,$this->existencia_almacen );
             while($this->cantidad_procesar > 0){
                 $datos_partida_entrada_sao = $this->getPartidasDisponiblesEntradaSAO($item_a_procesar["id_item"]);
                 if($this->cantidad_procesar <= $this->cantidad_disponible_entrada){
                     foreach($item_a_procesar["destinos"] as $destinos){
                         $this->destino_cantidad = $destinos["cantidad"];
-                        $this->transacciones["entrada"]["items"][] = [
+                        $this->preparacion_entrada["items"][] = [
                             "id_antecedente"=>$this->data["orden_compra"],
                             "item_antecedente"=>$datos_partida_entrada_sao[0]->id_item,
                             "id_material"=>$datos_partida_entrada_sao[0]->id_material,
@@ -138,7 +142,7 @@ class RecibeArticulosAlmacen
                             "saldo"=>$destinos["cantidad"] * $datos_partida_entrada_sao[0]->precio_unitario,
                             "precio_unitario"=> $datos_partida_entrada_sao[0]->precio_unitario,
                             "anticipo"=>$datos_partida_entrada_sao[0]->anticipo,
-                            "cantidad_original"=>$this->destino_cantidad,
+                            "cantidad_original1"=>$this->destino_cantidad,
                             "estado"=>0,
                             "importe"=>$destinos["cantidad"] * $datos_partida_entrada_sao[0]->precio_unitario,
                             "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
@@ -151,15 +155,11 @@ class RecibeArticulosAlmacen
                 }else if($this->cantidad_procesar > $this->cantidad_disponible_entrada && $this->cantidad_disponible_entrada > 0){
                     $iides = 0;
                     foreach($item_a_procesar["destinos"] as $destinos){
-                        
                         $this->destino_cantidad = $destinos["cantidad"];
-//                        if($iides >0 ){
-//                            dd($destinos,$this->destino_cantidad,$this->cantidad_disponible_entrada, $this->cantidad_procesar);
-//                        }
                         while ($this->destino_cantidad>0){
                             if($this->destino_cantidad<=$this->cantidad_disponible_entrada){
 
-                                $this->transacciones["entrada"]["items"][] = [
+                                $this->preparacion_entrada["items"][] = [
                                     "id_antecedente"=>$this->data["orden_compra"],
                                     "item_antecedente"=>$datos_partida_entrada_sao[0]->id_item,
                                     "id_material"=>$datos_partida_entrada_sao[0]->id_material,
@@ -170,7 +170,7 @@ class RecibeArticulosAlmacen
                                     "saldo"=>$this->destino_cantidad * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "precio_unitario"=> $datos_partida_entrada_sao[0]->precio_unitario,
                                     "anticipo"=>$datos_partida_entrada_sao[0]->anticipo,
-                                    "cantidad_original"=>$this->destino_cantidad,
+                                    "cantidad_original1"=>$this->destino_cantidad,
                                     "estado"=>0,
                                     "importe"=>$this->destino_cantidad * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
@@ -181,7 +181,7 @@ class RecibeArticulosAlmacen
                                 $this->destino_cantidad = 0;
                             }elseif($this->destino_cantidad > $this->cantidad_disponible_entrada && $this->cantidad_disponible_entrada>0){
 
-                                $this->transacciones["entrada"]["items"][] = [
+                                $this->preparacion_entrada["items"][] = [
                                     "id_antecedente"=>$this->data["orden_compra"],
                                     "item_antecedente"=>$datos_partida_entrada_sao[0]->id_item,
                                     "id_material"=>$datos_partida_entrada_sao[0]->id_material,
@@ -192,7 +192,7 @@ class RecibeArticulosAlmacen
                                     "saldo"=>$this->cantidad_disponible_entrada * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "precio_unitario"=> $datos_partida_entrada_sao[0]->precio_unitario,
                                     "anticipo"=>$datos_partida_entrada_sao[0]->anticipo,
-                                    "cantidad_original"=>$this->cantidad_disponible_entrada,
+                                    "cantidad_original1"=>$this->cantidad_disponible_entrada,
                                     "estado"=>0,
                                     "importe"=>$this->cantidad_disponible_entrada * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
@@ -202,29 +202,10 @@ class RecibeArticulosAlmacen
                                 $this->cantidad_disponible_entrada = 0;
                                 $iex_al = 0;
                                 
-                                //dd("aquiii", $this->destino_cantidad, $this->existencias_por_almacen);
-                                //while($this->destino_cantidad > 0){
                                     
                                 foreach($this->existencias_por_almacen as $existencia_por_almacen){
-//                                        if($iex_al == 1){
-//                                            dd($this->cantidad_procesar, $this->destino_cantidad, $existencia_por_almacen["existencias"]);
-//                                        }
                                     if($this->destino_cantidad<= $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0){
-                                        $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                            "tipo_transaccion"=>34,
-                                            "fecha"=>$this->data["fecha_recepcion"],
-                                            "id_obra"=>$this->obra->id_obra,
-                                            "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                            "referencia"=>"transferencia automática",
-                                            "observaciones"=>"transferencia automática",
-                                            "opciones"=>65537,
-                                        ];
-                                        $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                            "id_material"=>$item_a_procesar["id"],
-                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                            "cantidad"=>$this->destino_cantidad,
-                                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                        ];
+                                        
                                         $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                             "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                             "id_material"=>$item_a_procesar["id"],
@@ -234,28 +215,11 @@ class RecibeArticulosAlmacen
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>1
                                         ];
-                                        $no_transferencia++;
                                         $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
-
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = $this->existencias_por_almacen[$iex_al]["existencias"] - $this->destino_cantidad;
                                         $this->destino_cantidad = 0;
-//dd("si llega");
                                     }elseif($this->destino_cantidad > $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0){
-                                        $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                            "tipo_transaccion"=>34,
-                                            "fecha"=>$this->data["fecha_recepcion"],
-                                            "id_obra"=>$this->obra->id_obra,
-                                            "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                            "referencia"=>"transferencia automática",
-                                            "observaciones"=>"transferencia automática",
-                                            "opciones"=>65537,
-                                        ];
-                                        $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                            "id_material"=>$item_a_procesar["id"],
-                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                            "cantidad"=>$existencia_por_almacen["existencias"],
-                                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                        ];
+                                        
                                         $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                             "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                             "id_material"=>$item_a_procesar["id"],
@@ -265,14 +229,12 @@ class RecibeArticulosAlmacen
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>2
                                         ];
-                                        $no_transferencia++;
                                         $this->destino_cantidad = $this->destino_cantidad - $existencia_por_almacen["existencias"];
                                         $this->cantidad_procesar = $this->cantidad_procesar - $existencia_por_almacen["existencias"];
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = 0;
                                     }
                                     $iex_al++;
                                 }
-                                //}
                                 
                             }else{
                                 $iex_al = 0;
@@ -280,21 +242,7 @@ class RecibeArticulosAlmacen
                                 foreach($this->existencias_por_almacen as $existencia_por_almacen){
 
                                     if($this->destino_cantidad<= $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0 && $existencia_por_almacen["existencias"]>0){
-                                        $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                            "tipo_transaccion"=>34,
-                                            "fecha"=>$this->data["fecha_recepcion"],
-                                            "id_obra"=>$this->obra->id_obra,
-                                            "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                            "referencia"=>"transferencia automática",
-                                            "observaciones"=>"transferencia automática",
-                                            "opciones"=>65537,
-                                        ];
-                                        $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                            "id_material"=>$item_a_procesar["id"],
-                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                            "cantidad"=>$this->destino_cantidad,
-                                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                        ];
+                                        
                                         $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                             "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                             "id_material"=>$item_a_procesar["id"],
@@ -304,27 +252,12 @@ class RecibeArticulosAlmacen
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>3
                                         ];
-                                        $no_transferencia++;
                                         $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
 
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = $this->existencias_por_almacen[$iex_al]["existencias"] - $this->destino_cantidad;
                                         $this->destino_cantidad = 0;
                                     }elseif($this->destino_cantidad > $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0 && $existencia_por_almacen["existencias"]){
-                                        $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                            "tipo_transaccion"=>34,
-                                            "fecha"=>$this->data["fecha_recepcion"],
-                                            "id_obra"=>$this->obra->id_obra,
-                                            "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                            "referencia"=>"transferencia automática",
-                                            "observaciones"=>"transferencia automática",
-                                            "opciones"=>65537,
-                                        ];
-                                        $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                            "id_material"=>$item_a_procesar["id"],
-                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                            "cantidad"=>$existencia_por_almacen["existencias"],
-                                            "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                        ];
+                                        
                                         $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                             "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                             "id_material"=>$item_a_procesar["id"],
@@ -334,7 +267,6 @@ class RecibeArticulosAlmacen
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>4
                                         ];
-                                        $no_transferencia++;
                                         $this->destino_cantidad = $this->destino_cantidad - $existencia_por_almacen["existencias"];
                                         $this->cantidad_procesar = $this->cantidad_procesar - $existencia_por_almacen["existencias"];
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = 0;
@@ -352,21 +284,7 @@ class RecibeArticulosAlmacen
                         $iex_al = 0;
                         foreach($this->existencias_por_almacen as $existencia_por_almacen){
                             if($this->destino_cantidad<= $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0 && $existencia_por_almacen["existencias"]>0){
-                                $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                    "tipo_transaccion"=>34,
-                                    "fecha"=>$this->data["fecha_recepcion"],
-                                    "id_obra"=>$this->obra->id_obra,
-                                    "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                    "referencia"=>"transferencia automática",
-                                    "observaciones"=>"transferencia automática",
-                                    "opciones"=>65537,
-                                ];
-                                $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                    "id_material"=>$item_a_procesar["id"],
-                                    "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                    "cantidad"=>$this->destino_cantidad,
-                                    "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                ];
+                                
                                 $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                     "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                     "id_material"=>$item_a_procesar["id"],
@@ -376,27 +294,12 @@ class RecibeArticulosAlmacen
                                     "id_destino"=>$destinos["id"],
                                     "generada_en"=>3
                                 ];
-                                $no_transferencia++;
                                 $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
 
                                 $this->existencias_por_almacen[$iex_al]["existencias"] = $this->existencias_por_almacen[$iex_al]["existencias"] - $this->destino_cantidad;
                                 $this->destino_cantidad = 0;
                             }elseif($this->destino_cantidad > $existencia_por_almacen["existencias"] && $this->destino_cantidad > 0 && $existencia_por_almacen["existencias"]){
-                                $this->transacciones["transferencia"][$no_transferencia]["datos"] = [
-                                    "tipo_transaccion"=>34,
-                                    "fecha"=>$this->data["fecha_recepcion"],
-                                    "id_obra"=>$this->obra->id_obra,
-                                    "id_almacen"=>$existencia_por_almacen["id_almacen"],
-                                    "referencia"=>"transferencia automática",
-                                    "observaciones"=>"transferencia automática",
-                                    "opciones"=>65537,
-                                ];
-                                $this->transacciones["transferencia"][$no_transferencia]["item"] = [
-                                    "id_material"=>$item_a_procesar["id"],
-                                    "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
-                                    "cantidad"=>$existencia_por_almacen["existencias"],
-                                    "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
-                                ];
+                                
                                 $this->preparacion_transferencias["items"][$existencia_por_almacen["id_almacen"]][] = [
                                     "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
                                     "id_material"=>$item_a_procesar["id"],
@@ -406,7 +309,6 @@ class RecibeArticulosAlmacen
                                     "id_destino"=>$destinos["id"],
                                     "generada_en"=>4
                                 ];
-                                $no_transferencia++;
                                 $this->destino_cantidad = $this->destino_cantidad - $existencia_por_almacen["existencias"];
                                 $this->cantidad_procesar = $this->cantidad_procesar - $existencia_por_almacen["existencias"];
                                 $this->existencias_por_almacen[$iex_al]["existencias"] = 0;
@@ -417,8 +319,8 @@ class RecibeArticulosAlmacen
                 }
             }
         }
-        if(array_key_exists("entrada", $this->transacciones)){
-            $this->transacciones["entrada"]["datos"] = [
+        if(array_key_exists("items", $this->preparacion_entrada)){
+            $this->transacciones["entrada"][0]["datos"] = [
                 "tipo_transaccion"=>33,
                 "opciones"=>1,
                 "id_antecedente"=>$this->data["orden_compra"],
@@ -429,13 +331,13 @@ class RecibeArticulosAlmacen
                 "id_obra"=>$this->obra->id_obra,
                 "observaciones"=>$this->data["observaciones"],
                 "referencia"=>$this->data["numero_remision_factura"],
-            ]; 
+            ];
+            $this->transacciones["entrada"][0]["items"] = $this->preparacion_entrada["items"];
         }
         
-        //dd($this->preparacion_transferencias["items"], $this->transacciones);
         $i = 0;
         foreach($this->preparacion_transferencias["items"] as $k=>$v){
-            $this->transacciones["transferencias"][$i] = [
+            $this->transacciones["transferencias"][$i]["datos"] = [
                 "tipo_transaccion"=>34,
                 "fecha"=>$this->data["fecha_recepcion"],
                 "id_obra"=>$this->obra->id_obra,
@@ -443,9 +345,8 @@ class RecibeArticulosAlmacen
                 "referencia"=>"transferencia automática",
                 "observaciones"=>"transferencia automática",
                 "opciones"=>65537,
-                "items"=>$v
             ];
-            
+            $this->transacciones["transferencias"][$i]["items"] = $v;
             $i++;
         }
     }
@@ -605,10 +506,12 @@ class RecibeArticulosAlmacen
     }
     protected function creaEntradaAlmacen($datos_entrada)
     {
-        $entrada_almacen = new EntradaAlmacen($datos_entrada);
+        $entrada_almacen = new EntradaAlmacen($datos_entrada["datos"]);
+        
         $entrada_almacen->obra()->associate($this->obra);
         $entrada_almacen->save();
-        $partidas_entrada = $this->creaPartidasEntradaAlmacen($datos_entrada["partidas"]);
+        
+        $partidas_entrada = $this->creaPartidasEntradaAlmacen($datos_entrada["items"]);
         $entrada_almacen->items()->saveMany($partidas_entrada);
         $this->ejecuta_procedimiento_entrada($entrada_almacen);
         $this->actualiza_entregas($entrada_almacen);
@@ -628,9 +531,9 @@ class RecibeArticulosAlmacen
             $resultado = DB::connection("cadeco")->select('DECLARE @RC int
                     DECLARE @id_item int
                     EXECUTE @RC = [sp_entrada_material] 
-                    '.$item->id.' 
+                    '.$item->id_item.' 
                     SELECT @RC as res');
-            if($resultado["res"] != 0){
+            if($resultado[0]->res != 0){
                 throw new \Exception("Hubo un error al aplicar el procedimiento de entrada de almacén para el material:" . $item->material->descripcion);
             }
             
@@ -639,17 +542,18 @@ class RecibeArticulosAlmacen
     
     protected function actualiza_entregas($objEntrada){
         foreach($objEntrada->items as $item){
-            DB::table("entregas")
-                ->where("id", $item->item_antecedente)
+            DB::connection("cadeco")->table("entregas")
+                ->where("id_item", $item->item_antecedente)
                 ->increment("surtida", $item->cantidad);
         }
     }
     
     protected function creaTransferenciaAlmacen($datos_transferencia)
     {
-        $transferencia_almacen = new TransferenciaAlmacen($datos_transferencia);
+        $transferencia_almacen = new TransferenciaAlmacen($datos_transferencia["datos"]);
+        $transferencia_almacen->obra()->associate($this->obra);
         $transferencia_almacen->save();
-        $partidas_transferencia = $this->creaPartidasEntradaAlmacen($datos_transferencia["partidas"]);
+        $partidas_transferencia = $this->creaPartidasTransferenciaAlmacen($datos_transferencia["items"]);
         $transferencia_almacen->items()->saveMany($partidas_transferencia);
         $this->ejecuta_procedimiento_transferencia($transferencia_almacen);
         return $transferencia_almacen;
@@ -669,10 +573,10 @@ class RecibeArticulosAlmacen
                 DECLARE @RC int
                 DECLARE @id_item int
                 EXECUTE @RC = [dbo].[sp_salida_material] 
-                    '.$item->id.' 
+                    '.$item->id_item.' 
                 SELECT @RC as res
             ');
-            if($resultado["res"] != 0){
+            if($resultado[0]->res != 0){
                 throw new \Exception("Hubo un error al aplicar el procedimiento de transferencia de almacén para el material:" . $item->material->descripcion);
             }
         }
