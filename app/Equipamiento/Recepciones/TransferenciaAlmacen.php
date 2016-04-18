@@ -19,6 +19,7 @@ class TransferenciaAlmacen extends Model
         'id_almacen',
         'referencia',
         'observaciones',
+        'opciones',
     ];
     
     public static function boot()
@@ -26,7 +27,7 @@ class TransferenciaAlmacen extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->asignaFolioTransaccion();
+            //$model->asignaFolioTransaccion();
             $model->asignaFolioAlternativo();
             $model->asignaComentario();
         });

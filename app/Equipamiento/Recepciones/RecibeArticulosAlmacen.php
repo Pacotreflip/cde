@@ -17,13 +17,13 @@ class RecibeArticulosAlmacen
 
     protected $obra;
     
-    protected $transacciones = null;
+    protected $transacciones = [];
     
-    protected $preparacion_transferencias = null;
+    protected $preparacion_transferencias = [];
     
-    protected $preparacion_entrada;
+    protected $preparacion_entrada = [];
     
-    protected $items_ids = null;
+    protected $items_ids = [];
     
     
 
@@ -114,14 +114,15 @@ class RecibeArticulosAlmacen
     
     protected function procesoSAO(){
         $this->preparaDatosTransacciones();
-        //dd($this->data,$this->transacciones);
-        
-        foreach($this->transacciones["entrada"] as $datos_entrada){
-            $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);
+        if(array_key_exists("entrada", $this->transacciones)){
+            foreach($this->transacciones["entrada"] as $datos_entrada){
+                $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);
+            }
         }
-       
-        foreach($this->transacciones["transferencias"] as $datos_transferencia){
-            $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
+        if(array_key_exists("transferencias", $this->transacciones)){
+            foreach($this->transacciones["transferencias"] as $datos_transferencia){
+                $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
+            }
         }
         //dd($transacciones);
         foreach ($transacciones as $transaccion){
@@ -129,7 +130,27 @@ class RecibeArticulosAlmacen
                 $this->items_ids[$item->id_material][] = $item->id_item;
             }
         }
+        $this->orden_compra_cumplida();
         return $transacciones;
+    }
+    protected function orden_compra_cumplida(){
+        $resultado = DB::connection('cadeco')->select('select items_oc.id_item, items_oc.cantidad as cantidad_esperada, sum(items_ea.cantidad) as cantidad_entrada
+            , (items_oc.cantidad - sum(items_ea.cantidad)) AS pendiente
+  from items as items_oc join items as items_ea on(items_oc.id_item = items_ea.item_antecedente)
+  where items_oc.id_transaccion = ' . $this->data["orden_compra"] .' 
+  group by items_oc.id_item, items_oc.cantidad');
+        $cumplida = true;
+        
+        foreach($resultado as $item){
+            if($item->pendiente > 0){
+                $cumplida = false;
+                break;
+            }
+        }
+        
+        if($cumplida){
+            DB::connection('cadeco')->table("transacciones")->where("id_transaccion", $this->data["orden_compra"])->update(["estado"=>2]);
+        }
     }
     protected function preparaDatosTransacciones(){
         $items_a_procesar = $this->data["materiales"];
@@ -350,20 +371,21 @@ class RecibeArticulosAlmacen
             ];
             $this->transacciones["entrada"][0]["items"] = $this->preparacion_entrada["items"];
         }
-        
-        $i = 0;
-        foreach($this->preparacion_transferencias["items"] as $k=>$v){
-            $this->transacciones["transferencias"][$i]["datos"] = [
-                "tipo_transaccion"=>34,
-                "fecha"=>$this->data["fecha_recepcion"],
-                "id_obra"=>$this->obra->id_obra,
-                "id_almacen"=>$k,
-                "referencia"=>"transferencia automática",
-                "observaciones"=>"transferencia automática",
-                "opciones"=>65537,
-            ];
-            $this->transacciones["transferencias"][$i]["items"] = $v;
-            $i++;
+        if(array_key_exists("items", $this->preparacion_transferencias)){
+            $i = 0;
+            foreach($this->preparacion_transferencias["items"] as $k=>$v){
+                $this->transacciones["transferencias"][$i]["datos"] = [
+                    "tipo_transaccion"=>34,
+                    "fecha"=>$this->data["fecha_recepcion"],
+                    "id_obra"=>$this->obra->id_obra,
+                    "id_almacen"=>$k,
+                    "referencia"=>"transferencia automática",
+                    "observaciones"=>"transferencia automática",
+                    "opciones"=>65537,
+                ];
+                $this->transacciones["transferencias"][$i]["items"] = $v;
+                $i++;
+            }
         }
     }
     protected function getIdAlmacenSAODeArea($id_area){
@@ -380,7 +402,8 @@ class RecibeArticulosAlmacen
             $almacen->obra()->associate($this->obra);
             $almacen->save();
             $area->almacen()->associate($almacen);
-            $id_almacen = $almacen->id_almacen;
+            $area->save();
+            $id_almacen = $area->id_almacen;
         }
         return $id_almacen;
     }
