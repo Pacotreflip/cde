@@ -165,6 +165,7 @@ class RecibeArticulosAsignacion
     
     protected function procesoSAO(){
         $this->preparaDatosTransacciones();
+        //dd($this->transacciones);
         if(array_key_exists("entrada", $this->transacciones)){
             foreach($this->transacciones["entrada"] as $datos_entrada){
                 $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);

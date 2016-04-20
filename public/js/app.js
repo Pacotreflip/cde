@@ -41778,7 +41778,7 @@ Vue.component('recepcion-screen', {
       this.recepcionForm.materiales = this.articulosARecibir;
 
       this.$http.post('/recepciones', this.recepcionForm).success(function (response) {
-        //window.location = response.path;
+       window.location = response.path;
       }).error(function (errors) {
         this.recibiendo = false;
         App.setErrorsOnForm(this.recepcionForm, errors);

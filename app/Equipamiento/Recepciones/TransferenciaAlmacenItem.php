@@ -26,6 +26,7 @@ class TransferenciaAlmacenItem extends Model
         'unidad',
         'cantidad',
         'id_almacen',
+        'id_concepto'
     ];
     
     public $timestamps = false;

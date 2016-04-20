@@ -11,7 +11,7 @@ namespace Ghi\Equipamiento\Recepciones;
 use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Areas\Almacen;
-
+use Ghi\Equipamiento\Areas\Concepto;
 /**
  * Description of AuxiliaresTransaccionesSAO
  *
@@ -22,6 +22,8 @@ trait AuxiliaresTransaccionesSAO {
     protected $transacciones = [];
     
     protected $preparacion_transferencias = [];
+    
+    protected $preparacion_salidas = [];
     
     protected $preparacion_entrada = [];
     
@@ -78,7 +80,15 @@ trait AuxiliaresTransaccionesSAO {
                             "importe"=>$destinos["cantidad"] * $datos_partida_entrada_sao[0]->precio_unitario,
                             "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
                         ];
-                        
+                        $this->preparacion_salidas["items"][$this->getIdAlmacenSAODeArea($destinos["id"])][] = [
+                            "id_almacen_origen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                            "id_material"=>$item_a_procesar["id"],
+                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                            "cantidad"=>$this->destino_cantidad,
+                            "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
+                            "id_destino"=>$destinos["id"],
+                            "generada_en"=>0
+                        ];
                         $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
                         $this->cantidad_disponible_entrada = $this->cantidad_disponible_entrada - $destinos["cantidad"];
                         $this->destino_cantidad  = 0;
@@ -106,7 +116,15 @@ trait AuxiliaresTransaccionesSAO {
                                     "importe"=>$this->destino_cantidad * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
                                 ];
-
+                                $this->preparacion_salidas["items"][$this->getIdAlmacenSAODeArea($destinos["id"])][] = [
+                                    "id_almacen_origen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                                    "id_material"=>$item_a_procesar["id"],
+                                    "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                    "cantidad"=>$this->destino_cantidad,
+                                    "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
+                                    "id_destino"=>$destinos["id"],
+                                    "generada_en"=>0
+                                ];
                                 $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
                                 $this->cantidad_disponible_entrada = $this->cantidad_disponible_entrada - $this->destino_cantidad;
                                 $this->destino_cantidad = 0;
@@ -128,6 +146,15 @@ trait AuxiliaresTransaccionesSAO {
                                     "importe"=>$this->cantidad_disponible_entrada * $datos_partida_entrada_sao[0]->precio_unitario,
                                     "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
                                 ];
+                                $this->preparacion_salidas["items"][$this->getIdAlmacenSAODeArea($destinos["id"])][] = [
+                                    "id_almacen_origen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                                    "id_material"=>$item_a_procesar["id"],
+                                    "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                    "cantidad"=>$this->destino_cantidad,
+                                    "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
+                                    "id_destino"=>$destinos["id"],
+                                    "generada_en"=>0
+                                ];
                                 $this->destino_cantidad = $this->destino_cantidad - $this->cantidad_disponible_entrada;//6-4: 2
                                 $this->cantidad_procesar = $this->cantidad_procesar - $this->cantidad_disponible_entrada;//8-4: 4
                                 $this->cantidad_disponible_entrada = 0;
@@ -146,6 +173,17 @@ trait AuxiliaresTransaccionesSAO {
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>1
                                         ];
+                                        
+                                        $this->preparacion_salidas["items"][$existencia_por_almacen["id_almacen"]][] = [
+                                            "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
+                                            "id_material"=>$item_a_procesar["id"],
+                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                            "cantidad"=>$this->destino_cantidad,
+                                            "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
+                                            "id_destino"=>$destinos["id"],
+                                            "generada_en"=>1
+                                        ];
+                                        
                                         $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = $this->existencias_por_almacen[$iex_al]["existencias"] - $this->destino_cantidad;
                                         $this->destino_cantidad = 0;
@@ -157,6 +195,15 @@ trait AuxiliaresTransaccionesSAO {
                                             "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
                                             "cantidad"=>$existencia_por_almacen["existencias"],
                                             "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                                            "id_destino"=>$destinos["id"],
+                                            "generada_en"=>2
+                                        ];
+                                        $this->preparacion_salidas["items"][$existencia_por_almacen["id_almacen"]][] = [
+                                            "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
+                                            "id_material"=>$item_a_procesar["id"],
+                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                            "cantidad"=>$this->destino_cantidad,
+                                            "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>2
                                         ];
@@ -183,6 +230,15 @@ trait AuxiliaresTransaccionesSAO {
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>3
                                         ];
+                                        $this->preparacion_salidas["items"][$existencia_por_almacen["id_almacen"]][] = [
+                                            "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
+                                            "id_material"=>$item_a_procesar["id"],
+                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                            "cantidad"=>$this->destino_cantidad,
+                                            "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
+                                            "id_destino"=>$destinos["id"],
+                                            "generada_en"=>3
+                                        ];
                                         $this->cantidad_procesar = $this->cantidad_procesar - $this->destino_cantidad;
 
                                         $this->existencias_por_almacen[$iex_al]["existencias"] = $this->existencias_por_almacen[$iex_al]["existencias"] - $this->destino_cantidad;
@@ -195,6 +251,15 @@ trait AuxiliaresTransaccionesSAO {
                                             "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
                                             "cantidad"=>$existencia_por_almacen["existencias"],
                                             "id_almacen"=>$this->getIdAlmacenSAODeArea($destinos["id"]),
+                                            "id_destino"=>$destinos["id"],
+                                            "generada_en"=>4
+                                        ];
+                                        $this->preparacion_salidas["items"][$existencia_por_almacen["id_almacen"]][] = [
+                                            "id_almacen_origen"=>$existencia_por_almacen["id_almacen"],
+                                            "id_material"=>$item_a_procesar["id"],
+                                            "unidad"=>$this->getUnidadMaterial($item_a_procesar["id"]),
+                                            "cantidad"=>$this->destino_cantidad,
+                                            "id_concepto"=>$this->getIdConceptoSAODeArea($destinos["id"]),
                                             "id_destino"=>$destinos["id"],
                                             "generada_en"=>4
                                         ];
@@ -281,6 +346,27 @@ trait AuxiliaresTransaccionesSAO {
                 $i++;
             }
         }
+        if(array_key_exists("items", $this->preparacion_salidas)){
+            $i = 0;
+            foreach($this->preparacion_salidas["items"] as $k=>$v){
+                $this->transacciones["salidas"][$i]["datos"] = [
+                    "tipo_transaccion"=>34,
+                    "fecha"=>$this->data["fecha_recepcion"],
+                    "id_obra"=>$this->obra->id_obra,
+                    "id_almacen"=>$k,
+                    "referencia"=>"salida automática",
+                    "observaciones"=>"salida automática",
+                    "id_concepto"=>$this->getIdConceptoRaiz(),
+                    "opciones"=>1,
+                ];
+                $this->transacciones["salidas"][$i]["items"] = $v;
+                $i++;
+            }
+        }
+    }
+    protected function getIdConceptoRaiz(){
+        $concepto_raiz = Concepto::whereRaw("id_obra = {$this->obra->id_obra} and len(nivel)=4  and control_equipamiento = 1")->first();
+        return $concepto_raiz->id_concepto;
     }
     protected function getIdAlmacenSAODeArea($id_area){
         $area = Area::findOrFail($id_area);
@@ -301,8 +387,15 @@ trait AuxiliaresTransaccionesSAO {
         }
         return $id_almacen;
     }
-    protected function getPartidasTransferencia($id_item_oc){
-        
+    protected function getIdConceptoSAODeArea($id_area){
+        $area = Area::findOrFail($id_area);
+        $concepto = $area->concepto;
+        if($concepto){
+            $id_concepto = $concepto->id_concepto;
+        }else{
+            $id_concepto = $area->setConcepto();
+        }
+        return $id_concepto;
     }
     protected function getUnidadMaterial($id_material){
         $resultado = DB::connection("cadeco")->select('
@@ -488,7 +581,7 @@ trait AuxiliaresTransaccionesSAO {
         $transferencia_almacen->save();
         $partidas_transferencia = $this->creaPartidasTransferenciaAlmacen($datos_transferencia["items"]);
         $transferencia_almacen->items()->saveMany($partidas_transferencia);
-        $this->ejecuta_procedimiento_transferencia($transferencia_almacen);
+        $this->ejecuta_procedimiento_salida_transferencia($transferencia_almacen);
         return $transferencia_almacen;
     }
     
@@ -500,7 +593,7 @@ trait AuxiliaresTransaccionesSAO {
         return $partidas;
     }
     
-    protected function ejecuta_procedimiento_transferencia($objTransferencia){
+    protected function ejecuta_procedimiento_salida_transferencia($objTransferencia){
         foreach($objTransferencia->items as $item){
             $resultado = DB::connection("cadeco")->select('
                 DECLARE @RC int
@@ -510,7 +603,7 @@ trait AuxiliaresTransaccionesSAO {
                 SELECT @RC as res
             ');
             if($resultado[0]->res != 0){
-                throw new \Exception("Hubo un error al aplicar el procedimiento de transferencia de almacén para el material:" . $item->material->descripcion);
+                throw new \Exception("Hubo un error al aplicar el procedimiento de salida /  transferencia de almacén para el material:" . $item->material->descripcion);
             }
         }
     }
@@ -518,12 +611,12 @@ trait AuxiliaresTransaccionesSAO {
     
     protected function creaSalidaAlmacen($datos_transferencia)
     {
-        $transferencia_almacen = new SalidaAlmacen($datos_transferencia["datos"]);
+        $transferencia_almacen = new TransferenciaAlmacen($datos_transferencia["datos"]);
         $transferencia_almacen->obra()->associate($this->obra);
         $transferencia_almacen->save();
         $partidas_transferencia = $this->creaPartidasSalidaAlmacen($datos_transferencia["items"]);
         $transferencia_almacen->items()->saveMany($partidas_transferencia);
-        $this->ejecuta_procedimiento_salida($transferencia_almacen);
+        $this->ejecuta_procedimiento_salida_transferencia($transferencia_almacen);
         return $transferencia_almacen;
     }
     
@@ -534,22 +627,6 @@ trait AuxiliaresTransaccionesSAO {
         }
         return $partidas;
     }
-    
-    protected function ejecuta_procedimiento_transferencia($objTransferencia){
-        foreach($objTransferencia->items as $item){
-            $resultado = DB::connection("cadeco")->select('
-                DECLARE @RC int
-                DECLARE @id_item int
-                EXECUTE @RC = [dbo].[sp_salida_material] 
-                    '.$item->id_item.' 
-                SELECT @RC as res
-            ');
-            if($resultado[0]->res != 0){
-                throw new \Exception("Hubo un error al aplicar el procedimiento de transferencia de almacén para el material:" . $item->material->descripcion);
-            }
-        }
-    }
-    
     
     
 }

@@ -17,6 +17,7 @@ class TransferenciaAlmacen extends Model
         'tipo_transaccion',
         'fecha',
         'id_almacen',
+        'id_concepto',
         'referencia',
         'observaciones',
         'opciones',

@@ -262,26 +262,48 @@ class Area extends Node
     }
     public function setConcepto(){
         $nivel = $this->calculaNivel();
-        $concepto = new Concepto([
-            "id_obra"=>$this->id_obra,
-            "control_equipamiento"=>1,
-            "descripcion"=>$this->nombre
-            
-        ]);
-        $concepto->nivel = $nivel;
-        $concepto->save();
-        $this->id_concepto = $concepto->id_concepto;
-        $this->save();
-
+        $concepto_exitente = Concepto::where("nivel", $nivel)->where("id_obra", $this->id_obra)->first();
+        if($concepto_exitente){
+            $this->id_concepto = $concepto_exitente->id_concepto;
+            $this->save();
+        }else{
+            $concepto = new Concepto([
+                "id_obra"=>$this->id_obra,
+                "control_equipamiento"=>1,
+                "descripcion"=>$this->nombre
+            ]);
+            $concepto->nivel = $nivel;
+            $concepto->save();
+            $this->id_concepto = $concepto->id_concepto;
+            $this->save();
+        }
+        
+        return $this->id_concepto;
     }
     public function calculaNivel(){
         #obtenemos todos los ancestros
         $concepto_raiz = Concepto::whereRaw("id_obra = {$this->id_obra} and len(nivel)=4  and control_equipamiento = 1")->first();
-        //dd($concepto_raiz);
         $nivel = $concepto_raiz->nivel;
         foreach ($this->getAncestors() as $area_ancestro) {
             $posicion = $this->zerofill(3,$area_ancestro->getPosicionRespectoHermanas());
             $nivel .= $posicion.".";
+            if(!($area_ancestro->concepto)){
+                $concepto_exitente = Concepto::where("nivel", $nivel)->where("id_obra", $area_ancestro->id_obra)->first();
+                if($concepto_exitente){
+                    $area_ancestro->id_concepto = $concepto_exitente->id_concepto;
+                    $area_ancestro->save();
+                }else{
+                    $concepto = new Concepto([
+                        "id_obra"=>$area_ancestro->id_obra,
+                        "control_equipamiento"=>1,
+                        "descripcion"=>$area_ancestro->nombre
+                    ]);
+                    $concepto->nivel = $nivel;
+                    $concepto->save();
+                    $area_ancestro->id_concepto = $concepto->id_concepto;
+                    $area_ancestro->save();
+                }
+            }
         }
         $posicion_actual = $this->zerofill(3,$this->getPosicionRespectoHermanas());
         $nivel .= $posicion_actual.".";
