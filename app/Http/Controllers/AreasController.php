@@ -222,7 +222,13 @@ class AreasController extends Controller
 
         return $estadisticas;
     }
-
+    public function generaConceptoSAO($id){
+        $area = $this->areas->getById($id);
+        if(!($area->concepto)){
+            $area->setConcepto();
+        }
+        return redirect()->back();
+    }
     /**
      * Update the specified resource in storage.
      *

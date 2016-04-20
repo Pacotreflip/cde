@@ -19,6 +19,9 @@
               @if(count($descendiente->almacen) == 1)
               <span class="glyphicon glyphicon-home" style="padding: 5px" title="Relacionado con almacén en SAO ({{$descendiente->almacen->descripcion}})" data-toggle="tooltip" ></span>
               @endif
+              @if(count($descendiente->concepto) == 1)
+              <span class="glyphicon glyphicon-indent-left" style="padding: 5px" title="Relacionado con concepto en SAO " data-toggle="tooltip"></span>
+              @endif
               @if(count($descendiente->areas_hijas)>0)
             <a href="{{ route('areas.index', ['area='.$descendiente->id]) }}">{{ $descendiente->nombre }}</a>
             @else

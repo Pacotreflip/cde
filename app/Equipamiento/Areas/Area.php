@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Inventarios\Exceptions\InventarioNoEncontradoException;
 use Ghi\Equipamiento\Asignaciones\ItemAsignacion;
 use Ghi\Equipamiento\Cierres\CierrePartida;
+use Ghi\Equipamiento\Areas\Concepto;
 
 class Area extends Node
 {
@@ -61,6 +62,10 @@ class Area extends Node
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
     }
 
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
     /**
      * Inventarios relacionados con esta area.
      * 
@@ -239,6 +244,57 @@ class Area extends Node
 
         return $ruta;
     }
+    public function getPosicionRespectoHermanas(){
+        $padre = $this->area_padre;
+        if($padre){
+            $areas_hermanas = $padre->children()->orderBy('_lft',"asc")->get();
+        }else{
+            $areas_hermanas = Area::whereRaw("parent_id is NULL AND id_obra = {$this->id_obra} ")->orderBy('_lft',"asc")->get();
+        }
+        $posicion = 0;
+        foreach($areas_hermanas as $area_hermana){
+            if($this->id == $area_hermana->id){
+                break;
+            }
+            $posicion++;
+        }
+        return $posicion;
+    }
+    public function setConcepto(){
+        $nivel = $this->calculaNivel();
+        $concepto = new Concepto([
+            "id_obra"=>$this->id_obra,
+            "control_equipamiento"=>1,
+            "descripcion"=>$this->nombre
+            
+        ]);
+        $concepto->nivel = $nivel;
+        $concepto->save();
+        $this->id_concepto = $concepto->id_concepto;
+        $this->save();
+
+    }
+    public function calculaNivel(){
+        #obtenemos todos los ancestros
+        $concepto_raiz = Concepto::whereRaw("id_obra = {$this->id_obra} and len(nivel)=4  and control_equipamiento = 1")->first();
+        //dd($concepto_raiz);
+        $nivel = $concepto_raiz->nivel;
+        foreach ($this->getAncestors() as $area_ancestro) {
+            $posicion = $this->zerofill(3,$area_ancestro->getPosicionRespectoHermanas());
+            $nivel .= $posicion.".";
+        }
+        $posicion_actual = $this->zerofill(3,$this->getPosicionRespectoHermanas());
+        $nivel .= $posicion_actual.".";
+        return $nivel;
+    }
+    private function zerofill( $cantidad, $valor){
+    $cad_ceros = "";
+    $cantidad = $cantidad - strlen($valor);
+    for($i=0; $i<$cantidad; $i++){
+        $cad_ceros.='0';
+    }
+    return $cad_ceros . $valor;
+}
     public function soloRuta($separator = '/')
     {
         $ruta = '';
@@ -368,6 +424,7 @@ class Area extends Node
     public function area_padre(){
         return $this->belongsTo(Area::class, "parent_id");
     }
+    
     
     public function areas_hijas(){
         return $this->hasMany(Area::class, "parent_id", "id");

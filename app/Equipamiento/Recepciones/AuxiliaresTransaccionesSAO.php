@@ -516,6 +516,42 @@ trait AuxiliaresTransaccionesSAO {
     }
     
     
+    protected function creaSalidaAlmacen($datos_transferencia)
+    {
+        $transferencia_almacen = new SalidaAlmacen($datos_transferencia["datos"]);
+        $transferencia_almacen->obra()->associate($this->obra);
+        $transferencia_almacen->save();
+        $partidas_transferencia = $this->creaPartidasSalidaAlmacen($datos_transferencia["items"]);
+        $transferencia_almacen->items()->saveMany($partidas_transferencia);
+        $this->ejecuta_procedimiento_salida($transferencia_almacen);
+        return $transferencia_almacen;
+    }
+    
+    protected function creaPartidasSalidaAlmacen($datos_partidas_transferencia){
+        $partidas = null;
+        foreach($datos_partidas_transferencia as $datos_partida_transferencia){
+            $partidas[] = new TransferenciaAlmacenItem($datos_partida_transferencia);
+        }
+        return $partidas;
+    }
+    
+    protected function ejecuta_procedimiento_transferencia($objTransferencia){
+        foreach($objTransferencia->items as $item){
+            $resultado = DB::connection("cadeco")->select('
+                DECLARE @RC int
+                DECLARE @id_item int
+                EXECUTE @RC = [dbo].[sp_salida_material] 
+                    '.$item->id_item.' 
+                SELECT @RC as res
+            ');
+            if($resultado[0]->res != 0){
+                throw new \Exception("Hubo un error al aplicar el procedimiento de transferencia de almacén para el material:" . $item->material->descripcion);
+            }
+        }
+    }
+    
+    
+    
 }
 
 

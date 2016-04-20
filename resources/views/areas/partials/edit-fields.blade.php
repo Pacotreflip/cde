@@ -16,6 +16,13 @@
       {!! Form::label('almacen_id', 'Relacionar con almacén en SAO') !!}
       {!! Form::select('almacen_id', $almacenes, $area->id_almacen, ['class' => 'form-control']) !!}
     </div>
+    <div class="form-group">
+      @if($area->id_concepto>0)
+      <h4><span class="label label-success"><span class="glyphicon glyphicon-indent-left" style="margin-right: 5px"></span>Relacionado a Concepto en SAO</span></h4>
+      @else
+      <button type="button" class="btn btn-success" id="btn_genera_concepto">Generar Concepto SAO</button>
+      @endif
+    </div>
   </div>
   <div class="col-sm-6">
     <!-- Tipo Form Input -->

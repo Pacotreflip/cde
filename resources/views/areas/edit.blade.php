@@ -9,7 +9,13 @@
 {!! Form::model($area, ['route' => ['areas.update', $area], 'method' => 'PATCH']) !!}
 @include('areas.partials.edit-fields')
 {!! Form::close() !!}
+{!! Form::model($area, ['route' => ['areas.genera.concepto.sao', $area], 'method' => 'PATCH']) !!}
 
+{!! Form::close() !!}
+<form action="{{ route('areas.genera.concepto.sao', $area) }}" method="POST" accept-charset="UTF-8" id="genera_concepto">
+                  <input type="hidden" name="_method" value="PATCH">
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+</form>
 <hr>
 
 @if(count($area->materialesRequeridos)>0)
@@ -284,5 +290,8 @@
 @section('scripts')
 <script>
     $('[data-toggle="tooltip"]').tooltip();
+    $("#btn_genera_concepto").off().on("click", function(){
+        $("form#genera_concepto").submit();
+    });
 </script>
 @stop
