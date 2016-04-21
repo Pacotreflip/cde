@@ -41365,7 +41365,7 @@ Vue.component('asignacion-screen', {
       this.asignacionForm.materiales = this.articulosAAsignar;
 
       this.$http.post('/asignaciones', this.asignacionForm).success(function (response) {
-        //window.location = response.path;
+        window.location = response.path;
       }).error(function (errors) {
         this.asignando = false;
         App.setErrorsOnForm(this.asignacionForm, errors);
