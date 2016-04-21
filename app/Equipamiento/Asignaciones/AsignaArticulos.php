@@ -13,6 +13,7 @@ use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class AsignaArticulos
 {
+    use AuxiliaresTransaccionesSAO;
     protected $data;
 
     protected $obra;
@@ -38,7 +39,7 @@ class AsignaArticulos
         try {
             DB::connection('cadeco')->beginTransaction();
             
-
+            $proceso_sao = $this->procesoSAO();
             $asignacion = $this->creaAsignacion();
             
             foreach ($this->data['materiales'] as $item) {
@@ -72,6 +73,18 @@ class AsignaArticulos
 
             $asignacion->save();
             
+            foreach($proceso_sao as $transaccion){
+                DB::connection("cadeco")->table('Equipamiento.asignaciones_transacciones')->insert(
+                    ['id_asignacion' => $asignacion->id, 'id_transaccion' => $transaccion->id_transaccion]
+                );
+            }
+            foreach($asignacion->items as $item){
+                foreach($this->items_ids[$item->id_material] as $k=>$v){
+                    DB::connection("cadeco")->table('Equipamiento.asignaciones_transacciones_items')->insert(
+                        ['id_item_asignacion' => $item->id, 'id_item_transaccion' => $v]
+                    );
+                }
+            }
             
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -98,5 +111,28 @@ class AsignaArticulos
         $asignacion->save();
 
         return $asignacion;
+    }
+    
+    protected function procesoSAO(){
+        $this->preparaDatosTransacciones();
+        
+        if(array_key_exists("transferencias", $this->transacciones)){
+            foreach($this->transacciones["transferencias"] as $datos_transferencia){
+                $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
+            }
+        }
+        
+        if(array_key_exists("salidas", $this->transacciones)){
+            foreach($this->transacciones["salidas"] as $datos_transferencia){
+                $transacciones [] = $this->creaSalidaAlmacen($datos_transferencia);
+            }
+        }
+        //dd($transacciones);
+        foreach ($transacciones as $transaccion){
+            foreach($transaccion->items as $item){
+                $this->items_ids[$item->id_material][] = $item->id_item;
+            }
+        }
+        return $transacciones;
     }
 }
