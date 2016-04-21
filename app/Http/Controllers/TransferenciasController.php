@@ -3,12 +3,11 @@
 namespace Ghi\Http\Controllers;
 
 use Ghi\Http\Requests;
-use Ghi\Equipamiento\Areas\Area;
-use Illuminate\Support\Facades\DB;
-use Ghi\Equipamiento\Articulos\Material;
+
 use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Http\Requests\CreateTransferenciaRequest;
 use Ghi\Equipamiento\Transferencias\Transferencia;
+use Ghi\Equipamiento\Transferencias\Transferencias;
 
 class TransferenciasController extends Controller
 {
@@ -53,30 +52,33 @@ class TransferenciasController extends Controller
      */
     public function store(CreateTransferenciaRequest $request)
     {
-        DB::connection('cadeco')->beginTransaction();
-
-        try {
-            $origen = Area::findOrFail($request->get('area_origen'));
-
-            $transferencia = Transferencia::crear(
-                $this->getObraEnContexto(),
-                $request->get('fecha_transferencia'),
-                $request->get('observaciones'),
-                auth()->user()->usuario
-            );
-            
-            foreach ($request->get('materiales') as $item) {
-                $material = Material::where('id_material', $item['id'])->firstOrFail();
-                $destino = Area::findOrFail($item['area_destino']);
-
-                $transferencia->transfiereMaterial($material, $origen, $destino, $item['cantidad']);
-            }
-
-            DB::connection('cadeco')->commit();
-        } catch(\Exception $e) {
-            DB::connection('cadeco')->rollback();
-            throw $e;
-        }
+        
+        $transferencia = (new Transferencias($request->all(), $this->getObraEnContexto()))->save();
+        
+//        DB::connection('cadeco')->beginTransaction();
+//
+//        try {
+//            $origen = Area::findOrFail($request->get('area_origen'));
+//
+//            $transferencia = Transferencia::crear(
+//                $this->getObraEnContexto(),
+//                $request->get('fecha_transferencia'),
+//                $request->get('observaciones'),
+//                auth()->user()->usuario
+//            );
+//            
+//            foreach ($request->get('materiales') as $item) {
+//                $material = Material::where('id_material', $item['id'])->firstOrFail();
+//                $destino = Area::findOrFail($item['area_destino']);
+//
+//                $transferencia->transfiereMaterial($material, $origen, $destino, $item['cantidad']);
+//            }
+//
+//            DB::connection('cadeco')->commit();
+//        } catch(\Exception $e) {
+//            DB::connection('cadeco')->rollback();
+//            throw $e;
+//        }
 
         return response()->json(['path' => route('transferencias.show', [$transferencia])]);
     }
