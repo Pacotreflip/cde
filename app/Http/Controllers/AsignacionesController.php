@@ -68,9 +68,6 @@ class AsignacionesController extends Controller
                             ->orWhere('unidad','LIKE','%'.$busqueda.'%')
                             ->orWhere('numero_parte','LIKE','%'.$busqueda.'%');
                 })
-                ->whereHas('area', function($query) use ($busqueda) {
-                    $query->where('nombre', 'LIKE', '%'.$busqueda.'%');                            
-                })
                 ->orderBy('id_area', 'ASC')
                 ->paginate($howMany);     
     }

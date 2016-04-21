@@ -1,6 +1,11 @@
 @extends('layout')
 @section('content')
 @foreach($destinos->items() as $d)
-{{dd($d->cantidad_requerida($articulo->id_material))}}
+{{$d->id }}
+
+{{$d->nombre}}
+
+{{$d->cantidad_requerida($articulo->id_material)}}
+<br>
 @endforeach
 @stop
