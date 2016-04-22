@@ -57,22 +57,17 @@ class AsignacionesController extends Controller
             ->paginate($howMany);
     }
     
-    protected function buscarArticulos($busqueda, $howMany = 15)
+    protected function buscarArticulos($howMany = 15)
     {
         return \Ghi\Equipamiento\Inventarios\Inventario::with('area')
                 ->with('material')
                 ->where('cantidad_existencia', '>', 0)
                 ->where('id_obra', $this->getIdObra())
-                ->whereHas('material', function ($query) use ($busqueda) { 
-                    $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
-                            ->orWhere('unidad','LIKE','%'.$busqueda.'%')
-                            ->orWhere('numero_parte','LIKE','%'.$busqueda.'%');
-                })
                 ->orderBy('id_area', 'ASC')
                 ->paginate($howMany);     
     }
     
-    protected function buscarArticulosArea($busqueda, $id, $howMany = 15)
+    protected function buscarArticulosArea($id, $howMany = 15)
     {
         return \Ghi\Equipamiento\Inventarios\Inventario::with('area')
                 ->with('material')
@@ -80,11 +75,6 @@ class AsignacionesController extends Controller
                 ->where('cantidad_existencia', '>', 0)
                 ->where('id_obra', $this->getIdObra())
                 ->where('id_area', '=', $id)
-                ->whereHas('material', function ($query) use ($busqueda) { 
-                    $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
-                            ->orWhere('unidad','LIKE','%'.$busqueda.'%')
-                            ->orWhere('numero_parte','LIKE','%'.$busqueda.'%');
-                })
                 ->orderBy('id_area', 'ASC')
                 ->paginate($howMany);         
     }
@@ -95,49 +85,53 @@ class AsignacionesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected function showItems(Request $request, $id = null, $howmany = 15)
+    protected function create($id = null, $howmany = 15)
     {   
 //        $articulos = \Ghi\Equipamiento\Inventarios\Inventario::with('material')->where('id_area', '=', 53)->where('cantidad_existencia','>',0)->get();
 //        dd($articulos);
         $areasRaiz = $this->areas->getNivelesRaiz();
         
         if($id) {
-            $articulos = $this->buscarArticulosArea($request->buscar, $id);
+            $articulos = $this->buscarArticulosArea($id);
 //            $articulos = \Ghi\Equipamiento\Inventarios\Inventario::with('material')
 //                    ->where('id_area', '=', $id)
 //                    ->where('cantidad_existencia','>',0)
 //                    ->orderBy('id', 'ASC')
 //                    ->paginate($howmany);
             
-            return view('asignaciones.showItems')
+            return view('asignaciones.create')
                     ->withAreasraiz($areasRaiz)
                     ->withArticulos($articulos)
                     ->withCurrarea($this->areas->getById($id));
         } else {
-            $articulos = $this->buscarArticulos($request->buscar);
+            $articulos = $this->buscarArticulos();
 //            $areas = \Ghi\Equipamiento\Areas\Area::
-            return view('asignaciones.showItems')
+            return view('asignaciones.create')
                     ->withAreasraiz($areasRaiz)
                     ->withArticulos($articulos);
         }
     }
     
-    protected function create($area, $id, $howMany = 15)
-    {
-        $articulo = \Ghi\Equipamiento\Inventarios\Inventario::with('area')
-                ->with('material')
-                ->where('id_area', '=', $area)
-                ->where('id_material', '=', $id)
-                ->first();
-        
+    protected function getDestinos($id_area, $id_articulo)
+    {        
         $destinos = \Ghi\Equipamiento\Areas\Area::with('materialesRequeridos')
-                ->whereHas('materialesRequeridos', function($query) use ($id) {
-                    $query->where('id_material', '=', $id);               
+                ->whereHas('materialesRequeridos', function($query) use ($id_articulo) {
+                    $query->where('id_material', '=', $id_articulo);               
                 })
-                ->paginate($howMany);                 
-        return view('asignaciones.create')
-            ->withArticulo($articulo)
-            ->withDestinos($destinos);
+                ->get()
+                ;
+                
+        $areasDestino = [];
+
+        foreach ($destinos as $destino) {
+            $areasDestino[] = [
+                'id'                    => $destino->id,
+                'id_obra'               => $destino->id_obra,
+                'nombre'                => $destino->ruta(),
+                'cantidad_requerida'    => $destino->cantidad_requerida($id_articulo)
+            ];
+        }
+        return response()->json($areasDestino);
     }
 
     /**

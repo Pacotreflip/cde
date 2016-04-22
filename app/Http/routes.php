@@ -98,10 +98,9 @@ Route::delete('transferencias/{id}', 'TransferenciasController@destroy')->name('
 // Rutas de asignaciones...
 Route::get('asignaciones', 'AsignacionesController@index')->name('asignaciones.index');
 Route::get('asignaciones/{id}', 'AsignacionesController@show')->name('asignaciones.show');
-Route::get('asignar/inventarios', 'AsignacionesController@showItems')->name('asignar.showAllItems');
-Route::get('asignar/inventarios/{id}', 'AsignacionesController@showItems')->name('asignar.showItems');
-Route::post('asignaciones/asignar/crear/{area}/{id}', 'AsignacionesController@store')->name('asignaciones.store');
-Route::get('asignaciones/asignar/crear/{area}/{id}','AsignacionesController@create')->name('asignaciones.create');
+Route::get('asignar/inventarios', 'AsignacionesController@create')->name('asignar.create');
+Route::get('asignar/inventarios/{id}', 'AsignacionesController@create')->name('asignar.areacreate');
+Route::get('asignar/destinos/{id_area}/{id_articulo}', 'AsignacionesController@getDestinos')->name('asignar.destinos');
 
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
