@@ -63,7 +63,8 @@
                 <td>{{ $articulo->cantidad_existencia }}</td>
                 <td>{{ $articulo->material->cantidad_esperada($articulo->id_area) }}</td>
                 <td>{{ $articulo->material->cantidad_asignada($articulo->id_area) }}</td>
-                <td><a onclick="setDestinos({{$articulo->id_area}},{{$articulo->material->id_material}})"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                
+<!--                <td><a onclick="setDestinos({{$articulo->id_area}},{{$articulo->material->id_material}})"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                -->
+                <td><a  id="verDestinos" id_area="{{$articulo->id_area}}" id_material="{{$articulo->material->id_material}}"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                
             </tr>
             @endforeach
         </tbody>    
@@ -90,7 +91,18 @@ $('ul li.area').click(function(e) {
 
 var $rows = $('#tabla tbody tr');
 $('#buscar').keyup(function() {
+    
+    
     var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+    
+    if (val){ 
+    
+    $('[tipo=trDestino]').hide();
+    }
+    else {
+            $('[tipo=trDestino]').show();
+
+    }
     
     $rows.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
@@ -105,13 +117,30 @@ function setDestinos(id_area, id_material) {
         destinos.forEach(function (destino) {
             
             $('#'+ id_material).after(
-                    '<tr class="success">\n\
+                    '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
                         <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
                         <td colspan = "2"  align="right"><input name="" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
                     </tr>');
             i++;
-            });
         });
+    });
 }
+
+function removeDestinos(id) {
+    $('[id=destino'+id+']').remove();
+}
+
+$(function () {
+    function first() {
+        setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
+        $(this).one("click", second);
+    }
+    function second() {
+        removeDestinos($(this).attr("id_material"));
+        $(this).one("click", first);
+    }
+    $("[id=verDestinos]").one("click", first);
+});
+
 </script>
 @stop
