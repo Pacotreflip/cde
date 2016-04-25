@@ -4,18 +4,20 @@
 <h1>Nueva Asignación de Artículos</h1>
 <hr>
 <div class="text-right col-md-3 col-md-offset-9">
+    @if(!isset($currarea))
     <div class="input-group">
         <input class="form-control input-sm" type="text" id="buscar" placeholder="Buscar...">
           <span class="input-group-btn">
         <button class="btn btn-sm btn-primary disabled" type="submit">Buscar</button>
       </span>
     </div>
+    @endif
   <br>
 </div>
 <div class="section">
 <div class="col-md-3">
     @if(isset($currarea))
-    <a href="{{route('asignar.create')}}"><h4><strong>TODOS LOS ALMACENES</strong></h4></a>
+    <a href="{{route('asignar.create')}}"><h4><strong>TODOS LOS ARTÍCULOS</strong></h4></a>
 
     @else
     <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
@@ -37,6 +39,10 @@
     </ul>
 </div>
 <div class="col-md-9">
+    @if(isset($currarea))
+    <form action="{{ route('asignaciones.store',['id' => $currarea->id]) }}" method="POST" accept-charset="UTF-8">
+        <input name="_token" type="hidden" value="{{ csrf_token() }}">
+        @endif
     <table class="table table-hover" id="tabla">
         <h4><strong>{{isset($currarea) ? $currarea->ruta : 'ARTÍCULOS ALMACENADOS' }}</strong></h4>
         <thead>
@@ -46,9 +52,11 @@
                 <th>Descripción</th>
                 <th>Unidad</th>
                 <th>Almacenados</th>
+                @if(isset($currarea))
                 <th>Esperados</th>
                 <th>Asignados</th>
                 <th>Asignar a Destino(s)</th>
+                @endif
             </tr>
         </thead>
 
@@ -61,49 +69,43 @@
                 <td><strong>{{ $articulo->material->descripcion }}</strong></td>
                 <td>{{ $articulo->material->unidad }}</td>
                 <td>{{ $articulo->cantidad_existencia }}</td>
+                @if(isset($currarea))
                 <td>{{ $articulo->material->cantidad_esperada($articulo->id_area) }}</td>
                 <td>{{ $articulo->material->cantidad_asignada($articulo->id_area) }}</td>
-<!--                <td><a onclick="setDestinos({{$articulo->id_area}},{{$articulo->material->id_material}})"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                -->
                 <td><a  id="verDestinos" id_area="{{$articulo->id_area}}" id_material="{{$articulo->material->id_material}}"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                
+                @endif
             </tr>
             @endforeach
         </tbody>    
     </table>
-    {!! $articulos->render() !!}
-      @if(isset($currarea))
-    <a style="float: right" class="btn btn-primary" href="{{route('asignar.create')}}"><i class="fa fa-reply fa-lg"></i> Todos los Almacenes</a>
-    @endif
+        @if(isset($currarea))
+    <a style="float: right" class="btn btn-primary" href="{{route('asignar.create')}}"><i class="fa fa-reply fa-lg"></i> Todos los Artículos</a>
+        @endif
     <br>
     <br>
-   
+
+    @if(isset($currarea))
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit" id="enviar">
+            <span><i class="fa fa-check-circle"></i> Asignar Artículos</span>
+        </button>
+    </div>
+    @endif 
+    </form>
+
 </div>
 <hr>
 @stop
 @section('scripts')
 <script>
-$(document).ready(function(){
-    $('ul li > ul').slideUp();   
-});
-
-$('ul li.area').click(function(e) {
-    $(this).children('ul.children').slideToggle(300);
-});
+$(document).ready(function(){$('ul li > ul').slideUp();});
+$('ul li.area').click(function(e) {$(this).children('ul.children').slideToggle(300);});
 
 var $rows = $('#tabla tbody tr');
 $('#buscar').keyup(function() {
-    
-    
     var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-    
-    if (val){ 
-    
-    $('[tipo=trDestino]').hide();
-    }
-    else {
-            $('[tipo=trDestino]').show();
-
-    }
-    
+    if (val){ $('[tipo=trDestino]').hide();}
+    else {$('[tipo=trDestino]').show();}  
     $rows.show().filter(function() {
         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
         return !~text.indexOf(val);
@@ -112,23 +114,19 @@ $('#buscar').keyup(function() {
 
 function setDestinos(id_area, id_material) {
     var i = 1;
-    
     $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
         destinos.forEach(function (destino) {
-            
             $('#'+ id_material).after(
                     '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
                         <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
-                        <td colspan = "2"  align="right"><input name="" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
+                        <td colspan = "2"  align="right"><input name="'+destino.nombre+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
                     </tr>');
             i++;
         });
     });
 }
 
-function removeDestinos(id) {
-    $('[id=destino'+id+']').remove();
-}
+function removeDestinos(id) {$('[id=destino'+id+']').remove();}
 
 $(function () {
     function first() {
@@ -142,5 +140,20 @@ $(function () {
     $("[id=verDestinos]").one("click", first);
 });
 
+$('#enviar').on('click',function(e){
+    e.preventDefault();
+    var form = $(this).closest('form');
+    swal({
+        title: "¿Desea continuar con la asignación?",
+        text: "¿Esta seguro de que la información es correcta?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        confirmButtonColor: "#ec6c62"
+    }, function(isConfirm){
+        if (isConfirm) form.submit();
+    });
+});
 </script>
 @stop
