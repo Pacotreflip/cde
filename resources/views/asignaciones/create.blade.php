@@ -65,7 +65,7 @@
            <?php $areaArt = \Ghi\Equipamiento\Areas\Area::find($articulo->id_area) ?>
             <tr id="{{$articulo->material->id_material}}">
                 <td>{{$areaArt->ruta}}</td>
-                <td>{{ $articulo->material->numero_parte}}</td>
+                <td>{{ $articulo->material->numero_parte}}</td>                
                 <td><strong>{{ $articulo->material->descripcion }}</strong></td>
                 <td>{{ $articulo->material->unidad }}</td>
                 <td>{{ $articulo->cantidad_existencia }}</td>
@@ -97,50 +97,47 @@
 <hr>
 @stop
 @section('scripts')
+@if(isset($currarea))
 <script>
-$(document).ready(function(){$('ul li > ul').slideUp();});
-$('ul li.area').click(function(e) {$(this).children('ul.children').slideToggle(300);});
+    var asignacionForm = new Object();
+    var area = new Object();
+    var ruta_area = '';
 
-var $rows = $('#tabla tbody tr');
-$('#buscar').keyup(function() {
-    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-    if (val){ $('[tipo=trDestino]').hide();}
-    else {$('[tipo=trDestino]').show();}  
-    $rows.show().filter(function() {
-        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-        return !~text.indexOf(val);
-    }).hide();
-});
-
-function setDestinos(id_area, id_material) {
-    var i = 1;
-    $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
-        destinos.forEach(function (destino) {
-            $('#'+ id_material).after(
-                    '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-                        <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
-                        <td colspan = "2"  align="right"><input name="'+destino.nombre+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
-                    </tr>');
-            i++;
+    asignacionForm.origen = '<?php echo $currarea->id ?>';
+    asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
+    asignacionForm.materiales = [];
+    asignacionForm.errors = [];
+    area.materiales = [];
+    
+    function setDestinos(id_area, id_material) {
+        var i = 1;
+        $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
+            destinos.forEach(function (destino) {
+                $('#'+ id_material).after(
+                        '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
+                            <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
+                            <td colspan = "2"  align="right"><input name="'+destino.nombre+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
+                        </tr>');
+                i++;
+            });
         });
+    }
+    
+    function removeDestinos(id) {$('[id=destino'+id+']').remove();}
+
+    $(function () {
+        function first() {
+            setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
+            $(this).one("click", second);
+        }
+        function second() {
+            removeDestinos($(this).attr("id_material"));
+            $(this).one("click", first);
+        }
+        $("[id=verDestinos]").one("click", first);
     });
-}
-
-function removeDestinos(id) {$('[id=destino'+id+']').remove();}
-
-$(function () {
-    function first() {
-        setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
-        $(this).one("click", second);
-    }
-    function second() {
-        removeDestinos($(this).attr("id_material"));
-        $(this).one("click", first);
-    }
-    $("[id=verDestinos]").one("click", first);
-});
-
-$('#enviar').on('click',function(e){
+    
+    $('#enviar').on('click',function(e){
     e.preventDefault();
     var form = $(this).closest('form');
     swal({
@@ -154,6 +151,40 @@ $('#enviar').on('click',function(e){
     }, function(isConfirm){
         if (isConfirm) form.submit();
     });
+});
+function transformDestinos (destinos) {
+    var dest = [];
+    destinos.forEach(function (destino) {
+        dest.push({ id: destino.id, text: destino.text, cantidad: '', path: destino.path });
+      });
+}
+function setDestinos (material, destinos) {
+    material.destinos = transformDestinos(destinos);
+    
+}
+
+articulosAAsignar() {
+    return area.materiales.filter(function(material) {
+       return material.destinos.lenth; 
+    });
+}
+</script>
+@endif
+<script>
+$(document).ready(
+        function(){$('ul li > ul').slideUp();       
+});
+$('ul li.area').click(function(e) {$(this).children('ul.children').slideToggle(300);});
+
+var $rows = $('#tabla tbody tr');
+$('#buscar').keyup(function() {
+    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+    if (val){ $('[tipo=trDestino]').hide();}
+    else {$('[tipo=trDestino]').show();}  
+    $rows.show().filter(function() {
+        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+        return !~text.indexOf(val);
+    }).hide();
 });
 </script>
 @stop
