@@ -40,7 +40,7 @@
 </div>
 <div class="col-md-9">
     @if(isset($currarea))
-    <form action="{{ route('asignaciones.store',['id' => $currarea->id]) }}" method="POST" accept-charset="UTF-8">
+    <form action="{{ route('asignaciones.store') }}" method="POST" accept-charset="UTF-8">
         <input name="_token" type="hidden" value="{{ csrf_token() }}">
         @endif
     <table class="table table-hover" id="tabla">
@@ -92,25 +92,13 @@
     </div>
     @endif 
     </form>
-
 </div>
 <hr>
 @stop
 @section('scripts')
 @if(isset($currarea))
-<script>
-    var asignacionForm = new Object();
-    var area = new Object();
-    var ruta_area = '';
-
-    asignacionForm.origen = '<?php echo $currarea->id ?>';
-    asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
-    asignacionForm.materiales = [];
-    asignacionForm.errors = [];
-    area.materiales = [];
-    
+<script>   
     function setDestinos(id_area, id_material) {
-        var i = 1;
         $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
             destinos.forEach(function (destino) {
                 $('#'+ id_material).after(
@@ -118,7 +106,6 @@
                             <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
                             <td colspan = "2"  align="right"><input name="'+destino.nombre+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
                         </tr>');
-                i++;
             });
         });
     }
@@ -137,9 +124,12 @@
         $("[id=verDestinos]").one("click", first);
     });
     
-    $('#enviar').on('click',function(e){
+    
+
+    
+    $("#enviar").off().on("click", function (e) {
     e.preventDefault();
-    var form = $(this).closest('form');
+    var url = $(this).closest('form').attr("action");
     swal({
         title: "¿Desea continuar con la asignación?",
         text: "¿Esta seguro de que la información es correcta?",
@@ -149,7 +139,34 @@
         cancelButtonText: "No",
         confirmButtonColor: "#ec6c62"
     }, function(isConfirm){
-        if (isConfirm) form.submit();
+        if (isConfirm) {
+            $.ajaxSetup({
+                headers:{
+                    'X-CSRF-Token': $('input[name="_token"]').val()
+                }
+            });
+            var id = 2021;
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'id' : id},
+//                data: <--?php echo json_encode($currarea->materiales->toArray())?>,
+                success: function (data)
+                {
+                    console.log(data);
+                },
+                error: function (xhr, textStatus, thrownError)
+                {
+                    console.log(xhr.responseText);
+                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                    $.each($.parseJSON(xhr.responseText), function (ind, elem) {
+                        salida += '<li>' + elem + '</li>';
+                    });
+                    salida += '</ul></div>';
+                    $("div.errores_cobro_credito").html(salida);
+                }
+            });                    
+        }
     });
 });
 function transformDestinos (destinos) {
@@ -163,9 +180,9 @@ function setDestinos (material, destinos) {
     
 }
 
-articulosAAsignar() {
+function articulosAAsignar() {
     return area.materiales.filter(function(material) {
-       return material.destinos.lenth; 
+       return material.destinos.length; 
     });
 }
 </script>
