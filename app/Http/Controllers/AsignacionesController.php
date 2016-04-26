@@ -142,7 +142,7 @@ class AsignacionesController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        dd($request);
         return 1;
         $asignacion = (new AsignaArticulos($request->all(), $this->getObraEnContexto()))->save();
         if ($request->ajax()) {

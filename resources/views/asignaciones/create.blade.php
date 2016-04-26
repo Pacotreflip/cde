@@ -98,9 +98,26 @@
 @section('scripts')
 @if(isset($currarea))
 <script>   
+    var asignacionForm = {
+        origen: '',
+        nombre_area:'',
+        materiales: [],
+        errors: [],
+    };
+    
+    $(document).ready(
+        function() {
+            asignacionForm.origen = '<?php echo $currarea->id ?>';
+            asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
+            asignacionForm.
+            console.log(asignacionForm);
+    });
+        
     function setDestinos(id_area, id_material) {
+                
         $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
             destinos.forEach(function (destino) {
+
                 $('#'+ id_material).after(
                         '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
                             <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
@@ -123,10 +140,7 @@
         }
         $("[id=verDestinos]").one("click", first);
     });
-    
-    
-
-    
+   
     $("#enviar").off().on("click", function (e) {
     e.preventDefault();
     var url = $(this).closest('form').attr("action");
@@ -149,7 +163,7 @@
             $.ajax({
                 url: url,
                 type: "POST",
-                data: {'id' : id},
+                data: asignacionForm,
 //                data: <--?php echo json_encode($currarea->materiales->toArray())?>,
                 success: function (data)
                 {
@@ -169,16 +183,6 @@
         }
     });
 });
-function transformDestinos (destinos) {
-    var dest = [];
-    destinos.forEach(function (destino) {
-        dest.push({ id: destino.id, text: destino.text, cantidad: '', path: destino.path });
-      });
-}
-function setDestinos (material, destinos) {
-    material.destinos = transformDestinos(destinos);
-    
-}
 
 function articulosAAsignar() {
     return area.materiales.filter(function(material) {
