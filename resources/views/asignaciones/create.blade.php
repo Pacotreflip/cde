@@ -1,5 +1,4 @@
 @extends('layout')
-
 @section('content')
 <h1>Nueva Asignación de Artículos</h1>
 <hr>
@@ -104,18 +103,29 @@
         materiales: [],
         errors: [],
     };
+    var area = {
+        materiales: []
+    };
     
     $(document).ready(
         function() {
             asignacionForm.origen = '<?php echo $currarea->id ?>';
             asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
-            asignacionForm.
-            console.log(asignacionForm);
+            area.materiales.push( <?php echo json_encode($articulos->find(4))?>);
+            console.log(area.materiales[0].cantidad_existencia);
+            
+//            console.log(asignacionForm);
     });
         
     function setDestinos(id_area, id_material) {
-                
+        $.get('/api/materiales/' + id_area + '/' + id_material).success(function(material){
+            asignacionForm.materiales.push([{ id: id_material, cantidad: '10'}]);
+
+            
+    });
+
         $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
+            console.log(asignacionForm);
             destinos.forEach(function (destino) {
 
                 $('#'+ id_material).after(
