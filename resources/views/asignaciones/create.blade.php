@@ -96,12 +96,12 @@
 @stop
 @section('scripts')
 @if(isset($currarea))
-<script>   
+<script> 
     var asignacionForm = {
         origen: '',
         nombre_area:'',
         materiales: [],
-        errors: [],
+        errors: []
     };
     var area = {
         materiales: []
@@ -111,41 +111,127 @@
         function() {
             asignacionForm.origen = '<?php echo $currarea->id ?>';
             asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
-            area.materiales.push( <?php echo json_encode($articulos->find(4))?>);
-            console.log(area.materiales[0].cantidad_existencia);
+//            area.materiales.push( <?php echo json_encode($articulos->find(4))?>);
+//            console.log(area.materiales[0].cantidad_existencia);
             
 //            console.log(asignacionForm);
     });
-        
-    function setDestinos(id_area, id_material) {
-        $.get('/api/materiales/' + id_area + '/' + id_material).success(function(material){
-            asignacionForm.materiales.push([{ id: id_material, cantidad: '10'}]);
-
-            
-    });
-
-        $.get('/asignar/destinos/' + id_area + '/' + id_material).success(function(destinos){
-            console.log(asignacionForm);
-            destinos.forEach(function (destino) {
-
-                $('#'+ id_material).after(
-                        '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-                            <td  colspan = "6" align="right"><strong>' + destino.nombre + '</strong> (requiere '+ destino.cantidad_requerida +')</td>\n\
-                            <td colspan = "2"  align="right"><input name="'+destino.nombre+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar"></td>\n\
-                        </tr>');
+    
+    function setDestino(destino, id_area, id_material) {
+//        console.log(id_area, id_material);
+        // Obtener un nuevo material
+//        console.log(area.materiales);
+        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
+            // Obtener el destino
+            $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
+                console.log(destinos);
+                //verificar existencia del material
+                var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
+//                console.log(materialExistente);
+                if (materialExistente.length !== 0) {
+                    //Si el material existe
+                    //Verificar existencia del destino
+                    var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
+//                    console.log(destinoExistente);
+                    if(destinoExistente.length !== 0){
+                        //Si el destino existe
+//                        console.log('el destino existe');
+                        destinoExistente[0].cantidad = destino.value;
+                    } else {
+                        //Si el destino no existe
+//                        console.log('el destino no existe');
+                        destinos[0].cantidad = destino.value;
+                        materialExistente[0].destinos.push(destinos[0]);
+//                        console.log(materialExistente);
+                    }
+                    console.log('area materiales',area.materiales);
+                } else {
+                    //Si el material no existe
+//                    console.log('el material no existe');
+                    destinos[0].cantidad = destino.value;
+                    material.destinos.push(destinos[0]);
+                    area.materiales.push(material);  
+                    console.log('area materiales', area.materiales);
+                }
+                    
             });
         });
+//        console.log(area.materiales);
+//        console.dir(area.materiales);
+    }
+        // Obtener material existente
+//        var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
+
+        // Verificar existencia del material
+//        if (materialExistente.length !== 0) {
+//            //Si el material existe
+//            console.log('el material existe');
+//            //Verificar la existencia del destino
+//            var destinoExistente = $.grep(materialExistente, function(e){ return e.id === id_material; });
+//            if(destinoExistente.length !== 0){
+//                //Si el destino existe
+//                console.log('el destino existe');
+//                destinoExistente.cantidad = destino.value;
+//            } else {
+//                //Si el destino no existe
+//                console.log('el destino no existe');
+//                getDestino.cantidad = destino.value;
+//                materialExistente.push(getDestino);
+//            }
+//        } else {    
+//            //Si el material no existe
+//            console.log('el material no existe');
+//            getDestino.cantidad = destino.value;
+//            getMaterial.push(getDestino);
+//            area.materiales.push(getMaterial);
+//       }
+//    }
+   
+    function setDestinos(id_area, id_material) {
+//        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){ 
+            $.get('/asignar/destinos/' + id_material).success(function(destinos) {
+                destinos.forEach(function (destino) {
+//                    material.destinos.push(destino);
+                    $('#'+ id_material).after(
+                            '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
+                                <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (requiere '+ destino.cantidad +')</td>\n\
+                                <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
+                            </tr>'
+                    );
+                });
+//                asignacionForm.materiales.push(material);
+//                console.log(asignacionForm);
+            });
+//        });
     }
     
-    function removeDestinos(id) {$('[id=destino'+id+']').remove();}
+//    function removeDestinos(id) {
+//        $('[id=destino'+id+']').remove();
+//        var i = 0;
+//        asignacionForm.materiales.forEach(function (material) {
+//            if(material) {
+//                delete asignacionForm.materiales[i];
+//                console.log(asignacionForm.materiales);
+//            }
+//            i++;
+//        });   
+//    }
 
     $(function () {
+                        var cont = 0;
+
         function first() {
-            setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
-            $(this).one("click", second);
+            if(document.getElementById('destino'+$(this).attr("id_material"))) {
+                $('[id=destino'+$(this).attr("id_material")+']').show(); 
+            } else {
+                setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
+            }
+        $(this).one("click", second);
         }
+        
         function second() {
-            removeDestinos($(this).attr("id_material"));
+            $('[id=destino'+$(this).attr("id_material")+']').hide();
+//            removeDestinos($(this).attr("id_material"));
             $(this).one("click", first);
         }
         $("[id=verDestinos]").one("click", first);
@@ -169,25 +255,17 @@
                     'X-CSRF-Token': $('input[name="_token"]').val()
                 }
             });
-            var id = 2021;
             $.ajax({
                 url: url,
                 type: "POST",
                 data: asignacionForm,
-//                data: <--?php echo json_encode($currarea->materiales->toArray())?>,
                 success: function (data)
                 {
                     console.log(data);
                 },
                 error: function (xhr, textStatus, thrownError)
                 {
-                    console.log(xhr.responseText);
-                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
-                    $.each($.parseJSON(xhr.responseText), function (ind, elem) {
-                        salida += '<li>' + elem + '</li>';
-                    });
-                    salida += '</ul></div>';
-                    $("div.errores_cobro_credito").html(salida);
+                    console.log('error');
                 }
             });                    
         }

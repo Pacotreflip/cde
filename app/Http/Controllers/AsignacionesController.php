@@ -112,7 +112,7 @@ class AsignacionesController extends Controller
         }
     }
     
-    protected function getDestinos($id_area, $id_articulo)
+    protected function getDestinos($id_articulo)
     {        
         $destinos = \Ghi\Equipamiento\Areas\Area::with('materialesRequeridos')
                 ->whereHas('materialesRequeridos', function($query) use ($id_articulo) {
@@ -127,11 +127,56 @@ class AsignacionesController extends Controller
             $areasDestino[] = [
                 'id'                    => $destino->id,
                 'id_obra'               => $destino->id_obra,
-                'nombre'                => $destino->ruta(),
-                'cantidad_requerida'    => $destino->cantidad_requerida($id_articulo)
+                'text'                  => $destino->nombre,
+                'path'                  => $destino->ruta(),
+                'cantidad'              => $destino->cantidad_requerida($id_articulo)
             ];
         }
         return response()->json($areasDestino);
+    }
+    
+    protected function getDestino($id_articulo, $id_destino)
+    {        
+        
+        $destino = \Ghi\Equipamiento\Areas\Area::with('materialesRequeridos')
+                ->whereHas('materialesRequeridos', function($query) use ($id_articulo, $id_destino) {
+                    $query->where('id_material', '=', $id_articulo)
+                          ->where('id_area', '=', $id_destino);               
+                })
+                ->get()   
+                ;
+        $areaDestino [] = [
+                'id'                    => $destino[0]->id,
+                'id_obra'               => $destino[0]->id_obra,
+                'text'                  => $destino[0]->nombre,
+                'path'                  => $destino[0]->ruta(),
+                'cantidad'              => $destino[0]->cantidad_requerida($id_articulo)
+                ];
+        return response()->json($areaDestino);
+    }
+    
+    protected function getMaterial($id_area, $id_articulo)
+    {       
+        $inventario = \Ghi\Equipamiento\Inventarios\Inventario::with('area')
+                ->with('material')
+                ->where('id_material', '=', $id_articulo)
+                ->where('id_area', '=', $id_area)
+                ->where('id_obra', $this->getIdObra())
+                ->first();
+        
+        $material = [
+            "id"            => $inventario->id_material,
+            "id_inventario" => $inventario->id,
+            "numero_parte"  => $inventario->material->numero_parte,
+            "descripcion"   => $inventario->material->descripcion,
+            "unidad"        => $inventario->material->unidad,
+            "existencia"    => $inventario->cantidad_existencia,
+            "asignados"     => $inventario->material->cantidad_asignada($inventario->id_area),
+            "esperados"     => $inventario->material->cantidad_esperada($inventario->id_area),
+            'destinos'      => []
+        ];
+     
+        return response()->json($material);
     }
 
     /**
@@ -140,14 +185,13 @@ class AsignacionesController extends Controller
      * @param CreateAsignacionRequest $request
      * @return \Illuminate\Http\Response
      */
+    
     public function store(Request $request)
     {
-        dd($request);
-        return 1;
+        dd($request->all());
         $asignacion = (new AsignaArticulos($request->all(), $this->getObraEnContexto()))->save();
         if ($request->ajax()) {
-            return 1;
-//            return response()->json(['path' => route('asignaciones.show', $asignacion)]);
+            return response()->json(['path' => route('asignaciones.show', $asignacion)]);
         }
     }
 

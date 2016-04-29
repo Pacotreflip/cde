@@ -14,12 +14,10 @@
         <group>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/routes.php</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/asignaciones/index.blade.php</file>
-            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/public/js/app.js</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Equipamiento/Asignaciones/AsignaArticulos.php</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/asignaciones/create.blade.php</file>
-            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Requests/CreateAsignacionRequest.php</file>
-            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/storage/framework/views/05354493ebcd4583e03073c1b0dd6cef</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Controllers/AsignacionesController.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Controllers/Api/AreasController.php</file>
         </group>
     </open-files>
 </project-private>
