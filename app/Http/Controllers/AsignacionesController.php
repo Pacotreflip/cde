@@ -186,7 +186,7 @@ class AsignacionesController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function store(Request $request)
+    public function store(CreateAsignacionRequest $request)
     {
         dd($request->all());
         $asignacion = (new AsignaArticulos($request->all(), $this->getObraEnContexto()))->save();

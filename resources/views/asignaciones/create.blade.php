@@ -101,7 +101,7 @@
         origen: '',
         nombre_area:'',
         materiales: [],
-        errors: []
+        errors: [],
     };
     var area = {
         materiales: []
@@ -124,7 +124,7 @@
         $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
             // Obtener el destino
             $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
-                console.log(destinos);
+//                console.log(destinos);
                 //verificar existencia del material
                 var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
 //                console.log(materialExistente);
@@ -144,18 +144,20 @@
                         materialExistente[0].destinos.push(destinos[0]);
 //                        console.log(materialExistente);
                     }
-                    console.log('area materiales',area.materiales);
+//                    console.log('area materiales',area.materiales);
                 } else {
                     //Si el material no existe
 //                    console.log('el material no existe');
                     destinos[0].cantidad = destino.value;
                     material.destinos.push(destinos[0]);
                     area.materiales.push(material);  
-                    console.log('area materiales', area.materiales);
+//                    console.log('area materiales', area.materiales);
                 }
                     
             });
         });
+//        console.log('area materiales', area.materiales);
+//        console.log('asignacion form', asignacionForm);
 //        console.log(area.materiales);
 //        console.dir(area.materiales);
     }
@@ -239,6 +241,8 @@
    
     $("#enviar").off().on("click", function (e) {
     e.preventDefault();
+    asignacionForm.materiales.push(area.materiales);
+    console.log(asignacionForm);
     var url = $(this).closest('form').attr("action");
     swal({
         title: "¿Desea continuar con la asignación?",
@@ -265,7 +269,7 @@
                 },
                 error: function (xhr, textStatus, thrownError)
                 {
-                    console.log('error');
+                    console.log(xhr);
                 }
             });                    
         }

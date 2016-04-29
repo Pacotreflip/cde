@@ -27,6 +27,8 @@ class CreateAsignacionRequest extends Request
             'origen' => 'required',
             'materiales' => 'required|array',
         ];
+        
+        dd($this->get('materiales', []));
 
         foreach ($this->get('materiales', []) as $key => $material) {
             foreach ($material['destinos'] as $destinoKey => $destino) {
