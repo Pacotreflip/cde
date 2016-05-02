@@ -101,7 +101,7 @@
         origen: '',
         nombre_area:'',
         materiales: [],
-        errors: [],
+        errors: []
     };
     var area = {
         materiales: []
@@ -111,84 +111,48 @@
         function() {
             asignacionForm.origen = '<?php echo $currarea->id ?>';
             asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
-//            area.materiales.push( <?php echo json_encode($articulos->find(4))?>);
+            asignacionForm.errors = [];
 //            console.log(area.materiales[0].cantidad_existencia);
             
 //            console.log(asignacionForm);
     });
     
     function setDestino(destino, id_area, id_material) {
-//        console.log(id_area, id_material);
+        console.log(1);
         // Obtener un nuevo material
-//        console.log(area.materiales);
         $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
+            console.log(2);
             // Obtener el destino
             $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
-//                console.log(destinos);
+                console.log(3);
                 //verificar existencia del material
                 var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
-//                console.log(materialExistente);
                 if (materialExistente.length !== 0) {
                     //Si el material existe
                     //Verificar existencia del destino
                     var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
-//                    console.log(destinoExistente);
                     if(destinoExistente.length !== 0){
                         //Si el destino existe
-//                        console.log('el destino existe');
                         destinoExistente[0].cantidad = destino.value;
                     } else {
                         //Si el destino no existe
-//                        console.log('el destino no existe');
                         destinos[0].cantidad = destino.value;
                         materialExistente[0].destinos.push(destinos[0]);
-//                        console.log(materialExistente);
                     }
-//                    console.log('area materiales',area.materiales);
                 } else {
+                    console.log(3);
                     //Si el material no existe
-//                    console.log('el material no existe');
                     destinos[0].cantidad = destino.value;
                     material.destinos.push(destinos[0]);
-                    area.materiales.push(material);  
-//                    console.log('area materiales', area.materiales);
+                    area.materiales.push(material); 
                 }
                     
             });
         });
-//        console.log('area materiales', area.materiales);
-//        console.log('asignacion form', asignacionForm);
-//        console.log(area.materiales);
-//        console.dir(area.materiales);
+        console.log(4);
+        console.log('segunda',area.materiales);
     }
-        // Obtener material existente
-//        var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
 
-        // Verificar existencia del material
-//        if (materialExistente.length !== 0) {
-//            //Si el material existe
-//            console.log('el material existe');
-//            //Verificar la existencia del destino
-//            var destinoExistente = $.grep(materialExistente, function(e){ return e.id === id_material; });
-//            if(destinoExistente.length !== 0){
-//                //Si el destino existe
-//                console.log('el destino existe');
-//                destinoExistente.cantidad = destino.value;
-//            } else {
-//                //Si el destino no existe
-//                console.log('el destino no existe');
-//                getDestino.cantidad = destino.value;
-//                materialExistente.push(getDestino);
-//            }
-//        } else {    
-//            //Si el material no existe
-//            console.log('el material no existe');
-//            getDestino.cantidad = destino.value;
-//            getMaterial.push(getDestino);
-//            area.materiales.push(getMaterial);
-//       }
-//    }
-   
     function setDestinos(id_area, id_material) {
 //        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){ 
             $.get('/asignar/destinos/' + id_material).success(function(destinos) {
@@ -240,10 +204,10 @@
     });
    
     $("#enviar").off().on("click", function (e) {
-    e.preventDefault();
-    asignacionForm.materiales.push(area.materiales);
-    console.log(asignacionForm);
-    var url = $(this).closest('form').attr("action");
+        console.log(5);
+        e.preventDefault();        
+        console.log(6);
+        var url = $(this).closest('form').attr("action");
     swal({
         title: "¿Desea continuar con la asignación?",
         text: "¿Esta seguro de que la información es correcta?",
@@ -253,6 +217,10 @@
         cancelButtonText: "No",
         confirmButtonColor: "#ec6c62"
     }, function(isConfirm){
+        area.materiales.forEach(function (m){
+            asignacionForm.materiales.push(m);
+            console.log(asignacionForm);
+        });
         if (isConfirm) {
             $.ajaxSetup({
                 headers:{
@@ -263,24 +231,21 @@
                 url: url,
                 type: "POST",
                 data: asignacionForm,
-                success: function (data)
+                success: function (response)
                 {
-                    console.log(data);
+                    window.location = response.path;
                 },
-                error: function (xhr, textStatus, thrownError)
+                error: function (errors)
                 {
-                    console.log(xhr);
+                    console.log(errors);
+                    App.setErrorsOnForm(this.asignacionForm, errors);
+                    console.log(asignacionForm);
                 }
             });                    
         }
     });
 });
 
-function articulosAAsignar() {
-    return area.materiales.filter(function(material) {
-       return material.destinos.length; 
-    });
-}
 </script>
 @endif
 <script>

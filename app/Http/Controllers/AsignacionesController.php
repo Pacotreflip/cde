@@ -188,7 +188,6 @@ class AsignacionesController extends Controller
     
     public function store(CreateAsignacionRequest $request)
     {
-        dd($request->all());
         $asignacion = (new AsignaArticulos($request->all(), $this->getObraEnContexto()))->save();
         if ($request->ajax()) {
             return response()->json(['path' => route('asignaciones.show', $asignacion)]);
