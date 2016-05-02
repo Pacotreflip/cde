@@ -6,25 +6,33 @@ use Ghi\Equipamiento\Moneda;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Areas\AreasTipo;
 use Illuminate\Http\Request;
+use Ghi\Equipamiento\Articulos\Materiales;
+use Ghi\Equipamiento\Articulos\ClasificadorRepository;
+use Ghi\Equipamiento\Articulos\Familia;
+use Ghi\Equipamiento\Articulos\Clasificador;
+use Ghi\Equipamiento\Articulos\TipoMaterial;
 class AreasTipoComparativaController extends Controller
 {
     /**
      * @var AreasTipo
      */
     private $tipos_area;
+    protected $materiales;
+    protected $clasificadores;
 
     /**
      * ComparativaTipoAreaController constructor.
      *
      * @param AreasTipo $tipos_area
      */
-    public function __construct(AreasTipo $tipos_area)
+    public function __construct(AreasTipo $tipos_area, Materiales $materiales, ClasificadorRepository $clasificadores, Moneda $monedas)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->tipos_area = $tipos_area;
-
+        $this->materiales = $materiales;
+        $this->clasificadores = $clasificadores;
         parent::__construct();
     }
 
@@ -39,6 +47,9 @@ class AreasTipoComparativaController extends Controller
         $filtros_consulta["casos"] = [];
         $filtros_consulta["errores"] = [];
         $filtros_consulta["grados_variacion"] = [];
+        $filtros_consulta["familias"] = [];
+        $filtros_consulta["clasificadores"] = [];
+        $filtros_consulta["descripcion"] = "";
         $tipo = $this->tipos_area->getById($id);
         $tipo_cambio = Moneda::where('nombre', 'DOLARES')->first()->tipoCambioMasReciente();
         $tipo_cambio_euro = Moneda::where('nombre', 'EUROS')->first()->tipoCambioMasReciente();
@@ -52,6 +63,10 @@ class AreasTipoComparativaController extends Controller
         //$informacion_articulos_esperados  = AreasTipo::getArticulosEsperados($id, $moneda_comparativa->id_moneda, $tipos_cambio, $filtros_consulta);
         //$articulos_esperados = $informacion_articulos_esperados["articulos_esperados"];
         $filtros = AreasTipo::getFiltros();
+        $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
+        $clasificadores = $this->clasificadores->getAsList();
+        $filtros["familias"] = $familias->toArray();
+        $filtros["clasificadores"] = $clasificadores;
         return view('areas-tipo.comparativa', ["i"=>1
             , "articulos_esperados"=>null
             , "tipo_cambio_euro"=>number_format($tipo_cambio_euro->cambio,4)
@@ -74,6 +89,9 @@ class AreasTipoComparativaController extends Controller
         $filtros_consulta["casos"] = (is_array($request->casos))?$request->casos:[];
         $filtros_consulta["errores"] = (is_array($request->errores))?$request->errores:[];
         $filtros_consulta["grados_variacion"] = (is_array($request->grados_variacion))?$request->grados_variacion:[];
+        $filtros_consulta["familias"] = (is_array($request->familias))?$request->familias:[];
+        $filtros_consulta["clasificadores"] = (is_array($request->clasificadores))?$request->clasificadores:[];
+        $filtros_consulta["descripcion"] = $request->descripcion;
         //dd($filtros);
         
         $tipo = $this->tipos_area->getById($id);
@@ -98,7 +116,10 @@ class AreasTipoComparativaController extends Controller
         $articulos_esperados = $informacion_articulos_esperados["articulos_esperados"];
         $resumen = $informacion_articulos_esperados["resumen"];
         $filtros = AreasTipo::getFiltros();
-        
+        $familias = $this->materiales->getListaFamilias(TipoMaterial::TIPO_MATERIALES);
+        $clasificadores = $this->clasificadores->getAsList();
+        $filtros["familias"] = $familias->toArray();
+        $filtros["clasificadores"] = $clasificadores;
         $monedas = Moneda::all();
         return view('areas-tipo.comparativa', ["i"=>1,"articulos_esperados"=>$articulos_esperados
                 , "tipo_cambio_euro"=>($request->tipo_cambio_euro>0)? number_format($request->tipo_cambio_euro,4) :number_format($tipo_cambio_euro->cambio,4)

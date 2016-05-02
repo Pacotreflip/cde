@@ -132,6 +132,12 @@ class AreasTipo
         if(count($filtros_consulta["casos"])>0){
             $filtros .= " and casos.idcaso in(".  implode(",", $filtros_consulta["casos"])." ) ";
         }
+        if(count($filtros_consulta["clasificadores"])){
+            $filtros .= " and Equipamiento.material_clasificadores.id in(".  implode(",", $filtros_consulta["clasificadores"])." ) ";
+        }
+        if($filtros_consulta["descripcion"] != ""){
+            $filtros .= " and dbo.materiales.descripcion like '%".$filtros_consulta["descripcion"]."%' ";
+        }
         if(count($filtros_consulta["errores"])>0){
             $errores_finales = [];
             $tiene_error_nulo = false;
@@ -158,6 +164,9 @@ class AreasTipo
         }
         if(count($filtros_consulta["grados_variacion"])>0){
             $filtros .= " and grados_variacion.idgrado_variacion in(".  implode(",", $filtros_consulta["grados_variacion"])." ) ";
+        }
+        if(count($filtros_consulta["familias"])>0){
+            $filtros .= " and familia.id_material in(".  implode(",", $filtros_consulta["familias"])." ) ";
         }
         
         $resultados = DB::connection("cadeco")->select("
@@ -220,7 +229,8 @@ class AreasTipo
                 Equipamiento.materiales_requeridos ON 
                 dbo.materiales.id_material = Equipamiento.materiales_requeridos.id_material  LEFT OUTER JOIN
                 dbo.monedas AS monedas_1 ON dbo.materiales.id_moneda_proyecto_comparativo = monedas_1.id_moneda LEFT OUTER JOIN
-                dbo.monedas ON dbo.materiales.id_moneda = dbo.monedas.id_moneda  
+                dbo.monedas ON dbo.materiales.id_moneda = dbo.monedas.id_moneda JOIN
+                (select * from dbo.materiales where LEN(nivel) = 4) as familia ON( substring(dbo.materiales.nivel,1,4) = familia.nivel)
             JOIN(
                 select 
                     Equipamiento.materiales_requeridos.id ,
@@ -285,56 +295,56 @@ class AreasTipo
             ) AS importes on(importes.id = Equipamiento.materiales_requeridos.id)
                                                  
 JOIN (
-							   select 
-                                                           
-							   case 
-							   when not(importes_an.cantidad_comparativa > 0) or importes_an.cantidad_comparativa is null then 1
-							   when not(importes_an.cantidad_requerida > 0) or importes_an.cantidad_requerida is null then 2
-							   when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
-							   and (importes_an.importe_requerido_moneda_comparativa/importes_an.cantidad_requerida)
-							   >
-							   (importes_an.importe_comparativa_moneda_comparativa/importes_an.cantidad_comparativa)  then 3
-							   
-							   when (not(importes_an.cantidad_comparativa>0) or not(importes_an.cantidad_requerida>0) or importes_an.cantidad_comparativa is null
-							   or importes_an.cantidad_requerida is null) 
-							   and ((importes_an.importe_requerido_moneda_comparativa)
-							   >
-							   (importes_an.importe_comparativa_moneda_comparativa))  then 3
+           select 
 
-							   when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
-							   and (importes_an.importe_requerido_moneda_comparativa/importes_an.cantidad_requerida)
-							   <
-							   (importes_an.importe_comparativa_moneda_comparativa/importes_an.cantidad_comparativa)  then 5
+           case 
+           when not(importes_an.cantidad_comparativa > 0) or importes_an.cantidad_comparativa is null then 1
+           when not(importes_an.cantidad_requerida > 0) or importes_an.cantidad_requerida is null then 2
+           when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
+           and (importes_an.importe_requerido_moneda_comparativa/importes_an.cantidad_requerida)
+           >
+           (importes_an.importe_comparativa_moneda_comparativa/importes_an.cantidad_comparativa)  then 3
 
-							   when (not(importes_an.cantidad_comparativa>0) or not(importes_an.cantidad_requerida>0) or importes_an.cantidad_comparativa is null
-							   or importes_an.cantidad_requerida is null) 
-							   and (importes_an.importe_requerido_moneda_comparativa)
-							   <
-							   (importes_an.importe_comparativa_moneda_comparativa)  then 5
-                                                           
-                                                           when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
-							   and abs(importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa)<0.1
-							     then 7
-							   else 0
+           when (not(importes_an.cantidad_comparativa>0) or not(importes_an.cantidad_requerida>0) or importes_an.cantidad_comparativa is null
+           or importes_an.cantidad_requerida is null) 
+           and ((importes_an.importe_requerido_moneda_comparativa)
+           >
+           (importes_an.importe_comparativa_moneda_comparativa))  then 3
 
-							    end idcaso,
-							   importes_an.id,
-							   importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa AS diferencia,
-															   CASE WHEN importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa > 0 THEN importes_an.importe_requerido_moneda_comparativa
-                          - importes_an.importe_comparativa_moneda_comparativa ELSE 0.0 END AS sobrecosto, 
-                         CASE WHEN importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa < 0 THEN abs(importes_an.importe_requerido_moneda_comparativa
-                          - importes_an.importe_comparativa_moneda_comparativa) ELSE 0.0 END AS ahorro,
+           when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
+           and (importes_an.importe_requerido_moneda_comparativa/importes_an.cantidad_requerida)
+           <
+           (importes_an.importe_comparativa_moneda_comparativa/importes_an.cantidad_comparativa)  then 5
+
+           when (not(importes_an.cantidad_comparativa>0) or not(importes_an.cantidad_requerida>0) or importes_an.cantidad_comparativa is null
+           or importes_an.cantidad_requerida is null) 
+           and (importes_an.importe_requerido_moneda_comparativa)
+           <
+           (importes_an.importe_comparativa_moneda_comparativa)  then 5
+
+           when importes_an.cantidad_comparativa>0 and importes_an.cantidad_requerida>0 
+           and abs(importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa)<0.1
+             then 7
+           else 0
+
+            end idcaso,
+           importes_an.id,
+           importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa AS diferencia,
+           CASE WHEN importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa > 0 THEN importes_an.importe_requerido_moneda_comparativa
+          - importes_an.importe_comparativa_moneda_comparativa ELSE 0.0 END AS sobrecosto, 
+         CASE WHEN importes_an.importe_requerido_moneda_comparativa - importes_an.importe_comparativa_moneda_comparativa < 0 THEN abs(importes_an.importe_requerido_moneda_comparativa
+          - importes_an.importe_comparativa_moneda_comparativa) ELSE 0.0 END AS ahorro,
 						  
-						case when importes_an.precio_requerido_moneda_comparativa>0 and importes_an.precio_comparativa_moneda_comparativa > 0
-                                                    then((importes_an.precio_requerido_moneda_comparativa - importes_an.precio_comparativa_moneda_comparativa)/importes_an.precio_comparativa_moneda_comparativa) * 100
-                                                    
-                                                    else -1000000001  
-                                                end indice_variacion
-						  from (
-						  
-						  select materiales_requeridos_2.id , materiales_requeridos_2.cantidad_requerida,materiales_requeridos_2.cantidad_comparativa,
-                                                 case  when materiales_requeridos_2.id_moneda > 0 and $id_moneda_esperada > 0 then 
-						 (materiales_requeridos_2.precio_estimado * materiales_requeridos_2.cantidad_requerida ) * (
+        case when importes_an.precio_requerido_moneda_comparativa>0 and importes_an.precio_comparativa_moneda_comparativa > 0
+            then((importes_an.precio_requerido_moneda_comparativa - importes_an.precio_comparativa_moneda_comparativa)/importes_an.precio_comparativa_moneda_comparativa) * 100
+
+            else -1000000001  
+        end indice_variacion
+          from (
+
+          select materiales_requeridos_2.id , materiales_requeridos_2.cantidad_requerida,materiales_requeridos_2.cantidad_comparativa,
+         case  when materiales_requeridos_2.id_moneda > 0 and $id_moneda_esperada > 0 then 
+         (materiales_requeridos_2.precio_estimado * materiales_requeridos_2.cantidad_requerida ) * (
 						 (select tipo_cambio from (
   select cast(".$tipos_cambio[1]." as float) as tipo_cambio, 1 as idmoneda union
   select cast(".$tipos_cambio[2]." as float) as tipo_cambio, 2 as idmoneda union
@@ -515,7 +525,9 @@ group by materiales.id_material,Equipamiento.materiales_requeridos.id,dbo.materi
         $ahorro_total = 0;
         $resumen_casos = [];
         foreach($resultados as $resultado){
-            
+            //$resultado->familia = "f";
+            $material = \Ghi\Equipamiento\Articulos\Material::findOrFail($resultado->id_material);
+            $resultado->familia = $material->familia()->descripcion;
             if(is_numeric($resultado->importe_estimado)){
                 $resultado->importe_estimado_f = number_format($resultado->importe_estimado,2,".",",");
             }else{
