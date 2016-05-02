@@ -114,6 +114,89 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-3">
+                        <table class="table table-condensed table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Familia
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select name="familias[]" multiple="true" size="6" id="familias">
+                                            @foreach($filtros["familias"] as $k=>$v)
+                                            <option value="{{$k}}"
+                                                    @if(in_array($k, $filtros_consulta["familias"]))
+                                                    selected = "selected"
+                                                    @endif
+                                                    >{{$v}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table class="table table-condensed table-striped table-bordered">
+
+                            <thead>
+                                <tr>
+
+                                    <th>
+                                        Calsificador
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td>
+                                        <select name="clasificadores[]" multiple="true" size="6" id="clasificadores">
+                                            @foreach($filtros["clasificadores"] as $k=>$v)
+                                            <option value="{{$k}}"
+                                                    @if(in_array($k, $filtros_consulta["clasificadores"]))
+                                                    selected = "selected"
+                                                    @endif
+                                                    >{{$v}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-5">
+                        <table class="table table-condensed table-striped table-bordered">
+
+                            <thead>
+                                <tr>
+
+                                    <th>
+                                        Descripción
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td>
+                                        <input type="text" name="descripcion" value="{{ $filtros_consulta["descripcion"] }}" />
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-12" style="color: #009900">
                     <span class="glyphicon glyphicon-pencil" style="margin-right: 5px"></span>Presentación de Datos
                     </div>
@@ -219,7 +302,7 @@
 <th colspan="20" scope="col">OS&amp;E</th>
 </tr>-->
 <tr>
-            <td scope="col" colspan="4" style="text-align: center; border:1px #FFF solid; background-color: #fff">&nbsp;</td>
+            <td scope="col" colspan="5" style="text-align: center; border:1px #FFF solid; background-color: #fff">&nbsp;</td>
             <th colspan="5" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Este Proyecto</th>
             <th colspan="5" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Proyecto Comparativo</th>
             <th colspan="4" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Variaciones</th>
@@ -229,6 +312,7 @@
         <tr>
             <th style="text-align: center;  border-top:3px #C1C1C1 solid;  border-left:3px #C1C1C1 solid">#</th>
             <td style="text-align: center;border-top:3px #C1C1C1 solid">Clasificador</td>
+            <td style="text-align: center;border-top:3px #C1C1C1 solid">Familia</td>
             <td style="text-align: center; border-top:3px #C1C1C1 solid">Descripción</td>
             <td style="text-align: center; border-top:3px #C1C1C1 solid">Unidad</td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Cantidad </td>
@@ -260,6 +344,7 @@
             <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
             <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
             <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
+            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
             <td  style="text-align: right;border-bottom: 3px #C1C1C1 solid">Sumatorias:</td>
             <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulos_esperados[count($articulos_esperados)-1]->costo_total_proyecto_f}}</td>
             <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
@@ -279,6 +364,7 @@
         <tr>
             <td style=" border-left:3px #C1C1C1 solid">{{ $i ++ }}</td>
             <td>{{ $articulo_esperado->clasificador }}</td>   
+            <td>{{ $articulo_esperado->familia }}</td>   
             <td><a href="{{ route("articulos.edit", $articulo_esperado->id_material) }}">{{ $articulo_esperado->descripcion }}</a></td>
             <td>{{ $articulo_esperado->unidad }}</td>
             <td style="text-align: right;border-left:3px #C1C1C1 solid">{{ $articulo_esperado->cantidad_requerida }}</td>
