@@ -36,6 +36,17 @@
   @if (Auth::user()->can('entrega_area')) 
   <li><a href="{{ route('entregas.index') }}">Entrega</a></li>
   @endif
+  
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <span style="margin-left: 5px">Reportes</span> <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="{{ route("reportes.comparativa_equipamiento") }}" ><span style="margin-left: 5px">Comparativa Equipamiento</span></a></li>
+        
+    </ul>
+</li>
+  
 @if (Auth::user()->hasRole('admin')) 
 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

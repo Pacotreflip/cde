@@ -133,4 +133,6 @@ class AreasController extends ApiController
             'existencia' => $material->pivot->cantidad_asignada,
         ];
     }
+    
+    
 }
