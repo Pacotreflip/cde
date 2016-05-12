@@ -15,6 +15,12 @@ class ReportesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('context');
+        parent::__construct();
+    }
     public function index_reporte_comparativa(Request $request)
     {
         $filtros_consulta["casos"] = (is_array($request->casos))?$request->casos:[];
