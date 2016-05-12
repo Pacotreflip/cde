@@ -18,6 +18,8 @@ class AreasController extends Controller
     protected $areas;
 
     protected $areas_tipo;
+    
+    protected $lista_areas;
 
     /**
      * AreasController constructor.
@@ -347,5 +349,59 @@ class AreasController extends Controller
         Flash::success('El area fue borrada.');
 
         return redirect()->route('areas.index', $isRoot ? [] : ['area' => $parent_id]);
+    }
+    
+    public function areasJs(){
+        $areas = Area::whereRaw('parent_id is null and id_obra = ?', [$this->getObraEnContexto()->id_obra])
+                ->defaultOrder()->withDepth()->get();
+//        $area = $areas[0];
+//        $this->lista_areas[] = $this->areaArreglo($area);
+//        $this->obtieneHijos($area);
+//        dd($this->lista_areas);
+        $i = 0;
+        foreach($areas as $area){
+            $this->lista_areas[$i] = [
+                "id"=>$area->id,
+                "text"=>$area->nombre,
+                //"children"=>$this->obtieneHijos($area),
+            ];
+            $hijos = $this->obtieneHijos($area);
+            
+            
+            if ($hijos != null){
+                $this->lista_areas[$i]["children"] = $hijos;
+            }
+            $i++;
+        }
+        //dd($this->lista_areas,json_encode($this->lista_areas
+                return json_encode($this->lista_areas);
+    }
+    
+    public function areaArreglo(Area $area){
+        $area_arreglo = [
+            "id"=>$area->id,
+            "text"=>$area->nombre,
+        ];
+        return $area_arreglo;
+    }
+    
+    public function obtieneHijos($area){
+        $hijos = $area->areas_hijas()->defaultOrder()->withDepth()->get();
+        $regresa = null;
+        $i = 0;
+        foreach($hijos as $hijo){
+            $regresa[$i] = [
+                "id"=>$hijo->id,
+                "text"=>$hijo->nombre,
+            ];
+            if($hijo->areas_hijas){
+                $des = $this->obtieneHijos($hijo);
+                if($des != null){
+                    $regresa[$i]["children"] = $des;
+                }
+            }
+            $i++;
+        }
+        return $regresa;
     }
 }

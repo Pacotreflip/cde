@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Control de Equipamiento - Grupo Hermes Infraestructura</title>
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
+    <link rel="stylesheet" href="{{ asset('js/tree/themes/default/style.min.css') }}" />
     @include('scripts.globals')
 
   </head>
@@ -22,6 +23,7 @@
     <script src="{{ asset("js/jquery-ui.js") }}"></script>
     <script src="{{ asset("js/jquery.tablesorter.js") }}"></script>
     <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
+    <script src="{{ asset("js/tree/jstree.min.js") }}"></script>
     @yield('scripts')
   </body>
 </html>

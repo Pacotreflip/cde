@@ -6,7 +6,6 @@ use Ghi\Core\Facades\Fractal;
 use Ghi\Serializers\SimpleSerializer;
 use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Areas\AreaJsTreeTransformer;
-
 class AreasJsTreeController extends ApiController
 {
     protected $areas;
@@ -28,4 +27,6 @@ class AreasJsTreeController extends ApiController
 
         return $this->respondWithCollection($areas, new AreaJsTreeTransformer);
     }
+    
+    
 }
