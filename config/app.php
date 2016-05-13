@@ -143,6 +143,7 @@ return [
         Overtrue\LaravelLang\TranslationServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         'Zizaco\Entrust\EntrustServiceProvider',
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         
         Ghidev\Fpdf\FpdfServiceProvider::class,
         Ghidev\Fpdf\RotationServiceProvider::class,
@@ -214,6 +215,7 @@ return [
         'Fpdf'      => Ghidev\Fpdf\Facades\Fpdf::class,
         'Rotation'    => Ghidev\Fpdf\Facades\Rotation::class,
         'MC_Table'  => Ghidev\Fpdf\Facades\MC_Table::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

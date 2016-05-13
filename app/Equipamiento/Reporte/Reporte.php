@@ -3,7 +3,96 @@
 namespace Ghi\Equipamiento\Reporte;
 use Illuminate\Support\Facades\DB;
 use \Ghi\Equipamiento\Areas\AreaTipo;
+
 class Reporte {
+    public static function getDatosXLS($id_moneda_esperada, $tipos_cambio, $filtros_consulta){
+        $filtros = " and 1 = 1 ";
+        if(count($filtros_consulta["areas_tipo"])>0){
+            $filtros .= " and id_tipo_area in(".  implode(",", $filtros_consulta["areas_tipo"])." ) ";
+        }
+        if(count($filtros_consulta["areas"])>0){
+            $filtros .= " and id_area in(".  implode(",", $filtros_consulta["areas"])." ) ";
+        }
+//        if(count($filtros_consulta["areas"])>0){
+//            $filtros .= " and id_area in(".  implode(",", $filtros_consulta["areas"])." ) ";
+//        }
+        if(count($filtros_consulta["casos"])>0){
+            $filtros .= " and id_caso in(".  implode(",", $filtros_consulta["casos"])." ) ";
+        }
+        if(count($filtros_consulta["clasificadores"])){
+            $filtros .= " and id_clasificador in(".  implode(",", $filtros_consulta["clasificadores"])." ) ";
+        }
+        if($filtros_consulta["descripcion"] != ""){
+            $filtros .= " and material like '%".$filtros_consulta["descripcion"]."%' ";
+        }
+        if(count($filtros_consulta["errores"])>0){
+            $errores_finales = [];
+            $tiene_error_nulo = false;
+            foreach($filtros_consulta["errores"] as $error){
+                if($error > 1){
+                    $errores_finales[] = $error;
+                }else{
+                    $tiene_error_nulo = true;
+                    
+                }
+            }
+            if(count($errores_finales)>0){
+                if($tiene_error_nulo === true){
+                    $filtros .= " and (id_error is null or( id_error in(".  implode(",", $errores_finales)." ) ))";
+                }else{
+                    $filtros .= " and id_error in(".  implode(",", $errores_finales)." ) ";
+                }
+                
+            }else{
+                if($tiene_error_nulo){
+                    $filtros .= " and id_error is null";
+                }
+            }
+        }
+        if(count($filtros_consulta["grados_variacion"])>0){
+            $filtros .= " and id_grado_variacion in(".  implode(",", $filtros_consulta["grados_variacion"])." ) ";
+        }
+        if(count($filtros_consulta["familias"])>0){
+            $filtros .= " and id_familia in(".  implode(",", $filtros_consulta["familias"])." ) ";
+        }
+
+        
+        $resultados = DB::connection("cadeco")->select("
+            select
+id_material,
+count(idmateriales_requeridos_area) as veces_requerida,
+clasificador, familia, material, unidad, 
+sum(cantidad_requerida) as cantidad_requerida, precio_estimado,moneda_requerida, precio_requerido_moneda_comparativa, 
+sum(importe_requerido_moneda_comparativa) as importe_requerido_moneda_comparativa,
+sum(cantidad_comparativa) as cantidad_comparativa, precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
+sum(importe_comparativa_moneda_comparativa) as importe_comparativa_moneda_comparativa,
+sum(sobrecosto) as sobrecosto,
+sum(ahorro) as ahorro,
+sum(indice_variacion)/count(idmateriales_requeridos_area) as indice_variacion,
+grado_variacion,
+estilo_grado_variacion,
+caso
+,
+            STUFF((
+            SELECT ',' + error
+            FROM Equipamiento.reporte_materiales_requeridos_area as mra
+            WHERE mra.id_material = Equipamiento.reporte_materiales_requeridos_area.id_material
+            group by error
+            FOR XML PATH (''))
+            , 1, 1, '') as error_concat
+            
+            from Equipamiento.reporte_materiales_requeridos_area where 1=1 ". $filtros ."
+			group by 
+			id_material,
+			 clasificador, familia, material, unidad, precio_estimado,moneda_requerida, precio_requerido_moneda_comparativa,
+			 cantidad_comparativa, precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
+			 grado_variacion, estilo_grado_variacion,caso
+			 order by material 
+                
+                ");
+        
+        return  json_decode(json_encode($resultados), true);
+    }
     public static function getDatos($id_moneda_esperada, $tipos_cambio, $filtros_consulta){
         
         $filtros = " and 1 = 1 ";
@@ -55,18 +144,7 @@ class Reporte {
         if(count($filtros_consulta["familias"])>0){
             $filtros .= " and id_familia in(".  implode(",", $filtros_consulta["familias"])." ) ";
         }
-//        $resultados = DB::connection("cadeco")->select("
-//            select reporte_materiales_requeridos_area.*, 
-//            STUFF((
-//            SELECT ',' + error
-//            FROM Equipamiento.reporte_materiales_requeridos_area as mra
-//            WHERE mra.idmateriales_requeridos_area = Equipamiento.reporte_materiales_requeridos_area.idmateriales_requeridos_area
-//            FOR XML PATH (''))
-//            , 1, 1, '') as error_concat
-//            
-//            from Equipamiento.reporte_materiales_requeridos_area where 1=1 ". $filtros ."
-//                
-//                ");
+
         
         $resultados = DB::connection("cadeco")->select("
             select

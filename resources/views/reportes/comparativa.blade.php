@@ -1,7 +1,7 @@
 @extends ('layout')
 
 @section ('content')
-<form method="post" action="{{ route('reportes.comparativa_equipamiento') }}">
+<form method="post" id="frm_filtros_comparativa" action="{{ route('reportes.tabla_resultado_comparativa_equipamiento') }}">
     {{ csrf_field() }}
     <div class="row" id="btn_personalizacion" 
          @if($mostrar_personalizar == 1) 
@@ -305,16 +305,20 @@
                 <button type="button" class="btn btn-default toggle_personalizacion">
                     <span class="glyphicon glyphicon-minus-sign" style="margin-right: 5px"></span>Ocultar
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="button" class="btn btn-primary consulta">
                     <span class="glyphicon glyphicon-zoom-in" style="margin-right: 5px"></span>	Consultar
                 </button>
+                <button class="btn btn-small btn-success descarga_excel" type="button" >
+                    <span class="fa fa-download" style="margin-right: 5px"></span> Descarga en Excel
+                </button>
+<!--                -->
             </div>
         </div>
 
     </div>
 </div>
 </form>
-
+<form id="descargaExcel" method="post" action="{{ route("reportes.comparativa_equipamiento_xls") }}" >{{ csrf_field() }}</form>
 <hr>
 @if($articulos_esperados == "")
 @else
@@ -354,130 +358,9 @@
 </div>
 
 @endif
-
-@if($articulos_esperados == "")
-@elseif(count($articulos_esperados) > 0)
-<table class="tablesorter" id="table_sort" >
-<!--    <caption><span class="glyphicon glyphicon-filter" style="margin-right: 5px"></span>Todos los Artículos</caption>-->
-    <thead>
-<!--               <tr>
-<th colspan="20" scope="col">OS&amp;E</th>
-</tr>-->
-<tr>
-            <td scope="col" colspan="6" style="text-align: center; border:1px #FFF solid; background-color: #fff">&nbsp;</td>
-            <th colspan="5" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Este Proyecto</th>
-            <th colspan="5" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Proyecto Comparativo</th>
-            <th colspan="4" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Variaciones</th>
-            <th colspan="2" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Control</th>
-        </tr>
-        
-        <tr>
-            <th style="text-align: center;  border-top:3px #C1C1C1 solid;  border-left:3px #C1C1C1 solid">#</th>
-            <th style="text-align: center;  border-top:3px #C1C1C1 solid;  border-top:3px #C1C1C1 solid"># Areas</th>
-            <td style="text-align: center;border-top:3px #C1C1C1 solid">Clasificador</td>
-            <td style="text-align: center;border-top:3px #C1C1C1 solid">Familia</td>
-            <td style="text-align: center; border-top:3px #C1C1C1 solid">Descripción</td>
-            <td style="text-align: center; border-top:3px #C1C1C1 solid">Unidad</td>
-            <td style="text-align: center; border-left:3px #C1C1C1 solid">Cantidad </td>
-            <td style="text-align: center; ">Precio Unitario  </td>
-            <td style="text-align: center; ">Moneda</td>
-            <td style="text-align: center; ">Precio Unitario ({{$moneda_comparativa->nombre}})</td>
-            <td style="text-align: center;  border-right:3px #C1C1C1 solid">Importe ({{$moneda_comparativa->nombre}})</td>
-            <td style="text-align: center;  ">Cantidad </td>
-            <td style="text-align: center; ">Precio Unitario </td>
-            <td style="text-align: center; ">Moneda </td>
-            <td style="text-align: center; ">Precio Unitario ({{$moneda_comparativa->nombre}}) </td>
-            <td style="text-align: center;  border-right:3px #C1C1C1 solid">Importe ({{$moneda_comparativa->nombre}})</td>
-            <td style="text-align: center; ">Sobrecosto</td>
-            <td style="text-align: center; ">Ahorro</td>
-            <td style="text-align: center; ">%Variación</td>
-            <td style="text-align: center;  border-right:3px #C1C1C1 solid">Grado de Variación</td>
-            <td style="text-align: center; ">Caso</td>
-            <td style="text-align: center;  border-right:3px #C1C1C1 solid">Errores</td>
-        </tr>
-        <tr style="background-color: #C1C1C1">
-            <td style="text-align: right; border-left:3px #C1C1C1 solid; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right;  border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right;border-bottom: 3px #C1C1C1 solid">Sumatorias:</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulos_esperados[count($articulos_esperados)-1]->costo_total_proyecto_f}}</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulos_esperados[count($articulos_esperados)-1]->costo_total_proyecto_comparativa_f}}</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulos_esperados[count($articulos_esperados)-1]->sobrecosto_total_f}}</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulos_esperados[count($articulos_esperados)-1]->ahorro_total_f}}</td>
-            <td  colspan="2" style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-            <td  style="text-align: right; border-right:3px #C1C1C1 solid">&nbsp;</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($articulos_esperados as $articulo_esperado)
-        <tr>
-            <td style=" border-left:3px #C1C1C1 solid">{{ $i ++ }}</td>
-            <td>{{ $articulo_esperado->veces_requerida }}</td>   
-            <td>{{ $articulo_esperado->clasificador }}</td>   
-            <td>{{ $articulo_esperado->familia }}</td>   
-            <td><a href="{{ route("articulos.edit", $articulo_esperado->id_material) }}">{{ $articulo_esperado->material }}</a></td>
-            <td>{{ $articulo_esperado->unidad }}</td>
-            <td style="text-align: right;border-left:3px #C1C1C1 solid">{{ $articulo_esperado->cantidad_requerida }}</td>
-            <td style="text-align: right">{{ $articulo_esperado->precio_estimado_f }}</td>
-            <td>{{ $articulo_esperado->moneda_requerida }}</td>
-            <td style="text-align: right;">{{ $articulo_esperado->precio_requerido_moneda_comparativa_f }}</td>
-            <td style="text-align: right;border-right:3px #C1C1C1 solid">{{ $articulo_esperado->precio_requerido_moneda_comparativa_f }}</td>
-            
-            <td style="text-align: right">{{ $articulo_esperado->cantidad_comparativa }}</td>
-            <td style="text-align: right">{{ $articulo_esperado->precio_proyecto_comparativo_f }}</td>
-            <td>{{ $articulo_esperado->moneda_comparativa }}</td>
-            <td style="text-align: right; ">{{ $articulo_esperado->precio_comparativa_moneda_comparativa_f }}</td>
-            <td style="text-align: right; border-right:3px #C1C1C1 solid">{{ $articulo_esperado->importe_comparativa_moneda_comparativa_f }}</td>
-            <td style="text-align: right">{{ $articulo_esperado->sobrecosto_f }}</td>
-            <td style="text-align: right">{{ $articulo_esperado->ahorro_f }}</td>
-            <td style="text-align: right">{{ $articulo_esperado->indice_variacion_f }}</td>
-            <td style=" border-right:3px #C1C1C1 solid" ><span class="label label-info" style="background-color: #{{ $articulo_esperado->estilo_grado_variacion }}">{{ $articulo_esperado->grado_variacion }}</label></td>
-            <td>{{ $articulo_esperado->caso }}</td>
-            <td 
-                @if($articulo_esperado->error_concat != "")
-                style="background-color: #f00; color:#FFF;border-right:3px #C1C1C1 solid"
-                @else
-                style="border-right:3px #C1C1C1 solid"
-                @endif
-                >
-                {{$articulo_esperado->error_concat}}
-        </td>
-<!--        <td style=" border-right:3px #C1C1C1 solid">&nbsp;</td>-->
-    </tr>
-    @endforeach
-
-</tbody>
-<tfoot>
-    <tr style="background-color: #C1C1C1">
-        <td colspan="10" style="text-align: right; border-left:3px #C1C1C1 solid; border-bottom: 3px #C1C1C1 solid">Sumatorias:</td>
-        <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulo_esperado->costo_total_proyecto_f}}</td>
-        <td colspan="4" style="text-align: right; border-bottom: 3px #C1C1C1 solid">&nbsp;</td>
-        <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulo_esperado->costo_total_proyecto_comparativa_f}}</td>
-        <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulo_esperado->sobrecosto_total_f}}</td>
-        <td  style="text-align: right; border-bottom: 3px #C1C1C1 solid">{{ $articulo_esperado->ahorro_total_f}}</td>
-        <td colspan="4" style="text-align: right; border-bottom: 3px #C1C1C1 solid; border-right:3px #C1C1C1 solid;">&nbsp;</td>
-    </tr>
-</tfoot>
-</table>
-@else
-<div class="alert alert-danger">
-    <ul>
-          <li>No se encontraron artículos con los filtros indicados</li>
-    </ul>
-  </div>
-@endif
-
+<div id="tabla_resultados">
+@include("reportes.partials.tabla")
+</div>
 @stop
 @section('scripts')
 <script>
@@ -485,7 +368,68 @@ $("button.toggle_personalizacion").off().on("click", function(){
 $("#frm_personalizacion").toggle();
 $("#btn_personalizacion").toggle();
 });
+$("#frm_filtros_comparativa").off().on("submit", function(e){    
+    
+        var postData = $(this).serialize();
+        var formURL = $(this).attr("action");
 
+        $.ajax({
+            url : formURL,
+            type: "POST",
+            data : postData,
+            success:function(data) 
+            {                       
+                $("div#tabla_resultados").html(data);
+                 $.tablesorter.addWidget({
+                        // give the widget a id
+                        id: "indexFirstColumn",
+                        // format is called when the on init and when a sorting has finished
+                        format: function(table) {               
+                            // loop all tr elements and set the value for the first column  
+                            for(var i=0; i < table.tBodies[0].rows.length; i++) {
+                                $("tbody tr:eq(" + i + ") td:first",table).html(i+1);
+                            }                                   
+                        }
+                    });
+                $("#table_sort").tablesorter({
+                    theme : "blue",
+                    widgets :["indexFirstColumn","zebra"],
+                    headers: { 0: { sorter: false},1: { sorter: false},2: { sorter: false},3: { sorter: false},4: { sorter: false},5: { sorter: false}, 25: {sorter: false}, 26: {sorter: false} ,  27: {sorter: false}, 28: {sorter: false}, 29: {sorter: false}, 30: {sorter: false},  31: {sorter: false}, 32: {sorter: false}, 33: {sorter: false}
+                    , 34: {sorter: false}, 35: {sorter: false}, 36: {sorter: false}, 37: {sorter: false}, 38: {sorter: false}, 39: {sorter: false}, 40: {sorter: false}, 41: {sorter: false}, 42: {sorter: false}, 43: {sorter: false}}
+                }
+                        );
+            },
+            error: function(xhr, textStatus, thrownError) 
+            {
+                //console.log(xhr.responseText);
+                var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+
+                if(ind1 === -1){
+                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                    $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+                        salida += '<li>'+elem+'</li>';
+                    });
+                    salida += '</ul></div>';
+                    $("div#errores").html(salida);
+                }else{
+                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                    var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+                    var cad1 = xhr.responseText.substring(ind1);
+                    var ind2 = cad1.indexOf('</span>');
+                    var cad2 = cad1.substring(32,ind2);
+                    if(cad2 !== ""){
+                        salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+                    }else{
+                        salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+                    }
+                    salida += '</ul></div>';
+                    $("div#errores").html(salida);
+                }
+            }
+        });
+    
+    e.preventDefault();
+});
 $("button.limpiar_filtros").off().on("click", function(){
 
 });
@@ -529,11 +473,47 @@ $(function () {
         //console.log("The selected nodes are:");
         $("#inputs").find("input").remove();
         $.each(data.selected, function(a,v){
-            console.log(v);
+           // console.log(v);
             
             $("#inputs").append("<input type='hidden' name='areas[]' id='areas"+v+"' value='"+v+"' />");
         });
       });
 });
+$("button.descarga_excel").off().on("click", function(e){
+    $("#descargaExcel").find("input").remove();
+    $("#descargaExcel").find("select").remove();
+    selects = $("form#frm_filtros_comparativa").find("select");
+    $.each(selects, function(){
+       select = $(this);
+       name = select.attr("name");
+       if(select.val() !== null){
+        valores = select.val();
+        if($.isArray(valores)){
+            $.each(valores, function(i,v){
+
+               $("#descargaExcel").append("<input type='hidden' name='"+name+"' value='"+v+"' />");
+            });
+        }else{
+            $("#descargaExcel").append("<input type='hidden' name='"+name+"' value='"+valores+"' />");
+        }
+       }
+    });
+    inputs = $("form#frm_filtros_comparativa").find("input");
+    $.each(inputs, function(){
+       input = $(this);
+       name = input.attr("name");
+       valor = input.val();
+       if(valor !== null){
+            
+            $("#descargaExcel").append("<input type='hidden' name='"+name+"' value='"+valor+"' />");
+       }
+    });
+    var postData = $("#frm_filtros_comparativa").serialize();
+    $("form#descargaExcel").submit();
+});
+$("button.consulta").off().on("click", function(e){
+    $("form#frm_filtros_comparativa").submit();
+});
+
 </script>
 @stop
