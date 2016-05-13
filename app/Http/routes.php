@@ -213,4 +213,6 @@ Route::get('PDF/cierres/{id}', 'PDFController@cierres')->name('pdf.cierres');
 Route::get('PDF/entregas/{id}', 'PDFController@entregas')->name('pdf.entregas');
 
 Route::post('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
+Route::post('reportes/comparativa_equipamiento/resultado', 'ReportesController@recargaResultado')->name('reportes.tabla_resultado_comparativa_equipamiento');
 Route::get('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
+Route::post("reportes/comparativa_equipamiento/resultado/descarga_excel", "ReportesController@descargaExcel")->name('reportes.comparativa_equipamiento_xls');
