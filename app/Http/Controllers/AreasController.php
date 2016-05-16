@@ -142,6 +142,7 @@ class AreasController extends Controller
                 'clave' => $request->get('clave', $tipo ? $tipo->clave : ''),
                 'descripcion' => $request->get('descripcion'),
             ]);
+            
 
             $area->obra()->associate($this->getObraEnContexto());
             if($almacen){
@@ -157,7 +158,8 @@ class AreasController extends Controller
             }
             
             $this->areas->save($area);
-            
+            $acumulador = new \Ghi\Equipamiento\Areas\AreaAcumuladores();
+            $area->acumulador()->save($acumulador);
             if($tipo){
                 $materiales_requeridos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
                 $area->materialesRequeridos()->saveMany($materiales_requeridos);
@@ -343,9 +345,10 @@ class AreasController extends Controller
         if (! $isRoot) {
             $parent_id = $area->parent->id;
         }
-
+        $acumulador = $area->acumulador;
+        $acumulador->delete();
         $this->areas->delete($area);
-
+        
         Flash::success('El area fue borrada.');
 
         return redirect()->route('areas.index', $isRoot ? [] : ['area' => $parent_id]);

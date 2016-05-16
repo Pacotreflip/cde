@@ -10,6 +10,8 @@ class AreaAcumuladores extends Model
 
     protected $table = 'Equipamiento.areas_acumuladores';
     
+    public $timestamps = false;
+    
     public function area(){
         return $this->belongsTo(Area::class, "id_area");
     }
