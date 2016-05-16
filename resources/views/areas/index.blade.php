@@ -26,96 +26,93 @@
             
           </td>
           <td style="text-align: right; width: 150px">
-              @if($descendiente->cantidad_requerida() > 0)
-              <small class="text-muted">Estado Asignación de Artículos Esperados ({{number_format($descendiente->cantidad_asignada(),2,".", ",")}}/{{number_format($descendiente->cantidad_requerida(),2,".", ",")}}):</small>
+              @if($descendiente->acumulador->cantidad_requerida > 0)
+              <small class="text-muted">Estado Asignación de Artículos Esperados ({{number_format($descendiente->acumulador->cantidad_asignada,2,".", ",")}}/{{number_format($descendiente->acumulador->cantidad_requerida,2,".", ",")}}):</small>
               @endif
           </td>
           <td style="width: 100px; text-align: center">
-              @if($descendiente->cantidad_requerida() > 0)
-              
-                
+              @if($descendiente->acumulador->cantidad_requerida > 0)
                 <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_asignacion*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $descendiente->porcentaje_asignacion() }}"
+                      aria-valuenow="{{ $descendiente->acumulador->porcentaje_asignacion * 100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_asignacion()) }}%;">
-                      {{ round($descendiente->porcentaje_asignacion()) }}%
+                      style="min-width: 2.5em; width: {{ round($descendiente->acumulador->porcentaje_asignacion * 100) }}%;">
+                      {{ round($descendiente->acumulador->porcentaje_asignacion * 100) }}%
                     </div>
                   </div>
-          
                 @endif
             </td>
             <td style="text-align: right; width: 150px">
-                @if($descendiente->cantidad_validada() > 0)
-              <small class="text-muted">Estado Validación de Artículos Asignados ({{number_format($descendiente->cantidad_validada(),2,".", ",")}}/{{number_format($descendiente->cantidad_asignada(),2,".", ",")}}):</small>
+                @if($descendiente->acumulador->cantidad_asignada > 0)
+              <small class="text-muted">Estado Validación de Artículos Asignados ({{number_format($descendiente->acumulador->cantidad_validada,2,".", ",")}}/{{number_format($descendiente->acumulador->cantidad_asignada,2,".", ",")}}):</small>
               @endif
           </td>
             <td style="width: 100px; text-align: center" >
-              @if($descendiente->cantidad_validada() > 0)
+                @if($descendiente->acumulador->cantidad_asignada > 0)
           
                    
-                   <div class="progress">
+                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_validacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_validacion*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $descendiente->porcentaje_validacion() }}"
+                      aria-valuenow="{{ $descendiente->acumulador->porcentaje_validacion*100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_validacion()) }}%;">
-                      {{ round($descendiente->porcentaje_validacion()) }}%
+                      style="min-width: 2.5em; width: {{ round($descendiente->acumulador->porcentaje_validacion*100) }}%;">
+                      {{ round($descendiente->acumulador->porcentaje_validacion*100) }}%
                     </div>
-                  </div>
-                   
-                   
-                   
-                   @endif
-            </td>
-            <td style="text-align: right; width: 150px">
-                @if($descendiente->cantidad_areas_cerrables() > 0)
-              <small class="text-muted">Estado Cierre de Áreas Validadas Totalmente({{number_format($descendiente->cantidad_areas_cerradas(),2,".", ",")}}/{{number_format($descendiente->cantidad_areas_cerrables(),2,".", ",")}}):</small>
-              @endif
-          </td>
-            <td style="width: 100px; text-align: center" >
-              @if($descendiente->cantidad_areas_cerrables() > 0)
-          
-                   
-                   <div class="progress">
-                    <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_cierre()) == 100 ? ' progress-bar-success' : '' }}" 
-                      role="progressbar"
-                      aria-valuenow="{{ $descendiente->porcentaje_cierre() }}"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_cierre()) }}%;">
-                      {{ round($descendiente->porcentaje_cierre()) }}%
-                    </div>
-                  </div>
+                   </div>
                    
                    
                    
                 @endif
             </td>
             <td style="text-align: right; width: 150px">
-                @if($descendiente->cantidad_areas_cerradas() > 0)
-              <small class="text-muted">Estado Entrega de Áreas Cerradas({{number_format($descendiente->cantidad_areas_entregadas(),2,".", ",")}}/{{number_format($descendiente->cantidad_areas_cerradas(),2,".", ",")}}):</small>
+                @if($descendiente->acumulador->cantidad_areas_cerrables > 0)
+              <small class="text-muted">Estado Cierre de Áreas Validadas Totalmente({{number_format($descendiente->acumulador->cantidad_areas_cerradas,2,".", ",")}}/{{number_format($descendiente->acumulador->cantidad_areas_cerrables,2,".", ",")}}):</small>
               @endif
           </td>
             <td style="width: 100px; text-align: center" >
-              @if($descendiente->cantidad_areas_cerradas() > 0)
+              @if($descendiente->acumulador->cantidad_areas_cerrables > 0)
           
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->porcentaje_entrega()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_cierre*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $descendiente->porcentaje_entrega() }}"
+                      aria-valuenow="{{ $descendiente->acumulador->porcentaje_cierre*100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($descendiente->porcentaje_entrega()) }}%;">
-                      {{ round($descendiente->porcentaje_entrega()) }}%
+                      style="min-width: 2.5em; width: {{ round($descendiente->acumulador->porcentaje_cierre*100) }}%;">
+                      {{ round($descendiente->acumulador->porcentaje_cierre*100) }}%
+                    </div>
+                  </div>
+                   
+                   
+                   
+                @endif
+            </td>
+            <td style="text-align: right; width: 150px">
+                @if($descendiente->acumulador->cantidad_areas_cerradas > 0)
+              <small class="text-muted">Estado Entrega de Áreas Cerradas({{number_format($descendiente->acumulador->cantidad_areas_entregadas,2,".", ",")}}/{{number_format($descendiente->acumulador->cantidad_areas_cerradas,2,".", ",")}}):</small>
+              @endif
+          </td>
+            <td style="width: 100px; text-align: center" >
+              @if($descendiente->acumulador->cantidad_areas_cerradas > 0)
+          
+                   
+                   <div class="progress">
+                    <div
+                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_entrega*100) == 100 ? ' progress-bar-success' : '' }}" 
+                      role="progressbar"
+                      aria-valuenow="{{ $descendiente->acumulador->porcentaje_entrega*100 }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      style="min-width: 2.5em; width: {{ round($descendiente->acumulador->porcentaje_entrega*100) }}%;">
+                      {{ round($descendiente->acumulador->porcentaje_entrega*100) }}%
                     </div>
                   </div>
                    
