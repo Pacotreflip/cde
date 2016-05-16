@@ -562,4 +562,8 @@ class Area extends Node
         
         return ($this->cantidad_areas_entregadas() / $this->cantidad_areas_cerradas()) * 100;
     }
+    
+    public function acumulador(){
+        return $this->hasOne(AreaAcumuladores::class, "id_area", "id");
+    }
 }
