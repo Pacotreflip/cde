@@ -71,6 +71,7 @@ class Transaccion extends Model
     public function scopeOrdenesCompraMateriales($query)
     {
         return $query->where('tipo_transaccion', Tipo::ORDEN_COMPRA)
-            ->where('opciones', 1);
+            ->where('opciones', 1)
+            ->where('equipamiento', 1);
     }
 }
