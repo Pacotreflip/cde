@@ -94,39 +94,35 @@
     });
     
     function setDestino(destino, id_area, id_material) {
-        console.log(1);
-        // Obtener un nuevo material
-        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
-            console.log(2);
-            // Obtener el destino
-            $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
-                console.log(3);
-                //verificar existencia del material
-                var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
-                if (materialExistente.length !== 0) {
-                    //Si el material existe
-                    //Verificar existencia del destino
-                    var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
-                    if(destinoExistente.length !== 0){
-                        //Si el destino existe
-                        destinoExistente[0].cantidad = destino.value;
+        if(destino.value !== '') {
+            // Obtener un nuevo material
+            $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
+                // Obtener el destino
+                $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
+                    //verificar existencia del material
+                    var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
+                    if (materialExistente.length !== 0) {
+                        //Si el material existe
+                        //Verificar existencia del destino
+                        var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
+                        if(destinoExistente.length !== 0){
+                            //Si el destino existe
+                            destinoExistente[0].cantidad = destino.value;
+                        } else {
+                            //Si el destino no existe
+                            destinos[0].cantidad = destino.value;
+                            materialExistente[0].destinos.push(destinos[0]);
+                        }
                     } else {
-                        //Si el destino no existe
+                        //Si el material no existe
                         destinos[0].cantidad = destino.value;
-                        materialExistente[0].destinos.push(destinos[0]);
+                        material.destinos.push(destinos[0]);
+                        area.materiales.push(material); 
                     }
-                } else {
-                    console.log(3);
-                    //Si el material no existe
-                    destinos[0].cantidad = destino.value;
-                    material.destinos.push(destinos[0]);
-                    area.materiales.push(material); 
-                }
-                    
+
+                });
             });
-        });
-        console.log(4);
-        console.log('segunda',area.materiales);
+        }
     }
 
     function setDestinos(id_area, id_material) {
