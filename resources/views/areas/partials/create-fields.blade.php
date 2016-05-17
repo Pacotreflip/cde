@@ -47,6 +47,12 @@
       {!! Form::label('parent_id', '¿Dentro de que área se van a generar?') !!}
       {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
     </div>
+    
+    <div class="form-group">
+      {!! Form::label('almacen_id', 'Relacionar con almacén en SAO') !!}
+      {!! Form::select('almacen_id', $almacenes, Request::get('con_almacen'), ['class' => 'form-control']) !!}
+    </div>
+    
   </div>
 </div>
 

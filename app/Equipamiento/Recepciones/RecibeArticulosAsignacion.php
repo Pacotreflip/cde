@@ -14,9 +14,11 @@ use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class RecibeArticulosAsignacion
 {
+    use AuxiliaresTransaccionesSAO;
     protected $data;
 
     protected $obra;
+    
 
     /**
      * @param array $data
@@ -39,25 +41,7 @@ class RecibeArticulosAsignacion
         try {
             DB::connection('cadeco')->beginTransaction();
             
-//            $recepcion = $this->creaRecepcion();
-//
-//            foreach ($this->data['materiales'] as $item) {
-//                $material = Material::where('id_material', $item['id'])->first();
-//
-//                $cantidad = collect($item['destinos'])->sum('cantidad');
-//
-//                $recepcion->agregaMaterial($material, $cantidad, $item['id_item']);
-//
-//                // foreach ( as $destino) {
-//                //     $area = Area::findOrFail($destino['id']);
-//                // }
-//            }
-//
-//            if ($recepcion->items->count() === 0) {
-//                throw new RecepcionSinArticulosException;
-//            }
-//
-//            $recepcion->save();
+            $proceso_sao = $this->procesoSAO();
             
             $recepcion = $this->creaRecepcion();
 
@@ -121,6 +105,20 @@ class RecibeArticulosAsignacion
             $asignacion->save();
             
             
+            foreach($proceso_sao as $transaccion){
+                DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones')->insert(
+                    ['id_recepcion' => $recepcion->id, 'id_transaccion' => $transaccion->id_transaccion]
+                );
+            }
+            foreach($recepcion->items as $item){
+                foreach($this->items_ids[$item->id_material] as $k=>$v){
+                    DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones_items')->insert(
+                        ['id_item_recepcion' => $item->id, 'id_item_transaccion' => $v]
+                    );
+                }
+            }
+            
+            
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
@@ -163,5 +161,34 @@ class RecibeArticulosAsignacion
         $asignacion->save();
 
         return $asignacion;
+    }
+    
+    protected function procesoSAO(){
+        $this->preparaDatosTransacciones();
+        //dd($this->transacciones);
+        if(array_key_exists("entrada", $this->transacciones)){
+            foreach($this->transacciones["entrada"] as $datos_entrada){
+                $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);
+            }
+        }
+        if(array_key_exists("transferencias", $this->transacciones)){
+            foreach($this->transacciones["transferencias"] as $datos_transferencia){
+                $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
+            }
+        }
+        
+        if(array_key_exists("salidas", $this->transacciones)){
+            foreach($this->transacciones["salidas"] as $datos_transferencia){
+                $transacciones [] = $this->creaSalidaAlmacen($datos_transferencia);
+            }
+        }
+        //dd($transacciones);
+        foreach ($transacciones as $transaccion){
+            foreach($transaccion->items as $item){
+                $this->items_ids[$item->id_material][] = $item->id_item;
+            }
+        }
+        $this->orden_compra_cumplida();
+        return $transacciones;
     }
 }

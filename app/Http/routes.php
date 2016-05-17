@@ -44,12 +44,15 @@ Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], functi
 });
 
 // Rutas de areas...
+Route::get('areas/areas-jstree', 'AreasController@areasJs')->name("areas.areasJs");
 Route::get('areas', 'AreasController@index')->name('areas.index');
 Route::get('areas/nueva', 'AreasController@create')->name('areas.create');
 Route::post('areas', 'AreasController@store')->name('areas.store');
 Route::get('areas/{id}', 'AreasController@edit')->name('areas.edit');
 Route::patch('areas/{id}', 'AreasController@update')->name('areas.update');
+Route::patch('areas/{id}/concepto', 'AreasController@generaConceptoSAO')->name('areas.genera.concepto.sao');
 Route::delete('areas/{id}', 'AreasController@destroy')->name('areas.delete');
+
 
 // Rutas de clasificadores de articulos...
 Route::get('clasificadores-articulo', 'ClasificadoresController@index')->name('clasificadores.index');
@@ -112,13 +115,16 @@ Route::group(['prefix' => 'api'], function () {
         ->where(['id' => '[0-9]+']);
     Route::get('areas/jstree', 'Api\AreasJsTreeController@areas');
     Route::get('areas/{id}/children/jstree', 'Api\AreasJsTreeController@areas')
-        ->where(['id' => '[0-9]+']);;
+        ->where(['id' => '[0-9]+']);
+    Route::get('areas/jstree?id={id}', 'Api\AreasJsTreeController@areas')
+        ->where(['id' => '[0-9]+']);
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
     Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');
+    
 });
 
-
+//Route::get('areas', 'AreasController@index')->name('areas.index');
 Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
 //    Route::get('/', 'AdminController@welcome');
 //    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);
@@ -211,3 +217,7 @@ Route::get('PDF/asignaciones/{id}', 'PDFController@asignaciones')->name('pdf.asi
 Route::get('PDF/cierres/{id}', 'PDFController@cierres')->name('pdf.cierres');
 Route::get('PDF/entregas/{id}', 'PDFController@entregas')->name('pdf.entregas');
 
+Route::post('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
+Route::post('reportes/comparativa_equipamiento/resultado', 'ReportesController@recargaResultado')->name('reportes.tabla_resultado_comparativa_equipamiento');
+Route::get('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
+Route::post("reportes/comparativa_equipamiento/resultado/descarga_excel", "ReportesController@descargaExcel")->name('reportes.comparativa_equipamiento_xls');

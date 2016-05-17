@@ -12,10 +12,12 @@ use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
 
 class RecibeArticulosAlmacen
 {
+    
+    use AuxiliaresTransaccionesSAO;
+    
     protected $data;
 
     protected $obra;
-
     /**
      * @param array $data
      * @param Obra  $obra
@@ -36,9 +38,10 @@ class RecibeArticulosAlmacen
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            
+            $proceso_sao = $this->procesoSAO();
+            //dd($proceso_sao);
             $recepcion = $this->creaRecepcion();
-
+            
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
                 $itemOrdenCompra = Item::findOrFail($item['id_item']);
@@ -59,6 +62,19 @@ class RecibeArticulosAlmacen
             }
 
             $recepcion->save();
+            
+            foreach($proceso_sao as $transaccion){
+                DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones')->insert(
+                    ['id_recepcion' => $recepcion->id, 'id_transaccion' => $transaccion->id_transaccion]
+                );
+            }
+            foreach($recepcion->items as $item){
+                foreach($this->items_ids[$item->id_material] as $k=>$v){
+                    DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones_items')->insert(
+                        ['id_item_recepcion' => $item->id, 'id_item_transaccion' => $v]
+                    );
+                }
+            }
             
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -85,5 +101,27 @@ class RecibeArticulosAlmacen
         $recepcion->save();
 
         return $recepcion;
+    }
+    
+    protected function procesoSAO(){
+        $this->preparaDatosTransacciones();
+        if(array_key_exists("entrada", $this->transacciones)){
+            foreach($this->transacciones["entrada"] as $datos_entrada){
+                $transacciones [] = $this->creaEntradaAlmacen($datos_entrada);
+            }
+        }
+        if(array_key_exists("transferencias", $this->transacciones)){
+            foreach($this->transacciones["transferencias"] as $datos_transferencia){
+                $transacciones [] = $this->creaTransferenciaAlmacen($datos_transferencia);
+            }
+        }
+        //dd($transacciones);
+        foreach ($transacciones as $transaccion){
+            foreach($transaccion->items as $item){
+                $this->items_ids[$item->id_material][] = $item->id_item;
+            }
+        }
+        $this->orden_compra_cumplida();
+        return $transacciones;
     }
 }

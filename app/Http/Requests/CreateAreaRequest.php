@@ -24,10 +24,20 @@ class CreateAreaRequest extends Request
     public function rules()
     {
         return [
-            // 'nombre' => 'required',
+            'nombre' => 'required',
             'cantidad' => 'integer|min:1',
             'rango_inicial' => 'integer|min:1',
             'tipo_id' => 'integer',
+            'almacen_id'=>'unique:cadeco.Equipamiento.areas,id_almacen'
         ];
+    }
+    
+    public function messages()
+    {
+        $messages = [
+            'almacen_id.unique' => 'Un almacén del módulo de órdenes de compra del SAO sólo puede estar relacionado a una ubicación del módulo de equipamiento.'
+        ];
+
+        return $messages;
     }
 }

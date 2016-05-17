@@ -15,7 +15,8 @@
         "kalnoy/nestedset": "3.x-dev",
         "league/fractal": "^0.12.0",
         "zizaco/entrust": "dev-laravel-5",
-        "ghidev/fpdf": "1.0"
+        "ghidev/fpdf": "1.0",
+        "maatwebsite/excel": "^2.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

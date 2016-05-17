@@ -9,7 +9,13 @@
 {!! Form::model($area, ['route' => ['areas.update', $area], 'method' => 'PATCH']) !!}
 @include('areas.partials.edit-fields')
 {!! Form::close() !!}
+{!! Form::model($area, ['route' => ['areas.genera.concepto.sao', $area], 'method' => 'PATCH']) !!}
 
+{!! Form::close() !!}
+<form action="{{ route('areas.genera.concepto.sao', $area) }}" method="POST" accept-charset="UTF-8" id="genera_concepto">
+                  <input type="hidden" name="_method" value="PATCH">
+                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+</form>
 <hr>
 
 @if(count($area->materialesRequeridos)>0)
@@ -90,7 +96,7 @@
     </div>
     @endif
 </div>
-@if(!(count($area->inventarios)>0) && !($area->cantidad_asignada() >0))
+@if(!(count($area->inventarios)>0) && !($area->acumulador->cantidad_asignada >0))
 <div class="alert alert-danger" role="alert">
     <h4><i class="fa fa-fw fa-exclamation"></i>Atención:</h4>
     <p>
@@ -102,15 +108,15 @@
         {!! Form::close() !!}
     </p>
 </div>
-@elseif(count($area->inventarios)>0 && !($area->cantidad_asignada() >0))
+@elseif(count($area->inventarios)>0 && !($area->acumulador->cantidad_asignada >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene movimientos de inventario asociados. Estos movimientos se generan durante las recepciones y transferencias de almacén.
 </div>
-@elseif(!(count($area->inventarios)>0) && ($area->cantidad_asignada() >0))
+@elseif(!(count($area->inventarios)>0) && ($area->acumulador->cantidad_asignada >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados.
 </div>
-@elseif((count($area->inventarios)>0) && ($area->cantidad_asignada() >0))
+@elseif((count($area->inventarios)>0) && ($area->acumulador->cantidad_asignada >0))
 <div class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-info-sign" style="padding-right: 5px"></span>El área no puede ser eliminada porque tiene artículos asignados y movimientos de inventario relacionados.
 </div>
@@ -127,25 +133,25 @@
                     
                   
           [
-           {{number_format($area->cantidad_asignada(),2,".", ",")}} / 
-           {{number_format($area->cantidad_requerida(),2,".", ",")}}
+           {{number_format($area->acumulador->cantidad_asignada,2,".", ",")}} / 
+           {{number_format($area->acumulador->cantidad_requerida,2,".", ",")}}
           ]
                   </h5> </div>
           </div>
           
            <div class="row">  
                <div class="col-md-12">
-                   @if($area->cantidad_requerida() > 0)
+                   @if($area->acumulador->cantidad_requerida > 0)
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_asignacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($area->acumulador->porcentaje_asignacion*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $area->porcentaje_asignacion() }}"
+                      aria-valuenow="{{ $area->acumulador->porcentaje_asignacion*100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($area->porcentaje_asignacion()) }}%;">
-                      {{ round($area->porcentaje_asignacion()) }}%
+                      style="min-width: 2.5em; width: {{ round($area->acumulador->porcentaje_asignacion*100) }}%;">
+                      {{ round($area->acumulador->porcentaje_asignacion*100) }}%
                     </div>
                   </div>
                    
@@ -165,25 +171,25 @@
                     
                   
           [
-           {{number_format($area->cantidad_validada(),2,".", ",")}} / 
-           {{number_format($area->cantidad_asignada(),2,".", ",")}}
+           {{number_format($area->acumulador->cantidad_validada,2,".", ",")}} / 
+           {{number_format($area->acumulador->cantidad_asignada,2,".", ",")}}
           ]
                   </h5> </div>
           </div>
           
            <div class="row">  
                <div class="col-md-12">
-                   @if($area->cantidad_asignada() > 0)
+                   @if($area->acumulador->cantidad_asignada > 0)
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_validacion()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($area->acumulador->porcentaje_validacion * 100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $area->porcentaje_validacion() }}"
+                      aria-valuenow="{{ $area->acumulador->porcentaje_validacion * 100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($area->porcentaje_validacion()) }}%;">
-                      {{ round($area->porcentaje_validacion()) }}%
+                      style="min-width: 2.5em; width: {{ round($area->acumulador->porcentaje_validacion * 100) }}%;">
+                      {{ round($area->acumulador->porcentaje_validacion * 100) }}%
                     </div>
                   </div>
                    
@@ -203,8 +209,8 @@
                     
                   
           [
-           {{number_format($area->cantidad_areas_cerradas(),2,".", ",")}} / 
-           {{number_format($area->cantidad_areas_cerrables(),2,".", ",")}}
+           {{number_format($area->acumulador->cantidad_areas_cerradas,2,".", ",")}} / 
+           {{number_format($area->acumulador->cantidad_areas_cerrables,2,".", ",")}}
           ]
                   </h5> </div>
               
@@ -214,17 +220,17 @@
           
            <div class="row">  
                <div class="col-md-12">
-                   @if($area->cantidad_areas_cerrables() > 0)
+                   @if($area->acumulador->cantidad_areas_cerrables > 0)
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_cierre()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($area->acumulador->porcentaje_cierre*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $area->porcentaje_cierre() }}"
+                      aria-valuenow="{{ $area->acumulador->porcentaje_cierre*100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($area->porcentaje_cierre()) }}%;">
-                      {{ round($area->porcentaje_cierre()) }}%
+                      style="min-width: 2.5em; width: {{ round($area->acumulador->porcentaje_cierre*100) }}%;">
+                      {{ round($area->acumulador->porcentaje_cierre*100) }}%
                     </div>
                   </div>
                    
@@ -243,8 +249,8 @@
                     
                   
           [
-           {{number_format($area->cantidad_areas_entregadas(),2,".", ",")}} / 
-           {{number_format($area->cantidad_areas_cerradas(),2,".", ",")}}
+           {{number_format($area->acumulador->cantidad_areas_entregadas,2,".", ",")}} / 
+           {{number_format($area->acumulador->cantidad_areas_cerradas,2,".", ",")}}
           ]
                   </h5> </div>
               
@@ -254,17 +260,17 @@
           
            <div class="row">  
                <div class="col-md-12">
-                   @if($area->cantidad_areas_cerradas() > 0)
+                   @if($area->acumulador->cantidad_areas_cerradas > 0)
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($area->porcentaje_entrega()) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped{{ round($area->acumulador->porcentaje_entrega*100) == 100 ? ' progress-bar-success' : '' }}" 
                       role="progressbar"
-                      aria-valuenow="{{ $area->porcentaje_entrega() }}"
+                      aria-valuenow="{{ $area->acumulador->porcentaje_entrega*100 }}"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      style="min-width: 2.5em; width: {{ round($area->porcentaje_entrega()) }}%;">
-                      {{ round($area->porcentaje_entrega()) }}%
+                      style="min-width: 2.5em; width: {{ round($area->acumulador->porcentaje_entrega*100) }}%;">
+                      {{ round($area->acumulador->porcentaje_entrega*100) }}%
                     </div>
                   </div>
                    
@@ -284,5 +290,8 @@
 @section('scripts')
 <script>
     $('[data-toggle="tooltip"]').tooltip();
+    $("#btn_genera_concepto").off().on("click", function(){
+        $("form#genera_concepto").submit();
+    });
 </script>
 @stop

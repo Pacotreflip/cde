@@ -26,6 +26,7 @@ class CreateRecepcionRequest extends Request
         $rules = [
             'fecha_recepcion' => 'required|date',
             'orden_compra'    => 'required',
+            'numero_remision_factura'    => 'required',
             'persona_recibio' => 'required',
             'materiales'      => 'required|array',
         ];

@@ -129,4 +129,6 @@ class Recepcion extends Model
     public function usuario_registro(){
         return $this->hasOne(User::class,"idusuario", "id_usuario");
     }
+    
+   
 }

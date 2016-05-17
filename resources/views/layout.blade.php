@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Control de Equipamiento - Grupo Hermes Infraestructura</title>
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
+    <link rel="stylesheet" href="{{ asset(elixir('css/tree.css')) }}">
     @include('scripts.globals')
 
   </head>

@@ -18,8 +18,16 @@ elixir(function(mix) {
         .copy('node_modules/jstree/src/themes/default/32px.png', 'public/img')
         .copy('node_modules/jstree/src/themes/default/40px.png', 'public/img')
         .copy('node_modules/jstree/src/themes/default/throbber.gif', 'public/img')
+        .copy('node_modules/jstree/src/themes/default/32px.png', 'public/build/css')
+        .copy('node_modules/jstree/src/themes/default/40px.png', 'public/build/css')
+        .copy('node_modules/jstree/src/themes/default/throbber.gif', 'public/build/css')
         .browserify('app.js');
-    mix.sass('app.scss').version('public/css/app.css');
+    mix.sass('app.scss');
+    mix.less("tree.less");
+    mix.version([
+        'css/app.css',
+        'css/tree.css'
+    ]);
     mix.copy('node_modules/bootstrap-sass/assets/fonts','public/build/fonts');
     mix.copy('vendor/bower_components/jquery-ui/themes/smoothness/images','public/build/css/images');
     mix.copy('node_modules/tablesorter/dist/css/images','public/build/css/images');

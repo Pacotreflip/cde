@@ -11,12 +11,15 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Areas\Areas;
 use Ghi\Equipamiento\Areas\AreasTipo;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
-
+use Ghi\Equipamiento\Areas\Almacen;
+use Ghi\Http\Requests\UpdateAreaRequest;
 class AreasController extends Controller
 {
     protected $areas;
 
     protected $areas_tipo;
+    
+    protected $lista_areas;
 
     /**
      * AreasController constructor.
@@ -89,8 +92,10 @@ class AreasController extends Controller
     {
         $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
+        $almacenes = $this->areas->getListaAlmacenes();
 
         return view('areas.create')
+        ->with("almacenes",$almacenes)
             ->withAreas($areas)
             ->withTipos($tipos);
     }
@@ -107,10 +112,26 @@ class AreasController extends Controller
         $tipo = AreaTipo::find($request->get('tipo_id'));
         $parent = Area::find($request->get('parent_id'));
         $cantidad_a_crear = $request->get('cantidad', 1);
-        
+        //dd($parent->ruta);
 
         for ($i = 1; $i <= $cantidad_a_crear; $i++) {
+            
             $nombre = $request->get('nombre');
+            
+            if($cantidad_a_crear == 1 && $request->almacen_id == 0){
+                $nombre_almacen = ($parent)?strtoupper(substr(str_replace(" / ", " / ", $parent->ruta),0,(255-(strlen($nombre)))) . " / " .$nombre):strtoupper($nombre);
+                //dd($nombre_almacen);
+                $almacen = new Almacen([
+                    "descripcion"=>$nombre_almacen,
+                    "tipo_almacen"=>"0",
+                ]);
+                $almacen->obra()->associate($this->getObraEnContexto());
+                $almacen->save();
+            }elseif($cantidad_a_crear == 1 && $request->almacen_id > 0){
+                $almacen = Almacen::findOrFail($request->almacen_id);
+            }else{
+                $almacen = false;
+            }
 
             if ($cantidad_a_crear > 1) {
                 $nombre .= ' '.$rango;
@@ -121,8 +142,12 @@ class AreasController extends Controller
                 'clave' => $request->get('clave', $tipo ? $tipo->clave : ''),
                 'descripcion' => $request->get('descripcion'),
             ]);
+            
 
             $area->obra()->associate($this->getObraEnContexto());
+            if($almacen){
+                $area->almacen()->associate($almacen);
+            }
 
             if ($tipo) {
                 $area->asignaTipo($tipo);
@@ -133,11 +158,14 @@ class AreasController extends Controller
             }
             
             $this->areas->save($area);
-            
+            $acumulador = new \Ghi\Equipamiento\Areas\AreaAcumuladores();
+            $area->acumulador()->save($acumulador);
             if($tipo){
                 $materiales_requeridos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
                 $area->materialesRequeridos()->saveMany($materiales_requeridos);
             }
+            
+            
             
             $rango++;
         }
@@ -156,10 +184,12 @@ class AreasController extends Controller
         $area = $this->areas->getById($id);
         $tipos = [null => 'Ninguno'] + $this->areas_tipo->getListaUltimosNiveles();
         $areas = $this->areas->getListaAreas();
+        $almacenes = $this->areas->getListaAlmacenes();
 
         // dd($this->estadisticaMateriales($area));
 
         return view('areas.edit')
+            ->with("almacenes",$almacenes)
             ->withArea($area)
             ->withAreas($areas)
             ->withTipos($tipos);
@@ -196,7 +226,13 @@ class AreasController extends Controller
 
         return $estadisticas;
     }
-
+    public function generaConceptoSAO($id){
+        $area = $this->areas->getById($id);
+        if(!($area->concepto)){
+            $area->setConcepto();
+        }
+        return redirect()->back();
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -204,11 +240,38 @@ class AreasController extends Controller
      * @param  int      $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateAreaRequest $request, $id)
     {
         $area = $this->areas->getById($id);
         $parent = Area::find($request->get('parent_id'));
         $tipo = AreaTipo::find($request->get('tipo_id'));
+        $nombre = $request->nombre;
+        $almacen_actual = $area->almacen;
+        
+        
+        if($request->almacen_id == 0){
+            $nombre_almacen = ($parent)?strtoupper(substr(str_replace(" / ", " / ", $parent->ruta),0,(255-(strlen($nombre)))) . " / " .$nombre):strtoupper($nombre);
+            $almacenes = Almacen::where("descripcion", $nombre_almacen)->first();
+            if($almacenes){
+                throw new \Exception("Seleccione un almacén de la lista que coincida con el nombre del área.");
+            }
+            $almacen = new Almacen([
+                "descripcion"=>$nombre_almacen,
+                "tipo_almacen"=>"0",
+            ]);
+            $almacen->obra()->associate($this->getObraEnContexto());
+            $almacen->save();
+        }elseif($request->almacen_id > 0){
+            $almacen = Almacen::findOrFail($request->almacen_id);
+        }else{
+            $almacen = false;
+        }
+        
+        if($almacen){
+            $area->almacen()->associate($almacen);
+        }else{
+            $area->id_almacen = null;
+        }
 
         $area->fill($request->all());
         
@@ -282,11 +345,66 @@ class AreasController extends Controller
         if (! $isRoot) {
             $parent_id = $area->parent->id;
         }
-
+        $acumulador = $area->acumulador;
+        $acumulador->delete();
         $this->areas->delete($area);
-
+        
         Flash::success('El area fue borrada.');
 
         return redirect()->route('areas.index', $isRoot ? [] : ['area' => $parent_id]);
+    }
+    
+    public function areasJs(){
+        $areas = Area::whereRaw('parent_id is null and id_obra = ?', [$this->getObraEnContexto()->id_obra])
+                ->defaultOrder()->withDepth()->get();
+//        $area = $areas[0];
+//        $this->lista_areas[] = $this->areaArreglo($area);
+//        $this->obtieneHijos($area);
+//        dd($this->lista_areas);
+        $i = 0;
+        foreach($areas as $area){
+            $this->lista_areas[$i] = [
+                "id"=>$area->id,
+                "text"=>$area->nombre,
+                //"children"=>$this->obtieneHijos($area),
+            ];
+            $hijos = $this->obtieneHijos($area);
+            
+            
+            if ($hijos != null){
+                $this->lista_areas[$i]["children"] = $hijos;
+            }
+            $i++;
+        }
+        //dd($this->lista_areas,json_encode($this->lista_areas
+                return json_encode($this->lista_areas);
+    }
+    
+    public function areaArreglo(Area $area){
+        $area_arreglo = [
+            "id"=>$area->id,
+            "text"=>$area->nombre,
+        ];
+        return $area_arreglo;
+    }
+    
+    public function obtieneHijos($area){
+        $hijos = $area->areas_hijas()->defaultOrder()->withDepth()->get();
+        $regresa = null;
+        $i = 0;
+        foreach($hijos as $hijo){
+            $regresa[$i] = [
+                "id"=>$hijo->id,
+                "text"=>$hijo->nombre,
+            ];
+            if($hijo->areas_hijas){
+                $des = $this->obtieneHijos($hijo);
+                if($des != null){
+                    $regresa[$i]["children"] = $des;
+                }
+            }
+            $i++;
+        }
+        return $regresa;
     }
 }
