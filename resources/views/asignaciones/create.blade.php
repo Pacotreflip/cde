@@ -2,21 +2,15 @@
 @section('content')
 <h1>Nueva Asignación de Artículos</h1>
 <hr>
+<div class="errores"></div>
 <div class="section">
 <div class="col-md-3">
 
     <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
     <ul>
-        @foreach($areasraiz as $area)
+        @foreach($areas as $area)
         @if($area->cantidad_almacenada() > 0)
-        <li class="area"><a href="{{route('asignar.areacreate', ['id' => $area->id])}}">{{$area->nombre}} </a><i class="fa fa-chevron-circle-right fa-lg"></i>
-            <ul class="children">
-                @foreach($area->areas_hijas as $hija)
-                @if($hija->cantidad_almacenada > 0)
-                <li><a href="./{{$hija->id}}">{{$hija->nombre}} </a></li>
-                @endif
-                @endforeach
-            </ul>  
+        <li class="area"><a href="{{route('asignar.areacreate', ['id' => $area->id])}}">{{$area->ruta()}} </a></i>
         </li>
         @endif
         @endforeach
@@ -188,11 +182,29 @@
                 {
                     window.location = response.path;
                 },
-                error: function(error, responseText, text) {
-                    if (typeof error.responseText === 'object') {
-                        alert(error.responseText);
-                    } else {
-                        swal('Error', error.responseText, 'error');
+                error: function(xhr, responseText, thrownError) {
+                    var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+
+                    if(ind1 === -1){
+                        var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                        $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+                            salida += '<li>'+elem+'</li>';
+                        });
+                        salida += '</ul></div>';
+                        $(".errores").html(salida);
+                    }else{
+                        var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                        var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+                        var cad1 = xhr.responseText.substring(ind1);
+                        var ind2 = cad1.indexOf('</span>');
+                        var cad2 = cad1.substring(32,ind2);
+                        if(cad2 !== ""){
+                            salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+                        }else{
+                            salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+                        }
+                        salida += '</ul></div>';
+                        $(".errores").html(salida);
                     }
                 }
             });                    

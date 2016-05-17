@@ -90,8 +90,7 @@ class AsignaArticulos
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
             header("HTTP/1.1 500 Internal Server Error");
-            echo $e->getMessage();
-            die();      
+            throw $e;
         }
 
         return $asignacion;

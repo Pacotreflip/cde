@@ -100,7 +100,7 @@ class AsignacionesController extends Controller
 //                    ->paginate($howmany);
             
             return view('asignaciones.create')
-                    ->withAreasraiz($areasRaiz)
+                    ->withAreas(\Ghi\Equipamiento\Areas\Area::all())
                     ->withArticulos($articulos)
                     ->withCurrarea($this->areas->getById($id));
         } else {
@@ -112,6 +112,22 @@ class AsignacionesController extends Controller
         }
     }
     
+    protected function requerida($id_area, $id_material) {
+        return DB::connection('cadeco')
+                    ->table('Equipamiento.materiales_requeridos_area')
+                    ->where('id_material', $id_material)
+                    ->where('id_area', $id_area)
+                    ->sum('cantidad_requerida');
+    }
+    
+    protected function asignada($id_area, $id_material) {
+        return DB::connection('cadeco')
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_material', $id_material)
+                    ->where('id_area_destino', $id_area)
+                    ->sum('cantidad_asignada');
+    }
+    
     protected function getDestinos($id_articulo)
     {        
         $destinos = \Ghi\Equipamiento\Areas\Area::with('materialesRequeridos')
@@ -120,17 +136,21 @@ class AsignacionesController extends Controller
                 })
                 ->get()
                 ;
+   
                 
         $areasDestino = [];
 
         foreach ($destinos as $destino) {
-            $areasDestino[] = [
-                'id'                    => $destino->id,
-                'id_obra'               => $destino->id_obra,
-                'text'                  => $destino->nombre,
-                'path'                  => $destino->ruta(),
-                'cantidad'              => $destino->cantidad_requerida($id_articulo)
-            ];
+            if($this->requerida($destino->id, $id_articulo) - $this->asignada($destino->id, $id_articulo) > 0)
+            {
+                $areasDestino[] = [
+                    'id'                    => $destino->id,
+                    'id_obra'               => $destino->id_obra,
+                    'text'                  => $destino->nombre,
+                    'path'                  => $destino->ruta(),
+                    'cantidad'              => $this->requerida($destino->id, $id_articulo)
+                ];
+            }
         }
         return response()->json($areasDestino);
     }
