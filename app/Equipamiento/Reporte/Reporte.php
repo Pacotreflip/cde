@@ -5,6 +5,168 @@ use Illuminate\Support\Facades\DB;
 use \Ghi\Equipamiento\Areas\AreaTipo;
 
 class Reporte {
+    public static function getMaterialesOC($id_obra){
+        $resultados = DB::connection("cadeco")->select("
+            select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
+            moneda_compra,
+            sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
+            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa
+            from Equipamiento.reporte_materiales_orden_compra
+            where id_obra = {$id_obra}
+                group by 
+                id_material,material, unidad, moneda_compra
+            order by material");
+            
+        return collect($resultados);
+    }
+    public static function getMaterialesOCVSREQ($id_obra){
+        $resultados = DB::connection("cadeco")->select("
+           
+select 
+CASE WHEN  materiales_oc.id_material_compra IS NULL THEN materiales_requeridos.id_material_requerido
+ELSE materiales_oc.id_material_compra END id_material,
+ CASE WHEN  materiales_oc.material_compra IS NULL THEN materiales_requeridos.material_requerido
+ELSE materiales_oc.material_compra END material,
+CASE WHEN  materiales_oc.unidad_compra IS NULL THEN materiales_requeridos.unidad_requerida
+ELSE materiales_oc.unidad_compra END unidad,
+CASE 
+		WHEN  
+		materiales_oc.id_material_compra IS NULL AND 
+		materiales_requeridos.id_material_requerido IS NOT NULL
+		THEN 'REQUERIDO'
+		WHEN  
+		materiales_oc.id_material_compra IS NOT NULL AND 
+		materiales_requeridos.id_material_requerido IS NULL
+		THEN 'COMPRADO'
+		ELSE 'REQUERIDO Y COMPRADO'
+	END caso,
+ * from ( 
+SELECT 
+	Equipamiento.reporte_materiales_orden_compra.id_material AS id_material_compra,
+
+    Equipamiento.reporte_materiales_orden_compra.material as material_compra,
+	Equipamiento.reporte_materiales_orden_compra.unidad,
+
+	Equipamiento.reporte_materiales_orden_compra.unidad AS unidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.cantidad_compra) AS cantidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra)/count(*) AS precio_compra, 
+    Equipamiento.reporte_materiales_orden_compra.moneda_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra_moneda_comparativa)/count(*) AS precio_compra_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_orden_compra.importe_compra_moneda_comparativa) AS importe_compra_moneda_comparativa 
+FROM            
+    Equipamiento.reporte_materiales_orden_compra 
+WHERE id_obra = {$id_obra}
+GROUP BY 
+	Equipamiento.reporte_materiales_orden_compra.id_material, 
+	Equipamiento.reporte_materiales_orden_compra.material, 
+	Equipamiento.reporte_materiales_orden_compra.unidad, 
+	Equipamiento.reporte_materiales_orden_compra.moneda_compra
+) as materiales_oc  FULL OUTER JOIN ( 
+SELECT 
+    Equipamiento.reporte_materiales_requeridos_area.id_material as id_material_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido, 
+    Equipamiento.reporte_materiales_requeridos_area.unidad AS unidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.cantidad_requerida) AS cantidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_estimado)/count(*) AS precio_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_requerido_moneda_comparativa)/count(*) AS precio_requerido_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.importe_requerido_moneda_comparativa) AS importe_requerido_moneda_comparativa
+FROM            
+	Equipamiento.reporte_materiales_requeridos_area 
+GROUP BY 
+	Equipamiento.reporte_materiales_requeridos_area.id_material, 
+	Equipamiento.reporte_materiales_requeridos_area.material, 
+	Equipamiento.reporte_materiales_requeridos_area.unidad, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida 
+) AS materiales_requeridos ON(materiales_requeridos.id_material_requerido = materiales_oc.id_material_compra)
+order by material; ");
+            
+        return collect($resultados);
+    }
+    
+    public static function getMaterialesOCXLS($id_obra){
+        $resultados = DB::connection("cadeco")->select("
+            select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
+            moneda_compra,
+            sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
+            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa
+            from Equipamiento.reporte_materiales_orden_compra
+            where id_obra = {$id_obra}
+                group by 
+                id_material,material, unidad, moneda_compra
+            order by material");
+            //dd(json_decode(json_encode($resultados), true));
+        return  json_decode(json_encode($resultados), true);
+    }
+    
+    public static function getMaterialesOCVSREQXLS($id_obra){
+        $resultados = DB::connection("cadeco")->select("
+           
+select 
+CASE WHEN  materiales_oc.id_material_compra IS NULL THEN materiales_requeridos.id_material_requerido
+ELSE materiales_oc.id_material_compra END id_material,
+ CASE WHEN  materiales_oc.material_compra IS NULL THEN materiales_requeridos.material_requerido
+ELSE materiales_oc.material_compra END material,
+CASE WHEN  materiales_oc.unidad_compra IS NULL THEN materiales_requeridos.unidad_requerida
+ELSE materiales_oc.unidad_compra END unidad,
+ cantidad_compra, precio_compra, moneda_compra, precio_compra_moneda_comparativa,
+ importe_compra_moneda_comparativa,
+ cantidad_requerida,
+ precio_requerido, moneda_requerida, precio_requerido_moneda_comparativa, importe_requerido_moneda_comparativa,
+CASE 
+		WHEN  
+		materiales_oc.id_material_compra IS NULL AND 
+		materiales_requeridos.id_material_requerido IS NOT NULL
+		THEN 'REQUERIDO'
+		WHEN  
+		materiales_oc.id_material_compra IS NOT NULL AND 
+		materiales_requeridos.id_material_requerido IS NULL
+		THEN 'COMPRADO'
+		ELSE 'REQUERIDO Y COMPRADO'
+	END caso  from ( 
+SELECT 
+	Equipamiento.reporte_materiales_orden_compra.id_material AS id_material_compra,
+
+    Equipamiento.reporte_materiales_orden_compra.material as material_compra,
+	Equipamiento.reporte_materiales_orden_compra.unidad,
+
+	Equipamiento.reporte_materiales_orden_compra.unidad AS unidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.cantidad_compra) AS cantidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra)/count(*) AS precio_compra, 
+    Equipamiento.reporte_materiales_orden_compra.moneda_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra_moneda_comparativa)/count(*) AS precio_compra_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_orden_compra.importe_compra_moneda_comparativa) AS importe_compra_moneda_comparativa 
+FROM            
+    Equipamiento.reporte_materiales_orden_compra 
+WHERE id_obra = {$id_obra}
+GROUP BY 
+	Equipamiento.reporte_materiales_orden_compra.id_material, 
+	Equipamiento.reporte_materiales_orden_compra.material, 
+	Equipamiento.reporte_materiales_orden_compra.unidad, 
+	Equipamiento.reporte_materiales_orden_compra.moneda_compra
+) as materiales_oc  FULL OUTER JOIN ( 
+SELECT 
+    Equipamiento.reporte_materiales_requeridos_area.id_material as id_material_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido, 
+    Equipamiento.reporte_materiales_requeridos_area.unidad AS unidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.cantidad_requerida) AS cantidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_estimado)/count(*) AS precio_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_requerido_moneda_comparativa)/count(*) AS precio_requerido_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.importe_requerido_moneda_comparativa) AS importe_requerido_moneda_comparativa
+FROM            
+	Equipamiento.reporte_materiales_requeridos_area 
+GROUP BY 
+	Equipamiento.reporte_materiales_requeridos_area.id_material, 
+	Equipamiento.reporte_materiales_requeridos_area.material, 
+	Equipamiento.reporte_materiales_requeridos_area.unidad, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida 
+) AS materiales_requeridos ON(materiales_requeridos.id_material_requerido = materiales_oc.id_material_compra)
+order by material; ");
+            
+        return json_decode(json_encode($resultados), true);
+    }
+
     public static function getDatosXLS($id_moneda_esperada, $tipos_cambio, $filtros_consulta){
         $filtros = " and 1 = 1 ";
         if(count($filtros_consulta["areas_tipo"])>0){

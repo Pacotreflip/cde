@@ -23,6 +23,24 @@ class ReportesController extends Controller
         $this->middleware('context');
         parent::__construct();
     }
+    
+    public function index_reporte_materiales_oc_vs_materiales_req(Request $request){
+        $materiales_oc  = Reporte::getMaterialesOCVSREQ($this->getIdObra());
+        $moneda_comparativa = Moneda::where('nombre', 'DOLARES')->first();
+        return view('reportes.materiales_oc_vs_req', ["i"=>1
+            , "moneda_comparativa"=>$moneda_comparativa
+            , "materiales_oc"=>$materiales_oc
+        ]);
+    }
+    
+    public function index_reporte_materiales_oc(Request $request){
+        $materiales_oc  = Reporte::getMaterialesOC($this->getIdObra());
+        $moneda_comparativa = Moneda::where('nombre', 'DOLARES')->first();
+        return view('reportes.materiales_en_oc', ["i"=>1
+            , "moneda_comparativa"=>$moneda_comparativa
+            , "materiales_oc"=>$materiales_oc
+        ]);
+    }
     public function index_reporte_comparativa(Request $request)
     {
         $filtros_consulta["casos"] = (is_array($request->casos))?$request->casos:[];
@@ -151,5 +169,66 @@ class ReportesController extends Controller
             
         })->export('xlsx');
         
+    }
+    
+    public function materialesOCDescargaExcel(Request $request){
+        
+        $materiales_oc  = Reporte::getMaterialesOCXLS($this->getIdObra());
+        
+        Excel::create('ReporteMaterialesOC'. date("d-m-Y h:i:s"), function($excel) use($materiales_oc) {
+            
+            $excel->sheet("Reporte", function($sheet) use($materiales_oc) {
+//                $arreglo = Producto::arregloInventario($ubicacion->idubicacion);
+                $sheet->fromArray($materiales_oc);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+//                $sheet->cells('I1:I'.$arreglo->count(), function($cells){
+//                    $cells->setBackground('#cccccc');
+//                });
+                $sheet->setAutoFilter();
+//                $sheet->getStyle('A2:B2')->getProtection()->setLocked(
+//                        //PHPExcel_Style_Protection::PROTECTION_UNPROTECTED
+//                );
+//                //$sheet->protectCells('A2:B2');
+                $sheet->setColumnFormat(array(
+                   
+                    'D' => '0.00',
+                    
+                ));
+            });
+            
+        })->export('xlsx');
+        
+    }
+    function materialesOCVSREQDescargaExcel(Request $request){
+        $materiales_oc  = Reporte::getMaterialesOCVSREQXLS($this->getIdObra());
+        
+        Excel::create('ReporteMaterialesOCVsREQ'. date("d-m-Y h:i:s"), function($excel) use($materiales_oc) {
+            
+            $excel->sheet("Reporte", function($sheet) use($materiales_oc) {
+//                $arreglo = Producto::arregloInventario($ubicacion->idubicacion);
+                $sheet->fromArray($materiales_oc);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+//                $sheet->cells('I1:I'.$arreglo->count(), function($cells){
+//                    $cells->setBackground('#cccccc');
+//                });
+                $sheet->setAutoFilter();
+//                $sheet->getStyle('A2:B2')->getProtection()->setLocked(
+//                        //PHPExcel_Style_Protection::PROTECTION_UNPROTECTED
+//                );
+//                //$sheet->protectCells('A2:B2');
+                $sheet->setColumnFormat(array(
+                   
+                    'D' => '0.00',
+                    
+                ));
+            });
+            
+        })->export('xlsx');
     }
 }

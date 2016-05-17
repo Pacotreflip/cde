@@ -217,3 +217,8 @@ Route::post('reportes/comparativa_equipamiento', 'ReportesController@index_repor
 Route::post('reportes/comparativa_equipamiento/resultado', 'ReportesController@recargaResultado')->name('reportes.tabla_resultado_comparativa_equipamiento');
 Route::get('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
 Route::post("reportes/comparativa_equipamiento/resultado/descarga_excel", "ReportesController@descargaExcel")->name('reportes.comparativa_equipamiento_xls');
+Route::get('reportes/materiales_orden_compra', 'ReportesController@index_reporte_materiales_oc')->name('reportes.materiales_ordenes_compra');
+Route::post("reportes/materiales_orden_compra/resultado/descarga_excel", "ReportesController@materialesOCDescargaExcel")->name('reportes.materiales_ordenes_compra_xls');
+Route::get('reportes/materiales_oc_vs_materiales_req', 'ReportesController@index_reporte_materiales_oc_vs_materiales_req')->name('reportes.materiales_oc_vs_materiales_req');
+Route::post("reportes/materiales_oc_vs_materiales_req/resultado/descarga_excel", "ReportesController@materialesOCVSREQDescargaExcel")->name('reportes.materiales_oc_vs_materiales_req_xls');
+
