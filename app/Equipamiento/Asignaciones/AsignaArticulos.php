@@ -57,20 +57,8 @@ class AsignaArticulos
                     $cantidad_a_asignar = $destino['cantidad'];
                     $cantidad_total_asignada = $cantidad_asignada + $cantidad_a_asignar;
                     $pendiente = $cantidad_requerida-$cantidad_asignada;
-                    
-                    
                     if (!($cantidad_requerida>= $cantidad_total_asignada)) {
                         //throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item['descripcion']}");
-//                        dd('Articulo a asignar: '.$item['descripcion'],
-//                            'Area destino: '.$area_destino->ruta(),
-//                            'Area Origen: '.$area_origen->ruta(),
-//                            'Cantidad requerida: '.$cantidad_requerida,
-//                            'Cantidad asignada: '.$cantidad_asignada, 
-//                            'Cantidad a asignar: '.$cantidad_a_asignar,
-//                            'Cantidad total asignada: '.$cantidad_total_asignada,
-//                            'Pendiente: '.$pendiente
-//                            );
-                        
                         throw new \Exception("No es posible asignar el artículo: {$item['descripcion']} al área: ".$area_destino->ruta().", la cantidad pendiente de recibir es: $pendiente");
                     }
 
@@ -88,7 +76,9 @@ class AsignaArticulos
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
-            throw $e;         
+            header("HTTP/1.1 500 Internal Server Error");
+            echo $e->getMessage();
+            die();      
         }
 
         return $asignacion;

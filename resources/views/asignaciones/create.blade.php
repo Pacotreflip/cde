@@ -235,11 +235,8 @@
                 {
                     window.location = response.path;
                 },
-                error: function (errors)
-                {
-                    console.log(errors);
-                    App.setErrorsOnForm(this.asignacionForm, errors);
-                    console.log(asignacionForm);
+                error: function(error, responseText, text) {
+                    swal('¡Error!', error.responseText, 'error');
                 }
             });                    
         }
