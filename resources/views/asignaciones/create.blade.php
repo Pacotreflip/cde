@@ -83,81 +83,67 @@
         materiales: []
     };
     
-    $(document).ready(
-        function() {
-            asignacionForm.origen = '<?php echo $currarea->id ?>';
-            asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
-            asignacionForm.errors = [];
-//            console.log(area.materiales[0].cantidad_existencia);
-            
-//            console.log(asignacionForm);
+    $(document).ready(function() {
+        asignacionForm.origen = '<?php echo $currarea->id ?>';
+        asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
+        asignacionForm.errors = [];
+        $.ajaxSetup({
+            headers:{
+                'X-CSRF-Token': App.csrfToken
+            }
+        });
     });
     
     function setDestino(destino, id_area, id_material) {
-        if(destino.value !== '') {
             // Obtener un nuevo material
-            $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
-                // Obtener el destino
-                $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
-                    //verificar existencia del material
-                    var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
-                    if (materialExistente.length !== 0) {
-                        //Si el material existe
-                        //Verificar existencia del destino
-                        var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
-                        if(destinoExistente.length !== 0){
-                            //Si el destino existe
-                            destinoExistente[0].cantidad = destino.value;
-                        } else {
-                            //Si el destino no existe
+        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
+            // Obtener el destino
+            $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
+                //verificar existencia del material
+                var materialExistente = $.grep(area.materiales, function(e){ return e.id === id_material; });
+                if (materialExistente.length !== 0) {
+                    //Si el material existe
+                    //Verificar existencia del destino
+                    var destinoExistente = $.grep(materialExistente[0].destinos, function(e){ return e.id == $(destino).attr("id_destino"); });
+                    if(destinoExistente.length !== 0){
+                        //Si el destino existe
+                        if($.trim(destino.value).length === 0) {
+                            var destinosNew = $.grep(materialExistente[0].destinos, function(e){ return e.id !== $(destino).attr("id_destino"); });
+                            materialExistente[0].destinos = destinosNew;
+                        }
+                        destinoExistente[0].cantidad = destino.value;
+                    } else {
+                        //Si el destino no existe
+                        if($.trim(destino.value).length !== 0){
                             destinos[0].cantidad = destino.value;
                             materialExistente[0].destinos.push(destinos[0]);
                         }
-                    } else {
-                        //Si el material no existe
-                        destinos[0].cantidad = destino.value;
-                        material.destinos.push(destinos[0]);
-                        area.materiales.push(material); 
                     }
+                } else {
+                    //Si el material no existe
+                    destinos[0].cantidad = destino.value;
+                    material.destinos.push(destinos[0]);
+                    area.materiales.push(material); 
+                }
 
-                });
             });
-        }
+        });
     }
 
     function setDestinos(id_area, id_material) {
-//        $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){ 
-            $.get('/asignar/destinos/' + id_material).success(function(destinos) {
-                destinos.forEach(function (destino) {
-//                    material.destinos.push(destino);
-                    $('#'+ id_material).after(
-                            '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-                                <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (requiere '+ destino.cantidad +')</td>\n\
-                                <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
-                            </tr>'
-                    );
-                });
-//                asignacionForm.materiales.push(material);
-//                console.log(asignacionForm);
+        $.get('/asignar/destinos/' + id_material).success(function(destinos) {
+            destinos.forEach(function (destino) {
+                $('#'+ id_material).after(
+                        '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
+                            <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (requiere '+ destino.cantidad +')</td>\n\
+                            <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
+                        </tr>'
+                );
             });
-//        });
+        });
     }
     
-//    function removeDestinos(id) {
-//        $('[id=destino'+id+']').remove();
-//        var i = 0;
-//        asignacionForm.materiales.forEach(function (material) {
-//            if(material) {
-//                delete asignacionForm.materiales[i];
-//                console.log(asignacionForm.materiales);
-//            }
-//            i++;
-//        });   
-//    }
-
     $(function () {
-                        var cont = 0;
-
         function first() {
             if(document.getElementById('destino'+$(this).attr("id_material"))) {
                 $('[id=destino'+$(this).attr("id_material")+']').show(); 
@@ -169,16 +155,13 @@
         
         function second() {
             $('[id=destino'+$(this).attr("id_material")+']').hide();
-//            removeDestinos($(this).attr("id_material"));
             $(this).one("click", first);
         }
         $("[id=verDestinos]").one("click", first);
     });
    
     $("#enviar").off().on("click", function (e) {
-        console.log(5);
         e.preventDefault();        
-        console.log(6);
         var url = $(this).closest('form').attr("action");
     swal({
         title: "¿Desea continuar con la asignación?",
@@ -189,16 +172,14 @@
         cancelButtonText: "No",
         confirmButtonColor: "#ec6c62"
     }, function(isConfirm){
+        asignacionForm.materiales = [];
         area.materiales.forEach(function (m){
+        if(m.destinos.length !== 0){
             asignacionForm.materiales.push(m);
             console.log(asignacionForm);
+        }
         });
         if (isConfirm) {
-            $.ajaxSetup({
-                headers:{
-                    'X-CSRF-Token': $('input[name="_token"]').val()
-                }
-            });
             $.ajax({
                 url: url,
                 type: "POST",
@@ -208,13 +189,16 @@
                     window.location = response.path;
                 },
                 error: function(error, responseText, text) {
-                    swal('¡Error!', error.responseText, 'error');
+                    if (typeof error.responseText === 'object') {
+                        alert(error.responseText);
+                    } else {
+                        swal('Error', error.responseText, 'error');
+                    }
                 }
             });                    
         }
     });
 });
-
 </script>
 @endif
 <script>
