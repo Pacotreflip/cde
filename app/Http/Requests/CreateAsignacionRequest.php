@@ -25,9 +25,9 @@ class CreateAsignacionRequest extends Request
     {
         $rules = [
             'origen' => 'required',
-            'materiales' => 'required|array',
+            'materiales' => 'required',
         ];
-
+        
         foreach ($this->get('materiales', []) as $key => $material) {
             foreach ($material['destinos'] as $destinoKey => $destino) {
                 $rules['materiales.'.$key.'.destinos.'.$destinoKey.'.cantidad'] = 'required|numeric';

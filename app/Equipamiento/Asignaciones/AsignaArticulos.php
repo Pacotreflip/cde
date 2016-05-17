@@ -41,7 +41,7 @@ class AsignaArticulos
             
             $proceso_sao = $this->procesoSAO();
             $asignacion = $this->creaAsignacion();
-            
+
             foreach ($this->data['materiales'] as $item) {
                 $material = Material::where('id_material', $item['id'])->first();
                 $area_origen = Area::findOrFail($this->data['origen']);
@@ -89,6 +89,7 @@ class AsignaArticulos
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
+            header("HTTP/1.1 500 Internal Server Error");
             throw $e;
         }
 
@@ -109,7 +110,7 @@ class AsignaArticulos
         $carbon = new \Carbon\Carbon();
         $asignacion->fecha_asignacion = $carbon->now();
         $asignacion->save();
-
+        
         return $asignacion;
     }
     
