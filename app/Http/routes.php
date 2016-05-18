@@ -21,6 +21,8 @@ Route::post('areas-tipo', 'AreasTipoController@store')->name('tipos.store');
 Route::get('areas-tipo/{id}/modificar', 'AreasTipoController@edit')->name('tipos.edit');
 Route::patch('areas-tipo/{id}', 'AreasTipoController@update')->name('tipos.update');
 Route::delete('areas-tipo/{id}', 'AreasTipoController@destroy')->name('tipos.delete');
+Route::post('areas-tipo/{id}/actualiza_areas', 'AreasTipoController@actualizaAreas')->name('tipos.actualiza_areas');
+
 
 // Subrutas de area tipo...
 Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], function () {
@@ -45,6 +47,7 @@ Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], functi
 
 // Rutas de areas...
 Route::get('areas/areas-jstree', 'AreasController@areasJs')->name("areas.areasJs");
+Route::get('areas_tipo/{id}/areas-jstree', 'AreasTipoController@areasJs')->name("areas_tipo.areasJs");
 Route::get('areas', 'AreasController@index')->name('areas.index');
 Route::get('areas/nueva', 'AreasController@create')->name('areas.create');
 Route::post('areas', 'AreasController@store')->name('areas.store');

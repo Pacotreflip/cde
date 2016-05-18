@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Areas\AreaTipo;
 use Ghi\Http\Requests\CreateAreaTipoRequest;
 use Ghi\Http\Requests\UpdateAreaTipoRequest;
 use Ghi\Equipamiento\Areas\AreasTipo;
+use Ghi\Equipamiento\Areas\Area;
 
 class AreasTipoController extends Controller
 {
@@ -16,6 +17,8 @@ class AreasTipoController extends Controller
      * @tipos TipoAreaRepository
      */
     protected $areas_tipo;
+    protected $ids_js_areas_abrir = [];
+    protected $ids_js_areas_checked = [];
 
     /**
      *
@@ -150,6 +153,14 @@ class AreasTipoController extends Controller
 
         return back();
     }
+    
+    public function actualizaAreas(Request $request, $id){
+        //dd($request, $id);
+        $this->areas_tipo->actualizaAreas($request->areas, $id);
+        $tipo = $this->areas_tipo->getById($id);
+        return view('areas-tipo.areas-asignadas')
+            ->withTipo($tipo);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -171,5 +182,88 @@ class AreasTipoController extends Controller
         Flash::message('El tipo de area fue borrado.');
 
         return redirect()->route('tipos.index', $isRoot ? [] : ['tipo' => $parent_id]);
+    }
+    
+    public function areasJs($id){
+        $tipo = $this->areas_tipo->getById($id);
+        $this->generaArregloAbiertas($tipo);
+        $this->generaArregloSeleccionadas($tipo);
+        $areas = Area::whereRaw('parent_id is null and id_obra = ?', [$this->getObraEnContexto()->id_obra])
+                ->defaultOrder()->withDepth()->get();
+        $i = 0;
+        foreach($areas as $area){
+            $this->lista_areas[$i] = [
+                "id"=>$area->id,
+                "text"=>$area->nombre,
+            ];
+            
+            if (in_array($area->id, $this->ids_js_areas_abrir)){
+                $this->lista_areas[$i]["state"]["opened"] = true;
+            }
+            if (in_array($area->id, $this->ids_js_areas_checked)){
+                $this->lista_areas[$i]["state"]["selected"] = true;
+            }else{
+                $this->lista_areas[$i]["state"]["selected"] = false;
+            }
+            
+            $hijos = $this->obtieneHijos($area);
+            if ($hijos != null){
+                $this->lista_areas[$i]["children"] = $hijos;
+            }
+            $i++;
+        }
+        //dd($this->lista_areas);
+        return json_encode($this->lista_areas);
+    }
+    
+
+    
+    public function obtieneHijos($area){
+        $hijos = $area->areas_hijas()->defaultOrder()->withDepth()->get();
+        $regresa = null;
+        $i = 0;
+        foreach($hijos as $hijo){
+            $regresa[$i] = [
+                "id"=>$hijo->id,
+                "text"=>$hijo->nombre,
+            ];
+            if (in_array($hijo->id, $this->ids_js_areas_abrir)){
+                $regresa[$i]["state"]["opened"] = true;
+            }
+            if (in_array($hijo->id, $this->ids_js_areas_checked)){
+                $regresa[$i]["state"]["selected"] = true;
+                //dd("entro",$hijo->id, $this->ids_js_areas_checked, $regresa[$i]["state"]);
+            }else{
+                $regresa[$i]["state"]["selected"] = false;
+            }
+            if($hijo->areas_hijas){
+                $des = $this->obtieneHijos($hijo);
+                if($des != null){
+                    $regresa[$i]["children"] = $des;
+                }
+            }
+            $i++;
+        }
+        return $regresa;
+    }
+    private function generaArregloAbiertas(AreaTipo $tipo){
+        #Obtener áreas hijas
+        $areas = $tipo->areas;
+        foreach($areas as $area){
+            $this->ids_js_areas_abrir[] = $area->id;
+            foreach ($area->getAncestors() as $area_an) {
+                $this->ids_js_areas_abrir[] = $area_an->id;
+            }
+        }
+        $this->ids_js_areas_abrir = array_unique($this->ids_js_areas_abrir);
+    }
+    private function generaArregloSeleccionadas(AreaTipo $tipo){
+        #Obtener áreas hijas
+        $areas = $tipo->areas;
+        foreach($areas as $area){
+            $this->ids_js_areas_checked[] = $area->id;
+        }
+        //dd($this->ids_js_areas_checked);
+        $this->ids_js_areas_checked = array_unique($this->ids_js_areas_checked);
     }
 }

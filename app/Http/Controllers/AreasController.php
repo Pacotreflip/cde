@@ -275,21 +275,21 @@ class AreasController extends Controller
 
         $area->fill($request->all());
         
-        if($area->tipo != $tipo && $area->tipo){
-            $materiales_requeridos_tipo = $area->tipo->materialesRequeridos;
-            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
-                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $area->id ." and id_material_requerido = ". $material_requerido_tipo->id)->first();
-//meter despues lo de la validación de artículos asignados
-                if($material_requerido != null){
-                    if($material_requerido->cantidadMaterialesAsignados()>0){
-                        $material_requerido->desvinculaMaterialRequeridoAreaTipo();
-                    }else{
-                        $material_requerido->delete();
-                    }
-                }
-                
-            }
-        }
+//        if($area->tipo != $tipo && $area->tipo){
+//            $materiales_requeridos_tipo = $area->tipo->materialesRequeridos;
+//            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+//                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $area->id ." and id_material_requerido = ". $material_requerido_tipo->id)->first();
+////meter despues lo de la validación de artículos asignados
+//                if($material_requerido != null){
+//                    if($material_requerido->cantidadMaterialesAsignados()>0){
+//                        $material_requerido->desvinculaMaterialRequeridoAreaTipo();
+//                    }else{
+//                        $material_requerido->delete();
+//                    }
+//                }
+//                
+//            }
+//        }
 
         $area->asignaTipo($tipo);
         
@@ -309,22 +309,22 @@ class AreasController extends Controller
 
         $this->areas->save($area);
         
-        if($tipo){
-            $materiales_requeridos = [];
-            $materiales_requeridos_candidatos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
-            foreach($materiales_requeridos_candidatos as $material_requerido_candidato){
-                $material_requerido = $area->materialesRequeridos->where("id_material", $material_requerido_candidato->id_material)->first();
-                if($material_requerido != null){
-                    if($material_requerido->cantidad_requerida == $material_requerido_candidato->cantidad_requerida){
-                        $material_requerido->id_material_requerido = $material_requerido_candidato->id_material_requerido;
-                        $material_requerido->save();
-                    }
-                }else{
-                    $materiales_requeridos[] = $material_requerido_candidato;
-                }
-            }
-            $area->materialesRequeridos()->saveMany($materiales_requeridos);
-        }
+//        if($tipo){
+//            $materiales_requeridos = [];
+//            $materiales_requeridos_candidatos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
+//            foreach($materiales_requeridos_candidatos as $material_requerido_candidato){
+//                $material_requerido = $area->materialesRequeridos->where("id_material", $material_requerido_candidato->id_material)->first();
+//                if($material_requerido != null){
+//                    if($material_requerido->cantidad_requerida == $material_requerido_candidato->cantidad_requerida){
+//                        $material_requerido->id_material_requerido = $material_requerido_candidato->id_material_requerido;
+//                        $material_requerido->save();
+//                    }
+//                }else{
+//                    $materiales_requeridos[] = $material_requerido_candidato;
+//                }
+//            }
+//            $area->materialesRequeridos()->saveMany($materiales_requeridos);
+//        }
 
         Flash::success('Los cambios fueron guardados.');
 
@@ -357,36 +357,22 @@ class AreasController extends Controller
     public function areasJs(){
         $areas = Area::whereRaw('parent_id is null and id_obra = ?', [$this->getObraEnContexto()->id_obra])
                 ->defaultOrder()->withDepth()->get();
-//        $area = $areas[0];
-//        $this->lista_areas[] = $this->areaArreglo($area);
-//        $this->obtieneHijos($area);
-//        dd($this->lista_areas);
         $i = 0;
         foreach($areas as $area){
             $this->lista_areas[$i] = [
                 "id"=>$area->id,
                 "text"=>$area->nombre,
-                //"children"=>$this->obtieneHijos($area),
             ];
             $hijos = $this->obtieneHijos($area);
-            
-            
             if ($hijos != null){
                 $this->lista_areas[$i]["children"] = $hijos;
             }
             $i++;
         }
-        //dd($this->lista_areas,json_encode($this->lista_areas
                 return json_encode($this->lista_areas);
     }
     
-    public function areaArreglo(Area $area){
-        $area_arreglo = [
-            "id"=>$area->id,
-            "text"=>$area->nombre,
-        ];
-        return $area_arreglo;
-    }
+
     
     public function obtieneHijos($area){
         $hijos = $area->areas_hijas()->defaultOrder()->withDepth()->get();

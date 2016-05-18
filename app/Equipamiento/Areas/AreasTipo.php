@@ -32,6 +32,40 @@ class AreasTipo
     {
         return AreaTipo::with('materialesRequeridos')->findOrFail($id);
     }
+    
+    public function actualizaAreas($ids_areas_seleccionadas, $id ){
+        //$union = array_unique(array_merge($a, $b));
+        //$intersection = array_intersection($a, $b);
+        //symetric_difference = array_merge(array_diff($a, $b), array_diff($b, $a));
+        $tipo = AreaTipo::findOrFail($id);
+        if(!is_array($ids_areas_seleccionadas)){
+            $ids_areas_seleccionadas = [];
+        }
+        #areas_actuales
+        $ids_areas_actuales = $tipo->ids_areas();
+        #definir que áreas se van a relacionar por ser nuevas
+        $ids_agregar = array_diff($ids_areas_seleccionadas, $ids_areas_actuales);
+        #definir que áreas se van a desligar porque existian y ya no se seleccionaron
+        $ids_remover = array_diff($ids_areas_actuales, $ids_areas_seleccionadas);
+        //dd($ids_remover);
+        foreach ($ids_agregar as $id_agregar){
+            $area = Area::findOrFail($id_agregar);
+            if($area->areas_hijas->count() == 0){
+                $area->asignaTipo($tipo);
+            }
+        }
+        
+        foreach ($ids_remover as $id_remover){
+            $area = Area::findOrFail($id_remover);
+            if($area->areas_hijas->count() == 0){
+                //dd($area->nombre);
+                $area->asignaTipo();
+            }
+        }
+        //dd($ids_remover);
+        //dd($ids_areas_seleccionadas, $ids_areas_actuales, $ids_remover, $ids_agregar);
+        
+    }
 
     /**
      * Obtiene la estructura completa de tipos.

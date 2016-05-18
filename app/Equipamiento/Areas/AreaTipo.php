@@ -210,4 +210,13 @@ class AreaTipo extends Node
     public function areas_hijas(){
         return $this->hasMany(AreaTipo::class, "parent_id", "id");
     }
+    
+    public function ids_areas(){
+        $ids = [];
+        $areas = $this->areas;
+        foreach($areas as $area){
+            $ids[] = $area->id;
+        }
+        return $ids;
+    }
 }

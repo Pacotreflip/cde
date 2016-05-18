@@ -138,6 +138,7 @@ class Area extends Node
     public function asignaTipo($area_tipo = null)
     {
         if (! $area_tipo) {
+            //dd("entrsa");
             
 //            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
 //            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
@@ -145,7 +146,30 @@ class Area extends Node
 //                //meter despues lo de la validación de artículos asignados
 //                $material_requerido->delete();
 //            }
-            $this->tipo()->dissociate();
+            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+            
+            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+                #Se obtiene el material requerido que tiene el área asociado 
+                #al material requerido que tiene el área tipo actual
+                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id)->first();
+                #Si existe un material requerido en el área relacionado con 
+                #el material requerido del área tipo
+                if($material_requerido != null){
+                    if($material_requerido->cantidadMaterialesAsignados()>0){
+                        #Si el material requerido del área ya se encuentra 
+                        #asignado se desvincula del material requerido área tipo
+                        $material_requerido->desvinculaMaterialRequeridoAreaTipo();
+                    }else{
+                        #Si el material requerido del área no se encuentra 
+                        #asignado se elimina
+                        $material_requerido->delete();
+                    }
+                }
+            }
+            
+            $this->tipo_id = null;
+            $this->save();
+            //dd("quita".$this->nombre);
         }else{
 //            if($this->tipo != $area_tipo && $this->tipo){
 //                $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
@@ -155,11 +179,54 @@ class Area extends Node
 //                    $material_requerido->delete();
 //                }
 //            }
+            #Si se quiere asociar un tipo distinto al que YA tiene el área 
+            #(no aplica cuando el área no tenia ningun tipo asignado previamente) 
+            if($this->tipo != $area_tipo && $this->tipo){
+                #se obtienen los materiales requeridos del tipo que tiene asignada el área actualmente
+                $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+                foreach($materiales_requeridos_tipo as $material_requerido_tipo){
+                    #Se obtiene el material requerido que tiene el área asociado 
+                    #al material requerido que tiene el área tipo actual
+                    $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id)->first();
+                    #Si existe un material requerido en el área relacionado con 
+                    #el material requerido del área tipo
+                    if($material_requerido != null){
+                        
+                        if($material_requerido->cantidadMaterialesAsignados()>0){
+                            #Si el material requerido del área ya se encuentra 
+                            #asignado se desvincula del material requerido área tipo
+                            $material_requerido->desvinculaMaterialRequeridoAreaTipo();
+                        }else{
+                            #Si el material requerido del área no se encuentra 
+                            #asignado se elimina
+                            $material_requerido->delete();
+                        }
+                    }
+
+                }
+            }
             $this->tipo()->associate($area_tipo);
+            $this->save();
+            #Se agregan los materiales requeridos del área tipo al área; si el material
+            #aún existe en el área después del proceso anterior y tiene la misma cantidad 
+            #requerida con el material requerido de la nueva área tipo, el material requerido
+            #del área se vincula con el material requerido del área tipo nueva
+            $materiales_requeridos = [];
+            $materiales_requeridos_candidatos = $this->getArticuloRequeridoDesdeAreaTipo($area_tipo);
+            foreach($materiales_requeridos_candidatos as $material_requerido_candidato){
+                $material_requerido = $this->materialesRequeridos->where("id_material", $material_requerido_candidato->id_material)->first();
+                if($material_requerido != null){
+                    if($material_requerido->cantidad_requerida == $material_requerido_candidato->cantidad_requerida){
+                        $material_requerido->id_material_requerido = $material_requerido_candidato->id_material_requerido;
+                        $material_requerido->save();
+                    }
+                }else{
+                    $materiales_requeridos[] = $material_requerido_candidato;
+                }
+            }
+            $this->materialesRequeridos()->saveMany($materiales_requeridos);
+            
         }
-
-        
-
         return $this;
     }
     
