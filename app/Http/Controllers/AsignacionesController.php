@@ -148,7 +148,7 @@ class AsignacionesController extends Controller
                     'id_obra'               => $destino->id_obra,
                     'text'                  => $destino->nombre,
                     'path'                  => $destino->ruta(),
-                    'cantidad'              => $this->requerida($destino->id, $id_articulo)
+                    'cantidad'              => $this->requerida($destino->id, $id_articulo) - $this->asignada($destino->id, $id_articulo)
                 ];
             }
         }

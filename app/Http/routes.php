@@ -53,7 +53,6 @@ Route::patch('areas/{id}', 'AreasController@update')->name('areas.update');
 Route::patch('areas/{id}/concepto', 'AreasController@generaConceptoSAO')->name('areas.genera.concepto.sao');
 Route::delete('areas/{id}', 'AreasController@destroy')->name('areas.delete');
 
-
 // Rutas de clasificadores de articulos...
 Route::get('clasificadores-articulo', 'ClasificadoresController@index')->name('clasificadores.index');
 Route::get('clasificadores-articulo/nuevo', 'ClasificadoresController@create')->name('clasificadores.create');
@@ -120,11 +119,10 @@ Route::group(['prefix' => 'api'], function () {
         ->where(['id' => '[0-9]+']);
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
-    Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');
-    
+    Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');   
 });
 
-//Route::get('areas', 'AreasController@index')->name('areas.index');
+
 Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
 //    Route::get('/', 'AdminController@welcome');
 //    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);
