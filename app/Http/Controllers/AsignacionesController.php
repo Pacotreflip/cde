@@ -107,7 +107,7 @@ class AsignacionesController extends Controller
             $articulos = $this->buscarArticulos();
 //            $areas = \Ghi\Equipamiento\Areas\Area::
             return view('asignaciones.create')
-                    ->withAreasraiz($areasRaiz)
+                    ->withAreas($areasRaiz)
                     ->withArticulos($articulos);
         }
     }

@@ -129,7 +129,7 @@
             destinos.forEach(function (destino) {
                 $('#'+ id_material).after(
                         '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-                            <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (requiere '+ destino.cantidad +')</td>\n\
+                            <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (Pendientes '+ destino.cantidad +')</td>\n\
                             <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
                         </tr>'
                 );
