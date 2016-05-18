@@ -56,7 +56,6 @@ Route::patch('areas/{id}', 'AreasController@update')->name('areas.update');
 Route::patch('areas/{id}/concepto', 'AreasController@generaConceptoSAO')->name('areas.genera.concepto.sao');
 Route::delete('areas/{id}', 'AreasController@destroy')->name('areas.delete');
 
-
 // Rutas de clasificadores de articulos...
 Route::get('clasificadores-articulo', 'ClasificadoresController@index')->name('clasificadores.index');
 Route::get('clasificadores-articulo/nuevo', 'ClasificadoresController@create')->name('clasificadores.create');
@@ -103,9 +102,13 @@ Route::delete('transferencias/{id}', 'TransferenciasController@destroy')->name('
 
 // Rutas de asignaciones...
 Route::get('asignaciones', 'AsignacionesController@index')->name('asignaciones.index');
-Route::get('asignaciones/asignar', 'AsignacionesController@create')->name('asignaciones.create');
-Route::post('asignaciones', 'AsignacionesController@store')->name('asignaciones.store');
 Route::get('asignaciones/{id}', 'AsignacionesController@show')->name('asignaciones.show');
+Route::post('asignaciones', 'AsignacionesController@store')->name('asignaciones.store');
+Route::get('asignar/inventarios', 'AsignacionesController@create')->name('asignar.create');
+Route::get('asignar/inventarios/{id}', 'AsignacionesController@create')->name('asignar.areacreate');
+Route::get('asignar/destinos/{id_articulo}', 'AsignacionesController@getDestinos')->name('asignar.destinos');
+Route::get('asignar/destino/{id_articulo}/{id_destino}', 'AsignacionesController@getDestino')->name('asignar.destino');
+Route::get('asignar/material/{id_area}/{id_articulo}', 'AsignacionesController@getMaterial')->name('asignar.material');
 
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
@@ -119,11 +122,10 @@ Route::group(['prefix' => 'api'], function () {
         ->where(['id' => '[0-9]+']);
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
-    Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');
-    
+    Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');   
 });
 
-//Route::get('areas', 'AreasController@index')->name('areas.index');
+
 Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
 //    Route::get('/', 'AdminController@welcome');
 //    Route::get('/manage', ['middleware' => ['permission:manage-admins'], 'uses' => 'AdminController@manageAdmins']);

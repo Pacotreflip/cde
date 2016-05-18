@@ -41318,8 +41318,8 @@ Vue.component('asignacion-screen', {
       this.compra = { materiales: [] };
 
       this.asignacionForm.materiales = [];
-
-      this.$http.get('/api/areas/' + id_area).success(function (area) {
+     
+        this.$http.get('/api/areas/' + id_area).success(function (area) {
         this.ruta_area = area.ruta;
         this.asignacionForm.nombre_area = area.nombre;
         this.cargando = false;
