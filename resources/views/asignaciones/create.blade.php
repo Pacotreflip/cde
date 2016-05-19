@@ -174,6 +174,7 @@
         }
         });
         if (isConfirm) {
+            $(".errores").empty();
             $.ajax({
                 url: url,
                 type: "POST",
