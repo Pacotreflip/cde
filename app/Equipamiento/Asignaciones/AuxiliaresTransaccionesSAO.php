@@ -34,18 +34,20 @@ trait AuxiliaresTransaccionesSAO {
    
     protected function preparaDatosTransacciones(){
         $items_a_procesar = $this->data["materiales"];
-        
+         
+       
         foreach($items_a_procesar as $item_a_procesar){
+            //throw new \Exception("". print_r($this->getExistenciasXAlmacen($item_a_procesar)).'CR:'. $this->acumuladoCantidadRecibir($item_a_procesar) ."- CD". $this->getCantidadDisponibleEntrada($item_a_procesar)."-".$this->getExistenciasAlmacen($item_a_procesar));
             $this->cantidad_procesar = $this->acumuladoCantidadRecibir($item_a_procesar);
             $this->cantidad_disponible_entrada = $this->getCantidadDisponibleEntrada($item_a_procesar);
             $this->existencia_almacen = $this->getExistenciasAlmacen($item_a_procesar);
             $this->existencias_por_almacen = $this->getExistenciasXAlmacen($item_a_procesar);
             if(($this->cantidad_procesar-( $this->existencia_almacen))>0.01){
-               throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en el SAO: Disponible Entrada: {$this->cantidad_disponible_entrada}; Disponible Transferencia: {$this->existencia_almacen}");
+                throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en los almacenes del SAO, reciba lo faltante del material. Cantidad a Asignar: {$this->cantidad_procesar} Pendiente de Recibir: {$this->cantidad_disponible_entrada}; Existencia en Almacenes SAO: {$this->existencia_almacen}");
             }
             while($this->cantidad_procesar > 0){
                 //$datos_partida_entrada_sao = $this->getPartidasDisponiblesEntradaSAO($item_a_procesar["id_item"]);
-                 if($this->cantidad_procesar > $this->cantidad_disponible_entrada ){
+                 if($this->cantidad_procesar <= $this->existencia_almacen ){
                     
                     foreach($item_a_procesar["destinos"] as $destinos){
                         $this->destino_cantidad = $destinos["cantidad"];
@@ -102,6 +104,8 @@ trait AuxiliaresTransaccionesSAO {
                             $iex_al++;
                         }
                     }
+                }else{
+                    throw new \Exception("No es posible asignar la cantidad indicada para el articulo {$item_a_procesar['descripcion']} no hay existencias suficientes en los almacenes del SAO, reciba lo faltante del material. Cantidad a Asignar: {$this->cantidad_procesar} Disponible para Recibir: {$this->cantidad_disponible_entrada}; Existencia en Almacenes SAO: {$this->existencia_almacen}");
                 }
             }
         }
