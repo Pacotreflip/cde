@@ -1,0 +1,101 @@
+{
+  "_args": [
+    [
+      "venn.js",
+      "C:\\httpd\\www\\php56.loc\\control-equipamiento"
+    ]
+  ],
+  "_from": "venn.js@*",
+  "_id": "venn.js@0.2.10",
+  "_inCache": true,
+  "_location": "/venn.js",
+  "_nodeVersion": "0.12.7",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/venn.js-0.2.10.tgz_1463269746119_0.834696207428351"
+  },
+  "_npmUser": {
+    "email": "ben@benfrederickson.com",
+    "name": "benfrederickson"
+  },
+  "_npmVersion": "2.11.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "venn.js",
+    "raw": "venn.js",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/venn.js/-/venn.js-0.2.10.tgz",
+  "_shasum": "2335af1aaa44cc4559a24090885ac34e438b8536",
+  "_shrinkwrap": null,
+  "_spec": "venn.js",
+  "_where": "C:\\httpd\\www\\php56.loc\\control-equipamiento",
+  "author": {
+    "email": "ben@benfrederickson.com",
+    "name": "Ben Frederickson",
+    "url": "http:/www.benfrederickson.com"
+  },
+  "bugs": {
+    "url": "https://github.com/benfred/venn.js/issues"
+  },
+  "dependencies": {},
+  "description": "Area Proportional Venn and Euler Diagrams",
+  "devDependencies": {
+    "faucet": "0.0",
+    "jshint": "^2.8.0",
+    "rollup": "0.21.2",
+    "tape": "4",
+    "uglify-js": "2"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "tests"
+  },
+  "dist": {
+    "shasum": "2335af1aaa44cc4559a24090885ac34e438b8536",
+    "tarball": "https://registry.npmjs.org/venn.js/-/venn.js-0.2.10.tgz"
+  },
+  "files": [
+    "*.js",
+    "build",
+    "src"
+  ],
+  "gitHead": "1792850b4d0dd732b31e9fa27f68426ca8053cb5",
+  "homepage": "https://github.com/benfred/venn.js",
+  "installable": true,
+  "jshintConfig": {
+    "esnext": true
+  },
+  "jsnext:main": "index",
+  "keywords": [
+    "Euler",
+    "Venn"
+  ],
+  "license": "MIT",
+  "main": "build/venn.js",
+  "maintainers": [
+    {
+      "name": "benfrederickson",
+      "email": "ben@benfrederickson.com"
+    }
+  ],
+  "name": "venn.js",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benfred/venn.js.git"
+  },
+  "scripts": {
+    "prepublish": "npm run test && uglifyjs build/venn.js -c -m -o build/venn.min.js && rm -f build/venn.zip && zip -j build/venn.zip -- LICENSE README.md build/venn.js build/venn.min.js",
+    "pretest": "mkdir -p build && node -e 'process.stdout.write(\"var version = \\\"\" + require(\"./package.json\").version + \"\\\"; export * from \\\"../index\\\"; export {version};\");' > build/bundle.js && rollup -f umd -u venn -n venn -o build/venn.js -- build/bundle.js",
+    "test": "jshint src/*.js && faucet `find tests -name '*test.js'`"
+  },
+  "url": "https://github.com/benfred/venn.js/issues",
+  "version": "0.2.10"
+}

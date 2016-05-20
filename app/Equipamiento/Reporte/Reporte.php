@@ -19,6 +19,70 @@ class Reporte {
             
         return collect($resultados);
     }
+    public static function getMaterialesOCVSREQVENN($id_obra){
+        $resultados = DB::connection("cadeco")->select("select caso, count(*) as size from (
+select 
+
+CASE 
+		WHEN  
+		materiales_oc.id_material_compra IS NULL AND 
+		materiales_requeridos.id_material_requerido IS NOT NULL
+		THEN 'REQUERIDO'
+		WHEN  
+		materiales_oc.id_material_compra IS NOT NULL AND 
+		materiales_requeridos.id_material_requerido IS NULL
+		THEN 'COMPRADO'
+		ELSE 'REQUERIDO Y COMPRADO'
+	END caso,
+ * from ( 
+SELECT 
+	Equipamiento.reporte_materiales_orden_compra.id_material AS id_material_compra,
+
+    Equipamiento.reporte_materiales_orden_compra.material as material_compra,
+	Equipamiento.reporte_materiales_orden_compra.unidad,
+
+	Equipamiento.reporte_materiales_orden_compra.unidad AS unidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.cantidad_compra) AS cantidad_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra)/count(*) AS precio_compra, 
+    Equipamiento.reporte_materiales_orden_compra.moneda_compra, 
+	SUM(Equipamiento.reporte_materiales_orden_compra.precio_compra_moneda_comparativa)/count(*) AS precio_compra_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_orden_compra.importe_compra_moneda_comparativa) AS importe_compra_moneda_comparativa 
+FROM            
+    Equipamiento.reporte_materiales_orden_compra 
+WHERE id_obra = {$id_obra}
+GROUP BY 
+	Equipamiento.reporte_materiales_orden_compra.id_material, 
+	Equipamiento.reporte_materiales_orden_compra.material, 
+	Equipamiento.reporte_materiales_orden_compra.unidad, 
+	Equipamiento.reporte_materiales_orden_compra.moneda_compra
+) as materiales_oc  FULL OUTER JOIN ( 
+SELECT 
+    Equipamiento.reporte_materiales_requeridos_area.id_material as id_material_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido, 
+    Equipamiento.reporte_materiales_requeridos_area.unidad AS unidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.cantidad_requerida) AS cantidad_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_estimado)/count(*) AS precio_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.precio_requerido_moneda_comparativa)/count(*) AS precio_requerido_moneda_comparativa, 
+    SUM(Equipamiento.reporte_materiales_requeridos_area.importe_requerido_moneda_comparativa) AS importe_requerido_moneda_comparativa
+FROM            
+	Equipamiento.reporte_materiales_requeridos_area 
+GROUP BY 
+	Equipamiento.reporte_materiales_requeridos_area.id_material, 
+	Equipamiento.reporte_materiales_requeridos_area.material, 
+	Equipamiento.reporte_materiales_requeridos_area.unidad, 
+	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida 
+) AS materiales_requeridos ON(materiales_requeridos.id_material_requerido = materiales_oc.id_material_compra)
+) as resultado
+group by caso");
+$col =  collect($resultados);
+$salida[$col[0]->caso] = $col[0]->size;
+$salida[$col[1]->caso] = $col[1]->size;
+$salida[$col[2]->caso] = $col[2]->size;
+
+return $salida;
+    }
+
     public static function getMaterialesOCVSREQ($id_obra){
         $resultados = DB::connection("cadeco")->select("
            

@@ -26,10 +26,13 @@ class ReportesController extends Controller
     
     public function index_reporte_materiales_oc_vs_materiales_req(Request $request){
         $materiales_oc  = Reporte::getMaterialesOCVSREQ($this->getIdObra());
+        $materiales_oc_venn  = Reporte::getMaterialesOCVSREQVENN($this->getIdObra());
+        //dd($materiales_oc_venn);
         $moneda_comparativa = Moneda::where('nombre', 'DOLARES')->first();
         return view('reportes.materiales_oc_vs_req', ["i"=>1
             , "moneda_comparativa"=>$moneda_comparativa
             , "materiales_oc"=>$materiales_oc
+            , "venn"=>$materiales_oc_venn
         ]);
     }
     
