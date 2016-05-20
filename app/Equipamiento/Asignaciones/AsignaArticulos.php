@@ -89,7 +89,6 @@ class AsignaArticulos
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollback();
-            header("HTTP/1.1 500 Internal Server Error");
             throw $e;
         }
 

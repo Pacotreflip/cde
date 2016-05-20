@@ -3,6 +3,7 @@
     window.App = {
         // Token CSRF de Laravel
         csrfToken: '{{ csrf_token() }}',
+        host: '{{ url("/") }}',
 
         // ID del Usuario Actual
         userId: {!! Auth::check() ? Auth::id() : 'null' !!},
