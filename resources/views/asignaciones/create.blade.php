@@ -4,65 +4,62 @@
 <hr>
 <div class="errores"></div>
 <div class="section">
-<div class="col-md-3">
+    <div class="col-md-3">
 
-    <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
-    <ul>
-        @foreach($areas as $area)
-        @if($area->cantidad_almacenada() > 0)
-        <li class="area"><a href="{{route('asignar.areacreate', ['id' => $area->id])}}">{{$area->ruta()}} </a></i>
-        </li>
-        @endif
-        @endforeach
-    </ul>
-</div>
-<div class="col-md-9">
-    @if(isset($currarea))
-    <form action="{{ route('asignaciones.store') }}" method="POST" accept-charset="UTF-8">
-        <input name="_token" type="hidden" value="{{ csrf_token() }}">
-    <table class="table table-hover" id="tabla">
-        <h4><strong>'ARTÍCULOS ALMACENADOS'</strong></h4>
-        <thead>
-            <tr>
-                <th>Area</th>
-                <th>#Parte</th>
-                <th>Descripción</th>
-                <th>Unidad</th>
-                <th>Almacenados</th>
-               
-                <th>Esperados</th>
-                <th>Asignados</th>
-                <th>Asignar a Destino(s)</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach($articulos as $articulo)
-           <?php $areaArt = \Ghi\Equipamiento\Areas\Area::find($articulo->id_area) ?>
-            <tr id="{{$articulo->material->id_material}}">
-                <td>{{$areaArt->ruta}}</td>
-                <td>{{ $articulo->material->numero_parte}}</td>                
-                <td><strong>{{ $articulo->material->descripcion }}</strong></td>
-                <td>{{ $articulo->material->unidad }}</td>
-                <td>{{ $articulo->cantidad_existencia }}</td>
-                <td>{{ $articulo->material->cantidad_esperada($articulo->id_area) }}</td>
-                <td>{{ $articulo->material->cantidad_asignada($articulo->id_area) }}</td>
-                <td><a  id="verDestinos" id_area="{{$articulo->id_area}}" id_material="{{$articulo->material->id_material}}"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                
-            </tr>
+        <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
+<!--        <div class="form-group">
+            <label for="inputdefault">FILTRAR <small>(ARTÍCULO)</small></label>
+            <input class="form-control" id="filtro" type="text" style="width: 75%">
+        </div>        -->
+        <ul class="areas">
+            @foreach($areas as $area)
+            <li class="area">
+                <a href="{{route('asignar.areacreate', ['id' => $area->id])}}">{{$area->ruta()}} </a>
+            </li>
             @endforeach
-        </tbody>    
-    </table>
-    <br>
-    <br>
-    <div class="form-group">
-        <button class="btn btn-primary" type="submit" id="enviar">
-            <span><i class="fa fa-check-circle"></i> Asignar Artículos</span>
-        </button>
+        </ul>
     </div>
-    @endif 
-    </form>
+    <div class="col-md-9">
+        @if(isset($currarea))
+        <form action="{{ route('asignaciones.store') }}" method="POST" accept-charset="UTF-8">
+            <input name="_token" type="hidden" value="{{ csrf_token() }}">
+        <table class="table table-hover" id="tabla">
+            <h4><strong>{{ $currarea->nombre }}</strong><small> ARTÍCULOS ALMACENADOS</small></h4>
+            <thead>
+                <tr>
+                    <th>#Parte</th>
+                    <th>Descripción</th>
+                    <th>Unidad</th>
+                    <th>Almacenados</th>
+                    <th>Asignar a Destino(s)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach($articulos as $articulo)
+                <tr id="{{$articulo->material->id_material}}">
+                    <td>{{ $articulo->material->numero_parte}}</td>                
+                    <td><strong>{{ $articulo->material->descripcion }}</strong></td>
+                    <td>{{ $articulo->material->unidad }}</td>
+                    <td>{{ $articulo->cantidad_existencia }}</td>
+                    <td><a  id="verDestinos" id_area="{{$articulo->id_area}}" id_material="{{$articulo->material->id_material}}"><i class=" btn btn-primary fa fa-sitemap"></i></a></td>                
+                </tr>
+                @endforeach
+            </tbody>    
+        </table>
+        <br>
+        <br>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit" id="enviar">
+                <span><i class="fa fa-check-circle"></i> Asignar Artículos</span>
+            </button>
+        </div>
+        @endif 
+        </form>
+    </div>
 </div>
 <hr>
+
 @stop
 @section('scripts')
 @if(isset($currarea))
@@ -123,18 +120,69 @@
             });
         });
     }
+    
+    $('#filtro').off().on('keyup', function(e) {
+        $('.areas').empty();
+        $.ajax({
+            type: 'GET',
+            url: '/asignar/filtrar/' + $('#filtro').val(),
+            dataType: 'JSON',
+            success: function(data) {
+                console.log(data);
+//                if(data.length === 0){
+//                    $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
+//                } else {
+                    data.forEach(function(area){
+                        console.log(area.id_area);
+                        $('.areas').append(
+                            '<li class="area"><a href="'+ App.host +'/asignar/inventarios/'+ area.id_area +'">'+ area.ruta +'</a></li>'
+                        );
+                    });
+//                }
+            },
+            error: function(xhr, responseText, thrownError) {   
+                $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
+
+            }
+        });
+    });
 
     function setDestinos(id_area, id_material) {
-        $.get('/asignar/destinos/' + id_material).success(function(destinos) {
-            destinos.forEach(function (destino) {
-                $('#'+ id_material).after(
-                        '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-                            <td  colspan = "6" align="right"><strong>' + destino.path + '</strong> (Pendientes '+ destino.cantidad +')</td>\n\
-                            <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
-                        </tr>'
-                );
-            });
+        $.ajax({
+            type: 'GET',
+            url: '/asignar/destinos/' + id_material,
+            dataType: 'JSON',            
+            success: function(data) {
+                if(data.length === 0) {
+                    swal('No existen destinos que esperen recibir éste artículo','','info');
+                } else {
+                    data.forEach(function (destino) {
+                        $('#'+ id_material).after(
+                            '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
+                                <td  colspan = "3" align="right"><strong>' + destino.path + '</strong> (Pendientes '+ destino.cantidad +')</td>\n\
+                                <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
+                            </tr>'
+                        );
+                    });
+                }                
+            },
+            error: function(xhr, responseText, thrownError) {                   
+            }
         });
+//        $.get('/asignar/destinos/' + id_material).success(function(destinos) {
+//            if(destinos.length === 0) {
+//                swal('No existen destinos que esperen recibir éste artículo','','info');
+//            } else {
+//                destinos.forEach(function (destino) {
+//                    $('#'+ id_material).after(
+//                            '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
+//                                <td  colspan = "3" align="right"><strong>' + destino.path + '</strong> (Pendientes '+ destino.cantidad +')</td>\n\
+//                                <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
+//                            </tr>'
+//                    );
+//                });
+//            }   
+//        });
     }
     
     $(function () {
@@ -170,7 +218,7 @@
         area.materiales.forEach(function (m){
         if(m.destinos.length !== 0){
             asignacionForm.materiales.push(m);
-            console.log(asignacionForm);
+            //console.log(asignacionForm);
         }
         });
         if (isConfirm) {

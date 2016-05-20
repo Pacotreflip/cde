@@ -86,28 +86,22 @@ class AsignacionesController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected function create($id = null, $howmany = 15)
-    {   
-//        $articulos = \Ghi\Equipamiento\Inventarios\Inventario::with('material')->where('id_area', '=', 53)->where('cantidad_existencia','>',0)->get();
-//        dd($articulos);
-        $areasRaiz = $this->areas->getNivelesRaiz();
-        
+    {           
+        $inventarios = \Ghi\Equipamiento\Inventarios\Inventario::where('cantidad_existencia', '>', 0)->select('id_area')->get()->toArray();
+        $areas = \Ghi\Equipamiento\Areas\Area::whereIn('id',$inventarios)->get();
         if($id) {
             $articulos = $this->buscarArticulosArea($id);
-//            $articulos = \Ghi\Equipamiento\Inventarios\Inventario::with('material')
-//                    ->where('id_area', '=', $id)
-//                    ->where('cantidad_existencia','>',0)
-//                    ->orderBy('id', 'ASC')
-//                    ->paginate($howmany);
             
             return view('asignaciones.create')
-                    ->withAreas(\Ghi\Equipamiento\Areas\Area::all())
+
+                    ->withAreas($areas)
+                        
                     ->withArticulos($articulos)
                     ->withCurrarea($this->areas->getById($id));
         } else {
             $articulos = $this->buscarArticulos();
-//            $areas = \Ghi\Equipamiento\Areas\Area::
             return view('asignaciones.create')
-                    ->withAreas(\Ghi\Equipamiento\Areas\Area::all())
+                    ->withAreas($areas)
                     ->withArticulos($articulos);
         }
     }
@@ -137,7 +131,6 @@ class AsignacionesController extends Controller
                 ->get()
                 ;
    
-                
         $areasDestino = [];
 
         foreach ($destinos as $destino) {
@@ -199,6 +192,23 @@ class AsignacionesController extends Controller
         return response()->json($material);
     }
 
+    public function filtrar($busqueda) {
+        $areas = DB::connection('cadeco')->select(
+                "SELECT I.id_area
+                FROM Equipamiento.inventarios AS I
+                INNER JOIN Equipamiento.areas AS A ON I.id_area = A.id
+                INNER JOIN dbo.materiales AS M ON I.id_material = M.id_material
+                WHERE cantidad_existencia > 0 AND M.descripcion LIKE '%$busqueda%' GROUP BY I.id_area");
+        
+        $data = [];
+        foreach($areas as $area) {
+            $data[] = [
+                'id_area' => $area->id_area,
+                'ruta' => \Ghi\Equipamiento\Areas\Area::find($area->id_area)->ruta()
+            ];
+        }
+        return response()->json($data);
+    }
     /**
      * Store a newly created resource in storage.
      *
