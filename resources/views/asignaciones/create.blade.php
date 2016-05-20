@@ -24,7 +24,7 @@
         <form action="{{ route('asignaciones.store') }}" method="POST" accept-charset="UTF-8">
             <input name="_token" type="hidden" value="{{ csrf_token() }}">
         <table class="table table-hover" id="tabla">
-            <h4><strong>{{ $currarea->nombre }}</strong><small> ARTÍCULOS ALMACENADOS</small></h4>
+            <h4>ARTÍCULOS ALMACENADOS EN: <strong>{{ $currarea->nombre }}</strong></h4>
             <thead>
                 <tr>
                     <th>#Parte</th>
@@ -154,7 +154,7 @@
             dataType: 'JSON',            
             success: function(data) {
                 if(data.length === 0) {
-                    swal('No existen destinos que esperen recibir éste artículo','','info');
+                    swal('No hay áreas que esperen recibir éste artículo.','','info');
                 } else {
                     data.forEach(function (destino) {
                         $('#'+ id_material).after(
