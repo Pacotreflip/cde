@@ -1,5 +1,20 @@
 @extends ('layout')
-
+@section ('styles')
+<style>
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 25px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+}
+</style>
+@stop
 @section ('content')
 @if($materiales_oc == "")
 @elseif(count($materiales_oc) > 0)
@@ -131,15 +146,21 @@ $("button.descarga_excel").off().on("click", function(e){
 });
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-<script src="{{ asset("js/venn.js/venn.js") }}"></script>
+<script src="{{ asset("js/d3.js") }}"></script>
+<script src="{{ asset("js/venn.js") }}"></script>
 <script>
 var sets = [ {sets: ['COMPRADOS'], size: {{$venn["COMPRADO"]}}  },
              {sets: ['REQUERIDOS'], size: {{$venn["REQUERIDO"]}} },
              {sets: ['COMPRADOS','REQUERIDOS'], size: {{$venn["REQUERIDO Y COMPRADO"]}} }];
 
-var chart = venn.VennDiagram();
+var chart = venn.VennDiagram().width(250)
+                             .height(200);
 d3.select("#venn").datum(sets).call(chart);
+
+d3.selectAll("#venn .venn-circle text")
+    .style("font-size", "12px")
+    ;
+
 var div = d3.select("#venn")
 //var tooltip = d3.select("body").append("div")
 //    .attr("class", "venntooltip");

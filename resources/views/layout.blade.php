@@ -9,20 +9,8 @@
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset(elixir('css/tree.css')) }}">
     @include('scripts.globals')
-<style>
-.venntooltip {
-  position: absolute;
-  text-align: center;
-  width: 128px;
-  height: 25px;
-  background: #333;
-  color: #ddd;
-  padding: 2px;
-  border: 0px;
-  border-radius: 8px;
-  opacity: 0;
-}
-</style>
+
+@yield('styles')
   </head>
   <body>
     @include('partials.nav')
