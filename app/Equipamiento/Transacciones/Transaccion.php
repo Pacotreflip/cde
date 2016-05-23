@@ -90,4 +90,23 @@ class Transaccion extends Model
     {
         return $this->recibido();
     }
+    
+    public function progressbar_estado_recepcion_class()
+    {
+        $clase = "";
+        if(round($this->cantidad_recibida / $this->items()->sum('cantidad')*100) == 100){
+            $clase = "progress-bar-success";
+        }else if(round($this->cantidad_recibida / $this->items()->sum('cantidad')*100) < 100 && round($this->cantidad_recibida / $this->items()->sum('cantidad')*100)>=70){
+            $clase = "";
+        }else if(round($this->cantidad_recibida / $this->items()->sum('cantidad')*100) < 70 && round($this->cantidad_recibida / $this->items()->sum('cantidad')*100)>=50){
+            $clase = "progress-bar-warning";
+        }else{
+            $clase = "progress-bar-danger";
+        }
+        return $clase;
+    }
+    public function getProgressBarEstadoRecepcionClassAttribute()
+    {
+        return $this->progressbar_estado_recepcion_class();
+    }
 }

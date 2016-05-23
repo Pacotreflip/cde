@@ -27,7 +27,7 @@
         @if($compra->items()->sum('cantidad') > 0)
         <div class="progress">
             <div
-              class="progress-bar progress-bar-striped{{ round(($compra->cantidad_recibida / $compra->items()->sum('cantidad'))*100) == 100 ? ' progress-bar-success' : '' }}" 
+              class="progress-bar progress-bar-striped {{ $compra->progress_bar_estado_recepcion_class }}" 
               role="progressbar"
               aria-valuenow="{{ $compra->cantidad_recibida / $compra->items()->sum('cantidad') * 100 }}"
               aria-valuemin="0"

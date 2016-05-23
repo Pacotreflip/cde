@@ -40,7 +40,7 @@
               @if($descendiente->acumulador->cantidad_requerida > 0)
                 <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_asignacion*100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped {{ $descendiente->acumulador->progress_bar_estado_asignacion_class }}" 
                       role="progressbar"
                       aria-valuenow="{{ $descendiente->acumulador->porcentaje_asignacion * 100 }}"
                       aria-valuemin="0"
@@ -62,7 +62,7 @@
                    
                     <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_validacion*100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped {{ $descendiente->acumulador->progress_bar_estado_validacion_class }}" 
                       role="progressbar"
                       aria-valuenow="{{ $descendiente->acumulador->porcentaje_validacion*100 }}"
                       aria-valuemin="0"
@@ -87,7 +87,7 @@
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_cierre*100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped {{ $descendiente->acumulador->progress_bar_estado_cierre_class }}" 
                       role="progressbar"
                       aria-valuenow="{{ $descendiente->acumulador->porcentaje_cierre*100 }}"
                       aria-valuemin="0"
@@ -112,7 +112,7 @@
                    
                    <div class="progress">
                     <div
-                      class="progress-bar progress-bar-striped{{ round($descendiente->acumulador->porcentaje_entrega*100) == 100 ? ' progress-bar-success' : '' }}" 
+                      class="progress-bar progress-bar-striped {{ $descendiente->acumulador->progress_bar_estado_entrega_class }}" 
                       role="progressbar"
                       aria-valuenow="{{ $descendiente->acumulador->porcentaje_entrega*100 }}"
                       aria-valuemin="0"
