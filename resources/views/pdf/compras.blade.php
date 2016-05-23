@@ -77,24 +77,24 @@ class PDF extends Rotation {
             $this->SetTextColors(array('255,255,255'));
             $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS ADQUIRIDOS'), 0, 1, 'L');
             
-            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);
             $this->SetStyles(array('DF', 'DF', 'DF', 'DF', 'FD', 'DF', 'DF', 'DF', 'DF'));
-            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
-            $this->SetRounds(array('1', '', '', '', '', '', '', '', '2'));
-            $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0, 0, 0.2));
-            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
-            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+            $this->SetRounds(array('1', '', '', '',  '', '', '', '2'));
+            $this->SetRadius(array(0.2, 0, 0, 0, 0, 0,  0, 0.2));
+            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.6));
-            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
-            $this->Row(array('#', utf8_decode("Descripción"), "Unidad", "Adquirido", "Precio", "Importe", "Entrega", "Recibido", "% Recibido"));
+            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
+            $this->Row(array('#', utf8_decode("Descripción"), "Unidad", "Adquirido", "Precio", "Importe", "Recibido", "% Recibido"));
 
-            $this->SetRounds(array('', '', '', '', '', '', '', '', ''));
-            $this->SetRadius(array(0, 0, 0, 0, 0, 0, 0, 0, 0));
-            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
-            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+            $this->SetRounds(array('', '', '', '', '', '', '', ''));
+            $this->SetRadius(array(0, 0, 0, 0, 0, 0, 0, 0));
+            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.35));
-            $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R', 'C', 'R', 'C'));
+            $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R', 'R', 'C'));
         } 
         else if ($this->encola == "observaciones") {
             $this->Ln(0.5);
@@ -144,9 +144,9 @@ class PDF extends Rotation {
         $numItems = 0;
         
         foreach($this->compra->items as $item){
-            foreach($item->recepciones as $itemRecepcion){
+            
                 $numItems++;
-            }
+            
         }
         
         if ($numItems > 0) {
@@ -164,42 +164,42 @@ class PDF extends Rotation {
             $this->SetTextColors(array('255,255,255'));
             $this->CellFitScale($this->WidthTotal, 1, utf8_decode('ARTÍCULOS ADQUIRIDOS'), 0, 1, 'L');
 
-            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
             $this->SetFont('Arial', '', 6);
-            $this->SetStyles(array('DF', 'DF', 'DF', 'DF', 'FD', 'DF', 'DF', 'DF', 'DF'));
-            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
-            $this->SetRounds(array('1', '', '', '', '', '', '', '', '2'));
-            $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0, 0, 0.2));
-            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
-            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+            $this->SetStyles(array('DF', 'DF', 'DF', 'DF', 'FD', 'DF',  'DF', 'DF'));
+            $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal,  0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+            $this->SetRounds(array('1', '', '', '', '',  '', '', '2'));
+            $this->SetRadius(array(0.2, 0, 0, 0, 0, 0,  0, 0.2));
+            $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.6));
             $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
-            $this->Row(array('#', utf8_decode("Descripción"), "Unidad", "Adquirido", "Precio", "Importe", "Entrega", "Recibido", "% Recibido"));
+            $this->Row(array('#', utf8_decode("Descripción"), "Unidad", "Adquirido", "Precio", "Importe",  "Recibido", "% Recibido"));
 
             foreach($this->compra->items as $item){
-                foreach($item->recepciones as $itemRecepcion){
+                
                     $this->SetFont('Arial', '', 6);
-                    $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+                    $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal,  0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
                     $this->encola="items";
-                    $this->SetRounds(array('', '', '', '', '', '', '', '', ''));
-                    $this->SetRadius(array(0, 0, 0, 0, 0, 0, 0, 0, 0));
-                    $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
-                    $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+                    $this->SetRounds(array('', '', '', '', '', '',  '', ''));
+                    $this->SetRadius(array(0, 0, 0, 0, 0, 0,  0, 0));
+                    $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+                    $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0',  '0,0,0'));
                     $this->SetHeights(array(0.35));
-                    $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R', 'C', 'R', 'C'));
+                    $this->SetAligns(array('C', 'L', 'L', 'R', 'R', 'R',  'R', 'C'));
 
                     if ($i == $numItems ) {
-                        $this->SetRounds(array('4', '', '', '', '', '', '', '', '3'));
-                        $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0, 0, 0.2));
+                        $this->SetRounds(array('4', '', '', '', '',  '', '', '3'));
+                        $this->SetRadius(array(0.2, 0, 0, 0, 0, 0, 0,  0.2));
                     }
 
-                    $this->SetWidths(array(0.04 * $this->WidthTotal, 0.33 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
+                    $this->SetWidths(array(0.04 * $this->WidthTotal, 0.42 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal, 0.09 * $this->WidthTotal));
                     $this->encola = "items";
 //                    for($cont = 0; $cont < 50; $cont++){
-                    $this->Row(array($i, utf8_decode($item->material->descripcion), utf8_decode($item->unidad), number_format(utf8_decode($item->cantidad),0,'.',','), number_format(utf8_decode($item->precio_unitario),2,'.',','), number_format(utf8_decode($item->importe),2,'.',','), utf8_decode($itemRecepcion->recepcion->fecha_recepcion->format('d-m-Y')), utf8_decode($item->cantidad_recibida), utf8_decode(round(($item->cantidad_recibida / $itemRecepcion->cantidad_recibida) * 100)."%")));
+                    $this->Row(array($i, utf8_decode($item->material->descripcion), utf8_decode($item->unidad), number_format(utf8_decode($item->cantidad),0,'.',','), number_format(utf8_decode($item->precio_unitario),2,'.',','), number_format(utf8_decode($item->importe),2,'.',','),  utf8_decode($item->cantidad_recibida), utf8_decode(round(($item->cantidad_recibida / $item->cantidad) * 100)."%")));
 //                    }
                     $i++;
-                }
+                
             }
             $this->encola = "";
         } else {
