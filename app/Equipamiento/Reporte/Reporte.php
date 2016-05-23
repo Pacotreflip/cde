@@ -22,11 +22,13 @@ class Reporte {
                     FROM Equipamiento.reporte_materiales_orden_compra as materiales_oc2 
                     WHERE materiales_oc2.id_material = Equipamiento.reporte_materiales_orden_compra.id_material
                 FOR XML PATH (''))
-                , 1, 1, '') as id_orden_compra
+                , 1, 1, '') as id_orden_compra,
+                Equipamiento.reporte_materiales_orden_compra.id_familia,
+                Equipamiento.reporte_materiales_orden_compra.familia
             from Equipamiento.reporte_materiales_orden_compra
             where id_obra = {$id_obra}
                 group by 
-                id_material,material, unidad, moneda_compra
+                id_material,material, unidad, moneda_compra, id_familia, familia
             order by material");
             
         return collect($resultados);
@@ -103,6 +105,12 @@ CASE WHEN  materiales_oc.id_material_compra IS NULL THEN materiales_requeridos.i
 ELSE materiales_oc.id_material_compra END id_material,
  CASE WHEN  materiales_oc.material_compra IS NULL THEN materiales_requeridos.material_requerido
 ELSE materiales_oc.material_compra END material,
+
+CASE WHEN  materiales_oc.id_familia_compra IS NULL THEN materiales_requeridos.id_familia_requerida
+ELSE materiales_oc.id_familia_compra END id_familia,
+ CASE WHEN  materiales_oc.familia_compra IS NULL THEN materiales_requeridos.familia_requerida
+ELSE materiales_oc.familia_compra END familia,
+
 CASE WHEN  materiales_oc.unidad_compra IS NULL THEN materiales_requeridos.unidad_requerida
 ELSE materiales_oc.unidad_compra END unidad,
 CASE 
@@ -119,7 +127,8 @@ CASE
  * from ( 
 SELECT 
 	Equipamiento.reporte_materiales_orden_compra.id_material AS id_material_compra,
-
+        Equipamiento.reporte_materiales_orden_compra.id_familia AS id_familia_compra,
+Equipamiento.reporte_materiales_orden_compra.familia AS familia_compra,
     Equipamiento.reporte_materiales_orden_compra.material as material_compra,
 	Equipamiento.reporte_materiales_orden_compra.unidad,
 
@@ -135,12 +144,16 @@ WHERE id_obra = {$id_obra}
 GROUP BY 
 	Equipamiento.reporte_materiales_orden_compra.id_material, 
 	Equipamiento.reporte_materiales_orden_compra.material, 
+        Equipamiento.reporte_materiales_orden_compra.id_familia, 
+	Equipamiento.reporte_materiales_orden_compra.familia, 
 	Equipamiento.reporte_materiales_orden_compra.unidad, 
 	Equipamiento.reporte_materiales_orden_compra.moneda_compra
 ) as materiales_oc  FULL OUTER JOIN ( 
 SELECT 
     Equipamiento.reporte_materiales_requeridos_area.id_material as id_material_requerido, 
-	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido,
+        Equipamiento.reporte_materiales_requeridos_area.id_familia as id_familia_requerida, 
+	Equipamiento.reporte_materiales_requeridos_area.familia AS familia_requerida, 
     Equipamiento.reporte_materiales_requeridos_area.unidad AS unidad_requerida, 
     SUM(Equipamiento.reporte_materiales_requeridos_area.cantidad_requerida) AS cantidad_requerida, 
     SUM(Equipamiento.reporte_materiales_requeridos_area.precio_estimado)/count(*) AS precio_requerido, 
@@ -151,7 +164,9 @@ FROM
 	Equipamiento.reporte_materiales_requeridos_area 
 GROUP BY 
 	Equipamiento.reporte_materiales_requeridos_area.id_material, 
-	Equipamiento.reporte_materiales_requeridos_area.material, 
+	Equipamiento.reporte_materiales_requeridos_area.material,
+        Equipamiento.reporte_materiales_requeridos_area.id_familia, 
+	Equipamiento.reporte_materiales_requeridos_area.familia,
 	Equipamiento.reporte_materiales_requeridos_area.unidad, 
 	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida 
 ) AS materiales_requeridos ON(materiales_requeridos.id_material_requerido = materiales_oc.id_material_compra)
@@ -162,7 +177,7 @@ order by material; ");
     
     public static function getMaterialesOCXLS($id_obra){
         $resultados = DB::connection("cadeco")->select("
-            select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
+            select id_material,material,id_familia, familia, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
             moneda_compra,
             sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
             sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa,
@@ -175,7 +190,7 @@ order by material; ");
             from Equipamiento.reporte_materiales_orden_compra
             where id_obra = {$id_obra}
                 group by 
-                id_material,material, unidad, moneda_compra
+                id_material,material, unidad, moneda_compra,id_familia, familia
             order by material");
             //dd(json_decode(json_encode($resultados), true));
         return  json_decode(json_encode($resultados), true);
@@ -189,6 +204,12 @@ CASE WHEN  materiales_oc.id_material_compra IS NULL THEN materiales_requeridos.i
 ELSE materiales_oc.id_material_compra END id_material,
  CASE WHEN  materiales_oc.material_compra IS NULL THEN materiales_requeridos.material_requerido
 ELSE materiales_oc.material_compra END material,
+
+CASE WHEN  materiales_oc.id_familia_compra IS NULL THEN materiales_requeridos.id_familia_requerida
+ELSE materiales_oc.id_familia_compra END id_familia,
+ CASE WHEN  materiales_oc.familia_compra IS NULL THEN materiales_requeridos.familia_requerida
+ELSE materiales_oc.familia_compra END familia,
+
 CASE WHEN  materiales_oc.unidad_compra IS NULL THEN materiales_requeridos.unidad_requerida
 ELSE materiales_oc.unidad_compra END unidad,
  cantidad_compra, precio_compra, moneda_compra, precio_compra_moneda_comparativa,
@@ -208,8 +229,11 @@ CASE
 	END caso  from ( 
 SELECT 
 	Equipamiento.reporte_materiales_orden_compra.id_material AS id_material_compra,
+        Equipamiento.reporte_materiales_orden_compra.material as material_compra,
 
-    Equipamiento.reporte_materiales_orden_compra.material as material_compra,
+        Equipamiento.reporte_materiales_orden_compra.id_familia AS id_familia_compra,
+        Equipamiento.reporte_materiales_orden_compra.familia as familia_compra,
+
 	Equipamiento.reporte_materiales_orden_compra.unidad,
 
 	Equipamiento.reporte_materiales_orden_compra.unidad AS unidad_compra, 
@@ -223,13 +247,19 @@ FROM
 WHERE id_obra = {$id_obra}
 GROUP BY 
 	Equipamiento.reporte_materiales_orden_compra.id_material, 
-	Equipamiento.reporte_materiales_orden_compra.material, 
+	Equipamiento.reporte_materiales_orden_compra.material,
+        Equipamiento.reporte_materiales_orden_compra.id_familia, 
+	Equipamiento.reporte_materiales_orden_compra.familia, 
 	Equipamiento.reporte_materiales_orden_compra.unidad, 
 	Equipamiento.reporte_materiales_orden_compra.moneda_compra
 ) as materiales_oc  FULL OUTER JOIN ( 
 SELECT 
     Equipamiento.reporte_materiales_requeridos_area.id_material as id_material_requerido, 
-	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido, 
+	Equipamiento.reporte_materiales_requeridos_area.material AS material_requerido,
+
+    Equipamiento.reporte_materiales_requeridos_area.id_familia as id_familia_requerida, 
+    Equipamiento.reporte_materiales_requeridos_area.familia AS familia_requerida, 
+
     Equipamiento.reporte_materiales_requeridos_area.unidad AS unidad_requerida, 
     SUM(Equipamiento.reporte_materiales_requeridos_area.cantidad_requerida) AS cantidad_requerida, 
     SUM(Equipamiento.reporte_materiales_requeridos_area.precio_estimado)/count(*) AS precio_requerido, 
@@ -241,6 +271,8 @@ FROM
 GROUP BY 
 	Equipamiento.reporte_materiales_requeridos_area.id_material, 
 	Equipamiento.reporte_materiales_requeridos_area.material, 
+        Equipamiento.reporte_materiales_requeridos_area.id_familia, 
+	Equipamiento.reporte_materiales_requeridos_area.familia, 
 	Equipamiento.reporte_materiales_requeridos_area.unidad, 
 	Equipamiento.reporte_materiales_requeridos_area.moneda_requerida 
 ) AS materiales_requeridos ON(materiales_requeridos.id_material_requerido = materiales_oc.id_material_compra)

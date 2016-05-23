@@ -35,6 +35,7 @@
         
         <tr>
             <th style="text-align: center;"  >#</th>
+            <th style="text-align: center;" >Familia</th>
             <th style="text-align: center;" >Descripción</th>
             <th style="text-align: center;" >Unidad </th>
             
@@ -52,7 +53,7 @@
             <th style="text-align: center;" >Caso</th>
         </tr>
         <tr style="background-color: #C1C1C1">
-            <th colspan="3" style="text-align: right; ">Sumatorias:</th>
+            <th colspan="4" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("cantidad_compra"),2) }}</th>
             <th colspan="3" style="text-align: right; ">&nbsp;</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("importe_compra_moneda_comparativa"),2) }}</th>
@@ -67,6 +68,7 @@
         @foreach($materiales_oc as $material_oc)
         <tr>
             <td style=" ">{{ $i ++ }}</td>
+            <td >{{ $material_oc->familia }}</td> 
             <td><a href="{{ route("articulos.edit", $material_oc->id_material) }}">{{ $material_oc->material }}</a></td>   
             <td>{{ $material_oc->unidad }}</td>   
             <td style="text-align: right;">{{ $material_oc->cantidad_compra }}</td>   

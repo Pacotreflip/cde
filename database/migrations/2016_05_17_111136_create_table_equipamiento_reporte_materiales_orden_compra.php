@@ -15,6 +15,8 @@ class CreateTableEquipamientoReporteMaterialesOrdenCompra extends Migration
         Schema::create('Equipamiento.reporte_materiales_orden_compra', function (Blueprint $table) {
             $table->integer('id_obra')->unsigned();
             $table->integer('id_material')->unsigned();
+            $table->integer('id_familia')->unsigned();
+            $table->string('familia',255);
             $table->integer('id_orden_compra')->unsigned();
             $table->integer('numero_folio_orden_compra');
             $table->string('material',255);
@@ -35,6 +37,6 @@ class CreateTableEquipamientoReporteMaterialesOrdenCompra extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('Equipamiento.reporte_materiales_orden_compra');
     }
 }
