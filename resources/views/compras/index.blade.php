@@ -13,7 +13,7 @@
         <th>Fecha</th>
         <th>Proveedor</th>
         <th>Observaciones</th>
-        <th></th>
+        <th>% Recibido</th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +23,21 @@
           <td>{{ $compra->fecha->format('d-m-Y') }}</td>
           <td>{{ $compra->empresa->razon_social }}</td>
           <td>{{ str_limit($compra->observaciones, 70) }}</td>
-          <td></td>
+          <td>
+        @if($compra->items()->sum('cantidad') > 0)
+        <div class="progress">
+            <div
+              class="progress-bar progress-bar-striped{{ round(($compra->cantidad_recibida / $compra->items()->sum('cantidad'))*100) == 100 ? ' progress-bar-success' : '' }}" 
+              role="progressbar"
+              aria-valuenow="{{ $compra->cantidad_recibida / $compra->items()->sum('cantidad') * 100 }}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              style="min-width: 2.5em; width: {{ round($compra->cantidad_recibida / $compra->items()->sum('cantidad') * 100) }}%;">
+              {{ round($compra->cantidad_recibida / $compra->items()->sum('cantidad') * 100) }}%
+            </div>
+        </div>
+        @endif    
+          </td>
         </tr>
       @endforeach
     </tbody>

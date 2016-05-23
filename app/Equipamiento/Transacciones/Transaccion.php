@@ -1,7 +1,7 @@
 <?php
 
 namespace Ghi\Equipamiento\Transacciones;
-
+use Illuminate\Support\Facades\DB;
 use Ghi\Core\Models\Obra;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Proveedores\Proveedor;
@@ -76,5 +76,18 @@ class Transaccion extends Model
         return $query->where('tipo_transaccion', Tipo::ORDEN_COMPRA)
             ->where('opciones', 1)
             ->where('equipamiento', 1);
+    }
+    
+    public function recibido()
+    {
+        return (float) DB::connection($this->connection)
+            ->table('Equipamiento.recepciones')
+            ->join('Equipamiento.recepcion_items', 'recepciones.id', '=', 'recepcion_items.id_recepcion')
+            ->where('id_orden_compra', $this->id_transaccion)
+            ->sum('cantidad_recibida');
+    }
+    public function getCantidadRecibidaAttribute()
+    {
+        return $this->recibido();
     }
 }
