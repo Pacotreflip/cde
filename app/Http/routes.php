@@ -83,6 +83,7 @@ Route::delete('proveedores/{id}', 'ProveedoresController@destroy')->name('provee
 
 // Rutas de compras...
 Route::get('compras', 'ComprasController@index')->name('compras.index');
+Route::get('compras/material/{id_material}', 'ComprasController@index_x_material')->name('compras.index_x_material');
 Route::get('compras/{id}', 'ComprasController@show')->name('compras.show');
 
 // Rutas de recepcion de articulos...

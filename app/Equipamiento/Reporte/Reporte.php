@@ -10,7 +10,19 @@ class Reporte {
             select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
             moneda_compra,
             sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
-            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa
+            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa,
+			 STUFF((
+                    SELECT ',' + cast(numero_folio_orden_compra as varchar)
+                    FROM Equipamiento.reporte_materiales_orden_compra as materiales_oc2 
+                    WHERE materiales_oc2.id_material = Equipamiento.reporte_materiales_orden_compra.id_material
+                FOR XML PATH (''))
+                , 1, 1, '') as ordenes_compra,
+			 STUFF((
+                    SELECT ',' + cast(id_orden_compra as varchar)
+                    FROM Equipamiento.reporte_materiales_orden_compra as materiales_oc2 
+                    WHERE materiales_oc2.id_material = Equipamiento.reporte_materiales_orden_compra.id_material
+                FOR XML PATH (''))
+                , 1, 1, '') as id_orden_compra
             from Equipamiento.reporte_materiales_orden_compra
             where id_obra = {$id_obra}
                 group by 
@@ -153,7 +165,13 @@ order by material; ");
             select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
             moneda_compra,
             sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
-            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa
+            sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa,
+			 STUFF((
+                    SELECT ',' + cast(numero_folio_orden_compra as varchar)
+                    FROM Equipamiento.reporte_materiales_orden_compra as materiales_oc2 
+                    WHERE materiales_oc2.id_material = Equipamiento.reporte_materiales_orden_compra.id_material
+                FOR XML PATH (''))
+                , 1, 1, '') as ordenes_compra
             from Equipamiento.reporte_materiales_orden_compra
             where id_obra = {$id_obra}
                 group by 

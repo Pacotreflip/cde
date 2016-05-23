@@ -3,7 +3,7 @@
 namespace Ghi\Equipamiento\Articulos;
 
 use Ghi\Equipamiento\Moneda;
-
+use Ghi\Equipamiento\Transacciones\Transaccion;
 class Materiales
 {
     /**
@@ -157,5 +157,14 @@ class Materiales
     public function save(Material $material)
     {
         return $material->save();
+    }
+    
+    public function getOrdenCompra($id_obra, $id_material){
+        $ordenes = Transaccion::ordenesCompraMateriales()
+            ->where('id_obra', $id_obra)
+            ->where('id_material', $id_material)
+            ->join("items", "items.id_transaccion","=","transacciones.id_transaccion")
+            ->orderBy('numero_folio', 'ASC')->get();
+        return $ordenes;
     }
 }

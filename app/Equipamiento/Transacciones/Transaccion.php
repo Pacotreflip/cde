@@ -5,9 +5,12 @@ namespace Ghi\Equipamiento\Transacciones;
 use Ghi\Core\Models\Obra;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Proveedores\Proveedor;
-
+use Laracasts\Presenter\PresentableTrait;
+use Ghi\Equipamiento\Presenters\TransaccionPresenter;
 class Transaccion extends Model
 {
+    use PresentableTrait;
+    protected $presenter = TransaccionPresenter::class;
     /**
      * @var string
      */

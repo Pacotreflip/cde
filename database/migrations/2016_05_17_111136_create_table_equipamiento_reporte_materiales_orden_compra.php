@@ -15,6 +15,8 @@ class CreateTableEquipamientoReporteMaterialesOrdenCompra extends Migration
         Schema::create('Equipamiento.reporte_materiales_orden_compra', function (Blueprint $table) {
             $table->integer('id_obra')->unsigned();
             $table->integer('id_material')->unsigned();
+            $table->integer('id_orden_compra')->unsigned();
+            $table->integer('numero_folio_orden_compra');
             $table->string('material',255);
             $table->string('unidad',16);
             $table->float('cantidad_compra')->nullable();

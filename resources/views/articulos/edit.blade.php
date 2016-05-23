@@ -18,7 +18,21 @@
       <br>
     </div>
     <div class="col-md-6 gallery">
+        <div class="row">
       @include('articulos.partials.fotos')
+        </div>
+        <div class="row">
+      <h3>Orden de Compra</h3>
+      <hr>
+      <ul>
+      @foreach($ordenes_compra as $orden_compra)
+      <li>
+          <a href="{{ route('compras.show', $orden_compra->id_transaccion) }}">{{ $orden_compra->present()->numero_folio }}</a>
+          
+      </li>
+      @endforeach
+      </ul>
+        </div>
     </div>
   </div>
 
@@ -137,7 +151,7 @@
   
   <div class="row">
       @if(count($material->areas_requerido()))
-      <div class="col-md-6">
+      <div class="col-md-5">
       <h3>Requerido / Asignado En:</h3>
 <hr>
 <br>
@@ -168,7 +182,7 @@
       @if(count($material->areas_almacenacion()))
       
       
-      <div class="col-md-6">
+      <div class="col-md-5">
       <h3>Almacenado en: </h3>
 <hr>
 <br>

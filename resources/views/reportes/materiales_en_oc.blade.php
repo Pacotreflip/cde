@@ -18,6 +18,7 @@
         
         <tr>
             <th style="text-align: center;"  >#</th>
+            <th style="text-align: center;" >OC</th>
             <th style="text-align: center;" >Descripción</th>
             <th style="text-align: center;" >Unidad Compra</th>
             <th style="text-align: center;" >Cantidad Compra </th>
@@ -27,7 +28,7 @@
             <th style="text-align: center;" >Importe Compra ({{$moneda_comparativa->nombre}})</th>
         </tr>
         <tr style="background-color: #C1C1C1">
-            <th colspan="3" style="text-align: right; ">Sumatorias:</th>
+            <th colspan="4" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("cantidad_compra"),2) }}</th>
             <th colspan="3" style="text-align: right; ">&nbsp;</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("importe_compra_moneda_comparativa"),2) }}</th>
@@ -38,6 +39,11 @@
         @foreach($materiales_oc as $material_oc)
         <tr>
             <td style=" ">{{ $i ++ }}</td>
+            @if(strpos($material_oc->ordenes_compra,",")>0)
+            <td style=" "><a href="{{ route("compras.index_x_material", $material_oc->id_material) }}">{{ $material_oc->ordenes_compra }}</a></td>
+            @else
+            <td style=" "><a href="{{ route("compras.show", $material_oc->id_orden_compra) }}">{{ $material_oc->ordenes_compra }}</a></td>
+            @endif
             <td><a href="{{ route("articulos.edit", $material_oc->id_material) }}">{{ $material_oc->material }}</a></td>   
             <td>{{ $material_oc->unidad }}</td>   
             <td style="text-align: right;">{{ $material_oc->cantidad_compra }}</td>   

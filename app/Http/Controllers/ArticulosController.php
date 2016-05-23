@@ -149,12 +149,15 @@ class ArticulosController extends Controller
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
         $monedas = [null => 'Seleccione Moneda'] + $this->materiales->getListaMonedas();
         $idobra = $this->getObraEnContexto()->id_obra;
+        $ordenes_compra = $this->materiales->getOrdenCompra($idobra, $id);
+        //dd($ordenes_compra);
         return view('articulos.edit')
             ->withMaterial($material)
             ->withUnidades($unidades)
             ->withFamilias($familias)
             ->withMonedas($monedas)
             ->with("idobra",$idobra)
+            ->with("ordenes_compra",$ordenes_compra)
             ->withClasificadores($clasificadores);
     }
 

@@ -19,7 +19,7 @@
     <tbody>
       @foreach($compras as $compra)
         <tr>
-          <td><a href="{{ route('compras.show', $compra) }}"># {{ $compra->numero_folio }}</a></td>
+          <td><a href="{{ route('compras.show', $compra->id_transaccion) }}"># {{ $compra->numero_folio }}</a></td>
           <td>{{ $compra->fecha->format('d-m-Y') }}</td>
           <td>{{ $compra->empresa->razon_social }}</td>
           <td>{{ str_limit($compra->observaciones, 70) }}</td>

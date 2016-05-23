@@ -31,6 +31,14 @@ class ComprasController extends Controller
         return view('compras.index')
             ->withCompras($compras);
     }
+    public function index_x_material($id_material)
+    {
+        $compras = $this->buscar_x_material($id_material);
+
+        return view('compras.index')
+            ->withCompras($compras);
+    }
+    
 
     /**
      * Busca ordenes de compra
@@ -42,17 +50,43 @@ class ComprasController extends Controller
      */
     protected function buscar($busqueda, $howMany = 15)
     {
-        return Transaccion::ordenesCompraMateriales()
+        $salida =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
             ->where('id_obra', $this->getIdObra())
             ->where(function ($query) use ($busqueda) {
                 $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('materiales.descripcion', 'LIKE', '%'.$busqueda.'%')
                     ->orWhereHas('empresa', function ($query) use ($busqueda) {
                         $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
                     });
             })
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
             ->orderBy('numero_folio', 'DESC')
+            ->select('transacciones.id_transaccion','numero_folio','fecha','id_empresa','observaciones')        
             ->paginate($howMany);
+            //dd($salida);
+            return $salida;
+    }
+    
+    protected function buscar_x_material($id_material, $howMany = 15)
+    {
+        $salida =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            
+            ->where('id_obra', $this->getIdObra())
+            ->where(function ($query) use ($id_material) {
+                $query->where('id_material', '=', $id_material);
+            })
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select('transacciones.id_transaccion','numero_folio','fecha','id_empresa','observaciones')        
+            ->paginate($howMany);
+            //dd($salida);
+            return $salida;
     }
 
     /**
