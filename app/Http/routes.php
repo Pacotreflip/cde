@@ -110,7 +110,8 @@ Route::get('asignar/inventarios/{id}', 'AsignacionesController@create')->name('a
 Route::get('asignar/destinos/{id_articulo}', 'AsignacionesController@getDestinos')->name('asignar.destinos');
 Route::get('asignar/destino/{id_articulo}/{id_destino}', 'AsignacionesController@getDestino')->name('asignar.destino');
 Route::get('asignar/material/{id_area}/{id_articulo}', 'AsignacionesController@getMaterial')->name('asignar.material');
-Route::get('asignar/filtrar/{busqueda}', 'AsignacionesController@filtrar')->name('asignar.filtrar');
+Route::get('asignar/materiales', 'AsignacionesController@getMateriales')->name('asignar.materiales');
+Route::post('asignar/filtrar/', 'AsignacionesController@filtrar')->name('asignar.filtrar');
 
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
