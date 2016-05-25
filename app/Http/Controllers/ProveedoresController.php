@@ -109,6 +109,7 @@ class ProveedoresController extends Controller
         $sucursal->contacto = $request->nombre_contacto;
         $sucursal->email = $request->correo;
         $sucursal->telefono = $request->telefono;
+        $sucursal->direccion = $request->direccion;
         $sucursal->id_empresa = $proveedor->id_empresa;
         $sucursal->save();
 
@@ -152,6 +153,7 @@ class ProveedoresController extends Controller
         $sucursal->contacto = $request->nombre_contacto;
         $sucursal->email = $request->correo;
         $sucursal->telefono = $request->telefono;
+        $sucursal->direccion = $request->direccion;
         $sucursal->save();
 
         Flash::success('Los cambios fueron guardados');
