@@ -63,7 +63,15 @@
         </div>
     </div>
 </div>
-    
+    <div class="row">
+    <div class="col-xs-12">
+        
+        <div class="form-group">
+            {!! Form::label('direccion', 'Dirección:') !!}
+            {!! Form::textarea('direccion', $proveedor->sucursales->first()->direccion, ['class' => 'form-control']) !!}
+        </div>
+    </div>
+</div>
     <hr>
     
     <div class="form-group">
