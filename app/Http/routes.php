@@ -53,6 +53,8 @@ Route::get('areas/nueva', 'AreasController@create')->name('areas.create');
 Route::post('areas', 'AreasController@store')->name('areas.store');
 Route::get('areas/{id}', 'AreasController@edit')->name('areas.edit');
 Route::patch('areas/{id}', 'AreasController@update')->name('areas.update');
+Route::patch('areas/{id}/down', 'AreasController@down')->name('areas.down');
+Route::patch('areas/{id}/up', 'AreasController@up')->name('areas.up');
 Route::patch('areas/{id}/concepto', 'AreasController@generaConceptoSAO')->name('areas.genera.concepto.sao');
 Route::delete('areas/{id}', 'AreasController@destroy')->name('areas.delete');
 

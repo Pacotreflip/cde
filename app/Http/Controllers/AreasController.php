@@ -275,60 +275,35 @@ class AreasController extends Controller
 
         $area->fill($request->all());
         
-//        if($area->tipo != $tipo && $area->tipo){
-//            $materiales_requeridos_tipo = $area->tipo->materialesRequeridos;
-//            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
-//                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $area->id ." and id_material_requerido = ". $material_requerido_tipo->id)->first();
-////meter despues lo de la validación de artículos asignados
-//                if($material_requerido != null){
-//                    if($material_requerido->cantidadMaterialesAsignados()>0){
-//                        $material_requerido->desvinculaMaterialRequeridoAreaTipo();
-//                    }else{
-//                        $material_requerido->delete();
-//                    }
-//                }
-//                
-//            }
-//        }
-
         $area->asignaTipo($tipo);
         
         if ($parent) {
             $area->moverA($parent);
         }
 
-        if ($request->has('move_up')) {
-            $area->up();
-            return back();
-        }
-
-        if ($request->has('move_down')) {
-            $area->down();
-            return back();
-        }
-
         $this->areas->save($area);
         
-//        if($tipo){
-//            $materiales_requeridos = [];
-//            $materiales_requeridos_candidatos = $area->getArticuloRequeridoDesdeAreaTipo($tipo);
-//            foreach($materiales_requeridos_candidatos as $material_requerido_candidato){
-//                $material_requerido = $area->materialesRequeridos->where("id_material", $material_requerido_candidato->id_material)->first();
-//                if($material_requerido != null){
-//                    if($material_requerido->cantidad_requerida == $material_requerido_candidato->cantidad_requerida){
-//                        $material_requerido->id_material_requerido = $material_requerido_candidato->id_material_requerido;
-//                        $material_requerido->save();
-//                    }
-//                }else{
-//                    $materiales_requeridos[] = $material_requerido_candidato;
-//                }
-//            }
-//            $area->materialesRequeridos()->saveMany($materiales_requeridos);
-//        }
-
         Flash::success('Los cambios fueron guardados.');
 
         return redirect()->back();
+    }
+    
+    public function down(Request $request, $id)
+    {
+        $area = $this->areas->getById($id);
+        
+        if ($request->has('move_down')) {
+            $area->down();
+        }
+    }
+    public function up(Request $request, $id)
+    {
+        $area = $this->areas->getById($id);
+        //$area::fixTree();
+        
+        if ($request->has('move_up')) {
+            $area->up();
+        }
     }
 
     /**

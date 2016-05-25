@@ -137,25 +137,25 @@
             @endif
               <div class="btn-group btn-group-xs">
                 @if (!Auth::user()->hasRole('consulta_provisional'))  
-                <form action="{{ route('areas.update', $descendiente) }}" method="POST" accept-charset="UTF-8">
+                <form action="{{ route('areas.down', $descendiente) }}" method="POST" accept-charset="UTF-8" >
                   <input type="hidden" name="_method" value="PATCH">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                  <button type="submit" class="btn btn-warning btn-xs">
+                  <button type="button" class="btn btn-warning btn-xs btn_down" >
                     <span class="fa fa-arrow-down"></span>
                   </button>
                   <input type="hidden" name="move_down" value="1">
                 </form>
+                
                 @endif
               </div>
 
               <div class="btn-group btn-group-xs">
                 @if (!Auth::user()->hasRole('consulta_provisional'))  
-                <form action="{{ route('areas.update', $descendiente) }}" method="POST" accept-charset="UTF-8">
+                <form action="{{ route('areas.up', $descendiente) }}" method="POST" accept-charset="UTF-8">
                   <input type="hidden" name="_method" value="PATCH">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                  <button type="submit" class="btn btn-warning btn-xs">
+                  <button type="button" class="btn btn-warning btn-xs btn_up">
                     <span class="fa fa-arrow-up"></span>
                   </button>
                   <input type="hidden" name="move_up" value="1">
@@ -168,7 +168,6 @@
       @endforeach
     </tbody>
   </table>
-  
   @if($area and count($areas_tipo) > 0)
     @include('areas.partials.resumen')
   @endif
@@ -178,5 +177,45 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 });
+$("button.btn_down").off().on("click", function (e){
+    $frm = $(this).parents("form");
+    var postData = $frm.serialize();
+    var formURL = $frm.attr("action");
+    $.ajax({
+        url: formURL,
+        type: "patch",
+        data: postData,
+        success: function (data)
+        {
+          location.reload();
+        }
+    });
+    e.preventDefault();
+});
+
+$("button.btn_up").off().on("click", function (e){
+    $frm = $(this).parents("form");
+    var postData = $frm.serialize();
+    var formURL = $frm.attr("action");
+    $.ajax({
+        url: formURL,
+        type: "patch",
+        data: postData,
+        success: function (data)
+        {
+          location.reload();
+        }
+    });
+    e.preventDefault();
+});
+
+$(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
 </script>
 @stop
