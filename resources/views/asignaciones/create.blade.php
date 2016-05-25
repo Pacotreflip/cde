@@ -5,12 +5,15 @@
 <div class="errores"></div>
 <div class="section">
     <div class="col-md-3">
-
+        <form class="navbar-form" role="search">
+            <div class="form-group">
+              <input id="filtro" type="text" class="form-control" placeholder="Buscar artículo">
+            </div>
+            <button id="buscarArticulo" type="Buscar" class="btn btn-primary">Buscar</button>
+        </form>
+        <hr>
         <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
-<!--        <div class="form-group">
-            <label for="inputdefault">FILTRAR <small>(ARTÍCULO)</small></label>
-            <input class="form-control" id="filtro" type="text" style="width: 75%">
-        </div>        -->
+        
         <ul class="areas">
             @foreach($areas as $area)
             <li class="area">
@@ -20,9 +23,7 @@
         </ul>
     </div>
     <div class="col-md-9">
-        @if(isset($currarea))
-        <form action="{{ route('asignaciones.store') }}" method="POST" accept-charset="UTF-8">
-            <input name="_token" type="hidden" value="{{ csrf_token() }}">
+        @if(isset($currarea))       
         <table class="table table-hover" id="tabla">
             <h4>ARTÍCULOS ALMACENADOS EN: <strong>{{ $currarea->nombre }}</strong></h4>
             <thead>
@@ -55,7 +56,6 @@
             </button>
         </div>
         @endif 
-        </form>
     </div>
 </div>
 <hr>
@@ -73,20 +73,14 @@
     var area = {
         materiales: []
     };
-    
     $(document).ready(function() {
         asignacionForm.origen = '<?php echo $currarea->id ?>';
         asignacionForm.nombre_area = '<?php echo $currarea->nombre ?>';
         asignacionForm.errors = [];
-        $.ajaxSetup({
-            headers:{
-                'X-CSRF-Token': App.csrfToken
-            }
-        });
+        
     });
-    
     function setDestino(destino, id_area, id_material) {
-            // Obtener un nuevo material
+            // Obtener un  material
         $.get('/asignar/material/' + id_area + '/' + id_material).success(function(material){
             // Obtener el destino
             $.get('/asignar/destino/' + id_material + '/' + $(destino).attr("id_destino")).success(function(destinos) {
@@ -116,37 +110,37 @@
                     material.destinos.push(destinos[0]);
                     area.materiales.push(material); 
                 }
-
             });
         });
     }
+//        $('.areas').empty();
+//        $.ajax({
+//            type: 'GET',
+//            url: '/asignar/filtrar/' + $('#filtro').val(),
+//            dataType: 'JSON',
+//            success: function(data) {
+//                console.log(data);
+////                if(data.length === 0){
+////                    $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
+////                } else {
+//                    data.forEach(function(area){
+//                        console.log(area.id_area);
+//                        $('.areas').append(
+//                            '<li class="area"><a href="'+ App.host +'/asignar/inventarios/'+ area.id_area +'">'+ area.ruta +'</a></li>'
+//                        );
+//                    });
+////                }
+//            },
+//            error: function(xhr, responseText, thrownError) {   
+//                $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
+//
+//            }
+//        });
+//    });
+
     
-    $('#filtro').off().on('keyup', function(e) {
-        $('.areas').empty();
-        $.ajax({
-            type: 'GET',
-            url: '/asignar/filtrar/' + $('#filtro').val(),
-            dataType: 'JSON',
-            success: function(data) {
-                console.log(data);
-//                if(data.length === 0){
-//                    $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
-//                } else {
-                    data.forEach(function(area){
-                        console.log(area.id_area);
-                        $('.areas').append(
-                            '<li class="area"><a href="'+ App.host +'/asignar/inventarios/'+ area.id_area +'">'+ area.ruta +'</a></li>'
-                        );
-                    });
-//                }
-            },
-            error: function(xhr, responseText, thrownError) {   
-                $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
-
-            }
-        });
-    });
-
+    
+     
     function setDestinos(id_area, id_material) {
         $.ajax({
             type: 'GET',
@@ -169,22 +163,7 @@
             error: function(xhr, responseText, thrownError) {                   
             }
         });
-//        $.get('/asignar/destinos/' + id_material).success(function(destinos) {
-//            if(destinos.length === 0) {
-//                swal('No existen destinos que esperen recibir éste artículo','','info');
-//            } else {
-//                destinos.forEach(function (destino) {
-//                    $('#'+ id_material).after(
-//                            '<tr tipo="trDestino" id="destino'+ id_material + '" class="success">\n\
-//                                <td  colspan = "3" align="right"><strong>' + destino.path + '</strong> (Pendientes '+ destino.cantidad +')</td>\n\
-//                                <td colspan = "2"  align="right"><input id_destino="'+destino.id+'" name="'+destino.path+'" type="text" class="form-control input-xs" placeholder="cantidad a asignar" onchange="setDestino(this,'+id_area+', '+id_material+')" ></td>\n\
-//                            </tr>'
-//                    );
-//                });
-//            }   
-//        });
-    }
-    
+    } 
     $(function () {
         function first() {
             if(document.getElementById('destino'+$(this).attr("id_material"))) {
@@ -201,26 +180,24 @@
         }
         $("[id=verDestinos]").one("click", first);
     });
-   
     $("#enviar").off().on("click", function (e) {
         e.preventDefault();        
-        var url = $(this).closest('form').attr("action");
-    swal({
-        title: "¿Desea continuar con la asignación?",
-        text: "¿Esta seguro de que la información es correcta?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si",
-        cancelButtonText: "No",
-        confirmButtonColor: "#ec6c62"
-    }, function(isConfirm){
-        asignacionForm.materiales = [];
-        area.materiales.forEach(function (m){
-        if(m.destinos.length !== 0){
-            asignacionForm.materiales.push(m);
-            //console.log(asignacionForm);
-        }
-        });
+        var url = "{{ route('asignaciones.store') }}";
+        swal({
+            title: "¿Desea continuar con la asignación?",
+            text: "¿Esta seguro de que la información es correcta?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
+            confirmButtonColor: "#ec6c62"
+        }, function(isConfirm){
+            asignacionForm.materiales = [];
+            area.materiales.forEach(function (m){
+                if(m.destinos.length !== 0){
+                    asignacionForm.materiales.push(m);
+                }
+            });
         if (isConfirm) {
             $(".errores").empty();
             $.ajax({
@@ -263,9 +240,47 @@
 </script>
 @endif
 <script>
-$(document).ready(
-        function(){$('ul li > ul').slideUp();       
+$.ajaxSetup({
+    headers:{
+        'X-CSRF-Token': App.csrfToken
+    }
 });
-$('ul li.area').click(function(e) {$(this).children('ul.children').slideToggle(300);});
+$("#filtro").autocomplete({
+    source: function( request, response ) {
+      $.ajax({
+          type: 'GET',
+          url: "{{ route('asignar.materiales') }}",
+          dataType: "jsonp",
+          data: {
+            q: request.term
+          },
+          success: function( data ) {
+            response( data );
+          }
+      });
+    }
+});           
+$('#buscarArticulo').off().on('click', function (e){
+    e.preventDefault();
+    $('.areas').empty();
+    $.ajax({
+        type: 'POST',
+        url: '/asignar/filtrar/',
+        data: {b: $('#filtro').val()},
+        dataType: 'JSON',
+        success: function(data) {
+            console.log(data);
+            data.forEach(function(area){
+                console.log(area.id_area);
+                $('.areas').append(
+                    '<li class="area"><a href="'+ App.host +'/asignar/inventarios/'+ area.id_area +'">'+ area.ruta +'</a></li>'
+                );
+            });
+        },
+        error: function(xhr, responseText, thrownError) {   
+            $('.areas').html('@foreach($areas as $area)<li class="area"><a href="{{route("asignar.areacreate", ["id" => $area->id])}}">{{$area->ruta()}} </a></li>@endforeach'); 
+        }
+    });
+});
 </script>
 @stop

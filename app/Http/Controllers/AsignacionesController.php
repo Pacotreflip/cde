@@ -191,8 +191,31 @@ class AsignacionesController extends Controller
      
         return response()->json($material);
     }
-
-    public function filtrar($busqueda) {
+    
+    public function getMateriales(Request $request) {
+        $ids = \Ghi\Equipamiento\Inventarios\Inventario::where('cantidad_existencia', '>', 0)->select('id_area')->distinct()->get()->toArray();
+        $arrayIds = [];
+        foreach($ids as $id){
+            array_push($arrayIds, $id['id_area']);
+        }
+        $materiales = DB::connection('cadeco')->table('equipamiento.inventarios')
+                ->join('dbo.materiales', 'equipamiento.inventarios.id_material', '=', 'dbo.materiales.id_material')
+                ->whereIn('equipamiento.inventarios.id_area', $arrayIds)
+                ->where('equipamiento.inventarios.id_obra', $this->getIdObra())
+                ->where('dbo.materiales.descripcion', 'LIKE', '%'.$request->input('q').'%')
+                ->where('cantidad_existencia', '>', 0)
+                ->select('dbo.materiales.descripcion')
+                ->get();  
+        $data = [];
+        foreach($materiales as $material) {
+            array_push($data, $material->descripcion);
+        }
+        return response()->json($data)
+                ->setCallback($request->input('callback'));
+    }
+    
+    public function filtrar(Request $request) {
+        $busqueda = $request->input('b');
         $areas = DB::connection('cadeco')->select(
                 "SELECT I.id_area
                 FROM Equipamiento.inventarios AS I
