@@ -74,6 +74,7 @@ Route::get('articulos/{id}', 'ArticulosController@edit')->name('articulos.edit')
 Route::patch('articulos/{id}', 'ArticulosController@update')->name('articulos.update');
 Route::post('articulos/{id}/fotos', 'FotosController@store')->name('articulos.fotos');
 Route::delete('articulos/{id_material}/fotos/{id}', 'FotosController@destroy')->name('articulos.fotos.delete');
+Route::delete('articulos/{id_material}/ficha_tecnica/delete', 'ArticulosController@elimina_ficha')->name('articulos.ficha_tecnica.delete');
 
 // Rutas de proveedores...
 Route::get('proveedores', 'ProveedoresController@index')->name('proveedores.index');

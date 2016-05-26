@@ -205,11 +205,19 @@
     </div>
       @endif
   </div>
-  
+    <form action="{{ route('articulos.ficha_tecnica.delete', $material) }}" method="POST" accept-charset="UTF-8" id="elimina_ficha">
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+      
+    </form>
 @stop
 
 @section('scripts')
   <script>
+      $("button#ficha-borrar").off().on("click", function(e){
+          $("form#elimina_ficha").submit();
+          e.preventDefault();
+      });
     Dropzone.options.dropzone = {
       paramName: "foto",
       dictDefaultMessage: "<h2 style='color:#bbb'><span class='glyphicon glyphicon-picture' style='padding-right:5px'></span>Arraste las fotografías a esta zona para asociarlas al artículo.</h2>"
