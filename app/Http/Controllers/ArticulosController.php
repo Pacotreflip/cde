@@ -126,7 +126,7 @@ class ArticulosController extends Controller
         if ($request->hasFile('ficha_tecnica')) {
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
-
+        $material->control_equipamiento = 1;
         $material->agregarEnFamilia($familia);
         $material->save();
 
