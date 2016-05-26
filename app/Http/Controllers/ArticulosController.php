@@ -16,6 +16,7 @@ use Ghi\Equipamiento\Articulos\Materiales;
 use Ghi\Equipamiento\Articulos\ClasificadorRepository;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Compras\Compras;
+use Illuminate\Support\Facades\File;
 class ArticulosController extends Controller
 {
     protected $materiales;
@@ -170,6 +171,7 @@ class ArticulosController extends Controller
      */
     public function update(UpdateArticuloRequest $request, $id)
     {
+        
         $material = $this->materiales->getById($id);
         $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
         $clasificador = Clasificador::find($request->get('id_clasificador'));
@@ -200,8 +202,7 @@ class ArticulosController extends Controller
         }
         
         
-        
-
+        //dd($request, $request->hasFile('ficha_tecnica'));
         if ($request->hasFile('ficha_tecnica')) {
             $material->agregaFichaTecnica($request->file('ficha_tecnica'));
         }
@@ -217,4 +218,19 @@ class ArticulosController extends Controller
 
         return back();
     }
+    
+    public function elimina_ficha($id){
+        $material = $this->materiales->getById($id);
+        $files = [$material->ficha_tecnica_path];
+        $material->ficha_tecnica_nombre = "";
+        $material->ficha_tecnica_path = "";
+        $material->save();
+        
+
+
+        File::delete($files);
+
+        return back();
+    }
+    
 }

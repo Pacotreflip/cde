@@ -59,6 +59,7 @@
       <a href="/{{ $material->ficha_tecnica_path }}" target="_blank">
         <i class="fa fa-fw fa-file"></i> {{ $material->ficha_tecnica_nombre }}
       </a>
+    <button type="button" class="btn btn-xs btn-danger" id="ficha-borrar" ><i class="fa fa-times"></i></button>
     @endif
   {!! Form::file('ficha_tecnica', null, ['class' => 'form-control']) !!}
 </div>
