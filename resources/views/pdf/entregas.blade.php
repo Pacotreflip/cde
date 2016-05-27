@@ -89,12 +89,16 @@ class PDF extends Rotation {
     
     function encabezados (){
         
+        
         // Título
-        $this->SetFont('Arial', 'B', $this->txtTitleTam);
-        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Entrega de Áreas - # '.$this->entrega->numero_folio), 0, 1, 'L', 0);
+        $this->SetFont('Arial', 'B', $this->txtTitleTam - 3);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode($this->entrega->obra->descripcion), 0, 1, 'L', 0);
+        
+        $this->SetFont('Arial', '', $this->txtSubtitleTam -1);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 0.35, utf8_decode('Entrega de Áreas o Materiales al Cliente - # '.$this->entrega->numero_folio), 0, 1, 'L', 0);
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
-        
+
         //Concepto (Titulo)
         if($this->entrega->concepto) {
             $this->SetFont('Arial', 'B', $this->txtSeccionTam);
@@ -197,18 +201,25 @@ class PDF extends Rotation {
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
         
-        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->SetX(0.1 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('ENTREGA'), 'TRLB', 0, 'C', 1);
-        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->SetX(0.375 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('AUTORIZA'), 'TRLB', 0, 'C', 1);
+        $this->SetX(0.650 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('RECIBE'), 'TRLB', 1, 'C', 1);
 
-        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->SetX(0.1 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 0, 'C');
-        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->SetX(0.375 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 0, 'C');
+        $this->SetX(0.650 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
-        $this->SetX(0.125 * $this->GetPageWidth());
+        
+        $this->SetX(0.1 * $this->GetPageWidth());
         $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->entrega)), 'TRLB', 0, 'C', 1);
-        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->SetX(0.375 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(0.650 * $this->GetPageWidth());
         $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, utf8_decode(trim($this->entrega->recibe)), 'TRLB', 1, 'C', 1);
     }
     
