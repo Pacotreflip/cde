@@ -86,7 +86,7 @@ class ReportesController extends Controller
         }
         
         if(is_array($tareas_cerradas)){
-            $salida[$i]["name"] = "Archivado";
+            $salida[$i]["name"] = "Finalizado";
             foreach($tareas_cerradas as $tarea){
                if(key_exists(0, $tarea->attachments)){
                         $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>$tarea->attachments[0]->url];
