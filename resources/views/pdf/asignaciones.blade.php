@@ -133,8 +133,11 @@ class PDF extends Rotation {
     function titulos (){
         
         // Título
-        $this->SetFont('Arial', 'B', $this->txtTitleTam);
-        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Asignación de Artículos - # '.$this->asignacion->numero_folio), 0, 1, 'L', 0);
+        $this->SetFont('Arial', 'B', $this->txtTitleTam - 3);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode($this->asignacion->obra->descripcion), 0, 1, 'L', 0);
+        
+        $this->SetFont('Arial', '', $this->txtSubtitleTam -1);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 0.35, utf8_decode('Asignación de Artículos - #'.$this->asignacion->numero_folio), 0, 1, 'L', 0);
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
         
@@ -291,7 +294,21 @@ class PDF extends Rotation {
         $this->image(public_path('img/logo_hc.png'), $this->WidthTotal - 1.3, 0.5, 2.33, 1.5);       
     }
         
+    function firma(){
+        $this->SetY(-4);  
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
+        
+        $this->SetX(-1-0.25 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('ASIGNA'), 'TRLB', 1, 'C', 1);
+        $this->SetX(-1-0.25 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
+        $this->SetX(-1-0.25 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, utf8_decode($this->asignacion->usuario_registro->present()->nombreCompleto), 'TRLB', 1, 'C', 1);
+    }
+    
     function Footer() {
+        $this->firma();
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', $this->txtFooterTam);

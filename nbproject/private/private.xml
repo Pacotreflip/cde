@@ -4,10 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/routes.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/recepciones/create.blade.php</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/scripts/globals.blade.php</file>
-            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Controllers/CierresController.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/assets/js/components/templates/selector-destinos.html</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/public/js/app.js</file>
             <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/views/asignaciones/create.blade.php</file>
-            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/app/Http/Controllers/AsignacionesController.php</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/assets/js/components/selector-destinos.js</file>
+            <file>file:/C:/httpd/www/php5617.loc/control-equipamiento/resources/assets/js/components/areas-jstree.js</file>
         </group>
     </open-files>
 </project-private>
