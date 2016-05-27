@@ -261,12 +261,6 @@ class PDF extends Rotation {
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
         
-        // Título
-//        $this->SetFont('Arial', 'B', $this->txtTitleTam);
-//        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Cierre de Áreas - # '.$this->cierre->numero_folio), 0, 1, 'L', 0);
-//        $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
-//        $this->Ln(0.5);
-        
         //Detalles de la Asignación (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
         $this->Cell(0.55 * $this->WidthTotal, 0.7, utf8_decode('Detalles del Cierre'), 0, 1, 'L');
