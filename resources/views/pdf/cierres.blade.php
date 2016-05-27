@@ -251,11 +251,21 @@ class PDF extends Rotation {
     
     function titulos (){
         
+        
         // Título
-        $this->SetFont('Arial', 'B', $this->txtTitleTam);
-        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Cierre de Áreas - # '.$this->cierre->numero_folio), 0, 1, 'L', 0);
+        $this->SetFont('Arial', 'B', $this->txtTitleTam - 3);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode($this->cierre->obra->descripcion), 0, 1, 'L', 0);
+        
+        $this->SetFont('Arial', '', $this->txtSubtitleTam -1);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 0.35, utf8_decode('Cierre Interno de Áreas - #'.$this->cierre->numero_folio), 0, 1, 'L', 0);
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
+        
+        // Título
+//        $this->SetFont('Arial', 'B', $this->txtTitleTam);
+//        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Cierre de Áreas - # '.$this->cierre->numero_folio), 0, 1, 'L', 0);
+//        $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
+//        $this->Ln(0.5);
         
         //Detalles de la Asignación (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
@@ -385,12 +395,20 @@ class PDF extends Rotation {
         $this->SetY(-4);  
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
-        $this->SetX(0.75 * $this->WidthTotal + 1);
-        $this->Cell(0.25 * $this->WidthTotal, 0.4, utf8_decode('CIERRA'), 'TRLB', 1, 'C', 1);
-        $this->SetX(0.75 * $this->WidthTotal + 1);
-        $this->Cell(0.25 * $this->WidthTotal, 1.5, '', 'RLB', 1, 'C');
-        $this->SetX(0.75 * $this->WidthTotal + 1);
-        $this->CellFitScale(0.25 * $this->WidthTotal,0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
+        
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('VALIDA'), 'TRLB', 0, 'C', 1);
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('CIERRA'), 'TRLB', 1, 'C', 1);
+
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 0, 'C');
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 1, 'C', 1);
     }
         
     function logo(){
