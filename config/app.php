@@ -144,6 +144,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         'Zizaco\Entrust\EntrustServiceProvider',
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        'Zjango\Laracurl\LaracurlServiceProvider',
         
         Ghidev\Fpdf\FpdfServiceProvider::class,
         Ghidev\Fpdf\RotationServiceProvider::class,
@@ -211,11 +212,13 @@ return [
         'Context'   => Ghi\Core\Facades\Context::class,
         'Image'     => Intervention\Image\Facades\Image::class,
         'Fractal'   => Ghi\Core\Facades\Fractal::class,
-        'Entrust' => 'Zizaco\Entrust\EntrustFacade',
+        'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
         'Fpdf'      => Ghidev\Fpdf\Facades\Fpdf::class,
-        'Rotation'    => Ghidev\Fpdf\Facades\Rotation::class,
+        'Rotation'  => Ghidev\Fpdf\Facades\Rotation::class,
         'MC_Table'  => Ghidev\Fpdf\Facades\MC_Table::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
+        'Laracurl'  =>  'Zjango\Laracurl\Facades\Laracurl',
+
     ],
 
 ];

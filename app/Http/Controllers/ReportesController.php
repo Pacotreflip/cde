@@ -9,6 +9,10 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Reporte\Reporte;
 use Maatwebsite\Excel\Facades\Excel;
+//use Illuminate\Support\Facades\File;
+//use Vinelab\Http\Client as HttpClient;
+//use GuzzleHttp\Client;
+use Zjango\Laracurl\Facades\Laracurl;
 
 class ReportesController extends Controller
 {
@@ -42,6 +46,107 @@ class ReportesController extends Controller
         return view('reportes.materiales_en_oc', ["i"=>1
             , "moneda_comparativa"=>$moneda_comparativa
             , "materiales_oc"=>$materiales_oc
+        ]);
+    }
+    public function index_estatus_desarrollo(){
+        
+       
+        
+        
+        #opcion Laraculr
+        //$response = Laracurl::get('https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?cards=open&card_fields=name&fields=name&key=067986551ec72f4bfa9df9eb4bb202c6');
+        //dd(json_decode($response->body));
+        
+        $response_listas = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?fields=name,id&key=067986551ec72f4bfa9df9eb4bb202c6");
+        $listas = json_decode($response_listas->body);
+        
+        $response_cards = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/cards?fields=name,idList,closed&key=067986551ec72f4bfa9df9eb4bb202c6&filter=open&attachments=true");
+        $tareas = json_decode($response_cards->body);
+        $i = 0;
+        foreach($listas as $lista){
+            $salida[$i]["name"] = $lista->name;
+            foreach($tareas as $tarea){
+                if($tarea->idList == $lista->id && $tarea->closed === false){
+                    if(key_exists(0, $tarea->attachments)){
+                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>$tarea->attachments[0]->url];
+                    }else{
+                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>"#"];
+                    }
+                }
+            }
+            
+            $i++;
+        }
+        
+        
+        
+        #OPCION ILLUMINATE
+        //$request = \Illuminate\Http\Request::create('https://trello.com/b/3msVE1ks.json', 'GET');
+        //dd($request);
+        
+        #OPCION VINELAB 1
+        //$client = new HttpClient();
+//        $response = $client->get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?cards=open&card_fields=name&fields=name&key=067986551ec72f4bfa9df9eb4bb202c6");
+//        $resumen = $response->json();
+//        $response_listas = $client->get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?fields=name,id&key=067986551ec72f4bfa9df9eb4bb202c6");
+//        $listas = $response_listas->json();
+//        
+//        $response_cards = $client->get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/cards?fields=name,idList,closed&key=067986551ec72f4bfa9df9eb4bb202c6&filter=open&attachments=true");
+//        $tareas = $response_cards->json();
+//        $i = 0;
+//        foreach($listas as $lista){
+//            $salida[$i]["name"] = $lista->name;
+//            foreach($tareas as $tarea){
+//                if($tarea->idList == $lista->id && $tarea->closed === false){
+//                    if(key_exists(0, $tarea->attachments)){
+//                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>$tarea->attachments[0]->url];
+//                    }else{
+//                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>"#"];
+//                    }
+//                }
+//            }
+//            
+//            $i++;
+//        }
+//dd($resumen);
+        //dd($response->json());
+//        
+//        
+        #opcion Vinelab ERROR
+//        $response =  HttpClient::get('https://trello.com/b/3msVE1ks.json');
+//        dd($response);
+        
+        #opcion GuzzleHttp NO DA CUERPO
+//        $client = new Client();
+//        $response = $client->get('https://trello.com/b/3msVE1ks.json');
+//        dd($response);
+        
+        
+        #OPCION ARCHIVO
+//        $contents = File::get("uploads/estatus_desarrollo.txt");
+//        $resumen = (json_decode($contents));
+        //dd($resumen->cards);
+//        $listas = $resumen->lists;
+//        $tareas = $resumen->cards;
+//        $salida = [];
+//        $i = 0;
+//        foreach($listas as $lista){
+//            $salida[$i]["nombre"] = $lista->name;
+//            foreach($tareas as $tarea){
+//                if($tarea->idList == $lista->id && $tarea->closed === false){
+//                    if(key_exists(0, $tarea->attachments)){
+//                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>$tarea->attachments[0]->url];
+//                    }else{
+//                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>"#"];
+//                    }
+//                }
+//            }
+//            
+//            $i++;
+//        }
+        //dd($salida);
+        return view('reportes.estado_desarrollo', ["datos"=>$salida,
+            "ancho"=>(100/count($salida))
         ]);
     }
     public function index_reporte_comparativa(Request $request)
