@@ -111,12 +111,15 @@ class PDF extends Rotation {
     
     function titulos (){
         
-        // Título
-        $this->SetFont('Arial', 'B', $this->txtTitleTam);
-        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode('Transferencia de Artículos - # ' . $this->transferencia->numero_folio), 0, 1, 'L', 0);
+        $this->SetFont('Arial', 'B', $this->txtTitleTam - 3);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 1.5, utf8_decode($this->transferencia->obra->descripcion), 0, 1, 'L', 0);
+        
+        $this->SetFont('Arial', '', $this->txtSubtitleTam -1);
+        $this->CellFitScale(0.6 * $this->WidthTotal, 0.35, utf8_decode('Transferencia Interna de Artículos - #'.$this->transferencia->numero_folio), 0, 1, 'L', 0);
+
         $this->Line(1, $this->GetY() + 0.2, $this->WidthTotal + 1, $this->GetY() + 0.2);
         $this->Ln(0.5);
-        
+                
         //Detalles de la Transferencia (Titulo)
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
         $this->Cell(0.55 * $this->WidthTotal,.7,utf8_decode('Detalle de la Transferencia'),0,1,'L');
@@ -135,7 +138,8 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Creada Por:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->transferencia->creado_por), '', 1, 'L');
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode(Ghi\Core\Models\User::where('usuario', $this->transferencia->creado_por)->first()->present()->nombreCompleto), '', 1, 'L');
+        
     }
     
     function items(){
