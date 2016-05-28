@@ -43,7 +43,8 @@ class Familia extends Model
     public function scopeFamilias($query, $tipo = null)
     {
         if ($tipo) {
-            $query->where('tipo_material', $tipo);
+            $query->where('tipo_material', $tipo)
+                ->where('control_equipamiento', 1);
         }
 
         return $query->whereRaw('LEN(nivel) = 4');

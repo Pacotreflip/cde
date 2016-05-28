@@ -57,12 +57,19 @@ class ReportesController extends Controller
         //$response = Laracurl::get('https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?cards=open&card_fields=name&fields=name&key=067986551ec72f4bfa9df9eb4bb202c6');
         //dd(json_decode($response->body));
         
-        $response_listas = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?fields=name,id&key=067986551ec72f4bfa9df9eb4bb202c6");
+        $response_listas = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/lists?fields=name,id&key=067986551ec72f4bfa9df9eb4bb202c6&token=77f33f43ee588ed62c82c588b4f7fdf720227b03abb10a931383d7aa0763065b");
         $listas = json_decode($response_listas->body);
         
-        $response_cards = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/cards?fields=name,idList,closed&key=067986551ec72f4bfa9df9eb4bb202c6&filter=open&attachments=true");
+        $response_cards = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/cards?fields=name,idList,closed&key=067986551ec72f4bfa9df9eb4bb202c6&filter=open&attachments=true&token=77f33f43ee588ed62c82c588b4f7fdf720227b03abb10a931383d7aa0763065b");
         $tareas = json_decode($response_cards->body);
+        
+        $response_cards_cerradas = Laracurl::get("https://api.trello.com/1/boards/5747231c2509b0bd9465ef3d/cards?fields=name,idList,closed&key=067986551ec72f4bfa9df9eb4bb202c6&filter=closed&attachments=true&token=77f33f43ee588ed62c82c588b4f7fdf720227b03abb10a931383d7aa0763065b");
+        $tareas_cerradas = json_decode($response_cards_cerradas->body);
+        
+        //dd($tareas_cerradas);
+        
         $i = 0;
+        //dd($tareas);
         foreach($listas as $lista){
             $salida[$i]["name"] = $lista->name;
             foreach($tareas as $tarea){
@@ -78,6 +85,16 @@ class ReportesController extends Controller
             $i++;
         }
         
+        if(is_array($tareas_cerradas)){
+            $salida[$i]["name"] = "Finalizado";
+            foreach($tareas_cerradas as $tarea){
+               if(key_exists(0, $tarea->attachments)){
+                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>$tarea->attachments[0]->url];
+                    }else{
+                        $salida[$i]["tareas"][] = ["name"=>$tarea->name, "atach"=>"#"];
+                }
+            }
+        }
         
         
         #OPCION ILLUMINATE
