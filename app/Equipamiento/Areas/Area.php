@@ -135,18 +135,20 @@ class Area extends Node
      * @param AreaTipo $area_tipo
      * @return Area
      */
-    public function asignaTipo($area_tipo = null)
+    public function asignaTipo(AreaTipo $area_tipo = null)
     {
-        if (! $area_tipo) {
-            //dd("entrsa");
-            
+        if (!$area_tipo) {
 //            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
 //            foreach($materiales_requeridos_tipo as $material_requerido_tipo){
 //                $material_requerido = MaterialRequeridoArea::whereRaw("id_area = ". $this->id ." and id_material_requerido = ". $material_requerido_tipo->id);
 //                //meter despues lo de la validación de artículos asignados
 //                $material_requerido->delete();
 //            }
-            $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+            if($this->tipo){
+                $materiales_requeridos_tipo = $this->tipo->materialesRequeridos;
+            }else{
+                $materiales_requeridos_tipo = [];
+            }
             
             foreach($materiales_requeridos_tipo as $material_requerido_tipo){
                 #Se obtiene el material requerido que tiene el área asociado 
