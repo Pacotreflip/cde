@@ -391,18 +391,18 @@ class PDF extends Rotation {
         $this->SetFillColor(180, 180, 180);
         
         $this->SetX(0.125 * $this->GetPageWidth());
-        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('VALIDA'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('CIERRA'), 'TRLB', 0, 'C', 1);
         $this->SetX(0.625 * $this->GetPageWidth());
-        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('CIERRA'), 'TRLB', 1, 'C', 1);
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('VALIDA'), 'TRLB', 1, 'C', 1);
 
         $this->SetX(0.125 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 0, 'C');
         $this->SetX(0.625 * $this->GetPageWidth());
         $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
         $this->SetX(0.125 * $this->GetPageWidth());
-        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, '', 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 0, 'C', 1);
         $this->SetX(0.625 * $this->GetPageWidth());
-        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, $this->cierre->usuario->present()->nombreCompleto, 'TRLB', 1, 'C', 1);
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, '', 'TRLB', 1, 'C', 1);
     }
         
     function logo(){
