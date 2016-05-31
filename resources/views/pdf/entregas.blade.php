@@ -102,7 +102,7 @@ class PDF extends Rotation {
         //Concepto (Titulo)
         if($this->entrega->concepto) {
             $this->SetFont('Arial', 'B', $this->txtSeccionTam);
-            $this->Cell(0.5 * $this->WidthTotal, 0.7, utf8_decode('Concépto'), 0, 0, 'L');
+            $this->Cell(0.5 * $this->WidthTotal, 0.7, utf8_decode('Concepto'), 0, 0, 'L');
         }
         
         $this->SetFont('Arial', '', $this->txtFooterTam);
