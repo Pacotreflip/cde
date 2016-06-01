@@ -13,7 +13,7 @@ class CreateReporteTipoXAreasTipoTable extends Migration
     public function up()
     {
         Schema::create('Equipamiento.reporte_tipo_x_areas_tipo', function (Blueprint $table) {
-            $table->integer('id_reporte_tipo', 10)->unsigned()->index();
+            $table->integer('id_reporte_tipo')->unsigned()->index();
             $table->integer('id_area_tipo')->unsigned()->index();
             $table->float('cantidad');
             $table->timestamps();

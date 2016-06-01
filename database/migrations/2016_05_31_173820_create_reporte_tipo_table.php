@@ -24,11 +24,11 @@ class CreateReporteTipoTable extends Migration
             $table->float('importe_compras_emitidas');
             $table->float('pax');
             $table->float('pax_comparativa');
-            $table->integer('id_moneda')->unsigned()->index()->default(2);
+            $table->integer('id_moneda')->unsigned()->default(2);
             $table->float('metros_cuadrados');
             $table->timestamps();
             
-            $table->foreign('id_moneda')->references('id')->on('monedas');
+            $table->foreign('id_moneda')->references('id_moneda')->on('monedas');
 
         });
     }

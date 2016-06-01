@@ -13,8 +13,8 @@ class CreateReporteTipoXModulosTable extends Migration
     public function up()
     {
         Schema::create('Equipamiento.reporte_tipo_x_modulos', function (Blueprint $table) {
-            $table->integer('id_reporte_tipo', 10)->unsigned()->index();
-            $table->integer('id_reporte_modulo', 10)->unsigned()->index();
+            $table->integer('id_reporte_tipo')->unsigned()->index();
+            $table->integer('id_reporte_modulo')->unsigned()->index();
             $table->float('cantidad');
             $table->timestamps();
             
