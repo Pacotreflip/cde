@@ -31,8 +31,8 @@ class CreateReporteTipoXModulosTable extends Migration
     public function down()
     {
         Schema::table('Equipamiento.reporte_tipo_x_modulos', function (Blueprint $table) {
-            $table->dropForeign('id_reporte_tipo');
-            $table->dropForeign('id_reporte_modulo');
+            $table->dropForeign('equipamiento_reporte_tipo_x_modulos_id_reporte_tipo_foreign');
+            $table->dropForeign('equipamiento_reporte_tipo_x_modulos_id_reporte_modulo_foreign');
         });
         Schema::drop('Equipamiento.reporte_tipo_x_modulos');
     }

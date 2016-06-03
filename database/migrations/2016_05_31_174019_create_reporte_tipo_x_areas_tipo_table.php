@@ -15,7 +15,6 @@ class CreateReporteTipoXAreasTipoTable extends Migration
         Schema::create('Equipamiento.reporte_tipo_x_areas_tipo', function (Blueprint $table) {
             $table->integer('id_reporte_tipo')->unsigned()->index();
             $table->integer('id_area_tipo')->unsigned()->index();
-            $table->float('cantidad');
             $table->timestamps();
             
             $table->foreign('id_reporte_tipo')->references('id')->on('Equipamiento.reporte_tipo');
@@ -33,8 +32,8 @@ class CreateReporteTipoXAreasTipoTable extends Migration
     public function down()
     {
         Schema::table('Equipamiento.reporte_tipo_x_areas_tipo', function (Blueprint $table) {
-            $table->dropForeign('id_reporte_tipo');
-            $table->dropForeign('id_area_tipo');
+            $table->dropForeign('equipamiento_reporte_tipo_x_areas_tipo_id_reporte_tipo_foreign');
+            $table->dropForeign('equipamiento_reporte_tipo_x_areas_tipo_id_area_tipo_foreign');
         });
         Schema::drop('Equipamiento.reporte_tipo_x_areas_tipo');
     }
