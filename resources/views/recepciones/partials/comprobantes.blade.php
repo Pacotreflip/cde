@@ -21,5 +21,5 @@
 @endforeach
 
 @unless(count($recepcion->comprobantes))
-  <div class="alert alert-info">Este artículo todavia no tiene comprobantes.</div>
+  <div class="alert alert-info">Esta recepción todavia no tiene comprobantes.</div>
 @endunless
