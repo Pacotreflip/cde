@@ -23,8 +23,6 @@
           <strong>Observaciones:</strong> {{ $recepcion->observaciones }} <br>
         </div>
       </div>
-    </div>
-    <div class="col-sm-6">
       <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
             Referencias
@@ -36,8 +34,19 @@
         </div>
       </div>
     </div>
+    <div class="col-md-6 col-sm-6 gallery">
+      <div class="row">
+        @include('recepciones.partials.comprobantes')
+      </div>
+    </div>
   </div>
-  
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
+      <form action="{{ route('recepciones.comprobantes', [$recepcion]) }}" class="dropzone" id="dropzone" method="POST" enctype="multipart/form-data">
+        {{ csrf_field() }}
+      </form>
+    </div>
+  </div>
   <hr>
 
   <h3>Artículos Recibidos</h3>
@@ -74,4 +83,18 @@
   
 @include('pdf/modal', ['modulo' => 'recepciones', 'titulo' => 'Recepción de Artículos - #'.$recepcion->numero_folio, 'ruta' => route('pdf.recepciones', $recepcion),])
 
+@stop
+
+@section('scripts')
+  <script>
+    Dropzone.options.dropzone = {
+      paramName: "comprobante",
+      dictDefaultMessage: "<h2 style='color:#bbb'><span class='glyphicon glyphicon-picture' style='padding-right:5px'></span>Arraste los comprobantes a esta zona para asociarlos a la recepción.</h2>",
+      init: function() {
+        this.on("errormultiple", function(files, response) {
+          console.log(response);
+        });
+      }
+    };
+  </script>
 @stop
