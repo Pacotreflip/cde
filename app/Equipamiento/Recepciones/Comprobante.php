@@ -21,6 +21,6 @@ class Comprobante extends Model {
     }
     
     public function baseDir() {
-        return 'articulo/fotos';
+        return 'recepcion/comprobantes';
     }
 }
