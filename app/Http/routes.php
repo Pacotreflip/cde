@@ -95,6 +95,8 @@ Route::get('recepciones/recibir', 'RecepcionesController@create')->name('recepci
 Route::post('recepciones', 'RecepcionesController@store')->name('recepciones.store');
 Route::get('recepciones/{id}', 'RecepcionesController@show')->name('recepciones.show');
 Route::patch('recepciones/{id}', 'RecepcionesController@update')->name('recepciones.update');
+Route::post('recepciones/{id}/comprobantes', 'ComprobantesController@store')->name('recepciones.comprobantes');
+Route::delete('recepciones/{id_recepcion}/comprobantes/{id}', 'ComprobantesController@destroy')->name('recepciones.comprobantes.delete');
 Route::delete('recepciones/{id}', 'RecepcionesController@destroy')->name('recepciones.delete');
 
 // Rutas de transferencias...
