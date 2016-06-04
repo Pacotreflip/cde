@@ -48,6 +48,12 @@ class ReportesController extends Controller
             , "materiales_oc"=>$materiales_oc
         ]);
     }
+    public function index_comparativa(){
+        $reporte  = Reporte::getPartidasComparativa();
+        return view('reportes.comparativa_costos', ["i"=>1
+            , "reporte"=>$reporte
+        ]);
+    }
     public function index_estatus_desarrollo(){
         
        
@@ -250,7 +256,7 @@ class ReportesController extends Controller
             ->withImporteTotal(0)
             ->withImporteTotalComparativa(0);
     }
-
+    
     public function descargaExcel(Request $request){
         
         $filtros_consulta["casos"] = (is_array($request->casos))?$request->casos:[];
@@ -326,6 +332,30 @@ class ReportesController extends Controller
             
         })->export('xlsx');
         
+    }
+    public function comparativaDescargaExcel(){
+        $reporte_xls  = Reporte::getPartidasComparativaXLS();
+        Excel::create('ReporteComparativa'. date("d-m-Y h:i:s"), function($excel) use($reporte_xls) {
+            
+            $excel->sheet("Reporte", function($sheet) use($reporte_xls) {
+//                $arreglo = Producto::arregloInventario($ubicacion->idubicacion);
+                $sheet->fromArray($reporte_xls);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+//                $sheet->cells('I1:I'.$arreglo->count(), function($cells){
+//                    $cells->setBackground('#cccccc');
+//                });
+                $sheet->setAutoFilter();
+//                $sheet->getStyle('A2:B2')->getProtection()->setLocked(
+//                        //PHPExcel_Style_Protection::PROTECTION_UNPROTECTED
+//                );
+//                //$sheet->protectCells('A2:B2');
+                
+            });
+            
+        })->export('xlsx');
     }
     function materialesOCVSREQDescargaExcel(Request $request){
         $materiales_oc  = Reporte::getMaterialesOCVSREQXLS($this->getIdObra());
