@@ -130,5 +130,11 @@ class Recepcion extends Model
         return $this->hasOne(User::class,"idusuario", "id_usuario");
     }
     
-   
+    public function comprobantes() {
+        return $this->hasMany(Comprobante::class, 'id_recepcion', 'id');
+    } 
+    
+    public function agregaComprobante(Comprobante $comprobante) {
+        return $this->comprobantes()->save($comprobante);
+    }
 }

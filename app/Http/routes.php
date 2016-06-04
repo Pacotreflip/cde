@@ -95,6 +95,8 @@ Route::get('recepciones/recibir', 'RecepcionesController@create')->name('recepci
 Route::post('recepciones', 'RecepcionesController@store')->name('recepciones.store');
 Route::get('recepciones/{id}', 'RecepcionesController@show')->name('recepciones.show');
 Route::patch('recepciones/{id}', 'RecepcionesController@update')->name('recepciones.update');
+Route::post('recepciones/{id}/comprobantes', 'ComprobantesController@store')->name('recepciones.comprobantes');
+Route::delete('recepciones/{id_recepcion}/comprobantes/{id}', 'ComprobantesController@destroy')->name('recepciones.comprobantes.delete');
 Route::delete('recepciones/{id}', 'RecepcionesController@destroy')->name('recepciones.delete');
 
 // Rutas de transferencias...
@@ -224,6 +226,8 @@ Route::get('PDF/asignaciones/{id}', 'PDFController@asignaciones')->name('pdf.asi
 Route::get('PDF/cierres/{id}', 'PDFController@cierres')->name('pdf.cierres');
 Route::get('PDF/entregas/{id}', 'PDFController@entregas')->name('pdf.entregas');
 
+Route::get('reportes/comparativa', 'ReportesController@index_comparativa')->name('reportes.comparativa');
+Route::post("reportes/comparativa/descarga_excel", "ReportesController@comparativaDescargaExcel")->name('reportes.comparativa_xls');
 Route::get('reportes/estatus_desarrollo', 'ReportesController@index_estatus_desarrollo')->name('reportes.estatus_desarrollo');
 Route::post('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
 Route::post('reportes/comparativa_equipamiento/resultado', 'ReportesController@recargaResultado')->name('reportes.tabla_resultado_comparativa_equipamiento');
