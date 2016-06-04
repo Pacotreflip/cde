@@ -42,6 +42,7 @@
         <span style="margin-left: 5px">Reportes</span> <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
+        <li><a href="{{ route("reportes.comparativa") }}" ><span style="margin-left: 5px">Comparativa con Restaurantes</span></a></li>
         <li><a href="{{ route("reportes.comparativa_equipamiento") }}" ><span style="margin-left: 5px">Comparativa Equipamiento</span></a></li>
         <li><a href="{{ route("reportes.materiales_ordenes_compra") }}" ><span style="margin-left: 5px">Materiales en Ordenes de Compra</span></a></li>
         <li><a href="{{ route("reportes.materiales_oc_vs_materiales_req") }}" ><span style="margin-left: 5px">Materiales Ordenes de Compra vs. Materiales Requeridos</span></a></li>

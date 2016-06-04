@@ -369,6 +369,27 @@ caso
         
         return  json_decode(json_encode($resultados), true);
     }
+    public static function getPartidasComparativa(){
+        $resultados = DB::connection("cadeco")->select("
+            select * from [Equipamiento].[reporte_tipo];
+            ");
+            
+        return collect($resultados);
+    }
+    public static function getPartidasComparativaXLS(){
+        $resultados = DB::connection("cadeco")->select("
+            select tipo, cantidad, pax, (cantidad * importe_presupuesto_manual) as presupuesto_manual, (cantidad * importe_presupuesto_calculado)
+            as presupuesto_calculado, (cantidad * importe_compras_emitidas ) as importe_compras, 
+            cantidad_comparativa, pax_comparativa, (cantidad_comparativa * importe_presupuesto_comparativa_manual) presupuesto_comparativa_manual,
+            (cantidad_comparativa * importe_presupuesto_comparativa_calculado) presupuesto_comparativa_calculado 
+             from [Equipamiento].[reporte_tipo];
+            ");
+            
+        return  json_decode(json_encode($resultados), true);
+    }
+    
+    
+    
     public static function getDatos($id_moneda_esperada, $tipos_cambio, $filtros_consulta){
         
         $filtros = " and 1 = 1 ";
