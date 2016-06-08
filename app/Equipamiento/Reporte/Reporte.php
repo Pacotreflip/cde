@@ -378,9 +378,9 @@ caso
     }
     public static function getPartidasComparativaXLS(){
         $resultados = DB::connection("cadeco")->select("
-            select tipo, cantidad, pax, (cantidad * importe_presupuesto_manual) as presupuesto_manual, (cantidad * importe_presupuesto_calculado)
+            select tipo, cantidad, pax, numero_modulos, (cantidad * importe_presupuesto_manual) as presupuesto_manual, (cantidad * importe_presupuesto_calculado)
             as presupuesto_calculado, (cantidad * importe_compras_emitidas ) as importe_compras, 
-            cantidad_comparativa, pax_comparativa, (cantidad_comparativa * importe_presupuesto_comparativa_manual) presupuesto_comparativa_manual,
+            cantidad_comparativa, pax_comparativa, numero_modulos_comparativa, (cantidad_comparativa * importe_presupuesto_comparativa_manual) presupuesto_comparativa_manual,
             (cantidad_comparativa * importe_presupuesto_comparativa_calculado) presupuesto_comparativa_calculado 
              from [Equipamiento].[reporte_tipo];
             ");

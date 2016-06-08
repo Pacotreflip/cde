@@ -12,10 +12,10 @@
 <!--               <tr>
 <th colspan="20" scope="col">OS&amp;E</th>
 </tr>-->
-<tr>
+        <tr>
             <td scope="col" colspan="2" style="text-align: center; border:1px #FFF solid; background-color: #fff">&nbsp;</td>
-            <th colspan="5" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Este Proyecto</th>
-            <th colspan="4" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Proyecto Comparativo</th>
+            <th colspan="12" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Este Proyecto</th>
+            <th colspan="9" scope="col" style="text-align: center; border:3px #C1C1C1 solid">Proyecto Comparativo</th>
         </tr>
         
         <tr>
@@ -23,15 +23,28 @@
             <td style="text-align: center;border-top:3px #C1C1C1 solid">Tipo</td>
 
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Cantidad </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Número Módulos </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">PAX </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual x Módulo </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual x PAX </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado x Módulo </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado x PAX </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Importe Compras </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Importe Compras x Módulo </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Importe Compras x PAX </td>
+            
             
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Cantidad </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Número Módulos </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">PAX </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual x Módulo </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Manual x PAX </td>
             <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado x Módulo </td>
+            <td style="text-align: center; border-left:3px #C1C1C1 solid">Presupuesto Calculado x PAX </td>
             
         </tr>
         
@@ -42,12 +55,24 @@
             <td style=" border-left:3px #C1C1C1 solid">{{ $i ++ }}</td>
             <td>{{ $partida->tipo }}</td>
             <td style="text-align: right">{{ $partida->cantidad }}</td>
+            <td style="text-align: right">{{ $partida->numero_modulos }}</td>
             <td style="text-align: right">{{ number_format($partida->pax,2) }}</td>
             <td style="text-align: right">{{ number_format($partida->importe_presupuesto_manual * $partida->cantidad,2) }}</td>
+            @if($partida->numero_modulos>0)
+            <td style="text-align: right">{{ number_format($partida->importe_presupuesto_manual * $partida->cantidad / $partida->numero_modulos,2) }}</td>
+            @else
+                <td style="text-align: right"></td>
+            @endif
+            @if($partida->numero_modulos>0)
+            <td style="text-align: right">{{ number_format($partida->importe_presupuesto_manual * $partida->cantidad / $partida->pax,2) }}</td>
+            @else
+                <td style="text-align: right"></td>
+            @endif
             <td style="text-align: right">{{ number_format($partida->importe_presupuesto_calculado * $partida->cantidad,2) }}</td>   
             <td style="text-align: right">{{ number_format($partida->importe_compras_emitidas * $partida->cantidad,2) }}</td>   
             
             <td style="text-align: right">{{ $partida->cantidad_comparativa }}</td>
+            <td style="text-align: right">{{ $partida->numero_modulos_comparativa }}</td>
             <td style="text-align: right">{{ number_format($partida->pax_comparativa,2) }}</td>
             <td style="text-align: right">{{ number_format($partida->importe_presupuesto_comparativa_manual * $partida->cantidad_comparativa,2) }}</td>
             <td style="text-align: right">{{ number_format($partida->importe_presupuesto_comparativa_calculado * $partida->cantidad_comparativa,2) }}</td>
