@@ -371,18 +371,54 @@ caso
     }
     public static function getPartidasComparativa(){
         $resultados = DB::connection("cadeco")->select("
-            select * from [Equipamiento].[reporte_tipo];
+            SELECT        tipo, cantidad, CASE WHEN cantidad_comparativa > 0 THEN (cantidad - cantidad_comparativa) / cantidad_comparativa * 100 ELSE 0 END AS variacion_cantidad, 
+                         numero_modulos, CASE WHEN numero_modulos_comparativa > 0 THEN (numero_modulos - numero_modulos_comparativa) 
+                         / numero_modulos_comparativa * 100 ELSE 0 END AS variacion_modulos, pax, CASE WHEN pax_comparativa > 0 THEN (pax - pax_comparativa) 
+                         / pax_comparativa * 100 ELSE 0 END AS variacion_pax, importe_presupuesto_manual * cantidad AS importe_presupuesto_manual_x_cantidad, 
+                         importe_presupuesto_manual * cantidad / numero_modulos AS importe_presupuesto_manual_x_cantidad_s_modulos, 
+                         importe_presupuesto_manual * cantidad / pax AS importe_presupuesto_manual_x_cantidad_s_pax, 
+                         importe_presupuesto_calculado * cantidad AS importe_presupuesto_calculado_x_cantidad, 
+                         importe_presupuesto_calculado * cantidad / numero_modulos AS importe_presupuesto_calculado_x_cantidad_s_modulos, 
+                         importe_presupuesto_calculado * cantidad / pax AS importe_presupuesto_calculado_x_cantidad_s_pax, 
+                         importe_compras_emitidas * cantidad AS importe_compras_emitidas_x_cantidad, 
+                         importe_compras_emitidas * cantidad / numero_modulos AS importe_compras_emitidas_x_cantidad_s_modulos, 
+                         importe_compras_emitidas * cantidad / pax AS importe_compras_emitidas_x_cantidad_s_pax, cantidad_comparativa, numero_modulos_comparativa, 
+                         pax_comparativa, importe_presupuesto_comparativa_manual * cantidad_comparativa AS importe_presupuesto_manual_x_cantidad_comparativa, 
+                         CASE WHEN numero_modulos_comparativa > 0 THEN importe_presupuesto_comparativa_manual * cantidad_comparativa / numero_modulos_comparativa ELSE 0 END
+                          AS importe_presupuesto_manual_x_cantidad_comparativa_s_nm, 
+                         CASE WHEN pax_comparativa > 0 THEN importe_presupuesto_comparativa_manual * cantidad_comparativa / pax_comparativa ELSE 0 END AS importe_presupuesto_manual_x_cantidad_comparativa_s_pax,
+                          importe_presupuesto_comparativa_calculado * cantidad_comparativa AS importe_presupuesto_calculado_x_cantidad_comparativa, 
+                         CASE WHEN numero_modulos_comparativa > 0 THEN importe_presupuesto_comparativa_calculado * cantidad_comparativa / numero_modulos_comparativa ELSE 0
+                          END AS importe_presupuesto_calculado_x_cantidad_comparativa_s_nm, 
+                         CASE WHEN pax_comparativa > 0 THEN importe_presupuesto_comparativa_calculado * cantidad_comparativa / pax_comparativa ELSE 0 END AS importe_presupuesto_calculado_x_cantidad_comparativa_s_pax
+FROM            Equipamiento.reporte_tipo
             ");
             
         return collect($resultados);
     }
     public static function getPartidasComparativaXLS(){
         $resultados = DB::connection("cadeco")->select("
-            select tipo, cantidad, pax, numero_modulos, (cantidad * importe_presupuesto_manual) as presupuesto_manual, (cantidad * importe_presupuesto_calculado)
-            as presupuesto_calculado, (cantidad * importe_compras_emitidas ) as importe_compras, 
-            cantidad_comparativa, pax_comparativa, numero_modulos_comparativa, (cantidad_comparativa * importe_presupuesto_comparativa_manual) presupuesto_comparativa_manual,
-            (cantidad_comparativa * importe_presupuesto_comparativa_calculado) presupuesto_comparativa_calculado 
-             from [Equipamiento].[reporte_tipo];
+            SELECT        tipo, cantidad, CASE WHEN cantidad_comparativa > 0 THEN (cantidad - cantidad_comparativa) / cantidad_comparativa * 100 ELSE 0 END AS variacion_cantidad, 
+                         numero_modulos, CASE WHEN numero_modulos_comparativa > 0 THEN (numero_modulos - numero_modulos_comparativa) 
+                         / numero_modulos_comparativa * 100 ELSE 0 END AS variacion_modulos, pax, CASE WHEN pax_comparativa > 0 THEN (pax - pax_comparativa) 
+                         / pax_comparativa * 100 ELSE 0 END AS variacion_pax, importe_presupuesto_manual * cantidad AS importe_presupuesto_manual_x_cantidad, 
+                         importe_presupuesto_manual * cantidad / numero_modulos AS importe_presupuesto_manual_x_cantidad_s_modulos, 
+                         importe_presupuesto_manual * cantidad / pax AS importe_presupuesto_manual_x_cantidad_s_pax, 
+                         importe_presupuesto_calculado * cantidad AS importe_presupuesto_calculado_x_cantidad, 
+                         importe_presupuesto_calculado * cantidad / numero_modulos AS importe_presupuesto_calculado_x_cantidad_s_modulos, 
+                         importe_presupuesto_calculado * cantidad / pax AS importe_presupuesto_calculado_x_cantidad_s_pax, 
+                         importe_compras_emitidas * cantidad AS importe_compras_emitidas_x_cantidad, 
+                         importe_compras_emitidas * cantidad / numero_modulos AS importe_compras_emitidas_x_cantidad_s_modulos, 
+                         importe_compras_emitidas * cantidad / pax AS importe_compras_emitidas_x_cantidad_s_pax, cantidad_comparativa, numero_modulos_comparativa, 
+                         pax_comparativa, importe_presupuesto_comparativa_manual * cantidad_comparativa AS importe_presupuesto_manual_x_cantidad_comparativa, 
+                         CASE WHEN numero_modulos_comparativa > 0 THEN importe_presupuesto_comparativa_manual * cantidad_comparativa / numero_modulos_comparativa ELSE 0 END
+                          AS importe_presupuesto_manual_x_cantidad_comparativa_s_nm, 
+                         CASE WHEN pax_comparativa > 0 THEN importe_presupuesto_comparativa_manual * cantidad_comparativa / pax_comparativa ELSE 0 END AS importe_presupuesto_manual_x_cantidad_comparativa_s_pax,
+                          importe_presupuesto_comparativa_calculado * cantidad_comparativa AS importe_presupuesto_calculado_x_cantidad_comparativa, 
+                         CASE WHEN numero_modulos_comparativa > 0 THEN importe_presupuesto_comparativa_calculado * cantidad_comparativa / numero_modulos_comparativa ELSE 0
+                          END AS importe_presupuesto_calculado_x_cantidad_comparativa_s_nm, 
+                         CASE WHEN pax_comparativa > 0 THEN importe_presupuesto_comparativa_calculado * cantidad_comparativa / pax_comparativa ELSE 0 END AS importe_presupuesto_calculado_x_cantidad_comparativa_s_pax
+FROM            Equipamiento.reporte_tipo
             ");
             
         return  json_decode(json_encode($resultados), true);
