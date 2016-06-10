@@ -90,8 +90,8 @@ GROUP BY
 ) as resultado
 group by caso");
 $col =  collect($resultados);
-$salida[$col[0]->caso] = $col[0]->size;
-$salida[$col[1]->caso] = $col[1]->size;
+$salida[$col[0]->caso] = $col[0]->size + $col[2]->size;
+$salida[$col[1]->caso] = $col[1]->size + $col[2]->size;
 $salida[$col[2]->caso] = $col[2]->size;
 
 return $salida;
