@@ -347,7 +347,13 @@ sum(ahorro) as ahorro,
 sum(indice_variacion)/count(idmateriales_requeridos_area) as indice_variacion,
 grado_variacion,
 estilo_grado_variacion,
-caso
+STUFF((
+            SELECT ',' + caso
+            FROM Equipamiento.reporte_materiales_requeridos_area as mra
+            WHERE mra.id_material = Equipamiento.reporte_materiales_requeridos_area.id_material
+            group by caso
+            FOR XML PATH (''))
+            , 1, 1, '') as caso
 ,
             STUFF((
             SELECT ',' + error
@@ -361,8 +367,8 @@ caso
 			group by 
 			id_material,
 			 clasificador, familia, material, unidad, precio_estimado,moneda_requerida, precio_requerido_moneda_comparativa,
-			 cantidad_comparativa, precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
-			 grado_variacion, estilo_grado_variacion,caso
+			  precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
+			 grado_variacion, estilo_grado_variacion
 			 order by material 
                 
                 ");
@@ -493,7 +499,15 @@ sum(ahorro) as ahorro,
 sum(indice_variacion)/count(idmateriales_requeridos_area) as indice_variacion,
 grado_variacion,
 estilo_grado_variacion,
-caso
+
+
+            STUFF((
+            SELECT ',' + caso
+            FROM Equipamiento.reporte_materiales_requeridos_area as mra
+            WHERE mra.id_material = Equipamiento.reporte_materiales_requeridos_area.id_material
+            group by caso
+            FOR XML PATH (''))
+            , 1, 1, '') as caso
 ,
             STUFF((
             SELECT ',' + error
@@ -507,8 +521,8 @@ caso
 			group by 
 			id_material,
 			 clasificador, familia, material, unidad, precio_estimado,moneda_requerida, precio_requerido_moneda_comparativa,
-			 cantidad_comparativa, precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
-			 grado_variacion, estilo_grado_variacion,caso
+			  precio_proyecto_comparativo, moneda_comparativa, precio_comparativa_moneda_comparativa,
+			 grado_variacion, estilo_grado_variacion
 			 order by material 
                 
                 ");
