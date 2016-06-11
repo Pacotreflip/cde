@@ -7,9 +7,9 @@ use \Ghi\Equipamiento\Areas\AreaTipo;
 class Reporte {
     public static function getMaterialesOC($id_obra){
         $resultados = DB::connection("cadeco")->select("
-            select id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
+            select reporte_materiales_orden_compra.id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(Equipamiento.reporte_materiales_orden_compra.id_material) as precio_compra, 
             moneda_compra,
-            sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
+            sum(precio_compra_moneda_comparativa)/count(Equipamiento.reporte_materiales_orden_compra.id_material) as precio_compra_moneda_comparativa,
             sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa,
 			 STUFF((
                     SELECT ',' + cast(numero_folio_orden_compra as varchar)
@@ -24,11 +24,18 @@ class Reporte {
                 FOR XML PATH (''))
                 , 1, 1, '') as id_orden_compra,
                 Equipamiento.reporte_materiales_orden_compra.id_familia,
-                Equipamiento.reporte_materiales_orden_compra.familia
-            from Equipamiento.reporte_materiales_orden_compra
+                Equipamiento.reporte_materiales_orden_compra.familia,
+				STUFF((
+                    SELECT ',' + cast(fecha_entrega as varchar)
+                    FROM Equipamiento.materiales_fechas_entrega as materiales_oc2 
+                    WHERE materiales_oc2.id_material = Equipamiento.materiales_fechas_entrega.id_material
+                FOR XML PATH (''))
+                , 1, 1, '') as fechas_entrega
+            from Equipamiento.reporte_materiales_orden_compra left join Equipamiento.materiales_fechas_entrega
+on(materiales_fechas_entrega.id_material = Equipamiento.reporte_materiales_orden_compra.id_material)
             where id_obra = {$id_obra}
                 group by 
-                id_material,material, unidad, moneda_compra, id_familia, familia
+                reporte_materiales_orden_compra.id_material,Equipamiento.materiales_fechas_entrega.id_material,material, unidad, moneda_compra, id_familia, familia
             order by material");
             
         return collect($resultados);
@@ -177,20 +184,27 @@ order by material; ");
     
     public static function getMaterialesOCXLS($id_obra){
         $resultados = DB::connection("cadeco")->select("
-            select id_material,material,id_familia, familia, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(id_material) as precio_compra, 
+            select Equipamiento.reporte_materiales_orden_compra.id_material,material,id_familia, familia, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(Equipamiento.reporte_materiales_orden_compra.id_material) as precio_compra, 
             moneda_compra,
-            sum(precio_compra_moneda_comparativa)/count(id_material) as precio_compra_moneda_comparativa,
+            sum(precio_compra_moneda_comparativa)/count(Equipamiento.reporte_materiales_orden_compra.id_material) as precio_compra_moneda_comparativa,
             sum(importe_compra_moneda_comparativa) as importe_compra_moneda_comparativa,
 			 STUFF((
                     SELECT ',' + cast(numero_folio_orden_compra as varchar)
                     FROM Equipamiento.reporte_materiales_orden_compra as materiales_oc2 
                     WHERE materiales_oc2.id_material = Equipamiento.reporte_materiales_orden_compra.id_material
                 FOR XML PATH (''))
-                , 1, 1, '') as ordenes_compra
-            from Equipamiento.reporte_materiales_orden_compra
+                , 1, 1, '') as ordenes_compra, 
+				STUFF((
+                    SELECT ',' + cast(fecha_entrega as varchar)
+                    FROM Equipamiento.materiales_fechas_entrega as materiales_oc2 
+                    WHERE materiales_oc2.id_material = Equipamiento.materiales_fechas_entrega.id_material
+                FOR XML PATH (''))
+                , 1, 1, '') as fechas_entrega
+            from Equipamiento.reporte_materiales_orden_compra left join Equipamiento.materiales_fechas_entrega
+on(materiales_fechas_entrega.id_material = Equipamiento.reporte_materiales_orden_compra.id_material)
             where id_obra = {$id_obra}
-                group by 
-                id_material,material, unidad, moneda_compra,id_familia, familia
+                group by Equipamiento.materiales_fechas_entrega.id_material,
+                Equipamiento.reporte_materiales_orden_compra.id_material,material, unidad, moneda_compra,id_familia, familia
             order by material");
             //dd(json_decode(json_encode($resultados), true));
         return  json_decode(json_encode($resultados), true);

@@ -19,6 +19,7 @@
         <tr>
             <th style="text-align: center;"  >#</th>
             <th style="text-align: center;" >OC</th>
+            <th style="text-align: center;" >Fechas Entrega</th>
             <th style="text-align: center;" >Familia</th>
             <th style="text-align: center;" >Descripción</th>
             <th style="text-align: center;" >Unidad Compra</th>
@@ -45,6 +46,7 @@
             @else
             <td style=" "><a href="{{ route("compras.show", $material_oc->id_orden_compra) }}">{{ $material_oc->ordenes_compra }}</a></td>
             @endif
+            <td>{{ $material_oc->fechas_entrega }}</td>  
             <td>{{ $material_oc->familia }}</td>  
             <td><a href="{{ route("articulos.edit", $material_oc->id_material) }}">{{ $material_oc->material }}</a></td>   
             <td>{{ $material_oc->unidad }}</td>   
