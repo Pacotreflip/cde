@@ -30,7 +30,7 @@
             <th style="text-align: center;" >Importe Compra ({{$moneda_comparativa->nombre}})</th>
         </tr>
         <tr style="background-color: #C1C1C1">
-            <th colspan="5" style="text-align: right; ">Sumatorias:</th>
+            <th colspan="6" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("cantidad_compra"),2) }}</th>
             <th colspan="3" style="text-align: right; ">&nbsp;</th>
             <th style="text-align: right">{{ number_format($materiales_oc->sum("importe_compra_moneda_comparativa"),2) }}</th>
@@ -61,7 +61,7 @@
 </tbody>
 <tfoot>
     <tr style="background-color: #C1C1C1">
-        <td colspan="5" style="text-align: right; ">Sumatorias:</td>
+        <td colspan="6" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right">{{ number_format($materiales_oc->sum("cantidad_compra"),2) }}</td>
         <td colspan="3" style="text-align: right; ">&nbsp;</td>
         <td style="text-align: right">{{ number_format($materiales_oc->sum("importe_compra_moneda_comparativa"),2) }}</td>
