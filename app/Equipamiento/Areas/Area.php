@@ -635,4 +635,31 @@ class Area extends Node
     public function acumulador(){
         return $this->hasOne(AreaAcumuladores::class, "id_area", "id");
     }
+    
+    public static function arregloArticulosRequeridosXLS($id){
+        $resultados = DB::connection("cadeco")->select("
+            SELECT     materiales.numero_parte
+, materiales.descripcion
+, materiales.descripcion_larga
+, materiales.unidad
+, Equipamiento.materiales_requeridos_area.cantidad_requerida, 
+                      materiales.precio_estimado
+                      , monedas.nombre AS moneda_nativa
+, dbo.ConversionTC(Equipamiento.materiales_requeridos_area.cantidad_requerida*materiales.precio_estimado,monedas.id_moneda, 2,0,0,0) as importe_estimado_moneda_homologada
+                      , Equipamiento.materiales_requeridos_area.cantidad_comparativa, 
+                      dbo.materiales.precio_proyecto_comparativo, monedas_1.nombre AS moneda_nativa_comparativa
+, dbo.ConversionTC(Equipamiento.materiales_requeridos_area.cantidad_comparativa*materiales.precio_proyecto_comparativo,monedas_1.id_moneda, 2,0,0,0) as importe_comparativa_moneda_homologada
+
+            FROM         monedas RIGHT OUTER JOIN
+                                  materiales ON monedas.id_moneda = materiales.id_moneda LEFT OUTER JOIN
+                                  monedas monedas_1 ON materiales.id_moneda_proyecto_comparativo = monedas_1.id_moneda RIGHT OUTER JOIN
+                                  Equipamiento.areas RIGHT OUTER JOIN
+                                  Equipamiento.materiales_requeridos_area ON Equipamiento.areas.id = Equipamiento.materiales_requeridos_area.id_area ON 
+                                  materiales.id_material = Equipamiento.materiales_requeridos_area.id_material
+            WHERE     (Equipamiento.areas.id = {$id})
+                order by materiales.descripcion
+                            ");
+        
+        return  json_decode(json_encode($resultados), true);
+    }
 }

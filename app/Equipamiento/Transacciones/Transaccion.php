@@ -109,4 +109,18 @@ class Transaccion extends Model
     {
         return $this->progressbar_estado_recepcion_class();
     }
+    
+    public static function arregloXLS($idobra){
+        $resultados = DB::connection("cadeco")->select("
+            SELECT     TOP (100) PERCENT dbo.transacciones.numero_folio, dbo.materiales.descripcion, 
+                      dbo.materiales.descripcion_larga, dbo.materiales.unidad, dbo.items.cantidad, dbo.items.precio_unitario, dbo.items.importe, dbo.items.descuento
+FROM         dbo.items INNER JOIN
+                      dbo.transacciones ON dbo.items.id_transaccion = dbo.transacciones.id_transaccion INNER JOIN
+                      dbo.materiales ON dbo.items.id_material = dbo.materiales.id_material
+WHERE     (dbo.transacciones.tipo_transaccion = 19) AND (dbo.transacciones.equipamiento = 1) and transacciones.id_obra = {$idobra}
+ORDER BY dbo.transacciones.numero_folio
+                            ");
+        
+        return  json_decode(json_encode($resultados), true);
+    }
 }

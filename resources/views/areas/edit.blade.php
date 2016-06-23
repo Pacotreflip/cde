@@ -19,6 +19,9 @@
 <hr>
 
 @if(count($area->materialesRequeridos)>0)
+<form id="descargaExcel" action="{{ route("areas.articulos_requeridos_xls", $area->id) }}"></form>
+      <button type="button" class="btn btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel</button>
+
 <table class="table table-condensed table-striped">
     <caption><h3>Artículos Requeridos ({{count($area->materialesRequeridos)}})</h3></caption>
     <thead>
@@ -289,6 +292,9 @@
 
 @section('scripts')
 <script>
+    $("button.descargar_excel").off().on("click", function(e){
+        $("form#descargaExcel").submit();
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $("#btn_genera_concepto").off().on("click", function(){
         $("form#genera_concepto").submit();

@@ -6,7 +6,7 @@ use Ghi\Core\Models\Obra;
 use Kalnoy\Nestedset\Node;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
-
+use Illuminate\Support\Facades\DB;
 class AreaTipo extends Node
 {
     protected $connection = 'cadeco';
@@ -218,5 +218,32 @@ class AreaTipo extends Node
             $ids[] = $area->id;
         }
         return $ids;
+    }
+    public static function arregloArticulosRequeridosXLS($id){
+        $resultados = DB::connection("cadeco")->select("
+
+SELECT     materiales.numero_parte
+, materiales.descripcion
+, materiales.descripcion_larga
+, materiales.unidad
+, Equipamiento.materiales_requeridos.cantidad_requerida, 
+                      materiales.precio_estimado
+                      , monedas.nombre AS moneda_nativa
+, dbo.ConversionTC(Equipamiento.materiales_requeridos.cantidad_requerida*materiales.precio_estimado,monedas.id_moneda, 2,0,0,0) as importe_estimado_moneda_homologada
+                      , Equipamiento.materiales_requeridos.cantidad_comparativa, 
+                      dbo.materiales.precio_proyecto_comparativo, monedas_1.nombre AS moneda_nativa_comparativa
+, dbo.ConversionTC(Equipamiento.materiales_requeridos.cantidad_comparativa*materiales.precio_proyecto_comparativo,monedas_1.id_moneda, 2,0,0,0) as importe_comparativa_moneda_homologada
+
+FROM         monedas RIGHT OUTER JOIN
+                      materiales ON monedas.id_moneda = materiales.id_moneda LEFT OUTER JOIN
+                      monedas monedas_1 ON materiales.id_moneda_proyecto_comparativo = monedas_1.id_moneda RIGHT OUTER JOIN
+                      Equipamiento.areas_tipo RIGHT OUTER JOIN
+                      Equipamiento.materiales_requeridos ON Equipamiento.areas_tipo.id = Equipamiento.materiales_requeridos.id_tipo_area ON 
+                      materiales.id_material = Equipamiento.materiales_requeridos.id_material
+WHERE     (Equipamiento.areas_tipo.id = {$id})
+    order by materiales.descripcion
+                ");
+        
+        return  json_decode(json_encode($resultados), true);
     }
 }

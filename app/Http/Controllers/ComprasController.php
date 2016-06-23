@@ -8,7 +8,7 @@ use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Transacciones\Transaccion;
-
+use Maatwebsite\Excel\Facades\Excel;
 class ComprasController extends Controller
 {
     public function __construct()
@@ -124,5 +124,21 @@ class ComprasController extends Controller
 
         return view('compras.show')
             ->withCompra($compra);
+    }
+    public function comprasXLS(){
+        Excel::create('Compras'.date("Ymd_his"), function($excel)  {
+
+            $excel->sheet("Compras", function($sheet)  {
+                $arreglo = Transaccion::arregloXLS($this->getIdObra());
+                $sheet->fromArray($arreglo);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+                
+                $sheet->setAutoFilter();
+            });
+            
+        })->export('xlsx');
     }
 }

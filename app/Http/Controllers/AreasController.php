@@ -13,6 +13,7 @@ use Ghi\Equipamiento\Areas\AreasTipo;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Areas\Almacen;
 use Ghi\Http\Requests\UpdateAreaRequest;
+use Maatwebsite\Excel\Facades\Excel;
 class AreasController extends Controller
 {
     protected $areas;
@@ -367,5 +368,23 @@ class AreasController extends Controller
             $i++;
         }
         return $regresa;
+    }
+    
+    public function articulosRequeridosXLS($id){
+        $area = Area::findOrFail($id);
+        Excel::create('AreaArticulosRequerido'.date("Ymd_his"), function($excel) use($area) {
+
+            $excel->sheet($area->nombre, function($sheet) use($area) {
+                $arreglo = Area::arregloArticulosRequeridosXLS($area->id);
+                $sheet->fromArray($arreglo);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+                
+                $sheet->setAutoFilter();
+            });
+            
+        })->export('xlsx');
     }
 }

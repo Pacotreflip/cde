@@ -15,6 +15,7 @@ Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
 // Rutas de areas tipo...
+Route::get("areas-tipo/{id}/articulos_requeridos_xls", "AreasTipoController@articulosRequeridosXLS")->name('areas-tipo.articulos_requeridos_xls');
 Route::get('areas-tipo', 'AreasTipoController@index')->name('tipos.index');
 Route::get('areas-tipo/nuevo', 'AreasTipoController@create')->name('tipos.create');
 Route::post('areas-tipo', 'AreasTipoController@store')->name('tipos.store');
@@ -46,6 +47,7 @@ Route::group(['prefix' => 'areas-tipo/{id}', 'namespace' => 'AreasTipo'], functi
 });
 
 // Rutas de areas...
+Route::get("areas/{id}/articulos_requeridos_xls", "AreasController@articulosRequeridosXLS")->name('areas.articulos_requeridos_xls');
 Route::get('areas/areas-jstree', 'AreasController@areasJs')->name("areas.areasJs");
 Route::get('areas_tipo/{id}/areas-jstree', 'AreasTipoController@areasJs')->name("areas_tipo.areasJs");
 Route::get('areas', 'AreasController@index')->name('areas.index');
@@ -85,6 +87,7 @@ Route::patch('proveedores/{id}', 'ProveedoresController@update')->name('proveedo
 Route::delete('proveedores/{id}', 'ProveedoresController@destroy')->name('proveedores.delete');
 
 // Rutas de compras...
+Route::get("compras/xls", "ComprasController@comprasXLS")->name('compras.xls');
 Route::get('compras', 'ComprasController@index')->name('compras.index');
 Route::get('compras/material/{id_material}', 'ComprasController@index_x_material')->name('compras.index_x_material');
 Route::get('compras/{id}', 'ComprasController@show')->name('compras.show');

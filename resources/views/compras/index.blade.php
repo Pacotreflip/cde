@@ -5,6 +5,8 @@
   <hr>
 
   @include('partials.search-form')
+<form id="descargaExcel" action="{{ route("compras.xls") }}"></form>
+      <button type="button" class="btn btn-primary pull-left descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel</button>
 
   <table class="table table-striped table-hover">
     <thead>
@@ -44,4 +46,11 @@
   </table>
 
   {!! $compras->appends(Request::only('buscar'))->render() !!}
+@stop
+@section('scripts')
+  <script>
+    $("button.descargar_excel").off().on("click", function(e){
+        $("form#descargaExcel").submit();
+    });
+  </script>
 @stop

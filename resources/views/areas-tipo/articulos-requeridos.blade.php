@@ -11,6 +11,7 @@
       </div>
       <button type="submit" class="btn btn-default">Aplicar</button>
       
+      <button type="button" class="btn btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel</button>
       <a href="{{ route('requerimientos.seleccion', [$tipo]) }}" class="btn btn-success pull-right">
         <i class="fa fa-plus"></i> Agregar Artículos
       </a>
@@ -96,10 +97,14 @@
         <input type="submit" class="btn btn-primary" value="Guardar Cambios">
       </div>
     {!! Form::close() !!}
+    <form id="descargaExcel" action="{{ route("areas-tipo.articulos_requeridos_xls", $tipo->id) }}"></form>
 @stop
 
 @section('scripts')
   <script>
+    $("button.descargar_excel").off().on("click", function(e){
+        $("form#descargaExcel").submit();
+    });
     $('#select_all').on('change', function() {
         var checked = $(this).prop('checked');
 

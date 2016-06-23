@@ -10,6 +10,8 @@ use Ghi\Http\Requests\CreateAreaTipoRequest;
 use Ghi\Http\Requests\UpdateAreaTipoRequest;
 use Ghi\Equipamiento\Areas\AreasTipo;
 use Ghi\Equipamiento\Areas\Area;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class AreasTipoController extends Controller
 {
@@ -265,5 +267,23 @@ class AreasTipoController extends Controller
         }
         //dd($this->ids_js_areas_checked);
         $this->ids_js_areas_checked = array_unique($this->ids_js_areas_checked);
+    }
+    
+    public function articulosRequeridosXLS($id){
+        $area_tipo = AreaTipo::findOrFail($id);
+        Excel::create('AreaTipoArticulosRequerido'.date("Ymd_his"), function($excel) use($area_tipo) {
+
+            $excel->sheet($area_tipo->nombre, function($sheet) use($area_tipo) {
+                $arreglo = AreaTipo::arregloArticulosRequeridosXLS($area_tipo->id);
+                $sheet->fromArray($arreglo);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+                
+                $sheet->setAutoFilter();
+            });
+            
+        })->export('xlsx');
     }
 }
