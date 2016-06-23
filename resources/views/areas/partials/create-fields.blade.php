@@ -48,12 +48,31 @@
       {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
     </div>
     
+    
+    
+  </div>
+</div>
+<div class="row">
+    
+    <div class="col-sm-3">
     <div class="form-group">
       {!! Form::label('almacen_id', 'Relacionar con almacén en SAO') !!}
       {!! Form::select('almacen_id', $almacenes, Request::get('con_almacen'), ['class' => 'form-control']) !!}
     </div>
+    </div>
     
-  </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label>¿Es Almacén?</label>
+            <div id="radio_es_almacen">
+            <input type="radio" id="es_almacen0" name="es_almacen" value="1" /> 
+            <label for="es_almacen0"><span style="margin: 5px">Si</span></label>
+            <input id="es_almacen1" type="radio" name="es_almacen" value="0" checked="1" /> 
+            <label for="es_almacen1"><span style="margin: 5px">No</span></label>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <hr>

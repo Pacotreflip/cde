@@ -401,6 +401,11 @@ class Area extends Node
         return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
     
+    public function materialesAlmacenados(){
+        $inventarios = $this->inventarios()->join("materiales","materiales.id_material","=","inventarios.id_material")->get();
+        return $inventarios;
+    }
+    
     public function materialesAsignados(){
         return $this->hasMany(ItemAsignacion::class, "id_area_destino");
     }
@@ -525,13 +530,17 @@ class Area extends Node
         $materiales_requeridos = $this->materialesRequeridos->sum("cantidad_requerida");
         
         //dd($materiales_requeridos, $materiales_asignados);
-        if($materiales_requeridos > 0){
-            $materiales_asignados = $this->materialesAsignados->sum("cantidad_asignada");
-            if(abs($materiales_requeridos-$materiales_asignados)>0.1){
+        if($this->es_almacen == 1){
+            $cerrable = 1;
+        }else{
+            if($materiales_requeridos > 0){
+                $materiales_asignados = $this->materialesAsignados->sum("cantidad_asignada");
+                if(abs($materiales_requeridos-$materiales_asignados)>0.1){
+                    $cerrable = 0;
+                }
+            }else{
                 $cerrable = 0;
             }
-        }else{
-            $cerrable = 0;
         }
         return $cerrable;
     }

@@ -292,6 +292,9 @@
 
 @section('scripts')
 <script>
+    $(document).ready(function () {
+        $("#radio_es_almacen").buttonset();
+    });
     $("button.descargar_excel").off().on("click", function(e){
         $("form#descargaExcel").submit();
     });

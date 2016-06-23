@@ -17,3 +17,12 @@
 
   @include('partials.errors')
 @stop
+
+@section('scripts')
+<script>
+    $(document).ready(function () {
+        $("#radio_es_almacen").buttonset();
+    });
+    
+</script>
+@stop

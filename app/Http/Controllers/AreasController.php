@@ -157,7 +157,7 @@ class AreasController extends Controller
             if ($parent) {
                 $area->moverA($parent);
             }
-            
+            $area->es_almacen = $request->get("es_almacen");
             $this->areas->save($area);
             $acumulador = new \Ghi\Equipamiento\Areas\AreaAcumuladores();
             $area->acumulador()->save($acumulador);
@@ -248,6 +248,7 @@ class AreasController extends Controller
         $tipo = AreaTipo::find($request->get('tipo_id'));
         $nombre = $request->nombre;
         $almacen_actual = $area->almacen;
+        $area->es_almacen = $request->get("es_almacen");
         
         
         if($request->almacen_id == 0){

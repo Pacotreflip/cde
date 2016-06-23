@@ -20,10 +20,16 @@ class Cierres {
     
     public function buscar($busqueda){
         $areas = Area::has('materialesRequeridos')->get();
+        $areas_almacenes = Area::where('es_almacen',"=", 1)->get();
         $ids = [];
         foreach($areas as $area){
             if(stripos($area->getRutaAttribute(), $busqueda)!==FALSE){
                 $ids[] = $area->id;
+            }
+        }
+        foreach($areas_almacenes as $area_almacen){
+            if(stripos($area_almacen->getRutaAttribute(), $busqueda)!==FALSE){
+                $ids[] = $area_almacen->id;
             }
         }
         $ids_cadena = implode(",", $ids);
@@ -43,25 +49,29 @@ class Cierres {
         $cierre = $this->creaCierre($data, $obra);
 
         foreach ($data['id_area'] as $id_area) {
+            $area = Area::findOrFail($id_area);
             $cierre_partida = new CierrePartida();
             $cierre_partida->id_cierre = $cierre->id;
             $cierre_partida->id_area = $id_area;
             $cierre_partida->save();
             
-            $asignacion_item_validaciones = DB::connection('cadeco')
-            ->table('Equipamiento.asignacion_items')
-            ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
-            ->where('id_area_destino', $id_area)
-            ->get();
+            if($area->es_almacen === 0){
             
-            foreach($asignacion_item_validaciones as $asignacion_item_validacion){
-                $cierre_partida_asignacion = new CierrePartidaAsignacion();
-                $cierre_partida_asignacion->id_cierre_partida = $cierre_partida->id;
-                $cierre_partida_asignacion->id_asignacion_item_validacion = $asignacion_item_validacion->id;
-                $cierre_partida_asignacion->save();
+                $asignacion_item_validaciones = DB::connection('cadeco')
+                ->table('Equipamiento.asignacion_items')
+                ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
+                ->where('id_area_destino', $id_area)
+                ->get();
+
+                foreach($asignacion_item_validaciones as $asignacion_item_validacion){
+                    $cierre_partida_asignacion = new CierrePartidaAsignacion();
+                    $cierre_partida_asignacion->id_cierre_partida = $cierre_partida->id;
+                    $cierre_partida_asignacion->id_asignacion_item_validacion = $asignacion_item_validacion->id;
+                    $cierre_partida_asignacion->save();
+                }
             }
             
-            if ($cierre_partida->cierre_partida_asignacion->count() === 0) {
+            if ($cierre_partida->cierre_partida_asignacion->count() === 0 && $area->es_almacen === 0) {
                 DB::connection('cadeco')->rollback();
                 throw new \Exception("Hubo un error al registrar el cierre de áreas..");
             }

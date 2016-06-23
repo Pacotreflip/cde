@@ -14,7 +14,7 @@
         <div class="row  alert alert-info" role="alert">
             <div class="col-md-10" >
                 <div >
-                    <i class="glyphicon glyphicon-exclamation-sign" style="margin-right: 5px"></i><strong>Atención:</strong> Sólo pueden cerrarse áreas que tengan asignados la totalidad de insumos requeridos.
+                    <i class="glyphicon glyphicon-exclamation-sign" style="margin-right: 5px"></i><strong>Atención:</strong> Sólo pueden cerrarse áreas que tengan asignados la totalidad de insumos requeridos o áreas que esten definidas como almacenes.
                 </div>
             </div>
             <div class="col-md-2" style="text-align: right">

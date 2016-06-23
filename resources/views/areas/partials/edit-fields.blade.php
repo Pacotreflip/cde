@@ -16,13 +16,7 @@
       {!! Form::label('almacen_id', 'Relacionar con almacén en SAO') !!}
       {!! Form::select('almacen_id', $almacenes, $area->id_almacen, ['class' => 'form-control']) !!}
     </div>
-    <div class="form-group">
-      @if($area->id_concepto>0)
-      <h4><span class="label label-success"><span class="glyphicon glyphicon-indent-left" style="margin-right: 5px"></span>Relacionado a Concepto en SAO</span></h4>
-      @else
-      <button type="button" class="btn btn-success" id="btn_genera_concepto">Generar Concepto SAO</button>
-      @endif
-    </div>
+    
   </div>
   <div class="col-sm-6">
     <!-- Tipo Form Input -->
@@ -41,13 +35,43 @@
       {!! Form::select('parent_id', $areas, Request::get('dentro_de'), ['class' => 'form-control']) !!}
     </div>
   </div>
-  <div class="col-sm-12">
+  
+</div>
+<div class="row">
+    
+    <div class="col-sm-3">
+    <div class="form-group">
+      @if($area->id_concepto>0)
+      <h4><span class="label label-success"><span class="glyphicon glyphicon-indent-left" style="margin-right: 5px"></span>Relacionado a Concepto en SAO</span></h4>
+      @else
+      <button type="button" class="btn btn-success" id="btn_genera_concepto">Generar Concepto SAO</button>
+      @endif
+    </div>
+    </div>
+    
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label>¿Es Almacén?</label>
+            <div id="radio_es_almacen">
+            <input type="radio" id="es_almacen0" name="es_almacen" value="1" @if($area->es_almacen == 1) checked="1" @endif /> 
+            <label for="es_almacen0"><span style="margin: 5px">Si</span></label>
+            <input id="es_almacen1" type="radio" name="es_almacen" value="0"  @if($area->es_almacen == 0) checked="1" @endif /> 
+            <label for="es_almacen1"><span style="margin: 5px">No</span></label>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="row">
+    
+    <div class="col-sm-12">
     <!-- Descripción Form Input -->
     <div class="form-group">
         {!! Form::label('descripcion', 'Descripción:') !!}
         {!! Form::textarea('descripcion', null, ['class' => 'form-control', 'rows' => 3]) !!}
     </div>
   </div>
+    
 </div>
 
 <hr>
