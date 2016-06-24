@@ -106,6 +106,10 @@ class Inventario extends Model
         if ($cantidad < 0) {
             throw new \Exception('La cantidad inicial del inventario no puede ser negativa');
         }
+        
+        if ($this->area->cerrada) {
+            throw new \Exception('No se puede crear inventario en un área cerrada.');
+        }
 
         $existe = static::existeInventario($area, $material);
 
@@ -142,7 +146,7 @@ class Inventario extends Model
      */
     public function puedeSerBorrado()
     {
-        return $this->cantidad_existencia <= 0 and $this->movimientos->count() === 1;
+        return $this->cantidad_existencia <= 0 and $this->movimientos->count() === 1 and $this->area->cerrada === false;
     }
 
     /**
@@ -153,6 +157,9 @@ class Inventario extends Model
      */
     public function incrementaExistencia($cantidad)
     {
+        if ($this->area->cerrada) {
+            throw new \Exception('No se puede incrementar la existencia de un inventario en una área cerrada.');
+        }
         $cantidad_actual = $this->cantidad_existencia;
         $cantidad_total = $cantidad_actual + $cantidad;
 
@@ -185,6 +192,9 @@ class Inventario extends Model
      */
     public function decrementaExistencia($decremento)
     {
+        if ($this->area->cerrada) {
+            throw new \Exception('No se puede disminuir la existencia de un inventario en una área cerrada.');
+        }
         if ($this->tieneExistenciaSuficiente($decremento)) {
             $cantidad_disponible = $this->cantidad_existencia;
             $cantidad_restante = $cantidad_disponible - $decremento;
@@ -217,6 +227,9 @@ class Inventario extends Model
      */
     public function transferirA(Inventario $inventario_destino, $cantidad)
     {
+        if ($this->area->cerrada) {
+            throw new \Exception('No se puede transferir la existencia de un inventario en una área cerrada.');
+        }
         if ($this->id == $inventario_destino->id) {
             return false;
         }
@@ -264,6 +277,9 @@ class Inventario extends Model
      */
     protected function creaMovimientoInventario($cantidad_anterior, $cantidad_actual)
     {
+        if ($this->area->cerrada) {
+            throw new \Exception('No se puede crear un movimiento de inventario en una área cerrada.');
+        }
         $movimiento = $this->movimientos()->getRelated()->newInstance();
         $movimiento->cantidad_anterior = $cantidad_anterior;
         $movimiento->cantidad_actual = $cantidad_actual;

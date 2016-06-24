@@ -37,7 +37,7 @@
         <tr>
           <td>{{ $partida->area->clave }}</td>
           <td>{{ $partida->area->ruta }}</td>
-          <td>{{ $partida->cantidad_validada() }}</td>
+          <td>{{ $partida->cantidad }}</td>
         </tr>
       @endforeach
     </tbody>

@@ -19,14 +19,15 @@ use Illuminate\Support\Facades\Auth;
 class Cierres {
     
     public function buscar($busqueda){
-        $areas = Area::has('materialesRequeridos')->get();
+        //$areas = Area::has('materialesRequeridos')->get();
+        $areas = Area::join("Equipamiento.reporte_materiales_requeridos_area", "Equipamiento.areas.id", "=", "Equipamiento.reporte_materiales_requeridos_area.id_area")
+                ->whereRaw("Equipamiento.reporte_materiales_requeridos_area.ruta_area like'%{$busqueda}%'")
+                ->groupBy(DB::raw("areas.id"))
+                ->select("areas.id")->get();
         $areas_almacenes = Area::where('es_almacen',"=", 1)->get();
-        $ids = [];
-        foreach($areas as $area){
-            if(stripos($area->getRutaAttribute(), $busqueda)!==FALSE){
-                $ids[] = $area->id;
-            }
-        }
+        //$areas_collect = collect($areas);
+        //$ids = $areas_collect->groupBy("id")->keys()->toArray();
+
         foreach($areas_almacenes as $area_almacen){
             if(stripos($area_almacen->getRutaAttribute(), $busqueda)!==FALSE){
                 $ids[] = $area_almacen->id;
@@ -34,11 +35,16 @@ class Cierres {
         }
         $ids_cadena = implode(",", $ids);
         if($ids_cadena != ""){
-            return Area::where(function ($query) use($ids_cadena) {
-                    $query->whereRaw('id IN ('.$ids_cadena.')');
-                })
-                ->orderBy('nombre')->get()
-                ;
+            $areas_almacen = Area::where(function ($query) use($ids_cadena) {
+                $query->whereRaw('id IN ('.$ids_cadena.')');
+            })
+            ->orderBy('nombre')->get()
+            ;
+            foreach($areas_almacen as $area_push){
+                $areas->push($area_push);
+            }
+            //dd($areas);
+            return $areas;
         }else{
             return [];
         }

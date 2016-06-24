@@ -401,9 +401,19 @@ class Area extends Node
         return $this->hasMany(MaterialRequeridoArea::class, "id_area");
     }
     
-    public function materialesAlmacenados(){
-        $inventarios = $this->inventarios()->join("materiales","materiales.id_material","=","inventarios.id_material")->get();
+    public function getMaterialesAlmacenadosAttribute(){
+        $inventarios = $this->inventarios()->join("materiales","materiales.id_material","=","inventarios.id_material")
+                 ->groupBy(DB::raw('materiales.id_material, numero_parte, descripcion, unidad'))
+                ->select(DB::raw("materiales.id_material, materiales.numero_parte, materiales.descripcion, materiales.unidad,sum(inventarios.cantidad_existencia) as cantidad_existencia"))->get();
         return $inventarios;
+    }
+    
+    public function getCerradaAttribute(){
+        if($this->cierre_partida){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
     
     public function materialesAsignados(){

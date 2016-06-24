@@ -177,16 +177,16 @@ class PDF extends Rotation {
                }
                $this->encola = "";
                $this->areaEncola = $partida->area->ruta();
-               $num_articulos_x_area = 0;
-               $total = 0;
-               foreach($this->articulos as $articulo){
-                   if($articulo->id_area == $partida->id_area){
-                       $num_articulos_x_area ++;
-                       $total += $articulo->cantidad_asignada;
-                   }
-               }
-
-               if($num_articulos_x_area > 0){
+//               $num_articulos_x_area = 0;
+//               $total = 0;
+//               foreach($this->articulos as $articulo){
+//                   if($articulo->id_area == $partida->id_area){
+//                       $num_articulos_x_area ++;
+//                       $total += $articulo->cantidad_asignada;
+//                   }
+//               }
+               $total = $partida->cantidad;
+               if($partida->cantidad > 0){
 
                    $i = 1;
 
@@ -254,8 +254,8 @@ class PDF extends Rotation {
                $this->encola = "";
                $this->areaEncola = $partida->area->ruta();
                
-               if($partida->area->materialesAlmacenados()->sum("cantidad_existencia") > 0){
-                   $total = $partida->area->materialesAlmacenados()->sum("cantidad_existencia");
+               //if($partida->area->materiales_almacenados->sum("cantidad_existencia") > 0){
+                   $total = $partida->cantidad;
                    $i = 1;
 
                    $this->SetWidths(array(0));
@@ -271,7 +271,7 @@ class PDF extends Rotation {
                    $this->CellFitScale(0.2 * $this->WidthTotal, 1, utf8_decode('Total de Artículos :'), 0, 0, 'R');
                    $this->CellFitScale(0.1 * $this->WidthTotal, 1, $total, 0, 1, 'R');
 
-
+                   if($partida->area->materiales_almacenados->sum("cantidad_existencia") > 0){
                    $this->SetWidths(array(0.05 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.65 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
                    $this->SetFont('Arial', '', 6);
                    $this->SetStyles(array('DF', 'DF', 'FD', 'DF', 'DF'));
@@ -284,35 +284,36 @@ class PDF extends Rotation {
                    $this->SetAligns(array('C', 'C', 'C', 'C', 'C'));
                    $this->Row(array('#', utf8_decode("No. Parte"), utf8_decode("Descripción"), utf8_decode("Unidad"), utf8_decode("Cantidad")));
 
-                   foreach($partida->area->inventarios as $inventario){
-                           $this->SetFont('Arial', '', 6);
-                           $this->SetWidths(array(0.05 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.65 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
-                           $this->encola="articulos";
-                           $this->areaEncola = $partida->area->ruta();
-                           $this->SetRounds(array('', '', '', '', ''));
-                           $this->SetRadius(array(0, 0, 0, 0, 0));
-                           $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
-                           $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
-                           $this->SetHeights(array(0.35));
-                           $this->SetAligns(array('C', 'L', 'L', 'L', 'R'));
+                   foreach($partida->area->materiales_almacenados as $material){
+                       $this->SetFont('Arial', '', 6);
+                       $this->SetWidths(array(0.05 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.65 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
+                       $this->encola="articulos";
+                       $this->areaEncola = $partida->area->ruta();
+                       $this->SetRounds(array('', '', '', '', ''));
+                       $this->SetRadius(array(0, 0, 0, 0, 0));
+                       $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+                       $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
+                       $this->SetHeights(array(0.35));
+                       $this->SetAligns(array('C', 'L', 'L', 'L', 'R'));
 
-                           if ($i == count($partida->area->inventarios)) {
-                               $this->SetRounds(array('4', '', '', '', '3'));
-                               $this->SetRadius(array(0.2, 0, 0, 0, 0.2));
-                           }
+                       if ($i == count($partida->area->inventarios)) {
+                           $this->SetRounds(array('4', '', '', '', '3'));
+                           $this->SetRadius(array(0.2, 0, 0, 0, 0.2));
+                       }
 
-                           $this->SetWidths(array(0.05 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.65 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
-                           $this->encola = "articulos";
-   //                        for($cont = 0; $cont < 50; $cont ++){
-                           $this->Row(array($i, utf8_decode($inventario->material->numero_parte), utf8_decode($inventario->material->descripcion), $inventario->material->unidad, $inventario->cantidad_existencia));
-   //                        }
-                           $i++;
+                       $this->SetWidths(array(0.05 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.65 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
+                       $this->encola = "articulos";
+//                        for($cont = 0; $cont < 50; $cont ++){
+                       $this->Row(array($i, utf8_decode($material->numero_parte), utf8_decode($material->descripcion), $material->unidad, $material->cantidad_existencia));
+//                        }
+                       $i++;
                    }
                    $this->encola = "";
-               } else {
+                   }
+               //} else {
 //                   $this->CellFitScale(19.5, 1, utf8_decode('NO HAY ARTÍCULOS POR MOSTRAR'), 1, 0, 'C');
 //                   $this->Ln(1);
-               }
+               //}
                
            }
         }
@@ -348,7 +349,7 @@ class PDF extends Rotation {
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Total de Artículos:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->numArticulos), '', 1, 'L');  
+        $this->CellFitScale(0.4 * $this->WidthTotal, 0.5, utf8_decode($this->cierre->partidas->sum("cantidad")), '', 1, 'L');  
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->Cell(0.15 * $this->WidthTotal, 0.5, utf8_decode('Persona que Cierra:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
