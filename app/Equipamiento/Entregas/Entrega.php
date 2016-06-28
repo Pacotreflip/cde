@@ -81,6 +81,10 @@ class Entrega extends Model
                 $articulos[$i] = $articulo_asignado->material;
                 $i++;
             }
+            foreach($partida->cierre_partida->area->materiales_almacenados as $articulo_almacenado){
+                $articulos[$i] = $articulo_almacenado->material;
+                $i++;
+            }
         }
         $articulos_unique = array_unique($articulos);
         $ia = 0;
@@ -89,8 +93,8 @@ class Entrega extends Model
             $salida[$ia]["familia"] = $articulo->familia()["descripcion"];
             $salida[$ia]["descripcion"] = $articulo->descripcion;
             $salida[$ia]["unidad"] = $articulo->unidad;
-            $salida[$ia]["cantidad_asignada"] = $articulo->cantidad_asignada($id_areas);
-            $salida[$ia]["ubicacion_asignada"] = $articulo->ubicacion_asignada($id_areas);
+            $salida[$ia]["cantidad_cierre"] = $articulo->cantidad_cierre($id_areas);
+            $salida[$ia]["ubicacion"] = $articulo->ubicacion_para_entrega($id_areas);
             $ia++;
         }
         $salida_col = new \Illuminate\Support\Collection($salida);

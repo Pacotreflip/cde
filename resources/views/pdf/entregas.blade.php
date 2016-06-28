@@ -184,7 +184,7 @@ class PDF extends Rotation {
                 $this->SetWidths(array(0.04 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.55 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.17 * $this->WidthTotal));
                 $this->encola = "items";
 //                        for($cont = 0; $cont < 50; $cont ++){
-                $this->Row(array($i, utf8_decode($articulo["familia"]), utf8_decode($articulo["descripcion"]), utf8_decode($articulo["unidad"]), $articulo["cantidad_asignada"], utf8_decode($articulo["ubicacion_asignada"])));
+                $this->Row(array($i, utf8_decode($articulo["familia"]), utf8_decode($articulo["descripcion"]), utf8_decode($articulo["unidad"]), $articulo["cantidad_cierre"], utf8_decode($articulo["ubicacion"])));
 //                        }
                 $i++;   
             }

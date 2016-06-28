@@ -82,11 +82,10 @@
                             {{$articulo->unidad}}
                         </td>
                         <td style="text-align: right">
-                            {{$articulo->cantidad_asignada($id_areas)}}
+                            {{ $articulo->cantidad_cierre($id_areas)}}
                         </td>
                         <td style="text-align: right">
-
-                           {{$articulo->ubicacion_asignada($id_areas)}}
+                            {{$articulo->ubicacion_asignada($id_areas)}}
                         </td>
                         
                     </tr>

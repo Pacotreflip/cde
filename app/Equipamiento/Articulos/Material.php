@@ -441,7 +441,7 @@ class Material extends Model
     {
         return $this->hasOne(Moneda::class, "id_moneda", "id_moneda_proyecto_comparativo");
     }
-    public function ubicacion_asignada($id_area = null){
+    public function ubicacion_para_entrega($id_area = null){
         if(is_array($id_area)){
             $areas = [];
             $ids_area = $id_area;
@@ -454,15 +454,26 @@ class Material extends Model
                     ->where('id_material', $this->id_material)
                     ->whereIn('id_area_destino', $ids)
                     ->get();
+                foreach ($resultado as $res){
+                    $areas[] = $res->id_area_destino;
+                }
+                
+                $resultado2 =  DB::connection($this->connection)
+                    ->table('Equipamiento.inventarios')
+                    ->where('id_material', $this->id_material)
+                    ->whereIn('id_area', $ids)
+                    ->get();
+                
+                foreach ($resultado2 as $res2){
+                    $areas[] = $res2->id_area;
+                }
                
 //                $resultado =  DB::connection($this->connection)
 //                    ->table('Equipamiento.areas')
 //                    ->whereIn('id', $ids)
 //                    ->get();
                 
-                foreach ($resultado as $res){
-                    $areas[] = $res->id_area_destino;
-                }
+                
             }
             $areas_unique = array_unique($areas);
             $areas_ruta = [];
@@ -498,6 +509,45 @@ class Material extends Model
                     ->table('Equipamiento.asignacion_items')
                     ->where('id_material', $this->id_material)
                     ->sum('cantidad_asignada');
+            }
+        }
+        return $cantidad;
+    }
+    
+    public function cantidad_cierre($id_area = null){
+        $cantidad = 0;
+        if(is_array($id_area)){
+            $ids_area = $id_area;
+            $ciclos = ceil(count($ids_area)/2000);
+            for($i = 0; $i<=$ciclos; $i++){
+                
+                $ids = array_slice($ids_area, $i*2000, 2000);
+                $cantidad += DB::connection($this->connection)
+                    ->table('Equipamiento.asignacion_items')
+                    ->where('id_material', $this->id_material)
+                    ->whereIn('id_area_destino', $ids)
+                    ->sum('cantidad_asignada');
+                $cantidad += DB::connection($this->connection)
+                    ->table('Equipamiento.inventarios')
+                    ->whereIn('id_area', $id_area)
+                    ->where('id_material', $this->id_material)
+                    ->sum('cantidad_existencia');
+            }
+        }else{
+            if($id_area > 0){
+                
+                $cantidad = DB::connection($this->connection)
+                ->table('Equipamiento.inventarios')
+                ->where('id_area', $id_area)
+                ->where('id_material', $this->id_material)
+                ->sum('cantidad_existencia');
+
+                $cantidad += DB::connection($this->connection)
+                ->table('Equipamiento.asignacion_items')
+                ->where('id_area_destino', $id_area)
+                ->where('id_material', $this->id_material)
+                ->sum('cantidad_asignada');
+                
             }
         }
         return $cantidad;

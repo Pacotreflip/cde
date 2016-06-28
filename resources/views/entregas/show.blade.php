@@ -53,11 +53,11 @@
                 {{$articulo["unidad"]}}
             </td>
             <td style="text-align: right">
-                {{$articulo["cantidad_asignada"]}}
+                {{$articulo["cantidad_cierre"]}}
             </td>
             <td style="text-align: right">
 
-               {{$articulo["ubicacion_asignada"]}}
+               {{$articulo["ubicacion"]}}
             </td>
           
         </tr>

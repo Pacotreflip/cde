@@ -78,7 +78,11 @@ class EntregasController extends Controller
             foreach($request->id_area as $id_area){
                 $objArea = Area::findOrFail($id_area);
                 $areas[] = $objArea;
-                $articulos_areas = $objArea->materialesAsignados();
+                if($objArea->es_almacen == 1){
+                    $articulos_areas = $objArea->materiales_almacenados;
+                }else{
+                    $articulos_areas = $objArea->materialesAsignados();
+                }
                 foreach($articulos_areas as $articulo_area){
                     $articulos[$i] = $articulo_area;
                     $i++;
@@ -212,9 +216,15 @@ class EntregasController extends Controller
             foreach($request->id_area as $id_area){
                 $objArea = Area::findOrFail($id_area);
                 $areas[] = $objArea;
-                $articulos_asignados = $objArea->materialesAsignados;
-                foreach($articulos_asignados as $articulo_asignado){
-                    $articulos[$i] = $articulo_asignado->material;
+                
+                if($objArea->es_almacen == 1){
+                    $articulos_area = $objArea->materiales_almacenados;
+                }else{
+                    $articulos_area = $objArea->materialesAsignados;
+                }
+                
+                foreach($articulos_area as $articulo_area){
+                    $articulos[$i] = $articulo_area->material;
                     $i++;
                 }
             }
