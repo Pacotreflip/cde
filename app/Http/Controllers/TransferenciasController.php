@@ -110,12 +110,14 @@ class TransferenciasController extends Controller
                 ->whereIn('equipamiento.inventarios.id_area', $arrayIds)
                 ->where('equipamiento.inventarios.id_obra', $this->getIdObra())
                 ->where('dbo.materiales.descripcion', 'LIKE', '%'.$request->input('q').'%')
+                ->orWhere('dbo.materiales.numero_parte', 'LIKE', '%'.$request->input('q').'%')
                 ->where('cantidad_existencia', '>', 0)
-                ->select('dbo.materiales.descripcion')
+                ->select('dbo.materiales.descripcion', 'dbo.materiales.numero_parte')
                 ->get();  
         $data = [];
         foreach($materiales as $material) {
-            array_push($data, $material->descripcion);
+            $num_parte = $material->numero_parte ? '['.$material->numero_parte.']' : '';
+            array_push($data, $num_parte.' '.$material->descripcion);
         }
         return response()->json($data)
                 ->setCallback($request->input('callback'));
