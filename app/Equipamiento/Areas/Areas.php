@@ -76,6 +76,23 @@ class Areas extends BaseRepository
         return $lista;
     }
     
+    public function getListaAreasConArticulos()
+    {
+        $inventarios = \Ghi\Equipamiento\Inventarios\Inventario::where('cantidad_existencia', '>', 0)->select('id_area')->get()->toArray();
+        $areas = \Ghi\Equipamiento\Areas\Area::whereIn('id',$inventarios)->get();
+        
+        $lista = [];
+        
+        foreach ($areas as $area) {
+            $lista[] = [
+                'id' => $area->id,
+                'nombre' => $area->nombre,
+                'ruta' => $area->ruta()
+            ];
+        }
+        return $lista;
+    }
+    
     public function getListaAlmacenes()
     {
         $almacenes = $this->getAlmacenesAll();

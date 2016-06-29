@@ -13,15 +13,34 @@
           <label for="fecha_transferencia">Fecha:</label>
           <input type="date" name="fecha_transferencia" value="{{ date('Y-m-d') }}" class="form-control" v-model="transferenciaForm.fecha_transferencia">
         </div>
-
-        <div class="form-group">
-          {!! Form::label('area_origen', 'Area Origen:') !!}
-          {!! Form::select('area_origen', $areas, null, [
-            'class' => 'form-control', 'required',
-            'v-model' => 'transferenciaForm.area_origen',
-            'v-on:change' => 'fetchMateriales']) !!}
+        <hr>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="input-group">
+              <input id="filtro" type="text" class="form-control" placeholder="Buscar artículo">
+              <span class="input-group-btn">
+                <button id="buscarArticulo" type="Buscar" class="btn btn-primary">Buscar</button>
+              </span>
+            </div>
+          </div>
+          <br>
+          <div class="col-md-12">
+            <div class="form-group">
+              {!! Form::label('area_origen', 'Area Origen:') !!}
+              <select class="form-control" required="required" v-model="transferenciaForm.area_origen" v-on:change="fetchMateriales" id="area_origen" name="area_origen">
+                <option value="" selected="selected" disabled="">-- SELECCIONAR --</option>
+                <div id="options">
+                  @foreach($areas as $area)
+                  <option value="{{$area['id']}}">{{$area['ruta']}}</option>
+                  @endforeach
+                </div>
+              </select>
+            </div>  
+          </div>
         </div>
-
+        
+        <hr>
+        
         <div class="form-group">
           <label for="observaciones">Observaciones:</label>
           <textarea name="observaciones" id="observaciones" rows="5" class="form-control" v-model="transferenciaForm.observaciones"></textarea>
@@ -36,7 +55,7 @@
         </div>
 
         <div class="alert alert-info" v-if="! tieneInventarios && ! cargandoInventarios">
-          <i class="fa fa-warning"></i> El area seleccionada no tiene inventario...
+          <i class="fa fa-warning"></i> No se ha seleccionado ningún inventario...
         </div>
 
         <table class="table table-striped" v-if="tieneInventarios">
@@ -82,4 +101,47 @@
       </form>
     </transferencias-screen>
   </div>
+@stop
+@section('scripts')
+<script>
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-Token': App.csrfToken
+        }
+    });
+    $("#filtro").autocomplete({
+        source: function( request, response ) {
+          $.ajax({
+              type: 'GET',
+              url: "{{ route('transferir.materiales') }}",
+              dataType: "jsonp",
+              data: {
+                q: request.term
+              },
+              success: function( data ) {
+                response( data );
+              }
+          });
+        }
+    });               
+    $('#buscarArticulo').off().on('click', function (e){
+        e.preventDefault();
+        $('#area_origen').empty();
+        $.ajax({
+            type: 'POST',
+            url: '/transferir/filtrar/',
+            data: {b: $('#filtro').val()},
+            dataType: 'JSON',
+            success: function(data) {
+                $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
+                data.forEach(function(area){
+                    $('#area_origen').append('<option value="'+ area.id_area +'">'+ area.ruta + '</option>');
+                });
+            },
+            error: function(xhr, responseText, thrownError) {   
+                console.log(responseText); 
+        }
+        });
+    });
+</script>
 @stop

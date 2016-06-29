@@ -108,6 +108,9 @@ Route::get('transferencias/transferir', 'TransferenciasController@create')->name
 Route::post('transferencias', 'TransferenciasController@store')->name('transferencias.store');
 Route::get('transferencias/{id}', 'TransferenciasController@show')->name('transferencias.show');
 Route::delete('transferencias/{id}', 'TransferenciasController@destroy')->name('transferencias.delete');
+Route::get('transferencia/materiales', 'TransferenciasController@getMateriales')->name('transferir.materiales');
+Route::post('transferir/filtrar/', 'TransferenciasController@filtrar')->name('transferir.filtrar');
+
 
 // Rutas de asignaciones...
 Route::get('asignaciones', 'AsignacionesController@index')->name('asignaciones.index');
