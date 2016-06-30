@@ -116,22 +116,22 @@ class TransferenciasController extends Controller
                 ->get();  
         $data = [];
         foreach($materiales as $material) {
-            $num_parte = $material->numero_parte ? '['.$material->numero_parte.']' : '';
-            array_push($data, $num_parte.' '.$material->descripcion);
+            $num_parte = $material->numero_parte ? '['.$material->numero_parte.'] ' : '';
+            array_push($data, $num_parte.''.$material->descripcion);
         }
         return response()->json($data)
                 ->setCallback($request->input('callback'));
     }
     
     public function filtrar(Request $request) {
-        $busqueda = $request->input('b');
+        $array_busqueda = explode(']', $request->input('b'));
+        $busqueda = (count($array_busqueda) == 1) ? trim($array_busqueda[0]) : trim($array_busqueda[1]); 
         $areas = DB::connection('cadeco')->select(
                 "SELECT I.id_area
                 FROM Equipamiento.inventarios AS I
                 INNER JOIN Equipamiento.areas AS A ON I.id_area = A.id
                 INNER JOIN dbo.materiales AS M ON I.id_material = M.id_material
-                WHERE cantidad_existencia > 0 AND (M.descripcion LIKE '%$busqueda%' 
-                OR M.numero_parte LIKE '%$busqueda$') GROUP BY I.id_area");
+                WHERE cantidad_existencia > 0 AND M.descripcion LIKE '%$busqueda%' GROUP BY I.id_area");
         
         $data = [];
         foreach($areas as $area) {
