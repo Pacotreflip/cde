@@ -14,17 +14,23 @@
           <input type="date" name="fecha_transferencia" value="{{ date('Y-m-d') }}" class="form-control" v-model="transferenciaForm.fecha_transferencia">
         </div>
         <hr>
+         <div class="alert alert-info">
+          <i class="fa fa-warning"></i> Teclee el nombre o número de parte del artículo, posteriormente seleccionelo de la lista para cargar automáticamente las áreas que lo tienen almacenado.
+        </div>
         <div class="row">
-          <div class="col-md-3">
-            <div class="input-group">
-              <input id="filtro" type="text" class="form-control" placeholder="Buscar artículo">
+          <div class="col-md-6">
+             <div class="form-group">
+                 <label>Artículo</label>
+                 <div class="input-group">
+              <input id="filtro" type="text" class="form-control" placeholder="Teclee el nombre o número de parte del artículo">
               <span class="input-group-btn">
-                <button id="buscarArticulo" type="Buscar" class="btn btn-primary">Buscar</button>
+                <button id="buscarArticulo" type="Filtrar Áreas" class="btn btn-primary">Filtrar Áreas</button>
               </span>
+                 </div>
             </div>
           </div>
-          <br>
-          <div class="col-md-12">
+         
+          <div class="col-md-6">
             <div class="form-group">
               {!! Form::label('area_origen', 'Area Origen:') !!}
               <select class="form-control" required="required" v-model="transferenciaForm.area_origen" v-on:change="fetchMateriales" id="area_origen" name="area_origen">
@@ -129,7 +135,7 @@
         $('#area_origen').empty();
         $.ajax({
             type: 'POST',
-            url: '/transferir/filtrar/',
+            url: "{{ route('transferir.filtrar') }}",
             data: {b: $('#filtro').val()},
             dataType: 'JSON',
             success: function(data) {

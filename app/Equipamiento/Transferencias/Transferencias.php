@@ -38,6 +38,9 @@ class Transferencias {
         $proceso_sao = $this->procesoSAO();
         try {
             $origen = Area::findOrFail($this->data['area_origen']);
+            if($origen->cerrada){
+                throw new \Exception("El área origen se encuentra cerrada, no puede hacer movimientos de sus inventarios.");
+            }
 
             $transferencia = Transferencia::crear(
                 $this->obra,
