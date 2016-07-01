@@ -4,15 +4,15 @@
 <hr>
 <div class="errores"></div>
 <div class="section">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <form class="navbar-form" role="search">
             <div class="form-group">
               <input id="filtro" type="text" class="form-control" placeholder="Buscar artículo">
             </div>
-            <button id="buscarArticulo" type="Buscar" class="btn btn-primary">Buscar</button>
+            <button id="buscarArticulo" type="Buscar" class="btn btn-primary">Buscar Áreas Contenedoras</button>
         </form>
         <hr>
-        <h4><strong>SELECCIONAR ALMACÉN</strong></h4>
+        <h4><strong>SELECCIONAR ÁREA CONTENEDORA</strong></h4>
         
         <ul class="areas">
             @foreach($areas as $area)
@@ -22,7 +22,7 @@
             @endforeach
         </ul>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
         @if(isset($currarea))       
         <table class="table table-hover" id="tabla">
             <h4>ARTÍCULOS ALMACENADOS EN: <strong>{{ $currarea->nombre }}</strong></h4>
@@ -271,13 +271,13 @@ $('#buscarArticulo').off().on('click', function (e){
     $('.areas').empty();
     $.ajax({
         type: 'POST',
-        url: '/asignar/filtrar/',
+        url: "{{ route('asignar.filtrar') }}",
         data: {b: $('#filtro').val()},
         dataType: 'JSON',
         success: function(data) {
-            console.log(data);
+            //console.log(data);
             data.forEach(function(area){
-                console.log(area.id_area);
+                //console.log(area.id_area);
                 $('.areas').append(
                     '<li class="area"><a href="'+ App.host +'/asignar/inventarios/'+ area.id_area +'">'+ area.ruta +'</a></li>'
                 );
