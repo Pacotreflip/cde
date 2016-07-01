@@ -128,24 +128,6 @@
                 response( data );
               }
           });
-        },
-        select: function(e, ui) {
-            $('#area_origen').empty();
-            $.ajax({
-                type: 'POST',
-                url: '/transferir/filtrar/',
-                data: {b: $('#filtro').val()},
-                dataType: 'JSON',
-                success: function(data) {
-                    $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
-                    data.forEach(function(area){
-                        $('#area_origen').append('<option value="'+ area.id_area +'">'+ area.ruta + '</option>');
-                    });
-                },
-                error: function(xhr, responseText, thrownError) {   
-                    console.log(responseText); 
-            }
-            });
         }
     });               
     $('#buscarArticulo').off().on('click', function (e){
