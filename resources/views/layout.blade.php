@@ -24,6 +24,7 @@
     <script src="{{ asset("js/jquery-ui.js") }}"></script>
     <script src="{{ asset("js/jquery.tablesorter.js") }}"></script>
     <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
+    <script src="{{ asset("js/loadingoverlay.js") }}"></script>
     @yield('scripts')
   </body>
 </html>

@@ -141,11 +141,14 @@
     
     
      
-    function setDestinos(id_area, id_material) {
+    function setDestinos(element, id_area, id_material) {
         $.ajax({
             type: 'GET',
             url: '/asignar/destinos/' + id_material,
-            dataType: 'JSON',            
+            dataType: 'JSON',   
+            beforeSend: function( xhr ) {
+               $(element).closest('tr').LoadingOverlay("show");
+            },
             success: function(data) {
                 if(data.length === 0) {
                     swal('No hay áreas que esperen recibir éste artículo.','','info');
@@ -160,8 +163,11 @@
                     });
                 }                
             },
-            error: function(xhr, responseText, thrownError) {                   
+            error: function(xhr, responseText, thrownError) {
+                $(element).closest('tr').LoadingOverlay("hide");
             }
+        }).done(function(){
+            $(element).closest('tr').LoadingOverlay("hide");
         });
     } 
     $(function () {
@@ -169,7 +175,7 @@
             if(document.getElementById('destino'+$(this).attr("id_material"))) {
                 $('[id=destino'+$(this).attr("id_material")+']').show(); 
             } else {
-                setDestinos($(this).attr("id_area"), $(this).attr("id_material"));
+                setDestinos($(this), $(this).attr("id_area"), $(this).attr("id_material"));
             }
         $(this).one("click", second);
         }
