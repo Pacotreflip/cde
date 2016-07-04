@@ -80,8 +80,10 @@
       @endforeach
     </tbody>
   </table>
+  <div id="errores"></div>
   <form method="post" id="cancela_recepcion"  action="{{ route('recepciones.delete', $recepcion->id) }}" style="float: right">
         {{ csrf_field() }}
+        
         <input type="hidden" name="_method" value="delete">
         <button type="submit" class="btn btn-sm btn-danger">
             <span class="glyphicon glyphicon-ban-circle" style="margin-right: 5px"></span>Cancelar
@@ -128,13 +130,29 @@
                 },
                 error: function (xhr, textStatus, thrownError)
                 {
-                    console.log(xhr.responseText);
-                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
-                    $.each($.parseJSON(xhr.responseText), function (ind, elem) {
-                        salida += '<li>' + elem + '</li>';
-                    });
-                    salida += '</ul></div>';
-                    $("div.errores_venta").html(salida);
+                    var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+
+                    if(ind1 === -1){
+                        var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                        $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+                            salida += '<li>'+elem+'</li>';
+                        });
+                        salida += '</ul></div>';
+                        $("div#errores").html(salida);
+                    }else{
+                        var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                        var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+                        var cad1 = xhr.responseText.substring(ind1);
+                        var ind2 = cad1.indexOf('</span>');
+                        var cad2 = cad1.substring(32,ind2);
+                        if(cad2 !== ""){
+                            salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+                        }else{
+                            salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+                        }
+                        salida += '</ul></div>';
+                        $("div#errores").html(salida);
+                    }
                 }
             });
         });

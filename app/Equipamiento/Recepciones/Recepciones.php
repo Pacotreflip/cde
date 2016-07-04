@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\Item;
 use Ghi\Equipamiento\Recepciones\Exceptions\RecepcionSinArticulosException;
+use Ghi\Equipamiento\Inventarios\Inventario;
 
 class Recepciones
 {
@@ -18,7 +19,8 @@ class Recepciones
     protected $id;
 
     protected $obra;
-    protected $transacciones_relacionadas;
+    protected $transacciones_relacionadas_recepcion = [];
+    protected $transacciones_relacionadas_asignacion = [];
     /**
      * @param array $data
      * @param Obra  $obra
@@ -40,7 +42,11 @@ class Recepciones
         try {
             DB::connection('cadeco')->beginTransaction();
             $recepcion = Recepcion::findOrFail($this->id);
+            $asignacion = $recepcion->asignacion;
+            $this->eliminaRelacionTransaccionesAsignacion($asignacion);
             $this->eliminaRelacionTransacciones($recepcion);
+            $this->actualizaInventarios($recepcion);
+            $this->eliminaAsignacion($recepcion);
             $this->procesoSAO($recepcion);
             $recepcion->delete();
             DB::connection('cadeco')->commit();
@@ -51,7 +57,8 @@ class Recepciones
     }
 
     protected function eliminaRelacionTransacciones($recepcion){
-        $this->transacciones_relacionadas = $recepcion->transacciones;
+        $this->transacciones_relacionadas_recepcion = $recepcion->transacciones()->orderBy("id_transaccion","desc")->get();
+        //dd($this->transacciones_relacionadas_recepcion);
         DB::connection("cadeco")->table('Equipamiento.recepciones_transacciones')
             ->where("id_recepcion","=", $recepcion->id)
             ->delete();
@@ -61,13 +68,52 @@ class Recepciones
             ->delete();
         }
     }
+    
+    protected function eliminaRelacionTransaccionesAsignacion($asignacion){
+        //dd($asignacion, $asignacion->transacciones);
+        if($asignacion){
+            $this->transacciones_relacionadas_asignacion = $asignacion->transacciones()->orderBy("id_transaccion","desc")->get();
 
+            DB::connection("cadeco")->table('Equipamiento.asignaciones_transacciones')
+                ->where("id_asignacion","=", $asignacion->id)
+                ->delete();
+            foreach($asignacion->items as $item){
+                DB::connection("cadeco")->table('Equipamiento.asignaciones_transacciones_items')
+                ->where("id_item_asignacion","=", $item->id)
+                ->delete();
+            }
+        }
+    }
+
+    protected function eliminaAsignacion($recepcion){
+        $asignacion = $recepcion->asignacion;
+        if($asignacion){
+            $asignacion->delete();
+        }
+    }
+    protected function actualizaInventarios($recepcion){
+        $asignacion = $recepcion->asignacion;
+        //dd($asignacion);
+        if(!$asignacion){
+            foreach($recepcion->items as $item){
+                $inventario = Inventario::where("id_material","=", $item->id_material)
+                    ->where("id_area","=", $item->id_area_almacenamiento)->first()
+                        ;
+                $inventario->decrementaExistencia($item->cantidad_recibida);
+            }
+        }
+    }
 
     protected function procesoSAO($recepcion){
-        $transacciones = $this->transacciones_relacionadas;
+        //dd($this->transacciones_relacionadas_asignacion);
+        foreach ($this->transacciones_relacionadas_asignacion as $transaccion_asignacion){
+            $this->elimina_transaccion($transaccion_asignacion);
+        }
+        $transacciones = $this->transacciones_relacionadas_recepcion;
         foreach ($transacciones as $transaccion){
             $this->elimina_transaccion($transaccion);
         }
         $this->orden_compra_no_cumplida($recepcion);
+        
     }
 }

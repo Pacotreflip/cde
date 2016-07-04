@@ -8,6 +8,7 @@ use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Autenticacion\User;
+use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 
 class Asignacion extends Model
@@ -104,5 +105,8 @@ class Asignacion extends Model
     }
     public function usuario_registro(){
         return $this->hasOne(User::class,"idusuario", "id_usuario");
+    }
+    public function transacciones(){
+        return $this->belongsToMany(Transaccion::class, "Equipamiento.asignaciones_transacciones", "id_asignacion", "id_transaccion" );
     }
 }

@@ -11,6 +11,7 @@ use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Autenticacion\User;
+use Ghi\Equipamiento\Asignaciones\Asignacion;
 
 class Recepcion extends Model
 {
@@ -129,6 +130,10 @@ class Recepcion extends Model
     
     public function usuario_registro(){
         return $this->hasOne(User::class,"idusuario", "id_usuario");
+    }
+    
+    public function asignacion(){
+        return $this->hasOne(Asignacion::class,"id_recepcion");
     }
     
     public function comprobantes() {
