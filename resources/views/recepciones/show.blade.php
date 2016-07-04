@@ -80,9 +80,16 @@
       @endforeach
     </tbody>
   </table>
-  
-@include('pdf/modal', ['modulo' => 'recepciones', 'titulo' => 'Recepción de Artículos - #'.$recepcion->numero_folio, 'ruta' => route('pdf.recepciones', $recepcion),])
+  <form method="post" id="cancela_recepcion"  action="{{ route('recepciones.delete', $recepcion->id) }}" style="float: right">
+        {{ csrf_field() }}
+        <input type="hidden" name="_method" value="delete">
+        <button type="submit" class="btn btn-sm btn-danger">
+            <span class="glyphicon glyphicon-ban-circle" style="margin-right: 5px"></span>Cancelar
+        </button>
+    </form>
+  <button type="button" style="margin-right: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.recepciones', $recepcion)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
 
+@include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
 @stop
 
 @section('scripts')
@@ -96,5 +103,50 @@
         });
       }
     };
+    
+    function muestraComprobante(ruta){
+        $("#PDFModal .modal-body").html('<iframe src="'+ruta+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');
+        $("#PDFModal").modal("show");
+    }
+    $("#cancela_recepcion").off().on("submit", function(e){
+        var formURL = $(this).attr("action");
+        swal({
+            title: "¿Desea continuar con la cancelación?",
+            text: "¿Esta seguro de cancelar la recepción?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
+            confirmButtonColor: "#ec6c62"
+        }, function () {
+            $.ajax({
+                url: formURL,
+                type: "DELETE",
+                success: function (data)
+                {
+                    window.location = "{{ route('recepciones.index') }}" ;
+                },
+                error: function (xhr, textStatus, thrownError)
+                {
+                    console.log(xhr.responseText);
+                    var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+                    $.each($.parseJSON(xhr.responseText), function (ind, elem) {
+                        salida += '<li>' + elem + '</li>';
+                    });
+                    salida += '</ul></div>';
+                    $("div.errores_venta").html(salida);
+                }
+            });
+        });
+        e.preventDefault();
+    });
+    $(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
   </script>
 @stop

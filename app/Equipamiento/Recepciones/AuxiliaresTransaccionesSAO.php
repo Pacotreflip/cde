@@ -46,8 +46,33 @@ trait AuxiliaresTransaccionesSAO {
         
         if($cumplida){
             DB::connection('cadeco')->table("transacciones")->where("id_transaccion", $this->data["orden_compra"])->update(["estado"=>2]);
+        }else{
+            DB::connection('cadeco')->table("transacciones")->where("id_transaccion", $this->data["orden_compra"])->update(["estado"=>1]);
         }
     }
+    
+    protected function orden_compra_no_cumplida($recepcion){
+        $resultado = DB::connection('cadeco')->select('select items_oc.id_item, items_oc.cantidad as cantidad_esperada, sum(items_ea.cantidad) as cantidad_entrada
+            , (items_oc.cantidad - sum(items_ea.cantidad)) AS pendiente
+            from items as items_oc join items as items_ea on(items_oc.id_item = items_ea.item_antecedente)
+            where items_oc.id_transaccion = ' . $recepcion->id_orden_compra .' 
+            group by items_oc.id_item, items_oc.cantidad');
+        $cumplida = true;
+        
+        foreach($resultado as $item){
+            if($item->pendiente > 0){
+                $cumplida = false;
+                break;
+            }
+        }
+        
+        if($cumplida){
+            DB::connection('cadeco')->table("transacciones")->where("id_transaccion", $recepcion->id_orden_compra)->update(["estado"=>2]);
+        }else{
+            DB::connection('cadeco')->table("transacciones")->where("id_transaccion", $recepcion->id_orden_compra)->update(["estado"=>1]);
+        }
+    }
+    
     protected function preparaDatosTransacciones(){
         $items_a_procesar = $this->data["materiales"];
         
@@ -647,7 +672,18 @@ trait AuxiliaresTransaccionesSAO {
         return $partidas;
     }
     
-    
+    protected function elimina_transaccion($objTransaccion){
+        $resultado = DB::connection("cadeco")->select('
+            DECLARE @RC int
+            DECLARE @id_transaccion int
+            EXECUTE @RC = [sp_borra_transaccion] 
+            '.$objTransaccion->id_transaccion.'
+            Select @RC as res     
+        ');
+        if($resultado[0]->res != 0){
+            throw new \Exception("Hubo un error al aplicar el procedimiento de eliminación para la transacción:" . $objTransaccion->id_transaccion);
+        }
+    }
 }
 
 

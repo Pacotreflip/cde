@@ -9,6 +9,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
+use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Autenticacion\User;
 
 class Recepcion extends Model
@@ -136,5 +137,9 @@ class Recepcion extends Model
     
     public function agregaComprobante(Comprobante $comprobante) {
         return $this->comprobantes()->save($comprobante);
+    }
+    
+    public function transacciones(){
+        return $this->belongsToMany(Transaccion::class, "Equipamiento.recepciones_transacciones", "id_recepcion", "id_transaccion" );
     }
 }

@@ -10,6 +10,7 @@ use Ghi\Equipamiento\Recepciones\Recepcion;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAlmacen;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
+use Ghi\Equipamiento\Recepciones\Recepciones;
 
 class RecepcionesController extends Controller
 {
@@ -122,5 +123,10 @@ class RecepcionesController extends Controller
 
         return view('recepciones.show')
             ->withRecepcion($recepcion);
+    }
+    
+    public function destroy($id){
+         (new Recepciones($id, $this->getObraEnContexto()))->cancelar();
+        
     }
 }
