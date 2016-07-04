@@ -116,6 +116,7 @@ Route::post('transferir/filtrar/', 'TransferenciasController@filtrar')->name('tr
 Route::get('asignaciones', 'AsignacionesController@index')->name('asignaciones.index');
 Route::get('asignaciones/{id}', 'AsignacionesController@show')->name('asignaciones.show');
 Route::post('asignaciones', 'AsignacionesController@store')->name('asignaciones.store');
+Route::delete('asignaciones/{id}', 'AsignacionesController@destroy')->name('asignaciones.delete');
 Route::get('asignar/inventarios', 'AsignacionesController@create')->name('asignar.create');
 Route::get('asignar/inventarios/{id}', 'AsignacionesController@create')->name('asignar.areacreate');
 Route::get('asignar/destinos/{id_articulo}', 'AsignacionesController@getDestinos')->name('asignar.destinos');

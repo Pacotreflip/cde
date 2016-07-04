@@ -9,6 +9,7 @@ use Ghi\Http\Requests\CreateAsignacionRequest;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
 use Ghi\Equipamiento\Asignaciones\AsignaArticulos;
 use Illuminate\Support\Facades\DB;
+use Ghi\Equipamiento\Asignaciones\Asignaciones;
 
 class AsignacionesController extends Controller
 {
@@ -292,6 +293,6 @@ class AsignacionesController extends Controller
      */
     public function destroy($id)
     {
-        //
+         (new Asignaciones($id, $this->getObraEnContexto()))->cancelar();
     }
 }
