@@ -43,6 +43,8 @@ class Asignaciones
         try {
             DB::connection('cadeco')->beginTransaction();
             $asignacion = Asignacion::findOrFail($this->id);
+            if($asignacion->recepcion)
+                throw new \Exception("La asignación se generó desde el módulo de recepciones, debe eliminarse desde dicho módulo buscando la recepción: #" . $asignacion->recepcion->numero_folio );
             $this->eliminaRelacionTransaccionesAsignacion($asignacion);
             $this->actualizaInventarios($asignacion);
             $this->procesoSAO($asignacion);
@@ -53,13 +55,14 @@ class Asignaciones
             throw $e;
         }
     }
-
         
     protected function eliminaRelacionTransaccionesAsignacion($asignacion){
         //dd($asignacion, $asignacion->transacciones);
         if($asignacion){
             $this->transacciones_relacionadas_asignacion = $asignacion->transacciones()->orderBy("id_transaccion","desc")->get();
-
+            if(!(count($this->transacciones_relacionadas_asignacion)>0))
+                throw new \Exception("La asignación debe ser eliminada desde el módulo de recepciones." . $objTransaccion->id_transaccion);
+                
             DB::connection("cadeco")->table('Equipamiento.asignaciones_transacciones')
                 ->where("id_asignacion","=", $asignacion->id)
                 ->delete();
@@ -70,7 +73,6 @@ class Asignaciones
             }
         }
     }
-
     
     protected function actualizaInventarios($recepcion){
         $asignacion = $recepcion->asignacion;
