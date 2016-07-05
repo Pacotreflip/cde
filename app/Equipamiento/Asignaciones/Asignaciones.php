@@ -26,9 +26,10 @@ class Asignaciones
      * @param array $data
      * @param Obra  $obra
      */
-    public function __construct($id, Obra $obra)
+    public function __construct($datos, Obra $obra)
     {
-        $this->id = $id;
+        $this->id = $datos["id"];
+        $this->datos = $datos;
         $this->obra = $obra;
     }
 
@@ -48,6 +49,7 @@ class Asignaciones
             $this->eliminaRelacionTransaccionesAsignacion($asignacion);
             $this->actualizaInventarios($asignacion);
             $this->procesoSAO($asignacion);
+            $this->registraCancelacion($asignacion);
             $asignacion->delete();
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -93,5 +95,17 @@ class Asignaciones
             $this->elimina_transaccion($transaccion_asignacion);
         }
         
+    }
+    protected function registraCancelacion($asignacion){
+        $carbon = new \Carbon\Carbon();
+        DB::connection("cadeco")->table('Equipamiento.cancelaciones')->insert(
+            [
+                'id_obra'=>$this->obra->id_obra,
+                'motivo'=>$this->datos["motivo"],
+                'created_at'=>$carbon->now(),
+                'updated_at'=>$carbon->now(),
+                'numero_folio_asignacion' => $asignacion->numero_folio, 
+                'id_usuario' => Auth::id()]
+        );
     }
 }

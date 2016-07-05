@@ -291,8 +291,8 @@ class AsignacionesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-         (new Asignaciones($id, $this->getObraEnContexto()))->cancelar();
+    public function destroy(Request $request,$id){
+        $datos = ["id"=>$id, "motivo"=>$request->motivo];
+        (new Asignaciones($datos, $this->getObraEnContexto()))->cancelar();
     }
 }

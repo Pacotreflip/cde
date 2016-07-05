@@ -10,6 +10,7 @@ namespace Ghi\Equipamiento\Transferencias;
 use Ghi\Core\Models\Obra;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Areas\Area;
+use Illuminate\Support\Facades\Auth;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Inventarios\Inventario;
 /**
@@ -103,6 +104,7 @@ class Transferencias {
             $this->eliminaRelacionTransaccionesTransferencia($transferencia);
             $this->actualizaInventarios($transferencia);
             $this->procesoCancelacionSAO($transferencia);
+            $this->registraCancelacion($transferencia);
             $transferencia->delete();
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
@@ -145,5 +147,17 @@ class Transferencias {
             $this->elimina_transaccion($transaccion_transferencia);
         }
         
+    }
+    protected function registraCancelacion($transferencia){
+        $carbon = new \Carbon\Carbon();
+        DB::connection("cadeco")->table('Equipamiento.cancelaciones')->insert(
+            [
+                'id_obra'=>$this->obra->id_obra,
+                'motivo'=>$this->data["motivo"],
+                'created_at'=>$carbon->now(),
+                'updated_at'=>$carbon->now(),
+                'numero_folio_transferencia' => $transferencia->numero_folio, 
+                'id_usuario' => Auth::id()]
+        );
     }
 }

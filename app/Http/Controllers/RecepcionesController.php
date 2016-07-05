@@ -125,8 +125,9 @@ class RecepcionesController extends Controller
             ->withRecepcion($recepcion);
     }
     
-    public function destroy($id){
-         (new Recepciones($id, $this->getObraEnContexto()))->cancelar();
+    public function destroy(Request $request,$id){
+        $datos = ["id"=>$id, "motivo"=>$request->motivo];
+         (new Recepciones($datos, $this->getObraEnContexto()))->cancelar();
         
     }
 }

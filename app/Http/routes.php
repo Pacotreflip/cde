@@ -100,14 +100,14 @@ Route::get('recepciones/{id}', 'RecepcionesController@show')->name('recepciones.
 Route::patch('recepciones/{id}', 'RecepcionesController@update')->name('recepciones.update');
 Route::post('recepciones/{id}/comprobantes', 'ComprobantesController@store')->name('recepciones.comprobantes');
 Route::delete('recepciones/{id_recepcion}/comprobantes/{id}', 'ComprobantesController@destroy')->name('recepciones.comprobantes.delete');
-Route::delete('recepciones/{id}', 'RecepcionesController@destroy')->name('recepciones.delete');
+Route::post('recepciones/{id}', 'RecepcionesController@destroy')->name('recepciones.delete');
 
 // Rutas de transferencias...
 Route::get('transferencias', 'TransferenciasController@index')->name('transferencias.index');
 Route::get('transferencias/transferir', 'TransferenciasController@create')->name('transferencias.create');
 Route::post('transferencias', 'TransferenciasController@store')->name('transferencias.store');
 Route::get('transferencias/{id}', 'TransferenciasController@show')->name('transferencias.show');
-Route::delete('transferencias/{id}', 'TransferenciasController@destroy')->name('transferencias.delete');
+Route::post('transferencias/{id}', 'TransferenciasController@destroy')->name('transferencias.delete');
 Route::get('transferencia/materiales', 'TransferenciasController@getMateriales')->name('transferir.materiales');
 Route::post('transferir/filtrar/', 'TransferenciasController@filtrar')->name('transferir.filtrar');
 
@@ -116,7 +116,7 @@ Route::post('transferir/filtrar/', 'TransferenciasController@filtrar')->name('tr
 Route::get('asignaciones', 'AsignacionesController@index')->name('asignaciones.index');
 Route::get('asignaciones/{id}', 'AsignacionesController@show')->name('asignaciones.show');
 Route::post('asignaciones', 'AsignacionesController@store')->name('asignaciones.store');
-Route::delete('asignaciones/{id}', 'AsignacionesController@destroy')->name('asignaciones.delete');
+Route::post('asignaciones/{id}', 'AsignacionesController@destroy')->name('asignaciones.delete');
 Route::get('asignar/inventarios', 'AsignacionesController@create')->name('asignar.create');
 Route::get('asignar/inventarios/{id}', 'AsignacionesController@create')->name('asignar.areacreate');
 Route::get('asignar/destinos/{id_articulo}', 'AsignacionesController@getDestinos')->name('asignar.destinos');

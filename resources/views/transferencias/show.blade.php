@@ -77,15 +77,22 @@
         swal({
             title: "¿Desea continuar con la cancelación?",
             text: "¿Esta seguro de cancelar la transferencia?",
-            type: "warning",
+            type: "input",
+            closeOnConfirm: false,
             showCancelButton: true,
             confirmButtonText: "Si",
             cancelButtonText: "No",
             confirmButtonColor: "#ec6c62"
-        }, function () {
+        }, function (inputValue) {
+            if (inputValue === false) return false;      
+            if (inputValue === "") {     
+                swal.showInputError("Es obligatorio indicar el motivo de la cancelación.");     
+                return false   
+            }
             $.ajax({
                 url: formURL,
-                type: "DELETE",
+                type: "POST",
+                data: {motivo: inputValue},
                 success: function (data)
                 {
                     window.location = "{{ route('transferencias.index') }}" ;
