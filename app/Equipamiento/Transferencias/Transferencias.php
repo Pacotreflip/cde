@@ -11,6 +11,7 @@ use Ghi\Core\Models\Obra;
 use Illuminate\Support\Facades\DB;
 use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Articulos\Material;
+use Ghi\Equipamiento\Inventarios\Inventario;
 /**
  * Description of Transferencias
  *
@@ -26,7 +27,7 @@ class Transferencias {
     protected $data;
 
     protected $obra;
-    
+    protected $transacciones_relacionadas_transferencia = [];
     public function __construct(array $data, Obra $obra)
     {
         $this->data = $data;
@@ -90,5 +91,59 @@ class Transferencias {
         }
         //$this->orden_compra_cumplida();
         return $transacciones;
+    }
+    
+    
+    public function cancelar()
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $transferencia = Transferencia::findOrFail($this->data["id"]);
+            
+            $this->eliminaRelacionTransaccionesTransferencia($transferencia);
+            $this->actualizaInventarios($transferencia);
+            $this->procesoCancelacionSAO($transferencia);
+            $transferencia->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            throw $e;
+        }
+    }
+    protected function eliminaRelacionTransaccionesTransferencia($transferencia){
+        //dd($asignacion, $asignacion->transacciones);
+        if($transferencia){
+            $this->transacciones_relacionadas_transferencia = $transferencia->transacciones()->orderBy("id_transaccion","desc")->get();
+                
+            DB::connection("cadeco")->table('Equipamiento.transferencias_transacciones')
+                ->where("id_transferencia","=", $transferencia->id)
+                ->delete();
+            foreach($transferencia->items as $item){
+                DB::connection("cadeco")->table('Equipamiento.transferencias_transacciones_items')
+                ->where("id_item_transferencia","=", $item->id)
+                ->delete();
+            }
+        }
+    }
+    
+    protected function actualizaInventarios($transferencia){
+       
+        if($transferencia){
+            foreach($transferencia->items as $item){
+                $inventario_origen = Inventario::where("id_material","=", $item->id_material)
+                    ->where("id_area","=", $item->id_area_destino)->first();
+                //dd($inventario_origen);
+                $inventario_destino = Inventario::where("id_material","=", $item->id_material)
+                    ->where("id_area","=", $item->id_area_origen)->first();
+                $inventario_origen->transferirA($inventario_destino, $item->cantidad_transferida);
+            }
+        }
+    }
+    protected function procesoCancelacionSAO(){
+        //dd($this->transacciones_relacionadas_asignacion);
+        foreach ($this->transacciones_relacionadas_transferencia as $transaccion_transferencia){
+            $this->elimina_transaccion($transaccion_transferencia);
+        }
+        
     }
 }

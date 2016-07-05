@@ -142,4 +142,9 @@ class TransferenciasController extends Controller
         }
         return response()->json($data);
     }
+    
+    public function destroy($id)
+    {
+         (new Transferencias(["id"=>$id], $this->getObraEnContexto()))->cancelar();
+    }
 }

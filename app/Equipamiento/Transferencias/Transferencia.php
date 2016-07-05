@@ -7,6 +7,7 @@ use Ghi\Equipamiento\Areas\Area;
 use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
+use Ghi\Equipamiento\Transacciones\Transaccion;
 
 class Transferencia extends Model
 {
@@ -113,5 +114,8 @@ class Transferencia extends Model
         $material->transfiereExistencia($cantidad, $origen, $destino);
 
         return $item;
+    }
+    public function transacciones(){
+        return $this->belongsToMany(Transaccion::class, "Equipamiento.transferencias_transacciones", "id_transferencia", "id_transaccion" );
     }
 }

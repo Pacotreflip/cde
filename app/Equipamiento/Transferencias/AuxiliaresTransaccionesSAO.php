@@ -388,7 +388,18 @@ trait AuxiliaresTransaccionesSAO {
         }
         return $partidas;
     }
-    
+    protected function elimina_transaccion($objTransaccion){
+        $resultado = DB::connection("cadeco")->select('
+            DECLARE @RC int
+            DECLARE @id_transaccion int
+            EXECUTE @RC = [sp_borra_transaccion] 
+            '.$objTransaccion->id_transaccion.'
+            Select @RC as res     
+        ');
+        if($resultado[0]->res != 0){
+            throw new \Exception("Hubo un error al aplicar el procedimiento de eliminación para la transacción:" . $objTransaccion->id_transaccion);
+        }
+    }
     
 }
 
