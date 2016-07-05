@@ -121,6 +121,12 @@ class EntregasController extends Controller
         $entregas->generarEntrega($request->all(), $this->getObraEnContexto());
         return response()->json(['path' => route('entregas.index')]);
     }
+    
+    public function destroy(Request $request,$id){
+        $entregas = new Entregas();
+        $datos = ["id"=>$id, "motivo"=>$request->motivo];
+        ($entregas->cancelar($datos, $this->getObraEnContexto()));
+    }
 
     /**
      * Show the form for editing the specified resource.

@@ -86,4 +86,35 @@ class Entregas {
 
         return $entrega;
     }
+    public function cancelar($datos, Obra $obra)
+    {
+        $this->id = $datos["id"];
+        $this->datos = $datos;
+        $this->obra = $obra;
+    
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $entrega = Entrega::findOrFail($this->id);
+            $this->registraCancelacion($entrega);
+            $entrega->partidas()->delete();
+            $entrega->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            throw $e;
+        }
+    }
+    
+    protected function registraCancelacion($entrega){
+        $carbon = new \Carbon\Carbon();
+        DB::connection("cadeco")->table('Equipamiento.cancelaciones')->insert(
+            [
+                'id_obra'=>$this->obra->id_obra,
+                'motivo'=>$this->datos["motivo"],
+                'created_at'=>$carbon->now(),
+                'updated_at'=>$carbon->now(),
+                'numero_folio_entrega' => $entrega->numero_folio, 
+                'id_usuario' => Auth::id()]
+        );
+    }
 }

@@ -244,6 +244,9 @@
                 type: "POST",
                 dataType: "json",
                 data: postData,
+                beforeSend: function( xhr ) {
+                    $("#busca_area").LoadingOverlay("show");
+                },
                 success: function (data)
                 {
                     if (data.length > 0) {
@@ -293,7 +296,10 @@
                     });
                     salida += '</ul></div>';
                     $("div.errores_cobro_credito").html(salida);
+                    $("#busca_area").LoadingOverlay("hide");
                 }
+            }).done(function(){
+                $("#busca_area").LoadingOverlay("hide");
             });
             e.preventDefault();
         });

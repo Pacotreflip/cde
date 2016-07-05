@@ -216,6 +216,7 @@ Route::group(["middleware" => ['permission:entrega_area']], function () {
     Route::post("/entregas/regresa/areas/{parametro}", ["as" => "entrega.get.areas", "uses" => "EntregasController@getAreas"]);
     Route::post("/entregas/carga/areas/", ["as" => "entrega.carga.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
     Route::post("/entregas/create", ["as" => "entrega.create.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
+    Route::post('entregas/{id}', 'EntregasController@destroy')->name('entregas.delete');
     Route::resource('entregas', 'EntregasController', ['names' => [
             'index' => 'entregas.index',
             'create' => 'entregas.create',

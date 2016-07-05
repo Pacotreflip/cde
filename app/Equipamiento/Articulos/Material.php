@@ -614,4 +614,8 @@ class Material extends Model
     public function porcentaje_asignacion(){
         return ($this->cantidad_asignada() / $this->cantidad_esperada()) * 100;
     }
+    
+    public function ubicacion_entrega(){
+        return "d";
+    }
 }

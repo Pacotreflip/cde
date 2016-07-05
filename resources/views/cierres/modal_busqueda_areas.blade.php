@@ -33,7 +33,7 @@
                             <input name="busqueda_area" id="busqueda_area" type="text" class="form-control"  value="" />                            
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" id="busca_area" type="submit">
                                 <span><i class="fa fa-search"></i> Buscar</span>
                             </button>
                         </div>

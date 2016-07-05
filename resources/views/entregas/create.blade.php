@@ -62,7 +62,6 @@
                         <th style="text-align: center">Descripción</th>
                         <th style="text-align: center">Unidad</th>
                         <th style="text-align: center; width: 150px">Cantidad Entregada</th>
-                        <th style="text-align: center">Ubicación</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,9 +83,7 @@
                         <td style="text-align: right">
                             {{ $articulo->cantidad_cierre($id_areas)}}
                         </td>
-                        <td style="text-align: right">
-                            {{$articulo->ubicacion_asignada($id_areas)}}
-                        </td>
+                        
                         
                     </tr>
                     @endforeach
@@ -288,6 +285,9 @@
                 type: "POST",
                 dataType: "json",
                 data: postData,
+                beforeSend: function( xhr ) {
+                    $("#busca_area").LoadingOverlay("show");
+                 },
                 success: function (data)
                 {
                     if (data.length > 0) {
@@ -345,7 +345,10 @@
                     });
                     salida += '</ul></div>';
                     $("div.errores_cobro_credito").html(salida);
+                    $("#busca_area").LoadingOverlay("hide");
                 }
+            }).done(function(){
+                $("#busca_area").LoadingOverlay("hide");
             });
             e.preventDefault();
         });
