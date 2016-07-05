@@ -102,11 +102,14 @@
                     var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
 
                     if(ind1 === -1){
+                        var salida_swal = '';
                         var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
                         $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
                             salida += '<li>'+elem+'</li>';
+                            salida_swal += elem +'/'
                         });
                         salida += '</ul></div>';
+                        swal(salida_swal);
                         $("div#errores").html(salida);
                     }else{
                         var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
@@ -114,12 +117,16 @@
                         var cad1 = xhr.responseText.substring(ind1);
                         var ind2 = cad1.indexOf('</span>');
                         var cad2 = cad1.substring(32,ind2);
+                        var salida_swal = '';
                         if(cad2 !== ""){
                             salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+                            salida_swal += cad2 ;
                         }else{
                             salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+                            salida_swal += 'Un error grave ocurrió. Por favor intente otra vez.';
                         }
                         salida += '</ul></div>';
+                        swal(salida_swal);
                         $("div#errores").html(salida);
                     }
                 }

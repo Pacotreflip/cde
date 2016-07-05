@@ -188,6 +188,7 @@ Route::group(["middleware" => ['role:admin']], function () {
 });
 
 Route::group(["middleware" => ['permission:cierre_area']], function () {
+    
     Route::post("/cierres/validar_asignaciones", ["as" => "cierre.validar.asignaciones", "uses" => "CierresController@validarAsignaciones"]);
     Route::post("/cierres/validar_todas_asignaciones/{id}", ["as" => "cierre.validar.todas.asignaciones.area", "uses" => "CierresController@validarTodasAsignaciones"]);
     Route::post("/cierres/busqueda/areas", ["as" => "cierre.busqueda.areas", "uses" => "CierresController@getFormularioBusquedaAreas"]);
@@ -195,6 +196,7 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
     Route::post("/cierres/regresa/areas/{parametro}", ["as" => "cierre.get.areas", "uses" => "CierresController@getAreas"]);
     Route::post("/cierres/carga/areas/", ["as" => "cierre.carga.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
     Route::post("/cierres/create", ["as" => "cierre.create.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
+    Route::post('cierres/{id}', 'CierresController@destroy')->name('cierres.delete');
     Route::resource('cierres', 'CierresController', ['names' => [
             'index' => 'cierres.index',
             'create' => 'cierres.create',

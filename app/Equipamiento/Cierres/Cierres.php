@@ -22,12 +22,12 @@ class Cierres {
         //$areas = Area::has('materialesRequeridos')->get();
         $areas = Area::join("Equipamiento.reporte_materiales_requeridos_area", "Equipamiento.areas.id", "=", "Equipamiento.reporte_materiales_requeridos_area.id_area")
                 ->whereRaw("Equipamiento.reporte_materiales_requeridos_area.ruta_area like'%{$busqueda}%'")
-                ->groupBy(DB::raw("areas.id"))
-                ->select("areas.id")->get();
+                ->groupBy(DB::raw("areas.id, areas.nombre, areas.clave"))
+                ->select(DB::raw("areas.id, areas.nombre, areas.clave"))->get();
         $areas_almacenes = Area::where('es_almacen',"=", 1)->get();
         //$areas_collect = collect($areas);
         //$ids = $areas_collect->groupBy("id")->keys()->toArray();
-
+        $ids = [];
         foreach($areas_almacenes as $area_almacen){
             if(stripos($area_almacen->getRutaAttribute(), $busqueda)!==FALSE){
                 $ids[] = $area_almacen->id;
@@ -43,11 +43,8 @@ class Cierres {
             foreach($areas_almacen as $area_push){
                 $areas->push($area_push);
             }
-            //dd($areas);
-            return $areas;
-        }else{
-            return [];
         }
+        return $areas;
     }
     
     public function generarCierre(array $data, Obra $obra){
@@ -61,14 +58,13 @@ class Cierres {
             $cierre_partida->id_area = $id_area;
             $cierre_partida->save();
             
-            if($area->es_almacen === 0){
+            if($area->es_almacen == 0){
             
                 $asignacion_item_validaciones = DB::connection('cadeco')
                 ->table('Equipamiento.asignacion_items')
                 ->join('Equipamiento.asignacion_item_validacion', 'Equipamiento.asignacion_items.id','=','Equipamiento.asignacion_item_validacion.id_item_asignacion')
                 ->where('id_area_destino', $id_area)
                 ->get();
-
                 foreach($asignacion_item_validaciones as $asignacion_item_validacion){
                     $cierre_partida_asignacion = new CierrePartidaAsignacion();
                     $cierre_partida_asignacion->id_cierre_partida = $cierre_partida->id;
@@ -77,7 +73,7 @@ class Cierres {
                 }
             }
             
-            if ($cierre_partida->cierre_partida_asignacion->count() === 0 && $area->es_almacen === 0) {
+            if ($cierre_partida->cierre_partida_asignacion->count() == 0 && $area->es_almacen == 0) {
                 DB::connection('cadeco')->rollback();
                 throw new \Exception("Hubo un error al registrar el cierre de áreas..");
             }
@@ -105,5 +101,35 @@ class Cierres {
         $cierre->save();
 
         return $cierre;
+    }
+    public function cancelar($datos, Obra $obra)
+    {
+        $this->id = $datos["id"];
+        $this->datos = $datos;
+        $this->obra = $obra;
+    
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $cierre = Cierre::findOrFail($this->id);
+            $this->registraCancelacion($cierre);
+            $cierre->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            throw $e;
+        }
+    }
+    
+    protected function registraCancelacion($cierre){
+        $carbon = new \Carbon\Carbon();
+        DB::connection("cadeco")->table('Equipamiento.cancelaciones')->insert(
+            [
+                'id_obra'=>$this->obra->id_obra,
+                'motivo'=>$this->datos["motivo"],
+                'created_at'=>$carbon->now(),
+                'updated_at'=>$carbon->now(),
+                'numero_folio_cierre' => $cierre->numero_folio, 
+                'id_usuario' => Auth::id()]
+        );
     }
 }

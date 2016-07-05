@@ -171,20 +171,19 @@ class PDF extends Rotation {
 //                $this->SetFont('Arial', 'B', $this->txtSubtitleTam);
 //                $this->Row(Array(utf8_decode('Asignaciones')));
         foreach($this->cierre->partidas as $partida){
-            if($partida->area->es_almacen === 0){
+            
+            if($partida->area->es_almacen == 0){
                if($this->GetY() > $this->GetPageHeight() - 6){
                    $this->AddPage();
                }
                $this->encola = "";
                $this->areaEncola = $partida->area->ruta();
-//               $num_articulos_x_area = 0;
-//               $total = 0;
-//               foreach($this->articulos as $articulo){
-//                   if($articulo->id_area == $partida->id_area){
-//                       $num_articulos_x_area ++;
-//                       $total += $articulo->cantidad_asignada;
-//                   }
-//               }
+               $num_articulos_x_area = 0;
+               foreach($this->articulos as $articulo){
+                   if($articulo->id_area == $partida->id_area){
+                       $num_articulos_x_area ++;
+                   }
+               }
                $total = $partida->cantidad;
                if($partida->cantidad > 0){
 
@@ -493,7 +492,6 @@ class PDF extends Rotation {
         $this->Cell(6.5, .4, utf8_decode('Formato generado desde el módulo de Control de Equipamiento.'), 0, 0, 'L');
     }
 }
-
 $pdf = new PDF('p', 'cm', 'Letter', $cierre, $articulos);
 $pdf->SetMargins(1, 0.5, 1);
 $pdf->AliasNbPages();

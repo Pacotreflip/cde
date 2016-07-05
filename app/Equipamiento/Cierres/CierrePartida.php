@@ -60,7 +60,7 @@ class CierrePartida extends Model
     }
     
     public function getCantidadAttribute(){
-        if($this->area->es_almacen === 0){
+        if($this->area->es_almacen == 0){
             return $this->cantidad_validada();
         }else{
             return $this->area->materiales_almacenados->sum("cantidad_existencia");

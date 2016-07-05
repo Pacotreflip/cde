@@ -92,6 +92,12 @@ class CierresController extends Controller
         $cierres->generarCierre($request->all(), $this->getObraEnContexto());
         return response()->json(['path' => route('cierres.index')]);
     }
+    
+    public function destroy(Request $request,$id){
+        $cierres = new Cierres();
+        $datos = ["id"=>$id, "motivo"=>$request->motivo];
+        ($cierres->cancelar($datos, $this->getObraEnContexto()));
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -216,4 +222,5 @@ class CierresController extends Controller
             }
         }
     }
+    
 }
