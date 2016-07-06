@@ -41899,6 +41899,31 @@ Vue.filter('depth', function (value, depth) {
   return '-'.repeat(depth) + value;
 });
 
+Vue.directive('select', {
+  twoWay: true,
+  priority: 1000,
+  params: ['options'],
+  bind: function () {
+    $(this.el).select2({
+      "placeholder": "Teclee el nombre del area",
+      "language": {
+        "noResults": function(){
+          return "No se encontraron resultados";
+        }
+      }
+    })
+    .on("select2:select", function(e) {
+      this.set($(this.el).val());
+    }.bind(this));
+  },
+  update: function (value) {
+    $(this.el).val(value).trigger('change');
+  },
+  unbind: function () {
+    $(this.el).off().select2('destroy');
+  }
+});
+
 Vue.component('transferencias-screen', {
 
   data: function data() {

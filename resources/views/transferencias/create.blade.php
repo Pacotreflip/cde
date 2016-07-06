@@ -180,25 +180,4 @@ select {
         });
     });
 </script>
-<script>
-    Vue.directive('select', {
-        twoWay: true,
-        priority: 1000,
-
-        params: ['options'],
-    
-        bind: function () {
-        $(this.el).select2()
-            .on("select2:select", function(e) {
-            this.set($(this.el).val());
-            }.bind(this));
-        },
-        update: function (value) {
-            $(this.el).val(value).trigger('change');
-        },
-        unbind: function () {
-            $(this.el).off().select2('destroy');
-        }
-    });
-</script>
 @stop
