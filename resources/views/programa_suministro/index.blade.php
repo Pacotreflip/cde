@@ -114,10 +114,35 @@
             @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
                 @if($material->getIndiceRecepcionAttribute($id_obra)>0)
-                <span class="label label-danger">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
-                    
+                <div class="popover-markup"> 
+                    <span class="trigger label label-danger" style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                <div class="head hide">Lorem Ipsum</div>
+                <div class="content hide">
+                    <div class="form-group">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            placeholder="Type something…">
+                    </div>
+                    <button type="submit" class="btn btn-default btn-block">
+                        Submit
+                    </button>
+                </div>
+                </div>
                 @else
-                    <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
+                <div class="popover-markup"> 
+                    <span class="alert-danger glyphicon glyphicon-exclamation-sign trigger"  style="cursor: pointer"></span>
+                <div class="head hide">OC #{{$material->folio_oc}}</div>
+                <div class="content hide">
+                    <div class="form-group">
+                        <label>Cantidad:</label>
+                        {{$material->cantidad_comprada}}
+                    </div>
+                    <button type="submit" class="btn btn-default btn-block">
+                        Recibir
+                    </button>
+                </div>
+                </div>
                 @endif
             </th>
             @elseif($material->getIndiceRecepcionAttribute($id_obra)== 100)
@@ -130,7 +155,19 @@
                     
                     <span class="label label-info ">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
                     @else
-                    <span class="alert-info glyphicon glyphicon-certificate"></span>
+                    <div class="popover-markup"> 
+                    <span class="alert-info glyphicon glyphicon-certificate trigger"></span>
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                <div class="content hide">
+                    <div class="form-group">
+                        <label>Cantidad:</label>
+                        {{$material->cantidad_comprada}}
+                    </div>
+                    <button type="submit" class="btn btn-default btn-block">
+                        Recibir
+                    </button>
+                </div>
+                </div>
                     @endif
                 </th>
             @endif
@@ -144,5 +181,19 @@
   @endforeach
   </tbody>
   </table>
- 
+  
+@stop
+@section("scripts")
+<script>
+$('.popover-markup>.trigger').popover({
+    html: true,
+    placement: "left",
+    title: function () {
+        return $(this).parent().find('.head').html();
+    },
+    content: function () {
+        return $(this).parent().find('.content').html();
+    }
+});
+</script>
 @stop

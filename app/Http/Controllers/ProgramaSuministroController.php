@@ -51,7 +51,7 @@ case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha
 else convert(varchar(4),month( fecha_entrega)) end +
 case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
 else convert(varchar(4),day( fecha_entrega)) end
-  anio_mes_dia, materiales.id_material, descripcion, Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra as id_oc"))
+  anio_mes_dia, materiales.id_material, descripcion, Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
             ->get();
         
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 
