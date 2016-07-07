@@ -8,6 +8,7 @@
     <title>Control de Equipamiento - Grupo Hermes Infraestructura</title>
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset(elixir('css/tree.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/select2.css') }}">
     @include('scripts.globals')
 
 @yield('styles')
@@ -25,6 +26,7 @@
     <script src="{{ asset("js/jquery.tablesorter.js") }}"></script>
     <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
     <script src="{{ asset("js/loadingoverlay.js") }}"></script>
+    <script src="{{ asset("js/select2.full.js") }}"></script>
     @yield('scripts')
   </body>
 </html>
