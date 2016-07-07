@@ -133,7 +133,28 @@ class Material extends Model
         return new TipoMaterial($value);
     }
     
-    
+    public function getIndiceRecepcionAttribute($id_obra){
+        $compras =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
+            ->where('id_obra', $id_obra)
+            ->where('materiales.id_material', $this->id_material)
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select(DB::raw('transacciones.id_transaccion,numero_folio,sum(items.cantidad) as cantidad_requerida'))->get() ; 
+        $recibido = 0;
+        $requerido = 0;
+        foreach($compras as $compra){
+            $recibido += $compra->getCantidadRecibidaMaterial($this->id_material);
+            $requerido += $compra->cantidad_requerida;
+        }
+        if($requerido>0){
+            return number_format(($recibido/$requerido*100),0,".","");
+        }else{
+            return "";
+        }
+    }
     
     public function getAnioMesDiaSuministroAttribute(){
         $dias = DB::connection("cadeco")->select(" select 

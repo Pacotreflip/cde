@@ -69,23 +69,31 @@
     <td>{{$i++}}</td>
     <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}</a></td>
     @foreach($dias as $dia)
-    @if(in_array($dia->anio_mes_dia,$material->anio_mes_dia_suministro))
-    @if($hoy->format("Ymd")>$dia->anio_mes_dia)
-    <th  style="text-align: center; border: solid 1px #CCC; background: #ffcccc">
-        
-        
-    </th>
-    @else
-    <th  style="text-align: center; border: solid 1px #CCC; background: #9C6">
-        
-        
-    </th>
-    @endif
-    @else
-    <th  style="text-align: center; border: solid 1px #CCC">
-        
-    </th>
-    @endif
+        @if(in_array($dia->anio_mes_dia,$material->anio_mes_dia_suministro))
+            @if($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
+            <th  style="text-align: center; border: solid 1px #CCC; background: #ffcccc">
+                @if($material->getIndiceRecepcionAttribute($id_obra)>0)
+                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
+                    @else
+                    <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
+                @endif
+            </th>
+            @elseif($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)== 100)
+            <th  style="text-align: center; border: solid 1px #CCC;">
+                <span class="alert-success glyphicon glyphicon-ok-sign"></span>
+            </th>
+            @else
+                <th  style="text-align: center; border: solid 1px #CCC">
+                    @if($material->getIndiceRecepcionAttribute($id_obra)>0)
+                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
+                    @endif
+                </th>
+            @endif
+        @else
+        <th  style="text-align: center; border: solid 1px #CCC">
+            
+        </th>
+        @endif
     @endforeach
   </tr>
   @endforeach

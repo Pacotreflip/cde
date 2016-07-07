@@ -39,13 +39,13 @@ class ProgramaSuministroController extends Controller
             $fecha_final = $request->fecha_final;
         }else{
             $hoy1 = Carbon::now();
-            $fecha_inicial = $hoy1->format("Y-m-d");
+            $fecha_inicial = $hoy1->subMonth(1)->format("Y-m-d");
             $hoy2 = Carbon::now();
             $fecha_final = $hoy2->addMonth(1)->format("Y-m-d");
         }
         $materiales = Material::join("Equipamiento.materiales_fechas_entrega", "materiales.id_material","=", "Equipamiento.materiales_fechas_entrega.id_material")
-                ->join("transacciones", "transacciones.id_transaccion","=", "Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra")
-                ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' ")->orderBy('fecha_entrega')->get();
+            ->join("transacciones", "transacciones.id_transaccion","=", "Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra")
+            ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' ")->orderBy('fecha_entrega')->get();
         
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 
 from (select 
@@ -138,6 +138,7 @@ where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}
         ->with("dias",$dias)
         ->with("i",1)
         ->with("hoy",$hoy)
+        ->with("id_obra",$this->getIdObra())
         ->with("materiales",$materiales);
             //->withRecepciones($recepciones);
     }
