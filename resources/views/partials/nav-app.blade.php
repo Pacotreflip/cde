@@ -26,6 +26,7 @@
   </li>
   @if (!Auth::user()->hasRole('consulta_provisional'))
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
+  <li><a href="{{ route('programa_suministro.index') }}">Programa de Suministro</a></li>
   <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
   <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
   <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>

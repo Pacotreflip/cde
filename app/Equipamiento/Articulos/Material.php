@@ -132,6 +132,26 @@ class Material extends Model
 
         return new TipoMaterial($value);
     }
+    
+    
+    
+    public function getAnioMesDiaSuministroAttribute(){
+        $dias = DB::connection("cadeco")->select(" select 
+  
+  convert(varchar(4),year( fecha_entrega)) + 
+case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
+else convert(varchar(4),month( fecha_entrega)) end +
+case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
+else convert(varchar(4),day( fecha_entrega)) end
+  anio_mes_dia
+ from [Equipamiento].[materiales_fechas_entrega]
+where id_material = {$this->id_material};");
+foreach($dias as $dia){
+    $dias_arr[] = $dia->anio_mes_dia;
+}
+
+    return $dias_arr;
+    }
 
     /**
      * Asigna el tipo de material a este material
