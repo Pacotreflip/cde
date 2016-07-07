@@ -136,26 +136,27 @@ select {
           });
         },
         select: function(){
-                            $('#area_origen').empty();
-
             $.ajax({
-            type: 'POST',
-            url: "{{ route('transferir.filtrar') }}",
-            data: {b: $('#filtro').val()},
-            dataType  : 'JSON',
-            beforeSend: function() {
-                $('#area_origen').empty();
-            },
-            success: function(data) {
-                $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
-                data.forEach(function(area){
-                    $('#area_origen').append('<option value="'+ area.id_area +'">'+ area.ruta + '</option>');
-                });
-            },
-            error: function(xhr, responseText, thrownError) {   
-                console.log(responseText); 
-    }
-        });
+                type: 'POST',
+                url: "{{ route('transferir.filtrar') }}",
+                data: {b: $('#filtro').val()},
+                dataType  : 'JSON',
+                beforeSend: function() {
+                    $('#area_origen').empty();
+                },
+                success: function(data) {
+                    $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
+                    data.forEach(function(area){
+                        $('#area_origen').append('<option value="'+ area.id_area +'">'+ area.ruta + '</option>');
+                    });
+                },
+                afterSend: function(data) {
+                    console.log(data);
+                },
+                error: function(xhr, responseText, thrownError) {   
+                    console.log(responseText); 
+                }
+            });
         }
     });               
     $('#buscarArticulo').off().on('click', function (e){

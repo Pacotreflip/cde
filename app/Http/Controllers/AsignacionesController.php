@@ -206,6 +206,7 @@ class AsignacionesController extends Controller
                 ->where('dbo.materiales.descripcion', 'LIKE', '%'.$request->input('q').'%')
                 ->where('cantidad_existencia', '>', 0)
                 ->select('dbo.materiales.descripcion')
+                ->distinct('dbo.materiales.id_material')
                 ->get();  
         $data = [];
         foreach($materiales as $material) {

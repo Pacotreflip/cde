@@ -197,16 +197,24 @@
             confirmButtonText: "Si",
             cancelButtonText: "No",
             confirmButtonColor: "#ec6c62"
-        }, function(isConfirm){
+        }, function(isConfirm){   
             asignacionForm.materiales = [];
             area.materiales.forEach(function (m){
                 if(m.destinos.length !== 0){
                     asignacionForm.materiales.push(m);
                 }
-            });
+            });  
         if (isConfirm) {
             $(".errores").empty();
             $.ajax({
+                beforeSend: function() {
+                    asignacionForm.materiales = [];
+                    area.materiales.forEach(function (m){
+                        if(m.destinos.length !== 0){
+                            asignacionForm.materiales.push(m);
+                        }
+                    });  
+                },
                 url: url,
                 type: "POST",
                 data: asignacionForm,

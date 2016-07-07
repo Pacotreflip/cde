@@ -113,6 +113,7 @@ class TransferenciasController extends Controller
                 ->orWhere('dbo.materiales.numero_parte', 'LIKE', '%'.$request->input('q').'%')
                 ->where('cantidad_existencia', '>', 0)
                 ->select('dbo.materiales.descripcion', 'dbo.materiales.numero_parte')
+                ->distinct('dbo.materiales.id_material')
                 ->get();  
         $data = [];
         foreach($materiales as $material) {
