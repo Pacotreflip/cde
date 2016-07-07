@@ -139,6 +139,7 @@ class Material extends Model
             ->join('materiales','items.id_material','=','materiales.id_material')
             ->where('id_obra', $id_obra)
             ->where('materiales.id_material', $this->id_material)
+            ->where('transacciones.id_transaccion', $this->id_oc)
             ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
                 ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
             ->orderBy('numero_folio', 'DESC')

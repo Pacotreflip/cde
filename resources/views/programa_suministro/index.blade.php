@@ -32,10 +32,51 @@
         </div>
         </div>
     </div>
-    <div class="col-md-4" style="margin-top: 25px">
+    <div class="col-md-2" style="margin-top: 25px">
         <button type="submit" class="btn btn-small btn-info">
             <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
         </button>
+    </div>
+    <div class="col-md-6" >
+        <table class="table">
+            <caption><strong>Simbología</strong></caption>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    No se ha recibido ningún artículo y la fecha esperada de entrega ha sido rebasada
+                </td>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                  <span class="label label-danger">%</span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                     Se han recibido algunos artículos y la fecha esperada de entrega ha sido rebasada
+                </td>
+            </tr>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="alert-info glyphicon glyphicon-certificate"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    No se ha recibido ningún artículo y la fecha esperada de entrega no ha sido rebasada
+                </td>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="label label-info ">%</span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    Se han recibido algunos artículos y la fecha esperada de entrega no ha sido rebasada
+                </td>
+            </tr>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px">
+                    <span class="alert-success glyphicon glyphicon-ok-sign"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    Suministrado Completamente (100%)
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 </form>
@@ -69,23 +110,27 @@
     <td>{{$i++}}</td>
     <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}</a></td>
     @foreach($dias as $dia)
-        @if(in_array($dia->anio_mes_dia,$material->anio_mes_dia_suministro))
-            @if($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
-            <th  style="text-align: center; border: solid 1px #CCC; background: #ffcccc">
+        @if($dia->anio_mes_dia == $material->anio_mes_dia)
+            @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
+            <th  style="text-align: center; border: solid 1px #CCC;">
                 @if($material->getIndiceRecepcionAttribute($id_obra)>0)
-                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
-                    @else
+                <span class="label label-danger">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                    
+                @else
                     <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
                 @endif
             </th>
-            @elseif($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)== 100)
+            @elseif($material->getIndiceRecepcionAttribute($id_obra)== 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
                 <span class="alert-success glyphicon glyphicon-ok-sign"></span>
             </th>
-            @else
+            @elseif($hoy->format("Ymd")<$dia->anio_mes_dia)
                 <th  style="text-align: center; border: solid 1px #CCC">
                     @if($material->getIndiceRecepcionAttribute($id_obra)>0)
-                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
+                    
+                    <span class="label label-info ">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                    @else
+                    <span class="alert-info glyphicon glyphicon-certificate"></span>
                     @endif
                 </th>
             @endif
