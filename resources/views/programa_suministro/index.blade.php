@@ -126,9 +126,12 @@
                             <label>Cantidad Rec.:</label>
                             {{$material->cantidad_recibida}}
                         </div>
-                        <button type="submit" class="btn btn-default btn-block">
-                            Recibir
-                        </button>
+                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
+                                Recibir
+                            </button>
+                        </form>
+                        
                     </div>
                 </div>
                 @else
@@ -140,9 +143,11 @@
                             <label>Cantidad OC:</label>
                             {{$material->cantidad_comprada}}
                         </div>
-                        <button type="submit" class="btn btn-default btn-block">
-                            Recibir
-                        </button>
+                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
+                                Recibir
+                            </button>
+                        </form>
                     </div>
                 </div>
                 @endif
@@ -178,9 +183,11 @@
                                 <label>Cantidad Rec.:</label>
                                 {{$material->cantidad_recibida}}
                             </div>
-<!--                            <button type="submit" class="btn btn-default btn-block">
+                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
                                 Recibir
-                            </button>-->
+                            </button>
+                            </form>
                         </div>
                     </div>
                     @else
@@ -192,7 +199,11 @@
                                 <label>Cantidad OC:</label>
                                 {{$material->cantidad_comprada}}
                             </div>
-                            
+                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                                <button type="submit" class="btn btn-default btn-block recibir">
+                                    Recibir
+                                </button>
+                            </form>
                         </div>
                     </div>
                     @endif
