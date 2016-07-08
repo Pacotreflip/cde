@@ -47,19 +47,19 @@ class RecepcionesController extends Controller
     protected function buscar($busqueda, $howMany = 15)
     {
         return Recepcion::where('id_obra', $this->getIdObra())
-            ->where(function ($query) use ($busqueda) {
-                $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('persona_recibio', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhereHas('empresa', function ($query) use ($busqueda) {
-                        $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
-                    })
-                    ->orWhereHas('compra', function ($query) use($busqueda) {
-                        $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%');
-                    });
-            })
-            ->orderBy('numero_folio', 'DESC')
-            ->paginate($howMany);
+        ->where(function ($query) use ($busqueda) {
+            $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('persona_recibio', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
+                ->orWhereHas('empresa', function ($query) use ($busqueda) {
+                    $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
+                })
+                ->orWhereHas('compra', function ($query) use($busqueda) {
+                    $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%');
+                });
+        })
+        ->orderBy('numero_folio', 'DESC')
+        ->paginate($howMany);
     }
 
     /**

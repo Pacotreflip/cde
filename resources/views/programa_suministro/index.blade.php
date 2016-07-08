@@ -116,58 +116,85 @@
                 @if($material->getIndiceRecepcionAttribute($id_obra)>0)
                 <div class="popover-markup"> 
                     <span class="trigger label label-danger" style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
-                <div class="head hide">Lorem Ipsum</div>
-                <div class="content hide">
-                    <div class="form-group">
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            placeholder="Type something…">
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                         <div class="form-group">
+                            <label>Cantidad Rec.:</label>
+                            {{$material->cantidad_recibida}}
+                        </div>
+                        <button type="submit" class="btn btn-default btn-block">
+                            Recibir
+                        </button>
                     </div>
-                    <button type="submit" class="btn btn-default btn-block">
-                        Submit
-                    </button>
-                </div>
                 </div>
                 @else
                 <div class="popover-markup"> 
                     <span class="alert-danger glyphicon glyphicon-exclamation-sign trigger"  style="cursor: pointer"></span>
-                <div class="head hide">OC #{{$material->folio_oc}}</div>
-                <div class="content hide">
-                    <div class="form-group">
-                        <label>Cantidad:</label>
-                        {{$material->cantidad_comprada}}
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                        <button type="submit" class="btn btn-default btn-block">
+                            Recibir
+                        </button>
                     </div>
-                    <button type="submit" class="btn btn-default btn-block">
-                        Recibir
-                    </button>
-                </div>
                 </div>
                 @endif
             </th>
             @elseif($material->getIndiceRecepcionAttribute($id_obra)== 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
-                <span class="alert-success glyphicon glyphicon-ok-sign"></span>
+                
+                <div class="popover-markup"> 
+                    <span class="alert-success glyphicon glyphicon-ok-sign trigger" style="cursor: pointer"></span>
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                    </div>
+                </div>
             </th>
             @elseif($hoy->format("Ymd")<$dia->anio_mes_dia)
                 <th  style="text-align: center; border: solid 1px #CCC">
                     @if($material->getIndiceRecepcionAttribute($id_obra)>0)
                     
-                    <span class="label label-info ">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                    
+                    <div class="popover-markup"> 
+                        <span class="trigger label label-info " style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <div class="content hide">
+                            <div class="form-group">
+                                <label>Cantidad OC:</label>
+                                {{$material->cantidad_comprada}}
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad Rec.:</label>
+                                {{$material->cantidad_recibida}}
+                            </div>
+<!--                            <button type="submit" class="btn btn-default btn-block">
+                                Recibir
+                            </button>-->
+                        </div>
+                    </div>
                     @else
                     <div class="popover-markup"> 
-                    <span class="alert-info glyphicon glyphicon-certificate trigger"></span>
-                    <div class="head hide">OC #{{$material->folio_oc}}</div>
-                <div class="content hide">
-                    <div class="form-group">
-                        <label>Cantidad:</label>
-                        {{$material->cantidad_comprada}}
+                        <span class="alert-info glyphicon glyphicon-certificate trigger" style="cursor: pointer"></span>
+                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <div class="content hide">
+                            <div class="form-group">
+                                <label>Cantidad OC:</label>
+                                {{$material->cantidad_comprada}}
+                            </div>
+                            
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-default btn-block">
-                        Recibir
-                    </button>
-                </div>
-                </div>
                     @endif
                 </th>
             @endif

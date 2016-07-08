@@ -174,6 +174,23 @@ class Material extends Model
         return number_format($requerido,0,".","");
     }
     
+    public function getCantidadRecibidaAttribute(){
+        $compras =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
+            ->where('materiales.id_material', $this->id_material)
+            ->where('transacciones.id_transaccion', $this->id_oc)
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select(DB::raw('transacciones.id_transaccion,numero_folio,sum(items.cantidad) as cantidad_requerida'))->get() ; 
+        $recibido = 0;
+        foreach($compras as $compra){
+            $recibido += $compra->getCantidadRecibidaMaterial($this->id_material);
+        }
+        return number_format($recibido,0,".","");
+    }
+    
     public function getAnioMesDiaSuministroAttribute(){
         $dias = DB::connection("cadeco")->select(" select 
   
