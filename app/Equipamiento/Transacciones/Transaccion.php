@@ -91,6 +91,16 @@ class Transaccion extends Model
         return $this->recibido();
     }
     
+    public function getCantidadRecibidaMaterial($id_material)
+    {
+        return (float) DB::connection($this->connection)
+            ->table('Equipamiento.recepciones')
+            ->join('Equipamiento.recepcion_items', 'recepciones.id', '=', 'recepcion_items.id_recepcion')
+            ->where('id_orden_compra', $this->id_transaccion)
+            ->where('Equipamiento.recepcion_items.id_material', $id_material)
+            ->sum('cantidad_recibida');
+    }
+    
     public function progressbar_estado_recepcion_class()
     {
         $clase = "";

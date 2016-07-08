@@ -92,6 +92,16 @@ Route::get('compras', 'ComprasController@index')->name('compras.index');
 Route::get('compras/material/{id_material}', 'ComprasController@index_x_material')->name('compras.index_x_material');
 Route::get('compras/{id}', 'ComprasController@show')->name('compras.show');
 
+Route::resource('programa_suministro', 'ProgramaSuministroController', ['names' => [
+    'index' => 'programa_suministro.index',
+    'create' => 'programa_suministro.create',
+    'store' => 'programa_suministro.store',
+    'show' => 'programa_suministro.show',
+    'edit' => 'programa_suministro.edit',
+    'update' => 'programa_suministro.update',
+    'destroy' => 'programa_suministro.destroy'
+]]);
+
 // Rutas de recepcion de articulos...
 Route::get('recepciones', 'RecepcionesController@index')->name('recepciones.index');
 Route::get('recepciones/recibir', 'RecepcionesController@create')->name('recepciones.create');
@@ -218,13 +228,13 @@ Route::group(["middleware" => ['permission:entrega_area']], function () {
     Route::post("/entregas/create", ["as" => "entrega.create.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
     Route::post('entregas/{id}', 'EntregasController@destroy')->name('entregas.delete');
     Route::resource('entregas', 'EntregasController', ['names' => [
-            'index' => 'entregas.index',
-            'create' => 'entregas.create',
-            'store' => 'entregas.store',
-            'show' => 'entregas.show',
-            'edit' => 'entregas.edit',
-            'update' => 'entregas.update',
-            'destroy' => 'entregas.destroy'
+        'index' => 'entregas.index',
+        'create' => 'entregas.create',
+        'store' => 'entregas.store',
+        'show' => 'entregas.show',
+        'edit' => 'entregas.edit',
+        'update' => 'entregas.update',
+        'destroy' => 'entregas.destroy'
     ]]);
 });
 

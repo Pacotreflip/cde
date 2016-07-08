@@ -132,6 +132,82 @@ class Material extends Model
 
         return new TipoMaterial($value);
     }
+    
+    public function getIndiceRecepcionAttribute($id_obra){
+        $compras =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
+            ->where('id_obra', $id_obra)
+            ->where('materiales.id_material', $this->id_material)
+            ->where('transacciones.id_transaccion', $this->id_oc)
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select(DB::raw('transacciones.id_transaccion,numero_folio,sum(items.cantidad) as cantidad_requerida'))->get() ; 
+        $recibido = 0;
+        $requerido = 0;
+        foreach($compras as $compra){
+            $recibido += $compra->getCantidadRecibidaMaterial($this->id_material);
+            $requerido += $compra->cantidad_requerida;
+        }
+        if($requerido>0){
+            return number_format(($recibido/$requerido*100),0,".","");
+        }else{
+            return "";
+        }
+    }
+    
+    public function getCantidadCompradaAttribute(){
+        $compras =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
+            ->where('materiales.id_material', $this->id_material)
+            ->where('transacciones.id_transaccion', $this->id_oc)
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select(DB::raw('transacciones.id_transaccion,numero_folio,sum(items.cantidad) as cantidad_requerida'))->get() ; 
+        $requerido = 0;
+        foreach($compras as $compra){
+            $requerido += $compra->cantidad_requerida;
+        }
+        return number_format($requerido,0,".","");
+    }
+    
+    public function getCantidadRecibidaAttribute(){
+        $compras =  Transaccion::ordenesCompraMateriales()
+            ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
+            ->join('materiales','items.id_material','=','materiales.id_material')
+            ->where('materiales.id_material', $this->id_material)
+            ->where('transacciones.id_transaccion', $this->id_oc)
+            ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
+                ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
+            ->orderBy('numero_folio', 'DESC')
+            ->select(DB::raw('transacciones.id_transaccion,numero_folio,sum(items.cantidad) as cantidad_requerida'))->get() ; 
+        $recibido = 0;
+        foreach($compras as $compra){
+            $recibido += $compra->getCantidadRecibidaMaterial($this->id_material);
+        }
+        return number_format($recibido,0,".","");
+    }
+    
+    public function getAnioMesDiaSuministroAttribute(){
+        $dias = DB::connection("cadeco")->select(" select 
+  
+  convert(varchar(4),year( fecha_entrega)) + 
+case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
+else convert(varchar(4),month( fecha_entrega)) end +
+case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
+else convert(varchar(4),day( fecha_entrega)) end
+  anio_mes_dia
+ from [Equipamiento].[materiales_fechas_entrega]
+where id_material = {$this->id_material};");
+foreach($dias as $dia){
+    $dias_arr[] = $dia->anio_mes_dia;
+}
+
+    return $dias_arr;
+    }
 
     /**
      * Asigna el tipo de material a este material
