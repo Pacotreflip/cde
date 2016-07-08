@@ -14,6 +14,7 @@ class Concepto extends Model
      * @var bool
      */
     protected $primaryKey = 'id_concepto';
+    protected $table = 'conceptos';
     
     public $timestamps = false;
 
@@ -96,5 +97,20 @@ class Concepto extends Model
         return static::where('id_obra', $this->id_obra)
             ->where('nivel', $this->getNivelAncestro())
             ->first();
+    }
+    
+    public function getRutaAttribute(){
+        $nivel = $this->nivel;
+        $no_niveles = strlen($nivel)/4;
+        $niveles_ancestros = array();
+        $largo=4;
+        for($c = 0; $c<$no_niveles; $c++){
+            $nivel_nuevo = substr($nivel, 0, $largo);
+            $ancestro = Concepto::where('nivel', $nivel_nuevo)->where("id_obra", $this->id_obra)->first();
+            $niveles_ancestros[] = $ancestro->descripcion;
+            $largo+=4;
+        }
+        $ruta = implode(" / ", $niveles_ancestros);
+        return $ruta;
     }
 }
