@@ -133,4 +133,8 @@ ORDER BY dbo.transacciones.numero_folio
         
         return  json_decode(json_encode($resultados), true);
     }
+    
+    public function antecedente(){
+        return $this->hasOne(Transaccion::class, "id_transaccion", "id_antecedente");
+    }
 }

@@ -32,10 +32,51 @@
         </div>
         </div>
     </div>
-    <div class="col-md-4" style="margin-top: 25px">
+    <div class="col-md-2" style="margin-top: 25px">
         <button type="submit" class="btn btn-small btn-info">
             <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
         </button>
+    </div>
+    <div class="col-md-6" >
+        <table class="table">
+            <caption><strong>Simbología</strong></caption>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    No se ha recibido ningún artículo y la fecha esperada de entrega ha sido rebasada
+                </td>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                  <span class="label label-danger">%</span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                     Se han recibido algunos artículos y la fecha esperada de entrega ha sido rebasada
+                </td>
+            </tr>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="alert-info glyphicon glyphicon-certificate"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    No se ha recibido ningún artículo y la fecha esperada de entrega no ha sido rebasada
+                </td>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px;">
+                   <span class="label label-info ">%</span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    Se han recibido algunos artículos y la fecha esperada de entrega no ha sido rebasada
+                </td>
+            </tr>
+            <tr>
+                <th  style="text-align: center; border: solid 1px #CCC; width: 16px">
+                    <span class="alert-success glyphicon glyphicon-ok-sign"></span>
+                </th>
+                <td style="border: solid 1px #CCC;">
+                    Suministrado Completamente (100%)
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 </form>
@@ -69,23 +110,102 @@
     <td>{{$i++}}</td>
     <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}</a></td>
     @foreach($dias as $dia)
-        @if(in_array($dia->anio_mes_dia,$material->anio_mes_dia_suministro))
-            @if($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
-            <th  style="text-align: center; border: solid 1px #CCC; background: #ffcccc">
+        @if($dia->anio_mes_dia == $material->anio_mes_dia)
+            @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
+            <th  style="text-align: center; border: solid 1px #CCC;">
                 @if($material->getIndiceRecepcionAttribute($id_obra)>0)
-                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
-                    @else
-                    <span class="alert-danger glyphicon glyphicon-exclamation-sign"></span>
+                <div class="popover-markup"> 
+                    <span class="trigger label label-danger" style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                         <div class="form-group">
+                            <label>Cantidad Rec.:</label>
+                            {{$material->cantidad_recibida}}
+                        </div>
+                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
+                                Recibir
+                            </button>
+                        </form>
+                        
+                    </div>
+                </div>
+                @else
+                <div class="popover-markup"> 
+                    <span class="alert-danger glyphicon glyphicon-exclamation-sign trigger"  style="cursor: pointer"></span>
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
+                                Recibir
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 @endif
             </th>
-            @elseif($hoy->format("Ymd")>$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)== 100)
+            @elseif($material->getIndiceRecepcionAttribute($id_obra)== 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
-                <span class="alert-success glyphicon glyphicon-ok-sign"></span>
+                
+                <div class="popover-markup"> 
+                    <span class="alert-success glyphicon glyphicon-ok-sign trigger" style="cursor: pointer"></span>
+                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="content hide">
+                        <div class="form-group">
+                            <label>Cantidad OC:</label>
+                            {{$material->cantidad_comprada}}
+                        </div>
+                    </div>
+                </div>
             </th>
-            @else
+            @elseif($hoy->format("Ymd")<$dia->anio_mes_dia)
                 <th  style="text-align: center; border: solid 1px #CCC">
                     @if($material->getIndiceRecepcionAttribute($id_obra)>0)
-                    {{$material->getIndiceRecepcionAttribute($id_obra)}}
+                    
+                    
+                    <div class="popover-markup"> 
+                        <span class="trigger label label-info " style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
+                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <div class="content hide">
+                            <div class="form-group">
+                                <label>Cantidad OC:</label>
+                                {{$material->cantidad_comprada}}
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad Rec.:</label>
+                                {{$material->cantidad_recibida}}
+                            </div>
+                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <button type="submit" class="btn btn-default btn-block recibir">
+                                Recibir
+                            </button>
+                            </form>
+                        </div>
+                    </div>
+                    @else
+                    <div class="popover-markup"> 
+                        <span class="alert-info glyphicon glyphicon-certificate trigger" style="cursor: pointer"></span>
+                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <div class="content hide">
+                            <div class="form-group">
+                                <label>Cantidad OC:</label>
+                                {{$material->cantidad_comprada}}
+                            </div>
+                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                                <button type="submit" class="btn btn-default btn-block recibir">
+                                    Recibir
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     @endif
                 </th>
             @endif
@@ -99,5 +219,19 @@
   @endforeach
   </tbody>
   </table>
- 
+  
+@stop
+@section("scripts")
+<script>
+$('.popover-markup>.trigger').popover({
+    html: true,
+    placement: "left",
+    title: function () {
+        return $(this).parent().find('.head').html();
+    },
+    content: function () {
+        return $(this).parent().find('.content').html();
+    }
+});
+</script>
 @stop

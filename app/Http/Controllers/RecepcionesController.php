@@ -47,19 +47,19 @@ class RecepcionesController extends Controller
     protected function buscar($busqueda, $howMany = 15)
     {
         return Recepcion::where('id_obra', $this->getIdObra())
-            ->where(function ($query) use ($busqueda) {
-                $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('persona_recibio', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhereHas('empresa', function ($query) use ($busqueda) {
-                        $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
-                    })
-                    ->orWhereHas('compra', function ($query) use($busqueda) {
-                        $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%');
-                    });
-            })
-            ->orderBy('numero_folio', 'DESC')
-            ->paginate($howMany);
+        ->where(function ($query) use ($busqueda) {
+            $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('persona_recibio', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('observaciones', 'LIKE', '%'.$busqueda.'%')
+                ->orWhereHas('empresa', function ($query) use ($busqueda) {
+                    $query->where('razon_social', 'LIKE', '%'.$busqueda.'%');
+                })
+                ->orWhereHas('compra', function ($query) use($busqueda) {
+                    $query->where('numero_folio', 'LIKE', '%'.$busqueda.'%');
+                });
+        })
+        ->orderBy('numero_folio', 'DESC')
+        ->paginate($howMany);
     }
 
     /**
@@ -69,7 +69,7 @@ class RecepcionesController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function create(Areas $areas)
+    public function create(Areas $areas, $id_oc= 0)
     {
         $proveedores = Proveedor::soloProveedores()
             ->orderBy('razon_social')
@@ -85,6 +85,7 @@ class RecepcionesController extends Controller
         $areas = $areas->getListaAreas();
 
         return view('recepciones.create')
+            ->with("id_oc", $id_oc)
             ->withProveedores($proveedores)
             ->withCompras($compras)
             ->withAreas($areas);
