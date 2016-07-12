@@ -95,14 +95,20 @@ Vue.component('recepcion-screen', {
     },
     
     fetchDestinos: function (material) {
-        console.log(material);
+      material.recibiendo = true;
       if(material.areas_destino.length) {
+        material.recibiendo = false;
         material.areas_destino = [];
         material.destinos = [];
       } else {
         this.$http.get('/api/areas/' + material.id + '/destinos').success(function (destinos) {
-          material.areas_destino = destinos;
+            material.recibiendo = false;
+            material.areas_destino = destinos;
+          if (!destinos.length) {
+           swal('No hay áreas que esperen recibir éste artículo.','','info');
+          }
         }).error(function (error) {
+            material.recibiendo = false;
         });
       }   
     },

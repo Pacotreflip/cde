@@ -52,7 +52,8 @@ class OrdenesCompraController extends ApiController
                 'precio_unitario' => $item->precio_unitario,
                 'cantidad_recibida' => $item->cantidad_recibida,
                 'cantidad_por_recibir' => $item->cantidad_por_recibir,
-                'areas_destino' => []
+                'areas_destino' => [],
+                'recibiendo' => false
             ];
         }
 
