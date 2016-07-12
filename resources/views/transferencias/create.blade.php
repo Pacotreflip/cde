@@ -95,7 +95,7 @@ select {
               <td>
                 <select style="width: 100%" v-select="material.area_destino" name="material[@{{ material.id }}][area_destino]" class="form-control"
                       v-model="material.area_destino">
-                  <option value="@{{ area.id }}" v-for="area in areas_destino">@{{ area.nombre | depth area.depth }}</option>
+                  <option value="@{{ area.id }}" v-for="area in areas_destino">@{{ area.clave }} @{{ area.nombre | depth area.depth }}</option>
                 </select>
               </td>
             </tr>

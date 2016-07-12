@@ -140,6 +140,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('areas', 'Api\AreasController@index');
     Route::get('areas/{id}', 'Api\AreasController@show')
         ->where(['id' => '[0-9]+']);
+    Route::get('areas/{id}/destinos', 'Api\AreasController@destinos')
+        ->where(['id' => '[0-9]+']);
     Route::get('areas/jstree', 'Api\AreasJsTreeController@areas');
     Route::get('areas/{id}/children/jstree', 'Api\AreasJsTreeController@areas')
         ->where(['id' => '[0-9]+']);

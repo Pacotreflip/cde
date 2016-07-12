@@ -6,7 +6,6 @@ use Ghi\Http\Requests;
 use Illuminate\Http\Request;
 use Ghi\Http\Controllers\Api\ApiController;
 use Ghi\Equipamiento\Transacciones\Transaccion;
-use Illuminate\Support\Facades\DB;
 
 class OrdenesCompraController extends ApiController
 {
@@ -53,53 +52,10 @@ class OrdenesCompraController extends ApiController
                 'precio_unitario' => $item->precio_unitario,
                 'cantidad_recibida' => $item->cantidad_recibida,
                 'cantidad_por_recibir' => $item->cantidad_por_recibir,
-                'areas_destino' => $this->getDestinos($item->id_material)
+                'areas_destino' => []
             ];
         }
 
         return $materiales;
-    }
-    
-    protected function getDestinos($id_articulo)
-    {        
-        $destinos = \Ghi\Equipamiento\Areas\Area::with('materialesRequeridos')
-                ->whereHas('materialesRequeridos', function($query) use ($id_articulo) {
-                    $query->where('id_material', '=', $id_articulo);               
-                })
-                ->get()
-                ;
-   
-        $areasDestino = [];
-
-        foreach ($destinos as $destino) {
-            if($this->requerida($destino->id, $id_articulo) - $this->asignada($destino->id, $id_articulo) > 0)
-            {
-                $areasDestino[] = [
-                    'id'                    => $destino->id,
-                    'nombre'                => $destino->nombre,
-                    'ruta'                  => $destino->ruta(),
-                    'cantidad'              => $this->requerida($destino->id, $id_articulo) - $this->asignada($destino->id, $id_articulo),
-                    'recibe'                => null
-                ];
-            }
-        }
-        return ($areasDestino);
-        
-    }
-    
-    protected function requerida($id_area, $id_material) {
-        return DB::connection('cadeco')
-                    ->table('Equipamiento.materiales_requeridos_area')
-                    ->where('id_material', $id_material)
-                    ->where('id_area', $id_area)
-                    ->sum('cantidad_requerida');
-    }
-    
-    protected function asignada($id_area, $id_material) {
-        return DB::connection('cadeco')
-                    ->table('Equipamiento.asignacion_items')
-                    ->where('id_material', $id_material)
-                    ->where('id_area_destino', $id_area)
-                    ->sum('cantidad_asignada');
     }
 }

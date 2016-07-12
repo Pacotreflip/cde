@@ -41730,6 +41730,44 @@ Vue.component('recepcion-screen', {
         this.cargando = false;
       });
     },
+    
+    setDestino: function setDestino(destino, material) {
+      var flag = false;
+      if (!(material.destinos.length)) {
+        if(destino.cantidad.trim()) {
+          material.destinos.push(destino);
+        }
+      } else {
+        material.destinos.forEach(function (d) {
+            if (d.id == destino.id) {
+             if(destino.cantidad.trim()){
+               d = destino;    
+             } else {
+                material.destinos.$remove(d);
+             }
+             flag = true;
+            }
+        });
+        if (flag == false) {
+         if(destino.cantidad.trim()) {
+            material.destinos.push(destino);
+          }  
+        }          
+      } 
+    },
+    
+    fetchDestinos: function fetchDestinos(material) {
+        console.log(material);
+      if(material.areas_destino.length) {
+        material.areas_destino = [];
+        material.destinos = [];
+      } else {
+        this.$http.get('/api/areas/' + material.id + '/destinos').success(function (destinos) {
+          material.areas_destino = destinos;
+        }).error(function (error) {
+        });
+      }   
+    },
 
     /**
      * Calcula la cantidad a recibir de un material de acuerdo
@@ -41737,7 +41775,7 @@ Vue.component('recepcion-screen', {
      */
     cantidadARecibir: function cantidadARecibir(material) {
       return material.destinos.reduce(function (prev, cur) {
-        return prev + cur.cantidad;
+        return parseInt(prev) + parseInt(cur.cantidad);
       }, 0);
     },
 
@@ -42006,7 +42044,7 @@ Vue.component('transferencias-screen', {
         App.setErrorsOnForm(this.transferenciaForm, errors);
       });
     },
-
+    
     /**
      * Envia el request para generar la transferencia.
      */
