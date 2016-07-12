@@ -39,10 +39,10 @@
             <td>{{ $item->material->unidad }}</td>
             <td>{{ $item->cantidad_transferida }}</td>
             <td>
-              @include('partials.path-area', ['area' => $item->origen])
+                {{$item->origen->ruta}}
             </td>
             <td>
-              @include('partials.path-area', ['area' => $item->destino])
+                {{$item->destino->ruta}}
             </td>
           </tr>
         @endforeach
