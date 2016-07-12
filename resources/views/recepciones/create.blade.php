@@ -145,23 +145,21 @@
                     <div 
                         v-show="material.cantidad_por_recibir"
                         v-if="recepcionForm.opcion_recepcion == 'asignar'">
-                        <button v-if="material.areas_destino.length" v-on:click="showList(material.id)" v-el:showListButton class="btn btn-success btn-xs">Asignar destinos</button>
-                        <button v-else class="btn btn-danger btn-xs" disabled>No hay destinos</button>
-                        
+                        <button v-on:click="fetchDestinos(material)" v-el:showListButton class="btn btn-success btn-xs">Asignar destinos</button>                        
                     </div>
                   </td>  
                 </tr>
                 <tr class="success" v-el:destinosList
                     v-if="recepcionForm.opcion_recepcion == 'asignar'"
                     v-for="destino in material.areas_destino">
-                    <td colspan = "7" align="right"><strong>@{{destino.ruta}}</strong> (Pendientes @{{destino.cantidad}})</td>
-                    <td><input v-model="destino.recibe" type="number" class="form-control"></td>
+                    <td colspan = "7" align="right"><strong>@{{destino.ruta}}</strong> (Pendientes @{{destino.requiere}})</td>
+                    <td><input v-on:keyup="setDestino(destino, material)" v-model="destino.cantidad" type="number" class="form-control"></td>
                 </tr>
               </tbody>
             </table>
-             <pre>
-              @{{ $data.compra | json }}
-            </pre> 
+             {{-- <pre>
+              @{{ $data.compra.materiales | json }}
+            </pre> --}}
           </section>
         </section>
       </section>
