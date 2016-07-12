@@ -19,7 +19,7 @@
                 <!-- Orden Compra Form Input -->
                 <div class="form-group">
                   {!! Form::label('orden_compra', '*Folio Orden de Compra:') !!}
-                  {!! Form::select('orden_compra', $compras, null, ['class' => 'form-control', 'required', 
+                  {!! Form::select('orden_compra', $compras, $id_oc, ['class' => 'form-control', 'required', 
                     'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}
                 </div>
               </div>

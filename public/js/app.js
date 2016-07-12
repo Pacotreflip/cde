@@ -41703,6 +41703,9 @@ Vue.component('recepcion-screen', {
       });
     }
   },
+  ready: function() {
+      this.fetchMateriales();
+  },
 
   methods: {
     /**

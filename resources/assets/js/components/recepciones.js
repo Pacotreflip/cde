@@ -31,10 +31,12 @@ Vue.component('recepcion-screen', {
   components: {
     'selector-destinos': require('./selector-destinos.js')
   },
-
+  ready: function() {
+      this.fetchMateriales();
+  },
   computed: {
-    articulosARecibir () {
-      return this.compra.materiales.filter(function(material) {
+    articulosARecibir: function articulosARecibir() {
+      return this.compra.materiales.filter(function (material) {
         return material.destinos.length;
       });
     }

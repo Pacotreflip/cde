@@ -104,6 +104,7 @@ Route::resource('programa_suministro', 'ProgramaSuministroController', ['names' 
 
 // Rutas de recepcion de articulos...
 Route::get('recepciones', 'RecepcionesController@index')->name('recepciones.index');
+Route::get('recepciones/recibir/{id_oc}', 'RecepcionesController@create')->name('recepciones.create');
 Route::get('recepciones/recibir', 'RecepcionesController@create')->name('recepciones.create');
 Route::post('recepciones', 'RecepcionesController@store')->name('recepciones.store');
 Route::get('recepciones/{id}', 'RecepcionesController@show')->name('recepciones.show');

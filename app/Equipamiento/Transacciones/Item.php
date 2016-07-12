@@ -117,4 +117,20 @@ class Item extends Model
     {
         return ($this->cantidad_por_recibir - $cantidad) >= 0;
     }
+    
+    public function concepto(){
+        return $this->hasOne(\Ghi\Equipamiento\Areas\Concepto::class, "id_concepto", "id_concepto");
+    }
+    
+    public function antecedente(){
+        return $this->hasOne(Item::class, "id_item", "item_antecedente");
+    }
+    
+    public function entregas(){
+        return $this->hasMany(Entrega::class, "id_item", "id_item");
+    }
+    
+    public function getRutaConceptoAttribute(){
+        return $this->concepto->ruta;
+    }
 }

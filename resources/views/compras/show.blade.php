@@ -7,8 +7,14 @@
   <p class="well">
     <strong>No. Folio:</strong>
     {{ $compra->numero_folio }} <br><br>
+    
+    <strong>No. Folio Solicitud:</strong>
+    {{ $compra->antecedente->numero_folio }} <br><br>
 
     <strong>Fecha:</strong>
+    {{ $compra->fecha->format('d-m-Y') }} <span class="text-muted">({{ $compra->fecha->diffForHumans() }})</span> <br><br>
+    
+    <strong>Fecha Acordada Entrega:</strong>
     {{ $compra->fecha->format('d-m-Y') }} <span class="text-muted">({{ $compra->fecha->diffForHumans() }})</span> <br><br>
     
     <strong>Proveedor:</strong>
@@ -29,6 +35,7 @@
           <th>Adquirido</th>
           <th>Precio</th>
           <th>Importe</th>
+          <th>Concepto</th>
           <th>Recibido</th>
           <th>% Recibido</th>
         </tr>
@@ -41,6 +48,7 @@
                 <td>{{ $item->cantidad }}</td>
                 <td>{{ number_format($item->precio_unitario,2) }}</td>
                 <td>{{ number_format($item->importe,2) }}</td>
+                <td>{{ $item->antecedente->entregas[0]->concepto->ruta }}</td>
                 <td>{{ $item->cantidad_recibida }}</td>
                 <td>
                 @if($item->cantidad > 0)
