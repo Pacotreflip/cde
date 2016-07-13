@@ -41318,8 +41318,8 @@ Vue.component('asignacion-screen', {
       this.compra = { materiales: [] };
 
       this.asignacionForm.materiales = [];
-     
-        this.$http.get('/api/areas/' + id_area).success(function (area) {
+
+      this.$http.get('/api/areas/' + id_area).success(function (area) {
         this.ruta_area = area.ruta;
         this.asignacionForm.nombre_area = area.nombre;
         this.cargando = false;
@@ -41695,16 +41695,15 @@ Vue.component('recepcion-screen', {
   components: {
     'selector-destinos': require('./selector-destinos.js')
   },
-
+  ready: function ready() {
+    this.fetchMateriales();
+  },
   computed: {
     articulosARecibir: function articulosARecibir() {
       return this.compra.materiales.filter(function (material) {
         return material.destinos.length;
       });
     }
-  },
-  ready: function() {
-      this.fetchMateriales();
   },
 
   methods: {
@@ -41733,49 +41732,49 @@ Vue.component('recepcion-screen', {
         this.cargando = false;
       });
     },
-    
+
     setDestino: function setDestino(destino, material) {
       var flag = false;
-      if (!(material.destinos.length)) {
-        if(destino.cantidad.trim()) {
+      if (!material.destinos.length) {
+        if (destino.cantidad.trim()) {
           material.destinos.push(destino);
         }
       } else {
         material.destinos.forEach(function (d) {
-            if (d.id == destino.id) {
-             if(destino.cantidad.trim()){
-               d = destino;    
-             } else {
-                material.destinos.$remove(d);
-             }
-             flag = true;
+          if (d.id == destino.id) {
+            if (destino.cantidad.trim()) {
+              d = destino;
+            } else {
+              material.destinos.$remove(d);
             }
+            flag = true;
+          }
         });
         if (flag == false) {
-         if(destino.cantidad.trim()) {
+          if (destino.cantidad.trim()) {
             material.destinos.push(destino);
-          }  
-        }          
-      } 
+          }
+        }
+      }
     },
-    
+
     fetchDestinos: function fetchDestinos(material) {
       material.recibiendo = true;
-      if(material.areas_destino.length) {
+      if (material.areas_destino.length) {
         material.recibiendo = false;
         material.areas_destino = [];
         material.destinos = [];
       } else {
         this.$http.get('/api/areas/' + material.id + '/destinos').success(function (destinos) {
-            material.recibiendo = false;
-            material.areas_destino = destinos;
+          material.recibiendo = false;
+          material.areas_destino = destinos;
           if (!destinos.length) {
-           swal('No hay áreas que esperen recibir éste artículo.','','info');
+            swal('No hay áreas que esperen recibir éste artículo.', '', 'info');
           }
         }).error(function (error) {
-            material.recibiendo = false;
+          material.recibiendo = false;
         });
-      }   
+      }
     },
 
     /**
@@ -41950,23 +41949,22 @@ Vue.directive('select', {
   twoWay: true,
   priority: 1000,
   params: ['options'],
-  bind: function () {
+  bind: function bind() {
     $(this.el).select2({
       "placeholder": "Teclee el nombre del area",
       "language": {
-        "noResults": function(){
+        "noResults": function noResults() {
           return "No se encontraron resultados";
         }
       }
-    })
-    .on("select2:select", function(e) {
+    }).on("select2:select", (function (e) {
       this.set($(this.el).val());
-    }.bind(this));
+    }).bind(this));
   },
-  update: function (value) {
+  update: function update(value) {
     $(this.el).val(value).trigger('change');
   },
-  unbind: function () {
+  unbind: function unbind() {
     $(this.el).off().select2('destroy');
   }
 });
@@ -42053,7 +42051,7 @@ Vue.component('transferencias-screen', {
         App.setErrorsOnForm(this.transferenciaForm, errors);
       });
     },
-    
+
     /**
      * Envia el request para generar la transferencia.
      */
