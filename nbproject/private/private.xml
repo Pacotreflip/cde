@@ -3,12 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/resources/views/transferencias/create.blade.php</file>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/resources/views/asignaciones/create.blade.php</file>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/app/Http/Controllers/TransferenciasController.php</file>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/app/Http/Controllers/AsignacionesController.php</file>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/app/Http/routes.php</file>
-            <file>file:/C:/xampp/htdocs/control-equipamiento/app/Equipamiento/Areas/Areas.php</file>
+            <file>file:/C:/xampp/htdocs/control-equipamiento/resources/views/recepciones/create.blade.php</file>
         </group>
     </open-files>
 </project-private>

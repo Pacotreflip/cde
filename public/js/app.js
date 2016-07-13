@@ -41733,6 +41733,50 @@ Vue.component('recepcion-screen', {
         this.cargando = false;
       });
     },
+    
+    setDestino: function setDestino(destino, material) {
+      var flag = false;
+      if (!(material.destinos.length)) {
+        if(destino.cantidad.trim()) {
+          material.destinos.push(destino);
+        }
+      } else {
+        material.destinos.forEach(function (d) {
+            if (d.id == destino.id) {
+             if(destino.cantidad.trim()){
+               d = destino;    
+             } else {
+                material.destinos.$remove(d);
+             }
+             flag = true;
+            }
+        });
+        if (flag == false) {
+         if(destino.cantidad.trim()) {
+            material.destinos.push(destino);
+          }  
+        }          
+      } 
+    },
+    
+    fetchDestinos: function fetchDestinos(material) {
+      material.recibiendo = true;
+      if(material.areas_destino.length) {
+        material.recibiendo = false;
+        material.areas_destino = [];
+        material.destinos = [];
+      } else {
+        this.$http.get('/api/areas/' + material.id + '/destinos').success(function (destinos) {
+            material.recibiendo = false;
+            material.areas_destino = destinos;
+          if (!destinos.length) {
+           swal('No hay áreas que esperen recibir éste artículo.','','info');
+          }
+        }).error(function (error) {
+            material.recibiendo = false;
+        });
+      }   
+    },
 
     /**
      * Calcula la cantidad a recibir de un material de acuerdo
@@ -41740,7 +41784,7 @@ Vue.component('recepcion-screen', {
      */
     cantidadARecibir: function cantidadARecibir(material) {
       return material.destinos.reduce(function (prev, cur) {
-        return prev + cur.cantidad;
+        return parseInt(prev) + parseInt(cur.cantidad);
       }, 0);
     },
 
@@ -41781,7 +41825,7 @@ Vue.component('recepcion-screen', {
       this.recepcionForm.materiales = this.articulosARecibir;
 
       this.$http.post('/recepciones', this.recepcionForm).success(function (response) {
-       window.location = response.path;
+        window.location = response.path;
       }).error(function (errors) {
         this.recibiendo = false;
         App.setErrorsOnForm(this.recepcionForm, errors);
@@ -41902,6 +41946,31 @@ Vue.filter('depth', function (value, depth) {
   return '-'.repeat(depth) + value;
 });
 
+Vue.directive('select', {
+  twoWay: true,
+  priority: 1000,
+  params: ['options'],
+  bind: function () {
+    $(this.el).select2({
+      "placeholder": "Teclee el nombre del area",
+      "language": {
+        "noResults": function(){
+          return "No se encontraron resultados";
+        }
+      }
+    })
+    .on("select2:select", function(e) {
+      this.set($(this.el).val());
+    }.bind(this));
+  },
+  update: function (value) {
+    $(this.el).val(value).trigger('change');
+  },
+  unbind: function () {
+    $(this.el).off().select2('destroy');
+  }
+});
+
 Vue.component('transferencias-screen', {
 
   data: function data() {
@@ -41984,7 +42053,7 @@ Vue.component('transferencias-screen', {
         App.setErrorsOnForm(this.transferenciaForm, errors);
       });
     },
-
+    
     /**
      * Envia el request para generar la transferencia.
      */

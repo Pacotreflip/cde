@@ -1,5 +1,11 @@
 @extends('layout')
-
+@section('styles')
+<style>
+select {
+  min-width: 300px;
+}
+</style>
+@stop
 @section('content')
   <h1>Nueva Transferencia</h1>
   <hr>
@@ -72,7 +78,7 @@
               <th>Unidad</th>
               <th>Existencia</th>
               <th>Cantidad</th>
-              <th>Destino</th>
+              <th style="width: 20%">Destino</th>
             </tr>
           </thead>
           <tbody>
@@ -87,9 +93,9 @@
                        v-model="material.cantidad">
               </td>
               <td>
-                <select name="material[@{{ material.id }}][area_destino]" class="form-control"
-                        v-model="material.area_destino">
-                  <option value="@{{ area.id }}" v-for="area in areas_destino">@{{ area.nombre | depth area.depth }}</option>
+                <select style="width: 100%" v-select="material.area_destino" name="material[@{{ material.id }}][area_destino]" class="form-control"
+                      v-model="material.area_destino">
+                  <option value="@{{ area.id }}" v-for="area in areas_destino">@{{ area.clave }} @{{ area.nombre | depth area.depth }}</option>
                 </select>
               </td>
             </tr>
@@ -108,7 +114,7 @@
     </transferencias-screen>
   </div>
 @stop
-@section('scripts')
+@section('scripts')   
 <script>
     $.ajaxSetup({
         headers:{
@@ -128,16 +134,41 @@
                 response( data );
               }
           });
+        },
+        select: function(){
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('transferir.filtrar') }}",
+                data: {b: $('#filtro').val()},
+                dataType  : 'JSON',
+                beforeSend: function() {
+                    $('#area_origen').empty();
+                },
+                success: function(data) {
+                    $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
+                    data.forEach(function(area){
+                        $('#area_origen').append('<option value="'+ area.id_area +'">'+ area.ruta + '</option>');
+                    });
+                },
+                afterSend: function(data) {
+                    console.log(data);
+                },
+                error: function(xhr, responseText, thrownError) {   
+                    console.log(responseText); 
+                }
+            });
         }
     });               
     $('#buscarArticulo').off().on('click', function (e){
         e.preventDefault();
-        $('#area_origen').empty();
         $.ajax({
             type: 'POST',
             url: "{{ route('transferir.filtrar') }}",
             data: {b: $('#filtro').val()},
             dataType  : 'JSON',
+            beforeSend: function() {
+                $('#area_origen').empty();
+            },
             success: function(data) {
                 $('#area_origen').append('<option value="" disabled selected>-- SELECCIONAR --</option>');
                 data.forEach(function(area){
