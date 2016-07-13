@@ -1,5 +1,5 @@
 Vue.component('recepcion-screen', {
-  
+
   data:function () {
     return {
       recepcionForm: {
@@ -53,20 +53,64 @@ Vue.component('recepcion-screen', {
 
       this.$http.get('/api/ordenes-compra/' + this.recepcionForm.orden_compra)
           .success(function (response) {
-            this.cargando = false;
-            this.recepcionForm.proveedor = response.proveedor.id_empresa;
+        this.cargando = false;
+        this.recepcionForm.proveedor = response.proveedor.id_empresa;
 
-            response.materiales.forEach(function (material) {
-              material.destinos = [];
-            });
-            
-            this.compra = response;
+        response.materiales.forEach(function (material) {
+          material.destinos = [];
+        });
+
+        this.compra = response;
 
             this.$nextTick(() => { $('[data-toggle="tooltip"]').tooltip() });
           })
           .error(function (errors) {
-            this.cargando = false;
-          });
+        this.cargando = false;
+      });
+    },
+    
+    setDestino: function (destino, material) {
+      var flag = false;
+      if (!(material.destinos.length)) {
+        if(destino.cantidad.trim()) {
+          material.destinos.push(destino);
+        }
+      } else {
+        material.destinos.forEach(function (d) {
+            if (d.id == destino.id) {
+             if(destino.cantidad.trim()){
+               d = destino;    
+             } else {
+                material.destinos.$remove(d);
+             }
+             flag = true;
+            }
+        });
+        if (flag == false) {
+         if(destino.cantidad.trim()) {
+            material.destinos.push(destino);
+          }  
+        }          
+      } 
+    },
+    
+    fetchDestinos: function (material) {
+      material.recibiendo = true;
+      if(material.areas_destino.length) {
+        material.recibiendo = false;
+        material.areas_destino = [];
+        material.destinos = [];
+      } else {
+        this.$http.get('/api/areas/' + material.id + '/destinos').success(function (destinos) {
+            material.recibiendo = false;
+            material.areas_destino = destinos;
+          if (!destinos.length) {
+           swal('No hay áreas que esperen recibir éste artículo.','','info');
+          }
+        }).error(function (error) {
+            material.recibiendo = false;
+        });
+      }   
     },
 
     /**
@@ -75,7 +119,7 @@ Vue.component('recepcion-screen', {
      */
     cantidadARecibir: function (material) {
       return material.destinos.reduce((prev, cur) => {
-        return prev + cur.cantidad;
+        return parseInt(prev) + parseInt(cur.cantidad);
       }, 0);
     },
 
@@ -93,8 +137,8 @@ Vue.component('recepcion-screen', {
       e.preventDefault();
 
       swal({
-        title: "¿Desea continuar?", 
-        text: "¿Esta seguro de que la información es correcta?", 
+        title: "¿Desea continuar?",
+        text: "¿Esta seguro de que la información es correcta?",
         type: "warning",
         showCancelButton: true,
         confirmButtonText: "Si",
@@ -113,12 +157,12 @@ Vue.component('recepcion-screen', {
 
       this.$http.post('/recepciones', this.recepcionForm)
           .success(function (response) {
-            window.location = response.path;
+        window.location = response.path;
           })
           .error(function (errors) {
-            this.recibiendo = false;
-            App.setErrorsOnForm(this.recepcionForm, errors);
-          });
+        this.recibiendo = false;
+        App.setErrorsOnForm(this.recepcionForm, errors);
+      });
     }
   }
 });

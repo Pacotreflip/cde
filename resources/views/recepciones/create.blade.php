@@ -5,9 +5,9 @@
   <hr>
   
   @include('partials.errors')
-
   <div id="app">
     <recepcion-screen inline-template>
+
     <div>
       <form action="{{ route('recepciones.store') }}" method="POST" accept-charset="UTF-8" @submit="recibir">
         <input name="_token" type="hidden" value="{{ csrf_token() }}">
@@ -106,11 +106,11 @@
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr 
+              <tbody
                   v-for="material in compra.materiales"
                   v-bind:class="{ 'danger': cantidadARecibir(material) > material.cantidad_por_recibir }"
-                >
+              >
+                <tr>
                   <td>
                     <i
                       class="fa fa-check-circle text-success"
@@ -137,15 +137,31 @@
                   </td>
                   <td>
                     <selector-destinos
-                      v-if="material.cantidad_por_recibir"
+                      v-show="material.cantidad_por_recibir"
+                      v-if="recepcionForm.opcion_recepcion == 'almacenar'"
                       v-bind:destinos.sync="material.destinos"
                       v-bind:material="material"
                     ></selector-destinos>
-                  </td>
+                    <div 
+                        v-show="material.cantidad_por_recibir"
+                        v-if="recepcionForm.opcion_recepcion == 'asignar'">
+                        <button v-on:click="fetchDestinos(material)" v-el:showListButton class="btn btn-success btn-xs">
+                            
+                            <span v-if="material.recibiendo == true"><i class="fa fa-spinner fa-spin"></i> Cargando...</span>
+                            <span v-else>Asignar destinos</span>
+                        </button>                        
+                    </div>
+                  </td>  
+                </tr>
+                <tr class="success" v-el:destinosList
+                    v-if="recepcionForm.opcion_recepcion == 'asignar'"
+                    v-for="destino in material.areas_destino">
+                    <td colspan = "7" align="right"><strong>@{{destino.ruta}}</strong> (Pendientes @{{destino.requiere}})</td>
+                    <td><input v-on:keyup="setDestino(destino, material)" v-model="destino.cantidad" type="number" class="form-control"></td>
                 </tr>
               </tbody>
             </table>
-            {{-- <pre>
+             {{-- <pre>
               @{{ $data.compra.materiales | json }}
             </pre> --}}
           </section>
@@ -162,7 +178,7 @@
           <span v-else><i class="fa fa-check-circle"></i> Recibir Artículos</span>
         </button>
       </div>
-    </div>
+      </div>
     </recepcion-screen>
   </div>
 @stop
