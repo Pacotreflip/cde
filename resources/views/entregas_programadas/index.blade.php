@@ -36,10 +36,10 @@
                   <tbody>
                       @foreach($item->entregasProgramadas as $entrega_programada)
                       <tr>
-                          <td>{{ $entrega_programada->fecha_entrega }}</td>
+                          <td>{{ $entrega_programada->fecha_entrega->format('d-m-Y') }}</td>
                           <td>{{ $entrega_programada->cantidad_programada }}</td>
                           <td>{{ $entrega_programada->usuario_registro->present()->nombreCompleto }}</td>
-                          <td>{{ $entrega_programada->created_at }}</td>
+                          <td>{{ $entrega_programada->created_at->format('d-m-Y h:i:s') }}</td>
                           <td class="text-center">
                               <button class="btn btn-xs btn-danger" onclick="borrar('{{$entrega_programada->id}}', this)"><i class="fa fa-times"></i></button>
                               <button class="btn btn-xs btn-info"><i class="fa fa-pencil"></i></button>
