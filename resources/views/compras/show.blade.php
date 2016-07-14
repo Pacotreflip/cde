@@ -45,7 +45,7 @@
               <tr>
                 <td>{{ $item->material->descripcion }}</td>
                 <td>{{ $item->unidad }}</td>
-                <td>{{ $item->cantidad }}</td>
+                <td><a onclick="showModal('{{ route('entregas_programadas.index' ['id_item' => $item->id_item]) }}')" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
                 <td>{{ number_format($item->precio_unitario,2) }}</td>
                 <td>{{ number_format($item->importe,2) }}</td>
                 <td>{{ $item->antecedente->entregas[0]->concepto->ruta }}</td>
@@ -69,6 +69,27 @@
           @endforeach
       </tbody>
     </table>
+      <div id="modal">
+          
+      </div>
   </div>
 @include('pdf/modal', ['modulo' => 'compras', 'titulo' => 'Compra de Artículos', 'ruta' => route('pdf.compras', $compra),])
+@include('compras/partials/entregas_programadas_modal')
+@stop
+@section('scripts')
+<script>
+  $('.adquirido').tooltip();
+  function showModal(ruta) {
+      $.ajax({
+        url: ruta,
+        success: function (source) {
+          $('#modal').html(source);
+          $('#entregas_programadas_modal').modal('show');
+        },
+        error: function (error) {
+          console.log(error);
+        }
+      });
+  }
+</script>
 @stop

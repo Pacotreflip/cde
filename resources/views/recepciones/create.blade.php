@@ -146,7 +146,6 @@
                         v-show="material.cantidad_por_recibir"
                         v-if="recepcionForm.opcion_recepcion == 'asignar'">
                         <button v-on:click="fetchDestinos(material)" v-el:showListButton class="btn btn-success btn-xs">
-                            
                             <span v-if="material.recibiendo == true"><i class="fa fa-spinner fa-spin"></i> Cargando...</span>
                             <span v-else>Asignar destinos</span>
                         </button>                        

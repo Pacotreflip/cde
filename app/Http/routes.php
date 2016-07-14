@@ -261,3 +261,4 @@ Route::post("reportes/materiales_orden_compra/resultado/descarga_excel", "Report
 Route::get('reportes/materiales_oc_vs_materiales_req', 'ReportesController@index_reporte_materiales_oc_vs_materiales_req')->name('reportes.materiales_oc_vs_materiales_req');
 Route::post("reportes/materiales_oc_vs_materiales_req/resultado/descarga_excel", "ReportesController@materialesOCVSREQDescargaExcel")->name('reportes.materiales_oc_vs_materiales_req_xls');
 
+Route::get('entregas_programadas/index/{id_item}')->name('entregas_programadas.index');
