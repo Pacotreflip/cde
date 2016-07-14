@@ -45,7 +45,7 @@
               <tr>
                 <td>{{ $item->material->descripcion }}</td>
                 <td>{{ $item->unidad }}</td>
-                <td><a onclick="showModal('{{ route('entregas_programadas.index' ['id_item' => $item->id_item]) }}')" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
+                <td><a onclick="showModal('{{ route('entregas_programadas.index', ['id_item' => $item->id_item]) }}')" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
                 <td>{{ number_format($item->precio_unitario,2) }}</td>
                 <td>{{ number_format($item->importe,2) }}</td>
                 <td>{{ $item->antecedente->entregas[0]->concepto->ruta }}</td>
@@ -74,11 +74,18 @@
       </div>
   </div>
 @include('pdf/modal', ['modulo' => 'compras', 'titulo' => 'Compra de Artículos', 'ruta' => route('pdf.compras', $compra),])
-@include('compras/partials/entregas_programadas_modal')
 @stop
 @section('scripts')
 <script>
   $('.adquirido').tooltip();
+  $(function () {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': App.csrfToken
+      }
+    });
+  });
+  
   function showModal(ruta) {
       $.ajax({
         url: ruta,
@@ -89,6 +96,39 @@
         error: function (error) {
           console.log(error);
         }
+      });
+  }
+  
+  function borrar(id, element) {
+      swal({   
+          title: "¿Eliminar Entrega Programada?",   
+          type: "warning",   
+          showCancelButton: true,   
+          confirmButtonText: "Si, eliminar",
+          cancelButtonText: "No, cancelar",
+          closeOnConfirm: false,   
+          showLoaderOnConfirm: true
+      }, 
+      function(){   
+          $.ajax({
+            url: App.host + '/entregas_programadas/' + id,
+            method: 'DELETE',
+            success: function(response) {
+                $(element).closest('tr').remove();
+                $('#totalProgramado').text(response.totalProgramado);
+                $('#cantidad').text(response.cantidad);
+                $('#faltante').text(response.faltante);
+                swal({
+                    type: "info",
+                    title: response.Mensaje,   
+                    timer: 1000,   
+                    showConfirmButton: false 
+                });
+            },
+            error: function(error) {
+                console.log(error);
+            }
+          });
       });
   }
 </script>

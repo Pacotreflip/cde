@@ -16,7 +16,7 @@ class CreateTableEntregasProgramadas extends Migration
             $table->increments('id');
             $table->integer('id_item')->unsigned();
             $table->float('cantidad_programada');
-            $table->float('cantidad_recibida');
+            $table->float('cantidad_recibida')->nullable();
             $table->date('fecha_entrega');
             $table->text('observaciones');
             $table->integer('id_usuario')->nullable();

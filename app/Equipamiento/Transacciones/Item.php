@@ -133,4 +133,21 @@ class Item extends Model
     public function getRutaConceptoAttribute(){
         return $this->concepto->ruta;
     }
+    
+    /**
+     * Entregas programadas relacionadas con este item
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function entregasProgramadas(){
+        return $this->hasMany(EntregaProgramada::class, 'id_item', 'id_item');
+    }
+    
+    public function totalProgramado() {
+        $totalProgramado = 0;
+        foreach($this->entregasProgramadas as $entrega_programada) {
+            $totalProgramado += $entrega_programada->cantidad_programada;
+        }
+        return $totalProgramado;
+    }
 }

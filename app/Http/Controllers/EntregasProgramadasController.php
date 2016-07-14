@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use Ghi\Http\Requests;
 use Ghi\Http\Controllers\Controller;
+use Ghi\Equipamiento\Transacciones\Item;
+use Ghi\Equipamiento\Transacciones\EntregaProgramada;
 
 class EntregasProgramadasController extends Controller
 {
@@ -14,9 +16,10 @@ class EntregasProgramadasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id_item)
     {
-        //
+        return view('entregas_programadas.index')
+                ->withItem(Item::find($id_item));
     }
 
     /**
@@ -26,7 +29,7 @@ class EntregasProgramadasController extends Controller
      */
     public function create()
     {
-        //
+        return view('entregas_programadas.create');
     }
 
     /**
@@ -82,6 +85,16 @@ class EntregasProgramadasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $entrega_programada = EntregaProgramada::find($id);
+        $item = Item::find($entrega_programada->id_item);
+        
+        EntregaProgramada::destroy($id);
+        
+        return response()->json([
+            'Mensaje' => 'Entrega eliminada',
+            'cantidad' => $item->cantidad,
+            'totalProgramado' => $item->totalProgramado(),
+            'faltante' => $item->cantidad - $item->totalProgramado()
+        ]);
     }
 }
