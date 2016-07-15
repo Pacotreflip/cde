@@ -5,7 +5,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Entregas Programadas</h4>
       </div>
-      <div class="modal-body">
+        <div class="modal-body" id="modal-body">
           <h4>{{ $item->material->descripcion }}</h4>
           <hr>
           <div class="row">
@@ -19,7 +19,7 @@
                 <p>Faltante: <strong id="faltante">{{ $item->cantidad - $item->totalProgramado() }}</strong></p>                  
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12 text-center">
-              <a href="#" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Agregar</a>
+                <button class="btn btn-success pull-right" onclick="agregar('{{ $item->id_item }}')"><i class="fa fa-plus"></i> Agregar</button>
             </div>
           </div>
           <div class="table-responsive">
@@ -51,7 +51,7 @@
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

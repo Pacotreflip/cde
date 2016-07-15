@@ -263,3 +263,5 @@ Route::post("reportes/materiales_oc_vs_materiales_req/resultado/descarga_excel",
 
 Route::get('entregas_programadas/index/{id_item}', 'EntregasProgramadasController@index')->name('entregas_programadas.index');
 Route::delete('entregas_programadas/{id}', 'EntregasProgramadasController@destroy')->name('entregas_programadas.delete');
+Route::get('entregas_programadas/create/{id_item}', 'EntregasProgramadasController@create')->name('entregas_programadas.create');
+Route::post('entregas_programadas/store/{id_item}', 'EntregasProgramadasController@store')->name('entregas_programadas.store');

@@ -27,6 +27,15 @@
     <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
     <script src="{{ asset("js/loadingoverlay.js") }}"></script>
     <script src="{{ asset("js/select2.full.js") }}"></script>
+    <script>
+      $(function () {
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });    
+      });
+    </script>
     @yield('scripts')
   </body>
 </html>
