@@ -8,9 +8,20 @@ use Ghi\Http\Requests;
 use Ghi\Http\Controllers\Controller;
 use Ghi\Equipamiento\Transacciones\Item;
 use Ghi\Equipamiento\Transacciones\EntregaProgramada;
+use Carbon\Carbon;
+use Ghi\Http\Requests\CreateEntregaProgramadaRequest;
+
 
 class EntregasProgramadasController extends Controller
 {
+    
+    public function __construct() {
+        
+        $this->middleware('auth');
+        $this->middleware('context');
+        
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -27,9 +38,18 @@ class EntregasProgramadasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id_item)
     {
-        return view('entregas_programadas.create');
+        $item = Item::find($id_item);
+        $faltante = $item->cantidad - $item->totalProgramado();
+        if ($faltante == 0) {
+            return response()->json(['error' => 'error']);
+        }
+        
+        $fecha_entrega = Carbon::now()->toDateString();
+        return view('entregas_programadas.create')
+                ->withItem(Item::find($id_item))
+                ->withFecha_entrega($fecha_entrega);
     }
 
     /**
@@ -38,9 +58,18 @@ class EntregasProgramadasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateEntregaProgramadaRequest $request, $id_item)
     {
-        //
+        $item = Item::find($id_item);        
+        EntregaProgramada::create([
+            'id_item' => $item->id_item,
+            'cantidad_programada' => $request->input('cantidad'),
+            'fecha_entrega' => Carbon::parse($request->input('fecha_entrega'))->toDateString(),
+            'observaciones' => $request->input('observaciones'),
+            'id_usuario' => auth()->user()->idusuario
+        ]);
+       
+       return response()->json(['Mensaje' => 'Registro exitoso de fecha de entrega']);
     }
 
     /**

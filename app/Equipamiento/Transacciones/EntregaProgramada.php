@@ -27,6 +27,15 @@ class EntregaProgramada extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    
+    protected $fillable = [
+        'id_item',
+        'cantidad_programada',
+        'fecha_entrega',
+        'observaciones',
+        'id_usuario'
+    ];
+    
     public function items() {
         return $this->belongsTo(Item::class, 'id_item', 'id_item');
     }
