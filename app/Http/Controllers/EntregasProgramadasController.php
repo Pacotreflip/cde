@@ -11,10 +11,8 @@ use Ghi\Equipamiento\Transacciones\EntregaProgramada;
 use Carbon\Carbon;
 use Ghi\Http\Requests\CreateEntregaProgramadaRequest;
 
-
 class EntregasProgramadasController extends Controller
-{
-    
+{   
     public function __construct() {
         
         $this->middleware('auth');

@@ -78,17 +78,12 @@
 @section('scripts')
 <script>
     $('.adquirido').tooltip(); 
- 
     $('.adquirido').off().on('click', function () {
        showModal($(this).attr('ruta')) 
     });
     
     function showModal(ruta) {
       $.ajax({
-        beforeSend: function() {
-        },
-        afterSend: function() {
-        },
         url: ruta,
         success: function (source) {
           $('#modal').html(source);
