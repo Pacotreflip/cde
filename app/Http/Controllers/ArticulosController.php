@@ -47,7 +47,7 @@ class ArticulosController extends Controller
      */
     public function index(Request $request)
     {
-        $materiales = $this->materiales->buscar($request->get('buscar'), 15);
+        $materiales = $this->materiales->buscar($request->get('buscar'), 30);
         $idobra = $this->getObraEnContexto()->id_obra;
         return view('articulos.index')
             ->with("idobra",$idobra)

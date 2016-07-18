@@ -4,6 +4,7 @@ namespace Ghi\Equipamiento\Articulos;
 
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Illuminate\Support\Facades\DB;
 class Materiales
 {
     /**
@@ -70,13 +71,15 @@ class Materiales
      */
     public function buscar($busqueda, $howMany = 30, $except = [])
     {
-        return Material::soloMateriales()
+        return Material::materialesEquipamiento()
             ->whereNotIn('id_material', $except)
             ->where(function ($query) use($busqueda) {
-                $query->where('descripcion', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('numero_parte', 'LIKE', '%'.$busqueda.'%')
-                    ->orWhere('unidad', 'LIKE', '%'.$busqueda.'%');
+                $query->where('materiales.descripcion', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('materiales.numero_parte', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('materiales.unidad', 'LIKE', '%'.$busqueda.'%');
             })
+            ->select(DB::raw("materiales.id_material, materiales.tipo_material, materiales.descripcion, materiales.numero_parte, materiales.unidad, materiales.id_clasificador"))
+            ->groupBy(DB::raw("materiales.id_material, materiales.tipo_material, materiales.descripcion, materiales.numero_parte, materiales.unidad, materiales.id_clasificador"))
             ->orderBy('descripcion')
             ->paginate($howMany);
     }

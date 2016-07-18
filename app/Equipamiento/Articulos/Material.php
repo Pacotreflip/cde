@@ -694,4 +694,18 @@ foreach($dias as $dia){
     public function ubicacion_entrega(){
         return "d";
     }
+    
+    /**
+     * Scope para obtener los materiales relacionados con equipamiento
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMaterialesEquipamiento($query)
+    {
+        return $query->leftJoin("items","items.id_material","=", "materiales.id_material")
+            ->leftJoin("transacciones","items.id_transaccion","=", "transacciones.id_transaccion")
+            ->whereRaw('LEN(nivel) > 4 and (materiales.control_equipamiento = 1 or (transacciones.tipo_transaccion = 19 and transacciones.equipamiento = 1))')
+            ;
+    }
 }
