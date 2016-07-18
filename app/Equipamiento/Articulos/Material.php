@@ -17,7 +17,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Recepciones\ItemRecepcion;
-
+use Ghi\Equipamiento\ReporteCostos\MaterialSecrets;
+use Ghi\Equipamiento\ReporteCostos\MaterialSecretsMaterialDreams;
+use Ghi\Equipamiento\ReporteCostos\AreaDreamsMateriales;
 class Material extends Model
 {
     const MAX_HIJOS_EN_FAMILIA = 999;
@@ -693,5 +695,85 @@ foreach($dias as $dia){
     
     public function ubicacion_entrega(){
         return "d";
+    }
+    
+    /**
+     * Scope para obtener los materiales relacionados con equipamiento
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMaterialesEquipamiento($query)
+    {
+        return $query->leftJoin("items","items.id_material","=", "materiales.id_material")
+            ->leftJoin("transacciones","items.id_transaccion","=", "transacciones.id_transaccion")
+            ->whereRaw('LEN(nivel) > 4 and (materiales.control_equipamiento = 1 or (transacciones.equipamiento = 1))')
+            ;
+    }
+    
+    public function ms_md()
+    {
+        return $this->hasOne(MaterialSecretsMaterialDreams::class, 'id_material_dreams', 'id_material');
+    }
+    
+    public function area_dreams_material()
+    {
+        return $this->hasOne(AreaDreamsMateriales::class, 'id_material', "id_material");
+    }
+    public function getIdMaterialSecretsAttribute(){
+        if($this->ms_md)
+            return $this->ms_md->id_material_secrets;
+        else
+            return null;
+    }
+    
+    public function getIdAreaReporteAttribute(){
+        if($this->area_dreams_material)
+            return $this->area_dreams_material->id_area_dreams;
+        else
+            return null;
+    }
+    
+    public function asignaAreaReporte($id_area_reporte = null){
+        if($this->area_dreams_material){
+            if($id_area_reporte>0){
+                if($id_area_reporte != $this->area_dreams_material->id_area_dreams){
+                    $this->area_dreams_material->id_area_dreams = $id_area_reporte;
+                    $this->area_dreams_material->save();
+                }
+            }else{
+                //$this->area_dreams_material()->delete();
+            }
+        }else{
+            if($id_area_reporte>0){
+                $area_dreams_materiales = new AreaDreamsMateriales();
+                $area_dreams_materiales->id_area_dreams = $id_area_reporte;
+                $area_dreams_materiales->id_material = $this->id_material;
+                $area_dreams_materiales->save();
+                
+            }
+        }
+        
+    }
+    public function asignaMaterialesSecrets($id_material_secrets = null){
+        if($this->ms_md){
+            if($id_material_secrets>0){
+                if($id_material_secrets != $this->ms_md->id_material_secrets){
+                    $this->ms_md->id_material_secrets = $id_material_secrets;
+                    $this->ms_md->save();
+                }
+            }else{
+                $this->ms_md->delete();
+            }
+        }else{
+            if($id_material_secrets>0){
+                $ms_md = new MaterialSecretsMaterialDreams();
+                $ms_md->id_material_secrets = $id_material_secrets;
+                $ms_md->id_material_dreams = $this->id_material;
+                $ms_md->save();
+                
+            }
+        }
+        
     }
 }

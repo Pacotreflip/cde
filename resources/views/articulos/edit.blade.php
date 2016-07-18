@@ -17,22 +17,23 @@
       {!! Form::close() !!}
       <br>
     </div>
-    <div class="col-md-6 gallery">
-        <div class="row">
-      @include('articulos.partials.fotos')
+    <div class="col-md-6">
+        <div class="row gallery">
+            @include('articulos.partials.fotos')
         </div>
         <div class="row">
-      <h3>Orden de Compra</h3>
-      <hr>
-      <ul>
-      @foreach($ordenes_compra as $orden_compra)
-      <li>
-          <a href="{{ route('compras.show', $orden_compra->id_transaccion) }}">{{ $orden_compra->present()->numero_folio }}</a>
-          
-      </li>
-      @endforeach
-      </ul>
+            <h3>Orden de Compra</h3>
+            <hr>
+            <ul>
+            @foreach($ordenes_compra as $orden_compra)
+            <li>
+                <a href="{{ route('compras.show', $orden_compra->id_transaccion) }}">{{ $orden_compra->present()->numero_folio }}</a>
+
+            </li>
+            @endforeach
+            </ul>
         </div>
+        
     </div>
   </div>
 

@@ -47,7 +47,7 @@ class ArticulosController extends Controller
      */
     public function index(Request $request)
     {
-        $materiales = $this->materiales->buscar($request->get('buscar'), 15);
+        $materiales = $this->materiales->buscar($request->get('buscar'), 30);
         $idobra = $this->getObraEnContexto()->id_obra;
         return view('articulos.index')
             ->with("idobra",$idobra)
@@ -146,6 +146,8 @@ class ArticulosController extends Controller
     {
         $material = $this->materiales->getById($id);
         $unidades = $this->materiales->getListaUnidades();
+        $areas_reporte = $this->materiales->getListaAreasReporte();
+        $materiales_secrets = $this->materiales->getListaMaterialesSecrets();
         $familias = $this->materiales->getListaFamilias($material->tipo_material->getTipoReal());
         $clasificadores = [null => 'No Aplica'] + $this->clasificadores->getAsList();
         $monedas = [null => 'Seleccione Moneda'] + $this->materiales->getListaMonedas();
@@ -157,6 +159,8 @@ class ArticulosController extends Controller
             ->withUnidades($unidades)
             ->withFamilias($familias)
             ->withMonedas($monedas)
+            ->withMateriales_secrets($materiales_secrets)
+            ->withAreas_reporte($areas_reporte)
             ->with("idobra",$idobra)
             ->with("ordenes_compra",$ordenes_compra)
             ->withClasificadores($clasificadores);
@@ -176,9 +180,14 @@ class ArticulosController extends Controller
         $unidad = Unidad::where('unidad', $request->get('unidad'))->firstOrFail();
         $clasificador = Clasificador::find($request->get('id_clasificador'));
         
+        $id_area_reporte = $request->id_area_reporte;
+        $id_material_secrets = $request->id_material_secrets;
+        
         $familia = Familia::findOrFail($request->get('familia'));
 
         $material->fill($request->all());
+        $material->asignaAreaReporte($id_area_reporte);
+        $material->asignaMaterialesSecrets($id_material_secrets);
         $material->asignaUnidad($unidad);
         $material->agregarEnFamilia($familia);
         $material->asignaClasificador($clasificador);
