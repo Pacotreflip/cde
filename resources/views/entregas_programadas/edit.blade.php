@@ -5,8 +5,9 @@
       <h4 class="modal-title">Entregas Programadas</h4>
     </div> 
       
-    <form id="entrega_programada_form">
+    <form id="edit_entrega_programada_form">
     <input type="hidden" name="faltante" value="{{ $item->cantidad - $item->totalProgramado() }}">
+    <input type="hidden" name="actual" value="{{ $entregaprogramada->cantidad_programada }}">
     <div class="modal-body" id="modal-body">
       <h4>{{ $item->material->descripcion }}</h4>
       <hr>
@@ -25,17 +26,17 @@
         <div class="col-md-6 col-sm-12">    
           <div class="form-group">
             <label for="fecha_entrega">Fecha de Entrega:</label>
-            <input type="date" class="form-control" value="{{ $fecha_entrega }}" name="fecha_entrega">
+            <input type="date" class="form-control" value="{{ $entregaprogramada->fecha_entrega->format('Y-m-d') }}" name="fecha_entrega">
           </div>
           <div class="form-group">
             <label for="Cantidad">Cantidad:</label>
-            <input type="number" class="form-control" value="{{ $item->cantidad - $item->totalProgramado() }}" name="cantidad">
+            <input type="number" class="form-control" value="{{ intval($entregaprogramada->cantidad_programada) }}" name="cantidad">
           </div>
         </div>
         <div class="col-md-6 col-sm-12"> 
           <div class="form-group">
             <label for="Observaciones">Observaciones:</label>
-            <textarea form="entrega_programada_form" type="text" class="form-control" name="observaciones" max="200"></textarea>
+            <textarea form="edit_entrega_programada_form" type="text" class="form-control" name="observaciones" max="200">{{ $entregaprogramada->observaciones }}</textarea>
           </div>
         </div>
       </div>
@@ -43,7 +44,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success" id="crear_entrega_programada" onclick="store('{{ $item->id_item }}')">Guardar</button>
+      <button type="button" class="btn btn-success" onclick="update('{{ $entregaprogramada->id }}', '{{ $item->id_item }}')">Actualizar</button>
       <button type="button" class="btn btn-primary" onclick="showModal('{{ route('entregas_programadas.index', ['id_item' => $item->id_item]) }}')" data-dismiss="modal">Regresar</button>
     </div>
         
