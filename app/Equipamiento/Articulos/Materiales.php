@@ -5,6 +5,8 @@ namespace Ghi\Equipamiento\Articulos;
 use Ghi\Equipamiento\Moneda;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Illuminate\Support\Facades\DB;
+use Ghi\Equipamiento\ReporteCostos\AreaDreams;
+use Ghi\Equipamiento\ReporteCostos\MaterialSecrets;
 class Materiales
 {
     /**
@@ -95,6 +97,39 @@ class Materiales
             ->orderBy('unidad')
             ->lists('unidad', 'unidad')
             ->all();
+    }
+    /**
+     * Obtiene una lista de áreas de reporte.
+     *
+     * @return array
+     */
+    public function getListaAreasReporte()
+    {
+       
+        $lista["A99"] = "- SELECCIONE ÁREA -";
+        $areas =  AreaDreams::selectRaw('id, area_dreams')
+            ->orderBy('area_dreams')
+            ->get();
+        foreach ($areas as $area) {
+            $lista[$area->id] = $area->area_dreams;
+        }
+        return $lista;
+    }
+    /**
+     * Obtiene una lista de materiales del hotel secrets.
+     *
+     * @return array
+     */
+    public function getListaMaterialesSecrets()
+    {
+        $lista["A99"] = "NO RELACIONAR";
+        $materiales =  MaterialSecrets::selectRaw('id, descripcion')
+            ->orderBy('descripcion')
+            ->get();
+        foreach ($materiales as $material) {
+            $lista[$material->id] = $material->descripcion;
+        }
+        return $lista;
     }
     
     /**

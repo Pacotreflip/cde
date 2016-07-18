@@ -94,6 +94,23 @@
     </div>
   </div>
 </div>
+<div class="row">
+            <div class="col-md-12">
+                <h3>Datos para Reporte de Costos</h3>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="col-md-12 control-label"  >Material Secrets Correspondiente:</label>
+                    {!! Form::select('id_material_secrets', $materiales_secrets, $material->id_material_secrets, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="col-md-12 control-label"  >Área de Reporte Correspondiente:</label>
+                    {!! Form::select('id_area_reporte', $areas_reporte, $material->id_area_reporte, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+        </div>
 <hr>
 
 <div class="form-group">
