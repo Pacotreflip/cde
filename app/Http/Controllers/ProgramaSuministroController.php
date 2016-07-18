@@ -43,15 +43,12 @@ class ProgramaSuministroController extends Controller
             $hoy2 = Carbon::now();
             $fecha_final = $hoy2->addMonth(1)->format("Y-m-d");
         }
-        $materiales = Material::join("Equipamiento.materiales_fechas_entrega", "materiales.id_material","=", "Equipamiento.materiales_fechas_entrega.id_material")
-            ->join("transacciones", "transacciones.id_transaccion","=", "Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra")
+        $materiales = Material::join("items", "materiales.id_material","=", "items.id_material")
+            ->join("Equipamiento.entregas_programadas", "items.id_item","=", "Equipamiento.entregas_programadas.id_item")
+            ->join("transacciones", "transacciones.id_transaccion","=", "items.id_transaccion")
             ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' ")->orderBy('fecha_entrega')
-            ->select(DB::raw("convert(varchar(4),year( fecha_entrega)) + 
-case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
-else convert(varchar(4),month( fecha_entrega)) end +
-case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
-else convert(varchar(4),day( fecha_entrega)) end
-  anio_mes_dia, materiales.id_material, descripcion, Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
+            ->select(DB::raw(" min(fecha_entrega) as fecha_entrega,materiales.id_material, descripcion, items.id_transaccion as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
+            ->groupBy(DB::raw(" materiales.id_material, descripcion, items.id_transaccion , dbo.zerofill(4,transacciones.numero_folio)"))
             ->get();
         
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 
@@ -65,8 +62,9 @@ else convert(varchar(4),month( fecha_entrega)) end
   when 3 then 'Marzo' when 4 then 'Abril' when 5 then 'Mayo' when 6 then 'Junio'
   when 7 then 'Julio' when 8 then 'Agosto' when 9 then 'Septiembre'
   when 10 then 'Octubre' when 11 then 'Noviembre' when 12 then 'Diciembre' end mesdes
- from [Equipamiento].[materiales_fechas_entrega] join transacciones
- on(Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra = transacciones.id_transaccion)
+  from [Equipamiento].[entregas_programadas] join items on ([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
+ join transacciones
+ on(items.id_transaccion = transacciones.id_transaccion)
  where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' 
  group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)) as tab
 group by  anio");
@@ -101,8 +99,9 @@ case month( fecha_entrega)when 1 then 'Ene' when 2 then 'Feb'
   when 7 then 'Jul' when 8 then 'Ago' when 9 then 'Sep'
   when 10 then 'Oct' when 11 then 'Nov' when 12 then 'Dic' end mesdescor
   
- from [Equipamiento].[materiales_fechas_entrega] join transacciones
- on(Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra = transacciones.id_transaccion)
+ from [Equipamiento].[entregas_programadas] join items on ([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
+ join transacciones
+ on(items.id_transaccion = transacciones.id_transaccion)
  where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59'
  group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)
  ) as tabla
@@ -132,8 +131,9 @@ else convert(varchar(4),day( fecha_entrega)) end
   when 3 then 'Marzo' when 4 then 'Abril' when 5 then 'Mayo' when 6 then 'Junio'
   when 7 then 'Julio' when 8 then 'Agosto' when 9 then 'Septiembre'
   when 10 then 'Octubre' when 11 then 'Noviembre' when 12 then 'Diciembre' end mesdes
- from [Equipamiento].[materiales_fechas_entrega] join transacciones
- on(Equipamiento.materiales_fechas_entrega.id_transaccion_orden_compra = transacciones.id_transaccion)
+ from [Equipamiento].[entregas_programadas] join items on([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
+ join transacciones
+ on(items.id_transaccion = transacciones.id_transaccion)
 where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' 
     group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)
 ");

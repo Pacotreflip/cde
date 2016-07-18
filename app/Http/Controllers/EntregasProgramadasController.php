@@ -10,6 +10,7 @@ use Ghi\Equipamiento\Transacciones\Item;
 use Ghi\Equipamiento\Transacciones\EntregaProgramada;
 use Carbon\Carbon;
 use Ghi\Http\Requests\CreateEntregaProgramadaRequest;
+use Ghi\Http\Requests\UpdateEntregaProgramadaRequest;
 
 class EntregasProgramadasController extends Controller
 {   
@@ -89,7 +90,10 @@ class EntregasProgramadasController extends Controller
      */
     public function edit($id)
     {
-        //
+        $entrega_programada = EntregaProgramada::find($id);
+        return view('entregas_programadas.edit')
+            ->withItem(Item::find($entrega_programada->id_item))
+            ->withEntregaprogramada($entrega_programada);
     }
 
     /**
@@ -99,9 +103,16 @@ class EntregasProgramadasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateEntregaProgramadaRequest $request, $id)
     {
-        //
+        $entrega_programada = EntregaProgramada::find($id);
+        $entrega_programada->cantidad_programada = $request->input('cantidad');
+        $entrega_programada->fecha_entrega = Carbon::parse($request->input('fecha_entrega'))->toDateString();
+        $entrega_programada->observaciones = $request->input('observaciones');
+        $entrega_programada->id_usuario = auth()->user()->idusuario;
+        $entrega_programada->save();
+        
+        return response()->json(['Mensaje' => 'Fecha de entrega actualizada correctamente']);        
     }
 
     /**

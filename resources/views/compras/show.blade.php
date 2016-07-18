@@ -30,6 +30,7 @@
     <table class="table table-striped table-hover table-condensed">
       <thead>
         <tr>
+          <th>No. de Parte</th>
           <th>Descripción</th>
           <th>Unidad</th>
           <th>Adquirido</th>
@@ -43,6 +44,7 @@
       <tbody>
           @foreach($compra->items as $item)
               <tr>
+                <td>{{ $item->material->numero_parte }}</td>
                 <td>{{ $item->material->descripcion }}</td>
                 <td>{{ $item->unidad }}</td>
                 <td><a ruta="{{ route('entregas_programadas.index', ['id_item' => $item->id_item]) }}" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
@@ -79,116 +81,184 @@
 <script>
     $('.adquirido').tooltip(); 
     $('.adquirido').off().on('click', function () {
-       showModal($(this).attr('ruta')) 
+      showModal($(this).attr('ruta'), this);
     });
     
-    function showModal(ruta) {
+    function showModal(ruta, element = null) {
       $.ajax({
         url: ruta,
+        method: 'GET',
+        
+        beforeSend: function() {
+          if(element)
+            $(element).closest('td').LoadingOverlay("show");  
+        },
+        afterSend: function() {
+          if(element)
+            $(element).closest('td').LoadingOverlay("hide");   
+        },
         success: function (source) {
           $('#modal').html(source);
           $('#entregas_programadas_modal').modal('show');
+          if(element)
+            $(element).closest('td').LoadingOverlay("hide");   
         },
         error: function (error) {
           console.log(error);
+          if(element)
+            $(element).closest('td').LoadingOverlay("hide");
         }
       });
-  }
-  
-  function agregar(id){
+    }
+    
+    function agregar(id){
       $.ajax({
-         type: 'GET',
-         url: App.host + '/entregas_programadas/create/' + id,
-         success: function(source) {
-           if(source.error) {
-             swal('No hay cantidad faltante por programar.','','info');
-           } else {
-              $('#entregas_programadas_modal').html(source);
-           }
-         },
-         error: function(error) {
-             console.log(error);
-         }
+        type: 'GET',
+        url: App.host + '/entregas_programadas/create/' + id,
+        success: function(source) {
+          if(source.error) {
+            swal('No hay cantidad faltante por programar.','','info');
+          } else {
+            $('#entregas_programadas_modal').html(source);
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
       });
-  }
-  
-  function borrar(id, element) {
+    }
+    
+    function borrar(id, element) {
       swal({   
-          title: "¿Eliminar Entrega Programada?",   
-          type: "warning",   
-          showCancelButton: true,   
-          confirmButtonText: "Si, eliminar",
-          cancelButtonText: "No, cancelar",
-          closeOnConfirm: false,   
-          showLoaderOnConfirm: true
+        title: "¿Eliminar Entrega Programada?",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,   
+        showLoaderOnConfirm: true
       }, 
       function(){   
-          $.ajax({
-            url: App.host + '/entregas_programadas/' + id,
-            method: 'DELETE',
-            success: function(response) {
-                $(element).closest('tr').remove();
-                $('#totalProgramado').text(response.totalProgramado);
-                $('#cantidad').text(response.cantidad);
-                $('#faltante').text(response.faltante);
-                swal({
-                    type: "info",
-                    title: response.Mensaje,   
-                    timer: 1000,   
-                    showConfirmButton: false 
-                });
-            },
-            error: function(error) {
-                console.log(error);
-            }
-          });
+        $.ajax({
+          url: App.host + '/entregas_programadas/' + id,
+          method: 'DELETE',
+          success: function(response) {
+            $(element).closest('tr').remove();
+            $('#totalProgramado').text(response.totalProgramado);
+            $('#cantidad').text(response.cantidad);
+            $('#faltante').text(response.faltante);
+            swal({
+              type: "info",
+              title: response.Mensaje,   
+              timer: 1000,   
+              showConfirmButton: false 
+            });
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
       });
-  }
-
-  function store(id){
+    }
+    
+    function store(id){
       $("#errores").empty();
       $.ajax({
         url: App.host + '/entregas_programadas/store/' + id,
         type: 'POST',
         data: 
-            $('#entrega_programada_form').serialize()
+          $('#entrega_programada_form').serialize()
         ,
         success: function(response) {
-            $('#entregas_programadas_modal').modal('hide');
-            showModal(App.host + '/entregas_programadas/index/' + id);
-            swal({
-                type: "success",
-                title: response.Mensaje,   
-                timer: 1000,   
-                showConfirmButton: false 
-            });
+          $('#entregas_programadas_modal').modal('hide');
+          showModal(App.host + '/entregas_programadas/index/' + id);
+          swal({
+            type: "success",
+            title: response.Mensaje,   
+            timer: 1000,   
+            showConfirmButton: false 
+          });
         },
         error: function(xhr, responseText, thrownError) {
+          var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+          if(ind1 === -1) {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+              salida += '<li>'+elem+'</li>';
+            });
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          } else {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
             var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
-
-            if(ind1 === -1){
-                var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
-                $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
-                    salida += '<li>'+elem+'</li>';
-                });
-                salida += '</ul></div>';
-                $("#errores").html(salida);
-            }else{
-                var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
-                var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
-                var cad1 = xhr.responseText.substring(ind1);
-                var ind2 = cad1.indexOf('</span>');
-                var cad2 = cad1.substring(32,ind2);
-                if(cad2 !== ""){
-                    salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
-                }else{
-                    salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
-                }
-                salida += '</ul></div>';
-                $("#errores").html(salida);
+            var cad1 = xhr.responseText.substring(ind1);
+            var ind2 = cad1.indexOf('</span>');
+            var cad2 = cad1.substring(32,ind2);
+            if(cad2 !== "") {
+              salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+            } else {
+              salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
             }
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          }
         }
       });
-  }
+    }
+    
+    function editar(id) {
+      $.ajax({
+        url: App.host + '/entregas_programadas/' + id + '/edit',
+        type: 'GET',
+        success: function (source) {
+          $('#entregas_programadas_modal').html(source);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+      });
+    }
+    
+    function update(id, id_item) {
+      $.ajax({
+        type: 'POST',
+        data: $('#edit_entrega_programada_form').serialize(),
+        url: App.host  + '/entregas_programadas/' + id,
+        success: function(response) {
+          $('#entregas_programadas_modal').modal('hide');
+          showModal(App.host + '/entregas_programadas/index/' + id_item);
+          swal({
+            type: "success",
+            title: response.Mensaje,   
+            timer: 1000,   
+            showConfirmButton: false 
+          });
+        },
+        error: function(xhr, responseText, thrownError) {
+          var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+          if(ind1 === -1) {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+              salida += '<li>'+elem+'</li>';
+            });
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          } else {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+            var cad1 = xhr.responseText.substring(ind1);
+            var ind2 = cad1.indexOf('</span>');
+            var cad2 = cad1.substring(32,ind2);
+            if(cad2 !== "") {
+              salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+            } else {
+              salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+            }
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          }
+        }
+      });  
+    }
 </script>
 @stop

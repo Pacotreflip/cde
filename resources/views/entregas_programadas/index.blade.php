@@ -42,7 +42,7 @@
                           <td>{{ $entrega_programada->created_at->format('d-m-Y h:i:s') }}</td>
                           <td class="text-center">
                               <button class="btn btn-xs btn-danger" onclick="borrar('{{$entrega_programada->id}}', this)"><i class="fa fa-times"></i></button>
-                              <button class="btn btn-xs btn-info"><i class="fa fa-pencil"></i></button>
+                              <button class="btn btn-xs btn-info" onclick="editar('{{$entrega_programada->id}}')"><i class="fa fa-pencil"></i></button>
                           </td>
                       </tr>
                       @endforeach

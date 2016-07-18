@@ -265,3 +265,5 @@ Route::get('entregas_programadas/index/{id_item}', 'EntregasProgramadasControlle
 Route::delete('entregas_programadas/{id}', 'EntregasProgramadasController@destroy')->name('entregas_programadas.delete');
 Route::get('entregas_programadas/create/{id_item}', 'EntregasProgramadasController@create')->name('entregas_programadas.create');
 Route::post('entregas_programadas/store/{id_item}', 'EntregasProgramadasController@store')->name('entregas_programadas.store');
+Route::get('entregas_programadas/{id}/edit', 'EntregasProgramadasController@edit')->name('entregas_programadas.edit');
+Route::post('entregas_programadas/{id}', 'EntregasProgramadasController@update')->name('entregas_programadas.update');
