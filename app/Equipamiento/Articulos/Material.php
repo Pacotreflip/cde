@@ -203,24 +203,29 @@ class Material extends Model
     
     public function getAnioMesDiaSuministroAttribute(){
         $dias = DB::connection("cadeco")->select(" select 
-  fecha_entrega,
-  year( fecha_entrega) as anio,
-  month( fecha_entrega) as mes,
-  day( fecha_entrega) as dia,
-    convert(varchar(4),year( fecha_entrega)) + 
-  case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
-  else convert(varchar(4),month( fecha_entrega)) end +
-  case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
-  else convert(varchar(4),day( fecha_entrega)) end
-    anio_mes_dia, cantidad_programada, id_transaccion
-   from [Equipamiento].[entregas_programadas] join items
-   on(items.id_item = entregas_programadas.id_item )
-  where items.id_material = {$this->id_material};");
+            dbo.zerofill(4,transacciones.numero_folio) as folio_oc,
+            transacciones.id_transaccion as id_oc,
+        fecha_entrega,
+        year( fecha_entrega) as anio,
+        month( fecha_entrega) as mes,
+        day( fecha_entrega) as dia,
+          convert(varchar(4),year( fecha_entrega)) + 
+        case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
+        else convert(varchar(4),month( fecha_entrega)) end +
+        case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
+        else convert(varchar(4),day( fecha_entrega)) end
+          anio_mes_dia, cantidad_programada, items.id_transaccion
+         from [Equipamiento].[entregas_programadas] join items
+         on(items.id_item = entregas_programadas.id_item )
+         join transacciones on(transacciones.id_transaccion = items.id_transaccion)
+        where items.id_material = {$this->id_material};");
     $dias_arr = [];
     $cantidad_recibida = $this->cantidad_recibida_modulo_equipamiento;
     foreach($dias as $dia){
         $date = Carbon::createFromFormat('Y-m-d', $dia->fecha_entrega);
         $dias_arr[$dia->anio_mes_dia]["fecha"] = $dia->anio_mes_dia;
+        $dias_arr[$dia->anio_mes_dia]["folio_oc"] = $dia->folio_oc;
+        $dias_arr[$dia->anio_mes_dia]["id_oc"] = $dia->id_oc;
         $dias_arr[$dia->anio_mes_dia]["fecha_entrega"] = $date->format("d-m-Y");
         $dias_arr[$dia->anio_mes_dia]["cantidad"] = $dia->cantidad_programada;
 

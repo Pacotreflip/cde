@@ -108,7 +108,7 @@
   @foreach($materiales as $material)
   <tr>
     <td>{{$i++}}</td>
-    <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}-{{ count($material->anio_mes_dia_suministro) }}-</a></td>
+    <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}</a></td>
     @foreach($dias as $dia)
         @if(array_key_exists($dia->anio_mes_dia, $material->anio_mes_dia_suministro) )
             @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]< 100)
@@ -118,17 +118,17 @@
                     <span class="trigger label label-danger" style="cursor: pointer">{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]}}</span>
                     <div class="head hide">
                         {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
-                        OC #{{$material->folio_oc}}</div>
+                        OC #{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["folio_oc"]}}</div>
                     <div class="content hide">
                         <div class="form-group">
-                            <label>Cantidad OC:</label>
-                            {{$material->cantidad_comprada}}
+                            <label>Cantidad:</label>
+                            {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["cantidad"]}}
                         </div>
                          <div class="form-group">
                             <label>Cantidad Rec.:</label>
                             {{$material->cantidad_recibida}}
                         </div>
-                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                        <form action="{{route("recepciones.create")}}/{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["id_oc"]}}" method="get">
                             <button type="submit" class="btn btn-default btn-block recibir">
                                 Recibir
                             </button>
@@ -141,13 +141,13 @@
                     <span class="alert-danger glyphicon glyphicon-exclamation-sign trigger"  style="cursor: pointer"></span>
                     <div class="head hide">
                         {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
-                        OC #{{$material->folio_oc}}</div>
+                        OC #{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["folio_oc"]}}</div>
                     <div class="content hide">
                         <div class="form-group">
-                            <label>Cantidad OC:</label>
-                            {{$material->cantidad_comprada}}
+                            <label>Cantidad:</label>
+                            {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["cantidad"]}}
                         </div>
-                        <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                        <form action="{{route("recepciones.create")}}/{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["id_oc"]}}" method="get">
                             <button type="submit" class="btn btn-default btn-block recibir">
                                 Recibir
                             </button>
@@ -163,11 +163,11 @@
                     <span class="alert-success glyphicon glyphicon-ok-sign trigger" style="cursor: pointer"></span>
                     <div class="head hide">
                         {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
-                        OC #{{$material->folio_oc}}</div>
+                        OC #{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["folio_oc"]}}</div>
                     <div class="content hide">
                         <div class="form-group">
-                            <label>Cantidad OC:</label>
-                            {{$material->cantidad_comprada}}
+                            <label>Cantidad:</label>
+                            {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["cantidad"]}}
                         </div>
                     </div>
                 </div>
@@ -181,17 +181,17 @@
                         <span class="trigger label label-info " style="cursor: pointer">{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]}}</span>
                         <div class="head hide">
                             {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
-                            OC #{{$material->folio_oc}}</div>
+                            OC #{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["folio_oc"]}}</div>
                         <div class="content hide">
                             <div class="form-group">
-                                <label>Cantidad OC:</label>
-                                {{$material->cantidad_comprada}}
+                                <label>Cantidad:</label>
+                                {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["cantidad"]}}
                             </div>
                             <div class="form-group">
                                 <label>Cantidad Rec.:</label>
                                 {{$material->cantidad_recibida}}
                             </div>
-                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <form action="{{route("recepciones.create")}}/{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["id_oc"]}}" method="get">
                             <button type="submit" class="btn btn-default btn-block recibir">
                                 Recibir
                             </button>
@@ -203,13 +203,13 @@
                         <span class="alert-info glyphicon glyphicon-certificate trigger" style="cursor: pointer"></span>
                         <div class="head hide">
                             {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
-                            OC #{{$material->folio_oc}}</div>
+                            OC #{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["folio_oc"]}}</div>
                         <div class="content hide">
                             <div class="form-group">
-                                <label>Cantidad OC:</label>
-                                {{$material->cantidad_comprada}}
+                                <label>Cantidad:</label>
+                                {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["cantidad"]}}
                             </div>
-                            <form action="{{route("recepciones.create")}}/{{$material->id_oc}}" method="get">
+                            <form action="{{route("recepciones.create")}}/{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["id_oc"]}}" method="get">
                                 <button type="submit" class="btn btn-default btn-block recibir">
                                     Recibir
                                 </button>
