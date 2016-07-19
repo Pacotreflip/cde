@@ -50,7 +50,17 @@
                 <td><a ruta="{{ route('entregas_programadas.index', ['id_item' => $item->id_item]) }}" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
                 <td>{{ number_format($item->precio_unitario,2) }}</td>
                 <td>{{ number_format($item->importe,2) }}</td>
+                @if($item->antecedente->entregas)
+                @if($item->antecedente->entregas[0]->concepto)
                 <td>{{ $item->antecedente->entregas[0]->concepto->ruta }}</td>
+                @else
+                <td></td>
+                @endif
+                
+                @else
+                <td>&nbsp;</td>
+                @endif
+                
                 <td>{{ $item->cantidad_recibida }}</td>
                 <td>
                 @if($item->cantidad > 0)

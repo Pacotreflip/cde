@@ -108,15 +108,17 @@
   @foreach($materiales as $material)
   <tr>
     <td>{{$i++}}</td>
-    <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}</a></td>
+    <td><a href="{{ route('articulos.edit', $material) }}"> {{ $material->descripcion }}-{{ count($material->anio_mes_dia_suministro) }}-</a></td>
     @foreach($dias as $dia)
-        @if($dia->anio_mes_dia == $material->anio_mes_dia)
-            @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->getIndiceRecepcionAttribute($id_obra)< 100)
+        @if(array_key_exists($dia->anio_mes_dia, $material->anio_mes_dia_suministro) )
+            @if($hoy->format("Ymd")>=$dia->anio_mes_dia && $material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]< 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
-                @if($material->getIndiceRecepcionAttribute($id_obra)>0)
+                @if($material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]>0)
                 <div class="popover-markup"> 
-                    <span class="trigger label label-danger" style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
-                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <span class="trigger label label-danger" style="cursor: pointer">{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]}}</span>
+                    <div class="head hide">
+                        {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
+                        OC #{{$material->folio_oc}}</div>
                     <div class="content hide">
                         <div class="form-group">
                             <label>Cantidad OC:</label>
@@ -137,7 +139,9 @@
                 @else
                 <div class="popover-markup"> 
                     <span class="alert-danger glyphicon glyphicon-exclamation-sign trigger"  style="cursor: pointer"></span>
-                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="head hide">
+                        {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
+                        OC #{{$material->folio_oc}}</div>
                     <div class="content hide">
                         <div class="form-group">
                             <label>Cantidad OC:</label>
@@ -152,12 +156,14 @@
                 </div>
                 @endif
             </th>
-            @elseif($material->getIndiceRecepcionAttribute($id_obra)== 100)
+            @elseif($material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]== 100)
             <th  style="text-align: center; border: solid 1px #CCC;">
                 
                 <div class="popover-markup"> 
                     <span class="alert-success glyphicon glyphicon-ok-sign trigger" style="cursor: pointer"></span>
-                    <div class="head hide">OC #{{$material->folio_oc}}</div>
+                    <div class="head hide">
+                        {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
+                        OC #{{$material->folio_oc}}</div>
                     <div class="content hide">
                         <div class="form-group">
                             <label>Cantidad OC:</label>
@@ -168,12 +174,14 @@
             </th>
             @elseif($hoy->format("Ymd")<$dia->anio_mes_dia)
                 <th  style="text-align: center; border: solid 1px #CCC">
-                    @if($material->getIndiceRecepcionAttribute($id_obra)>0)
+                    @if($material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]>0)
                     
                     
                     <div class="popover-markup"> 
-                        <span class="trigger label label-info " style="cursor: pointer">{{$material->getIndiceRecepcionAttribute($id_obra)}}</span>
-                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <span class="trigger label label-info " style="cursor: pointer">{{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["indice_suministro"]}}</span>
+                        <div class="head hide">
+                            {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
+                            OC #{{$material->folio_oc}}</div>
                         <div class="content hide">
                             <div class="form-group">
                                 <label>Cantidad OC:</label>
@@ -193,7 +201,9 @@
                     @else
                     <div class="popover-markup"> 
                         <span class="alert-info glyphicon glyphicon-certificate trigger" style="cursor: pointer"></span>
-                        <div class="head hide">OC #{{$material->folio_oc}}</div>
+                        <div class="head hide">
+                            {{$material->anio_mes_dia_suministro[$dia->anio_mes_dia]["fecha_entrega"]}}
+                            OC #{{$material->folio_oc}}</div>
                         <div class="content hide">
                             <div class="form-group">
                                 <label>Cantidad OC:</label>

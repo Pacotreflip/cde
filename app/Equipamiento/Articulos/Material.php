@@ -20,6 +20,8 @@ use Ghi\Equipamiento\Recepciones\ItemRecepcion;
 use Ghi\Equipamiento\ReporteCostos\MaterialSecrets;
 use Ghi\Equipamiento\ReporteCostos\MaterialSecretsMaterialDreams;
 use Ghi\Equipamiento\ReporteCostos\AreaDreamsMateriales;
+use Ghi\Equipamiento\Transacciones\Item;
+use Carbon\Carbon;
 class Material extends Model
 {
     const MAX_HIJOS_EN_FAMILIA = 999;
@@ -181,7 +183,8 @@ class Material extends Model
             ->join('items','items.id_transaccion','=','transacciones.id_transaccion')
             ->join('materiales','items.id_material','=','materiales.id_material')
             ->where('materiales.id_material', $this->id_material)
-            ->where('transacciones.id_transaccion', $this->id_oc)
+            ->where('transacciones.equipamiento', "1")
+            //->where('transacciones.id_transaccion', $this->id_oc)
             ->groupBy(['transacciones.id_transaccion','transacciones.numero_folio'
                 ,'transacciones.fecha','transacciones.id_empresa','transacciones.observaciones'])
             ->orderBy('numero_folio', 'DESC')
@@ -193,20 +196,47 @@ class Material extends Model
         return number_format($recibido,0,".","");
     }
     
+    public function getCantidadRecibidaModuloEquipamientoAttribute(){
+        $recibido = $this->items_recepcion()->sum("cantidad_recibida");
+        return number_format($recibido,0,".","");
+    }
+    
     public function getAnioMesDiaSuministroAttribute(){
         $dias = DB::connection("cadeco")->select(" select 
-  
-  convert(varchar(4),year( fecha_entrega)) + 
-case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
-else convert(varchar(4),month( fecha_entrega)) end +
-case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
-else convert(varchar(4),day( fecha_entrega)) end
-  anio_mes_dia
- from [Equipamiento].[materiales_fechas_entrega]
-where id_material = {$this->id_material};");
-foreach($dias as $dia){
-    $dias_arr[] = $dia->anio_mes_dia;
-}
+  fecha_entrega,
+  year( fecha_entrega) as anio,
+  month( fecha_entrega) as mes,
+  day( fecha_entrega) as dia,
+    convert(varchar(4),year( fecha_entrega)) + 
+  case when len(month( fecha_entrega))=1 then '0' +convert(varchar(4),month( fecha_entrega))
+  else convert(varchar(4),month( fecha_entrega)) end +
+  case when len(day( fecha_entrega))=1 then '0' +convert(varchar(4),day( fecha_entrega))
+  else convert(varchar(4),day( fecha_entrega)) end
+    anio_mes_dia, cantidad_programada, id_transaccion
+   from [Equipamiento].[entregas_programadas] join items
+   on(items.id_item = entregas_programadas.id_item )
+  where items.id_material = {$this->id_material};");
+    $dias_arr = [];
+    $cantidad_recibida = $this->cantidad_recibida_modulo_equipamiento;
+    foreach($dias as $dia){
+        $date = Carbon::createFromFormat('Y-m-d', $dia->fecha_entrega);
+        $dias_arr[$dia->anio_mes_dia]["fecha"] = $dia->anio_mes_dia;
+        $dias_arr[$dia->anio_mes_dia]["fecha_entrega"] = $date->format("d-m-Y");
+        $dias_arr[$dia->anio_mes_dia]["cantidad"] = $dia->cantidad_programada;
+
+        if($cantidad_recibida>= $dia->cantidad_programada){
+            $dias_arr[$dia->anio_mes_dia]["cantidad_recibida"] = $dia->cantidad_programada;
+            $cantidad_recibida -= $dia->cantidad_programada;
+        }else{
+            $dias_arr[$dia->anio_mes_dia]["cantidad_recibida"] = $cantidad_recibida;
+            $cantidad_recibida = 0;
+        }
+        if($dia->cantidad_programada > 0){
+            $dias_arr[$dia->anio_mes_dia]["indice_suministro"] = number_format(($dias_arr[$dia->anio_mes_dia]["cantidad_recibida"]/$dia->cantidad_programada*100),0,".","");
+        }else{
+            $dias_arr[$dia->anio_mes_dia]["indice_suministro"] = "";
+        }
+    }
 
     return $dias_arr;
     }
@@ -775,5 +805,12 @@ foreach($dias as $dia){
             }
         }
         
+    }
+    public function item_oc(){
+        return $this->hasMany(Item::class,"id_material","id_material");
+    }
+    public function getFechasProgramadasAttribute(){
+        $items_oc = $this->item_oc;
+        return "0".count($items_oc);
     }
 }
