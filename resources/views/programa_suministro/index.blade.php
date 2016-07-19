@@ -9,33 +9,47 @@
     {{ csrf_field() }}
     <input type="hidden" name="_method" value="get">
 <div class="row">
-    <div class="col-md-2">
-                               
-        <div class="form-group">
-        <label for="cantidad" >Fecha Inicial:</label>
-        <div class='input-group date' >
-            <input type='date' name="fecha_inicial" class="form-control" value="{{$fecha_inicial}}"/>
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+    <div class="col-md-6">
+        <div class="col-md-4">
+
+            <div class="form-group">
+            <label for="cantidad" >Fecha Inicial:</label>
+            <div class='input-group date' >
+                <input type='date' name="fecha_inicial" class="form-control" value="{{$fecha_inicial}}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            </div>
         </div>
+        <div class="col-md-4">
+            <div class="form-group">
+            <label for="cantidad" >Fecha Final:</label>
+            <div class='input-group date'>
+                <input type='date' name="fecha_final" class="form-control" value="{{$fecha_final}}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-        <label for="cantidad" >Fecha Final:</label>
-        <div class='input-group date'>
-            <input type='date' name="fecha_final" class="form-control" value="{{$fecha_final}}"/>
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+        <div class="col-md-4" style="margin-top: 25px">
+            <button type="submit" class="btn btn-small btn-info">
+                <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
+            </button>
         </div>
+        <div class="col-md-8">
+            <div class="form-group">
+            <label for="proveedor" >Proveedor:</label>
+            <select name="proveedor" id="proveedor" style="width: 100%">
+                <option value selected>-- SELECCIONAR PROVEEDOR --</option>
+                <!--<option value="">VER TODOS</option>-->
+                @foreach($proveedores as $p)
+                <option {{$proveedor == $p->razon_social ? "selected" : ""}} value="{{$p->razon_social}}">{{ $p->razon_social }}</option>
+                @endforeach
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="col-md-2" style="margin-top: 25px">
-        <button type="submit" class="btn btn-small btn-info">
-            <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
-        </button>
     </div>
     <div class="col-md-6" >
         <table class="table">
@@ -233,6 +247,7 @@
 @stop
 @section("scripts")
 <script>
+$('#proveedor').select2();
 $('.popover-markup>.trigger').popover({
     html: true,
     placement: "left",

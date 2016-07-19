@@ -31,8 +31,14 @@ class ProgramaSuministroController extends Controller
      */
     public function index(Request $request)
     {
-        //dd($request);
+        //dd($request->all());
         //$recepciones = $this->buscar($request->buscar);
+        $proveedores = Proveedor::join("transacciones", "empresas.id_empresa", "=", "transacciones.id_empresa")
+                ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19")
+                ->select(DB::raw("empresas.razon_social, empresas.id_empresa"))
+                ->groupBy("empresas.id_empresa", "empresas.razon_social")
+                ->get();
+        $proveedor = isset($request->proveedor) ? $request->proveedor : "";
         $hoy = Carbon::now();
         if($request->has("fecha_inicial") && $request->has("fecha_final")){
             $fecha_inicial = $request->fecha_inicial;
@@ -46,7 +52,8 @@ class ProgramaSuministroController extends Controller
         $materiales = Material::join("items", "materiales.id_material","=", "items.id_material")
             ->join("Equipamiento.entregas_programadas", "items.id_item","=", "Equipamiento.entregas_programadas.id_item")
             ->join("transacciones", "transacciones.id_transaccion","=", "items.id_transaccion")
-            ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' ")->orderBy('fecha_entrega')
+            ->join("empresas", "transacciones.id_empresa", "=", "empresas.id_empresa")
+            ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%' ")->orderBy('fecha_entrega')
             ->select(DB::raw(" min(fecha_entrega) as fecha_entrega,materiales.id_material, descripcion, items.id_transaccion as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
             ->groupBy(DB::raw(" materiales.id_material, descripcion, items.id_transaccion , dbo.zerofill(4,transacciones.numero_folio)"))
             ->get();
@@ -65,7 +72,8 @@ else convert(varchar(4),month( fecha_entrega)) end
   from [Equipamiento].[entregas_programadas] join items on ([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
  join transacciones
  on(items.id_transaccion = transacciones.id_transaccion)
- where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' 
+ join empresas on (transacciones.id_empresa = empresas.id_empresa)
+ where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%'
  group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)) as tab
 group by  anio");
         $meses = DB::connection("cadeco")->select("
@@ -102,7 +110,8 @@ case month( fecha_entrega)when 1 then 'Ene' when 2 then 'Feb'
  from [Equipamiento].[entregas_programadas] join items on ([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
  join transacciones
  on(items.id_transaccion = transacciones.id_transaccion)
- where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59'
+ join empresas on (transacciones.id_empresa = empresas.id_empresa)
+ where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%'
  group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)
  ) as tabla
  group by  mes, anio_mes, mesdes, mesdescor
@@ -134,7 +143,8 @@ else convert(varchar(4),day( fecha_entrega)) end
  from [Equipamiento].[entregas_programadas] join items on([Equipamiento].[entregas_programadas].[id_item] = items.id_item)
  join transacciones
  on(items.id_transaccion = transacciones.id_transaccion)
-where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' 
+ join empresas on (transacciones.id_empresa = empresas.id_empresa)
+where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%'
     group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)
 ");
         return view('programa_suministro.index')
@@ -146,7 +156,9 @@ where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}
         ->with("i",1)
         ->with("hoy",$hoy)
         ->with("id_obra",$this->getIdObra())
-        ->with("materiales",$materiales);
+        ->with("materiales",$materiales)
+        ->withProveedores($proveedores)
+        ->withProveedor($proveedor);
             //->withRecepciones($recepciones);
     }
 
