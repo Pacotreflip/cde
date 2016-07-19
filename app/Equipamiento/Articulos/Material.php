@@ -130,10 +130,11 @@ class Material extends Model
     {
         // Para diferenciar cuando el material es de tipo servicios y devolver el tipo correcto
         // por la inconsistencia de que mano de obra y servicios comparten el mismo numero de tipo
-        if ($value == TipoMaterial::TIPO_MANO_OBRA and $this->attributes['marca'] == 1) {
-            return new TipoMaterial(TipoMaterial::TIPO_SERVICIOS);
+        if(array_key_exists("marca", $this->attributes)){
+            if ($value == TipoMaterial::TIPO_MANO_OBRA and $this->attributes['marca'] == 1) {
+                return new TipoMaterial(TipoMaterial::TIPO_SERVICIOS);
+            }
         }
-
         return new TipoMaterial($value);
     }
     
