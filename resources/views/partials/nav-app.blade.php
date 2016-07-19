@@ -24,7 +24,7 @@
         @endif
     </ul>
   </li>
-  @if (!Auth::user()->hasRole('consulta_provisional'))
+  @if (!Auth::user()->hasRole('consulta_provisional') || Auth::user()->hasRole('almacenista'))
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
   <li><a href="{{ route('programa_suministro.index') }}">Programa de Suministro</a></li>
   <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
