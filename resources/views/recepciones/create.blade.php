@@ -14,13 +14,45 @@
         
         <div class="row">
           <div class="col-sm-6">
+              
+            <div class="row">
+                <div class="col-md-6">
+                <!-- Proveedor + Articulo Form Input -->
+                <div class="form-group">
+                  {!! Form::label('proveedor', 'Proveedor:') !!}
+                  <select id="proveedor" class="form-control" style="width: 100%">
+                      <option id="" value>-- SELECCIONE UN PROVEEDOR --</option>
+                    @foreach($proveedores as $p)
+                    <option value="{{$p->id_empresa}}" id="{{$p->id_empresa}}">{{ $p->razon_social }}</option>
+                    @endforeach
+                  </select>
+                </div>
+                </div>
+                
+                <!-- Fecha Recepcion Form Input -->
+                <div class="col-md-6">
+                <div class="form-group">
+                  {!! Form::label('articulo', 'Artículo:') !!}
+                  <select id="articulo" class="form-control" style="width: 100%">
+                    <option id="" value>-- SELECCIONE UN ARTÍCULO --</option>
+                  </select>
+                </div>
+                </div>
+            </div>  
+              
             <div class="row">
               <div class="col-xs-6">
                 <!-- Orden Compra Form Input -->
                 <div class="form-group">
                   {!! Form::label('orden_compra', '*Folio Orden de Compra:') !!}
-                  {!! Form::select('orden_compra', $compras, $id_oc, ['class' => 'form-control', 'required', 
-                    'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}
+                  <select name="orden_compra" id="oc" class="form-control" required v-model="recepcionForm.orden_compra" v-on:change="fetchMateriales">
+                      <option selected id="" value>-- SELECCIONE UNA ORDEN DE COMPRA --</option>
+                      @foreach($compras as $key => $oc)
+                      <option value="{{ $key }}">{{ $oc }}</option>
+                      @endforeach
+                  </select>
+<!--                  {!! Form::select('orden_compra', $compras, $id_oc, ['class' => 'form-control', 'required', 'id' => 'oc',
+                  'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}-->
                 </div>
               </div>
               <div class="col-xs-6">
@@ -180,4 +212,22 @@
       </div>
     </recepcion-screen>
   </div>
+@stop
+@section('scripts')
+<script>
+    $('#proveedor').select2();
+    $('#articulo').select2();
+    
+    $("#articulo").depdrop({
+        language: 'es',
+        url: App.host + '/api/materialesOc',
+        depends: ['proveedor']
+    });
+    
+    $("#oc").depdrop({
+        language: 'es',
+        url: App.host + '/api/getOc',
+        depends: ['proveedor', 'articulo']
+    });
+</script>
 @stop

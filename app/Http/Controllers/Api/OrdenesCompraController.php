@@ -26,7 +26,7 @@ class OrdenesCompraController extends ApiController
             'id' => $compra->id_transaccion,
             'numero_folio' => $compra->numero_folio,
             'proveedor' => $compra->empresa,
-            'materiales' => $this->transformaItems($compra->items),
+            'materiales' => $this->transformaItems($compra->items->sortBy('material.descripcion')),
         ]);
     }
 
@@ -58,5 +58,35 @@ class OrdenesCompraController extends ApiController
         }
 
         return $materiales;
+    }
+    
+    public function getOc(Request $request) {
+        if(null !== ($request->input('depdrop_parents'))) {
+            $ids = $request->input('depdrop_parents');
+            $proveedor_id = empty($ids[0]) ? null : $ids[0];
+            $articulo_id = empty($ids[1]) ? null : $ids[1];
+            if ($proveedor_id != null) {
+                $data = Transaccion::ordenesCompraMateriales()
+                    ->join("items", "transacciones.id_transaccion", "=", "items.id_transaccion")
+                    ->join("materiales", "items.id_material", "=", "materiales.id_material")
+                    ->where("id_obra", \Context::getId())
+                    ->where("id_empresa", "LIKE", $proveedor_id)
+                    ->where("materiales.id_material", "LIKE", $articulo_id)
+                    ->groupBy('transacciones.id_transaccion', 'numero_folio')
+                    ->select('transacciones.id_transaccion', 'numero_folio')
+                    ->orderBy('numero_folio', 'DESC')
+                    ->get();
+                $out = [];
+                foreach($data as $d) {
+                    $out [] = [
+                        'id' => $d->id_transaccion,
+                        'name' => $d->numero_folio
+                    ];
+                }
+                $selected = $data[0]->id_transaccion;
+                return response()->json(['output' => $out, 'selected' => '']);
+            }
+        }
+        return response()->json(['output'=>'', 'selected'=>'']);    
     }
 }

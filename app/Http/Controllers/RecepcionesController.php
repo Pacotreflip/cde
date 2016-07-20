@@ -11,6 +11,7 @@ use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAlmacen;
 use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
 use Ghi\Equipamiento\Recepciones\Recepciones;
+use Illuminate\Support\Facades\DB;
 
 class RecepcionesController extends Controller
 {
@@ -71,10 +72,13 @@ class RecepcionesController extends Controller
      */
     public function create(Areas $areas, $id_oc= 0)
     {
-        $proveedores = Proveedor::soloProveedores()
-            ->orderBy('razon_social')
-            ->lists('razon_social', 'id_empresa')
-            ->all();
+        $proveedores = Proveedor::join("transacciones", "empresas.id_empresa", "=", "transacciones.id_empresa")
+                ->where("id_obra", "=", $this->getIdObra())
+                ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19")
+                ->select(DB::raw("empresas.razon_social, empresas.id_empresa"))
+                ->groupBy("empresas.id_empresa", "empresas.razon_social")
+                ->orderBy("empresas.razon_social")
+                ->get();
 
         $compras = Transaccion::ordenesCompraMateriales()
             ->where('id_obra', $this->getIdObra())

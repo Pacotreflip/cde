@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset(elixir('css/tree.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dependent-dropdown.css') }}">
     @include('scripts.globals')
 
 @yield('styles')
@@ -27,6 +28,8 @@
     <script src="{{ asset("js/jquery.tablesorter.widgets.js") }}"></script>
     <script src="{{ asset("js/loadingoverlay.js") }}"></script>
     <script src="{{ asset("js/select2.full.js") }}"></script>
+    <script src="{{ asset("js/dependent-dropdown.js") }}"></script>
+    <script src="{{ asset("js/depdrop_locale_es.js") }}"></script>
     <script>
       $(function () {
         $.ajaxSetup({
