@@ -65,7 +65,7 @@ class OrdenesCompraController extends ApiController
             $ids = $request->input('depdrop_parents');
             $proveedor_id = empty($ids[0]) ? null : $ids[0];
             $articulo_id = empty($ids[1]) ? null : $ids[1];
-            if ($proveedor_id != null) {
+//            if ($proveedor_id != null) {
                 $data = Transaccion::ordenesCompraMateriales()
                     ->join("items", "transacciones.id_transaccion", "=", "items.id_transaccion")
                     ->join("materiales", "items.id_material", "=", "materiales.id_material")
@@ -85,7 +85,7 @@ class OrdenesCompraController extends ApiController
                 }
                 $selected = $data[0]->id_transaccion;
                 return response()->json(['output' => $out, 'selected' => '']);
-            }
+//            }
         }
         return response()->json(['output'=>'', 'selected'=>'']);    
     }
