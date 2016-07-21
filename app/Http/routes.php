@@ -155,6 +155,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('materiales', 'Api\MaterialesController@index');
     Route::get('ordenes-compra/{id}', 'Api\OrdenesCompraController@show');
     Route::get('areas-tipo/{id}/comparativa', 'AreasTipo\AreasTipoComparativaController@comparativa');   
+    Route::post('materialesOc', 'Api\MaterialesController@materialesOc');   
+    Route::post('getOc', 'Api\OrdenesCompraController@getOc');   
 });
 
 

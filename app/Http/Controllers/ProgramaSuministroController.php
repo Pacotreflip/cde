@@ -34,7 +34,8 @@ class ProgramaSuministroController extends Controller
         //dd($request->all());
         //$recepciones = $this->buscar($request->buscar);
         $proveedores = Proveedor::join("transacciones", "empresas.id_empresa", "=", "transacciones.id_empresa")
-                ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19")
+                ->where("id_obra", "=", $this->getIdObra())
+                ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19 and transacciones.equipamiento= 1")
                 ->select(DB::raw("empresas.razon_social, empresas.id_empresa"))
                 ->groupBy("empresas.id_empresa", "empresas.razon_social")
                 ->get();
