@@ -18,8 +18,6 @@
           <strong>Observaciones:</strong> {{ $asignacion->observaciones }} <br>
         </div>
       </div>
-    </div>
-    <div class="col-sm-6">
         @if($asignacion->recepcion)
       <div class="panel panel-default transaccion-detail">
         <div class="panel-heading">
@@ -30,6 +28,18 @@
         </div>
       </div>
         @endif
+    </div>
+    <div class="col-md-6 col-sm-6 gallery">
+      <div class="row">
+        @include('asignaciones.partials.comprobantes')
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
+      <form action="{{ route('asignaciones.comprobantes', [$asignacion]) }}" class="dropzone" id="dropzone" method="POST" enctype="multipart/form-data">
+        {{ csrf_field() }}
+      </form>
     </div>
   </div>
   
@@ -90,7 +100,15 @@
 
 @section('scripts')
   <script>
-    
+    Dropzone.options.dropzone = {
+      paramName: "comprobante",
+      dictDefaultMessage: "<h2 style='color:#bbb'><span class='glyphicon glyphicon-picture' style='padding-right:5px'></span>Arraste los comprobantes a esta zona para asociarlos a la asignación.</h2>",
+      init: function() {
+        this.on("errormultiple", function(files, response) {
+          console.log(response);
+        });
+      }
+    };
     
     function muestraComprobante(ruta){
         $("#PDFModal .modal-body").html('<iframe src="'+ruta+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');

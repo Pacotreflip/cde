@@ -1,6 +1,6 @@
 <?php
 
-namespace Ghi\Equipamiento\Recepciones;
+namespace Ghi\Equipamiento\Comprobantes;
 
 use Intervention\Image\Facades\Image;
 

@@ -24,7 +24,7 @@ class AgregaComprobanteRequest extends Request
     public function rules()
     {
         return [
-            'comprobante' => 'required|mimes:jpeg,bmp,png,jpg',
+            'comprobante' => 'required|mimes:jpeg,bmp,png,jpg,pdf',
         ];
     }
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace Ghi\Equipamiento\Recepciones;
+namespace Ghi\Equipamiento\Asignaciones;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Ghi\Equipamiento\Comprobantes\Comprobante;
 use Ghi\Equipamiento\Comprobantes\Thumbnail;
 
-class AgregaComprobanteARecepcion
+class AgregaComprobanteAAsignacion
 {
     /**
      * @var Material
      */
-    protected $recepcion;
+    protected $asignacion;
 
     /**
      * @var UploadedFile
@@ -24,9 +24,9 @@ class AgregaComprobanteARecepcion
      * @param Material     $material
      * @param UploadedFile $file
      */
-    public function __construct(Recepcion $recepcion, UploadedFile $file, Thumbnail $thumbnail=null)
+    public function __construct(Asignacion $asignacion, UploadedFile $file, Thumbnail $thumbnail=null)
     {
-        $this->recepcion = $recepcion;
+        $this->asignacion = $asignacion;
         $this->file = $file;
         $this->thumbnail = $thumbnail ?: new Thumbnail;
     }
@@ -47,7 +47,7 @@ class AgregaComprobanteARecepcion
         } else {
             $comprobante->thumbnail_path = $comprobante->baseDir().'/pdf.png';
         }
-        $this->recepcion->agregaComprobante($comprobante);
+        $this->asignacion->agregaComprobante($comprobante);
 
         return $comprobante;
     }

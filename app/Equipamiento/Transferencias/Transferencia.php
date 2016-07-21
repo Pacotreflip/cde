@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Equipamiento\Transacciones\Transaccion;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 
 class Transferencia extends Model
 {
@@ -117,5 +118,11 @@ class Transferencia extends Model
     }
     public function transacciones(){
         return $this->belongsToMany(Transaccion::class, "Equipamiento.transferencias_transacciones", "id_transferencia", "id_transaccion" );
+    }
+    public function comprobantes() {
+        return $this->hasMany(Comprobante::class, 'id_transferencia', 'id');
+    } 
+    public function agregaComprobante(Comprobante $comprobante) {
+        return $this->comprobantes()->save($comprobante);
     }
 }

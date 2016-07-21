@@ -12,6 +12,7 @@ use Ghi\Equipamiento\Transacciones\Transaccion as OrdenCompra;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Autenticacion\User;
 use Ghi\Equipamiento\Asignaciones\Asignacion;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 
 class Recepcion extends Model
 {

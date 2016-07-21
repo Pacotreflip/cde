@@ -109,7 +109,7 @@ Route::get('recepciones/recibir', 'RecepcionesController@create')->name('recepci
 Route::post('recepciones', 'RecepcionesController@store')->name('recepciones.store');
 Route::get('recepciones/{id}', 'RecepcionesController@show')->name('recepciones.show');
 Route::patch('recepciones/{id}', 'RecepcionesController@update')->name('recepciones.update');
-Route::post('recepciones/{id}/comprobantes', 'ComprobantesController@store')->name('recepciones.comprobantes');
+Route::post('recepciones/{id}/comprobantes', 'ComprobantesController@store_recepcion')->name('recepciones.comprobantes');
 Route::delete('recepciones/{id_recepcion}/comprobantes/{id}', 'ComprobantesController@destroy')->name('recepciones.comprobantes.delete');
 Route::post('recepciones/{id}', 'RecepcionesController@destroy')->name('recepciones.delete');
 
@@ -121,6 +121,8 @@ Route::get('transferencias/{id}', 'TransferenciasController@show')->name('transf
 Route::post('transferencias/{id}', 'TransferenciasController@destroy')->name('transferencias.delete');
 Route::get('transferencia/materiales', 'TransferenciasController@getMateriales')->name('transferir.materiales');
 Route::post('transferir/filtrar/', 'TransferenciasController@filtrar')->name('transferir.filtrar');
+Route::post('transferencias/{id}/comprobantes', 'ComprobantesController@store_transferencia')->name('transferencias.comprobantes');
+Route::delete('transferencias/{id_transferencia}/comprobantes/{id}', 'ComprobantesController@destroy')->name('transferencias.comprobantes.delete');
 
 
 // Rutas de asignaciones...
@@ -135,6 +137,8 @@ Route::get('asignar/destino/{id_articulo}/{id_destino}', 'AsignacionesController
 Route::get('asignar/material/{id_area}/{id_articulo}', 'AsignacionesController@getMaterial')->name('asignar.material');
 Route::get('asignar/materiales', 'AsignacionesController@getMateriales')->name('asignar.materiales');
 Route::post('asignar/filtrar/', 'AsignacionesController@filtrar')->name('asignar.filtrar');
+Route::post('asignaciones/{id}/comprobantes', 'ComprobantesController@store_asignacion')->name('asignaciones.comprobantes');
+Route::delete('asignaciones/{id_asignacion}/comprobantes/{id}', 'ComprobantesController@destroy')->name('asignaciones.comprobantes.delete');
 
 // Rutas del api...
 Route::group(['prefix' => 'api'], function () {
@@ -210,6 +214,8 @@ Route::group(["middleware" => ['permission:cierre_area']], function () {
     Route::post("/cierres/carga/areas/", ["as" => "cierre.carga.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
     Route::post("/cierres/create", ["as" => "cierre.create.areas", "uses" => "CierresController@getAreasSeleccionadas"]);
     Route::post('cierres/{id}', 'CierresController@destroy')->name('cierres.delete');
+    Route::post('cierres/{id}/comprobantes', 'ComprobantesController@store_cierre')->name('cierres.comprobantes');
+    Route::delete('cierres/{id_cierre}/comprobantes/{id}', 'ComprobantesController@destroy')->name('cierres.comprobantes.delete');
     Route::resource('cierres', 'CierresController', ['names' => [
             'index' => 'cierres.index',
             'create' => 'cierres.create',
@@ -230,6 +236,8 @@ Route::group(["middleware" => ['permission:entrega_area']], function () {
     Route::post("/entregas/carga/areas/", ["as" => "entrega.carga.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
     Route::post("/entregas/create", ["as" => "entrega.create.areas", "uses" => "EntregasController@getAreasSeleccionadas"]);
     Route::post('entregas/{id}', 'EntregasController@destroy')->name('entregas.delete');
+    Route::post('entregas/{id}/comprobantes', 'ComprobantesController@store_entrega')->name('entregas.comprobantes');
+    Route::delete('entregas/{id_entrega}/comprobantes/{id}', 'ComprobantesController@destroy')->name('entregas.comprobantes.delete');
     Route::resource('entregas', 'EntregasController', ['names' => [
         'index' => 'entregas.index',
         'create' => 'entregas.create',

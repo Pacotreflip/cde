@@ -7,6 +7,7 @@ use Ghi\Equipamiento\Areas\Area;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Core\Models\Obra;
 use Ghi\Core\Models\User;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 
 class Cierre extends Model
 {
@@ -69,5 +70,11 @@ class Cierre extends Model
      */
     public function obra(){
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+    public function comprobantes() {
+        return $this->hasMany(Comprobante::class, 'id_cierre', 'id');
+    } 
+    public function agregaComprobante(Comprobante $comprobante) {
+        return $this->comprobantes()->save($comprobante);
     }
 }

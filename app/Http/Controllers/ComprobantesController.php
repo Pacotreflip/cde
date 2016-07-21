@@ -4,12 +4,20 @@ namespace Ghi\Http\Controllers;
 
 use Ghi\Http\Requests;
 use Illuminate\Http\Request;
-use Ghi\Equipamiento\Recepciones\Comprobante;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 use Ghi\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Ghi\Equipamiento\Recepciones\Recepcion;
+use Ghi\Equipamiento\Transferencias\Transferencia;
+use Ghi\Equipamiento\Asignaciones\Asignacion;
+use Ghi\Equipamiento\Cierres\Cierre;
+use Ghi\Equipamiento\Transacciones\Entrega;
 use Ghi\Http\Requests\AgregaComprobanteRequest;
 use Ghi\Equipamiento\Recepciones\AgregaComprobanteARecepcion;
+use Ghi\Equipamiento\Transferencias\AgregaComprobanteATransferencia;
+use Ghi\Equipamiento\Asignaciones\AgregaComprobanteAAsignacion;
+use Ghi\Equipamiento\Cierres\AgregaComprobanteACierre;
+use Ghi\Equipamiento\Entregas\AgregaComprobanteAEntrega;
 
 class ComprobantesController extends Controller
 {
@@ -46,7 +54,7 @@ class ComprobantesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AgregaComprobanteRequest $request, $id)
+    public function store_recepcion(AgregaComprobanteRequest $request, $id)
     {
         $recepcion = Recepcion::findOrFail($id);
 
@@ -57,10 +65,54 @@ class ComprobantesController extends Controller
         }
     }
     
-    public function destroy($id_recepcion, $id)
+    public function store_transferencia(AgregaComprobanteRequest $request, $id)
     {
-        $comprobante = Comprobante::findOrFail($id);
-        $files = [$comprobante->path, $comprobante->thumbnail_path];
+        $transferencia = Transferencia::findOrFail($id);
+
+        $comprobante = (new AgregaComprobanteATransferencia($transferencia, $request->file('comprobante')))->save();
+
+        if ($request->ajax()) {
+            return response()->json($comprobante->thumbnail_path);
+        }
+    }
+    
+    public function store_asignacion(AgregaComprobanteRequest $request, $id)
+    {
+        $asignacion = Asignacion::findOrFail($id);
+
+        $comprobante = (new AgregaComprobanteAAsignacion($asignacion, $request->file('comprobante')))->save();
+
+        if ($request->ajax()) {
+            return response()->json($comprobante->thumbnail_path);
+        }
+    }
+    
+    public function store_cierre(AgregaComprobanteRequest $request, $id)
+    {
+        $cierre = Cierre::findOrFail($id);
+
+        $comprobante = (new AgregaComprobanteACierre($cierre, $request->file('comprobante')))->save();
+
+        if ($request->ajax()) {
+            return response()->json($comprobante->thumbnail_path);
+        }
+    }
+    
+    public function store_entrega(AgregaComprobanteRequest $request, $id)
+    {
+        $entrega = Entrega::findOrFail($id);
+
+        $comprobante = (new AgregaComprobanteAEntrega($entrega, $request->file('comprobante')))->save();
+
+        if ($request->ajax()) {
+            return response()->json($comprobante->thumbnail_path);
+        }
+    }
+    
+    public function destroy($id, $id_comprobante)
+    {
+        $comprobante = Comprobante::findOrFail($id_comprobante);
+        $files = $comprobante->thumbnail_path == $comprobante->baseDir().'/pdf.png' ? [$comprobante->path] : [$comprobante->path, $comprobante->thumbnail_path];
 
         $comprobante->delete();
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Transacciones\TransaccionTrait;
 use Ghi\Core\Models\Obra;
 use Ghi\Core\Models\User;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 
 class Entrega extends Model
 {
@@ -30,5 +31,11 @@ class Entrega extends Model
     }
     public function concepto(){
         return $this->hasOne(\Ghi\Equipamiento\Areas\Concepto::class, "id_concepto", "id_concepto");
+    }
+    public function comprobantes() {
+        return $this->hasMany(Comprobante::class, 'id_entrega', 'id');
+    } 
+    public function agregaComprobante(Comprobante $comprobante) {
+        return $this->comprobantes()->save($comprobante);
     }
 }

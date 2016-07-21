@@ -10,6 +10,7 @@ use Ghi\Equipamiento\Articulos\Material;
 use Ghi\Equipamiento\Autenticacion\User;
 use Ghi\Equipamiento\Transacciones\Transaccion;
 use Ghi\Equipamiento\Areas\MaterialRequeridoArea;
+use Ghi\Equipamiento\Comprobantes\Comprobante;
 
 class Asignacion extends Model
 {
@@ -108,5 +109,11 @@ class Asignacion extends Model
     }
     public function transacciones(){
         return $this->belongsToMany(Transaccion::class, "Equipamiento.asignaciones_transacciones", "id_asignacion", "id_transaccion" );
+    }
+    public function comprobantes() {
+        return $this->hasMany(Comprobante::class, 'id_asignacion', 'id');
+    }  
+    public function agregaComprobante(Comprobante $comprobante) {
+        return $this->comprobantes()->save($comprobante);
     }
 }
