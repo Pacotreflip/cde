@@ -41977,6 +41977,7 @@ Vue.component('transferencias-screen', {
         fecha_transferencia: '',
         area_origen: '',
         observaciones: '',
+        recibe: '',
         materiales: [],
         errors: []
       },

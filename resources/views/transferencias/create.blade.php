@@ -57,7 +57,17 @@ select {
           <label for="observaciones">Observaciones:</label>
           <textarea name="observaciones" id="observaciones" rows="5" class="form-control" v-model="transferenciaForm.observaciones"></textarea>
         </div>
-
+        <div class="row">
+        <div class="col-md-1 col-md-offset-8 form-group">
+            <label for="chkrecibe">¿Alguien recíbe?:</label>
+            <input name="chkrecibe" id="chkrecibe" type="checkbox" v-model="recibe">
+        </div>
+        <div class="col-md-3 form-group" >        
+            <label for="recibe">Persona que recíbe:</label>
+            <input v-if="recibe" value="" id="recibe" type="text" class="form-control" name="recibe" v-model="transferenciaForm.recibe">
+            <input v-else type="text" value="" v-model="transferenciaForm.recibe" class="form-control" disabled>
+        </div>
+        </div>
         <hr>
 
         <h2>Inventario Actual</h2>

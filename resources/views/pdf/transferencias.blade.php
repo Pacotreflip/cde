@@ -260,7 +260,27 @@ class PDF extends Rotation {
         $this->image(public_path('img/logo_hc.png'), $this->WidthTotal - 1.3, 0.5, 2.33, 1.5);       
     }
         
+    function firma(){
+        $this->SetY(-4);  
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
+        
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('ENTREGA'), 'TRLB', 0, 'C', 1);
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 0.4, utf8_decode('RECIBE'), 'TRLB', 1, 'C', 1);
+
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 0, 'C');
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->Cell(0.25 * $this->GetPageWidth(), 1.5, '', 'RLB', 1, 'C');
+        $this->SetX(0.125 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, $this->transferencia->entrega, 'TRLB', 0, 'C', 1);
+        $this->SetX(0.625 * $this->GetPageWidth());
+        $this->CellFitScale(0.25 * $this->GetPageWidth(), 0.4, $this->transferencia->recibe, 'TRLB', 1, 'C', 1);
+    }
     function Footer() {
+        $this->firma();
         $this->SetFont('Arial', 'B', $this->txtFooterTam);
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', $this->txtFooterTam);

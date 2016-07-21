@@ -81,13 +81,15 @@ class Transferencia extends Model
      * @param  string $usuario
      * @return self
      */
-    public static function crear(Obra $obra, $fecha, $observaciones, $usuario)
+    public static function crear(Obra $obra, $fecha, $observaciones, $usuario, $entrega, $recibe)
     {
         $transferencia = new static();
         $transferencia->obra()->associate($obra);
         $transferencia->fecha_transferencia = $fecha;
         $transferencia->observaciones = $observaciones;
         $transferencia->creado_por = $usuario;
+        $transferencia->recibe = $recibe;
+        $transferencia->entrega = $entrega;
         $transferencia->save();
 
         return $transferencia;

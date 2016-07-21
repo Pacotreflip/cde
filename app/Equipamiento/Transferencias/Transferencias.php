@@ -44,11 +44,16 @@ class Transferencias {
                 throw new \Exception("El área origen se encuentra cerrada, no puede hacer movimientos de sus inventarios.");
             }
 
+            $entrega = auth()->user()->present()->nombreCompleto;
+            $recibe = $this->data['recibe'] == "" ? $entrega : $this->data['recibe'];
+            
             $transferencia = Transferencia::crear(
                 $this->obra,
                 $this->data['fecha_transferencia'],
                 $this->data['observaciones'],
-                auth()->user()->usuario
+                auth()->user()->usuario,
+                $entrega,
+                $recibe
             );
             
             foreach ($this->data['materiales'] as $item) {
