@@ -253,10 +253,14 @@ class ComprasController extends Controller
                         $cell->setBackground('#A9F169');
                     });
                 }
-                $incremeto = ((($importe_dolares - $importe_sin_iva)/$importe_sin_iva));
-                $sheet->appendRow(["","","","","","","","", "","","","","","","","INCREMENTO:",$incremeto, "", "","","", ""]);
+                if($importe_sin_iva>0){
+                $incremento = ((($importe_dolares - $importe_sin_iva)/$importe_sin_iva));
+                }else{
+                    $incremento = "";
+                }
+                $sheet->appendRow(["","","","","","","","", "","","","","","","","INCREMENTO:",$incremento, "", "","","", ""]);
                 $sheet->setBorder('P'.($i+2).':Q'.($i+2), 'thin');
-               if($incremeto>0){
+               if($incremento>0){
                     $sheet->cell('P'.($i+2).':Q'.($i+2), function($cell) {
                         $cell->setBackground('#FF5733');
                     });

@@ -147,84 +147,84 @@ ORDER BY dbo.transacciones.numero_folio
        reporte_b_datos_secrets.unidad,
        reporte_b_datos_secrets.precio AS precio,
        reporte_b_datos_secrets.moneda,
-       cast(round(reporte_b_datos_secrets.importe_sin_iva,2) as numeric(36,2))
+       cast (
+          round (reporte_b_datos_secrets.importe_sin_iva, 2) AS NUMERIC (36, 2))
           AS importe_sin_iva,
-       empresas.razon_social as proveedor_dreams,
+       empresas.razon_social AS proveedor_dreams,
        materiales.descripcion,
        items.cantidad AS cantidad_solicitada_amr,
-       items.unidad as unidad_dreams,
-       cast(round(items.precio_unitario,2) as numeric(36,2)) 
+       items.unidad AS unidad_dreams,
+       cast (round (items.precio_unitario, 2) AS NUMERIC (36, 2))
           AS precio_unitario_mo,
        monedas.nombre AS moneda_original,
-       cast(round (items.importe, 2) as numeric(36,2)) AS importe,
-       cast(round (dbo.ConversionTC (items.precio_unitario,
-                                 transacciones.id_moneda,
-                                 2,
-                                 0,
-                                 18.20,
-                                 0),
-               2) as numeric(36,2))
+       cast (round (items.importe, 2) AS NUMERIC (36, 2)) AS importe,
+       cast (round (dbo.ConversionTC (items.precio_unitario,
+                                      transacciones.id_moneda,
+                                      2,
+                                      0,
+                                      18.20,
+                                      0),
+                    2) AS NUMERIC (36, 2))
           AS precio_unitario_dolares,
-       cast(round (dbo.ConversionTC (items.importe,
-                                 transacciones.id_moneda,
-                                 2,
-                                 0,
-                                 18.20,
-                                 0),
-               2) as numeric(36,2))
+       cast (round (dbo.ConversionTC (items.importe,
+                                      transacciones.id_moneda,
+                                      2,
+                                      0,
+                                      18.20,
+                                      0),
+                    2) AS NUMERIC (36, 2))
           AS importe_dolares,
-       cast(round ( (reporte_b_datos_secrets.importe_sin_iva * 1.22),
-               2) as numeric(36,2))
+       cast (
+          round ( (reporte_b_datos_secrets.importe_sin_iva * 1.22), 2) AS NUMERIC (36, 2))
           AS presupuesto,
-       cast(round (  dbo.ConversionTC (items.importe,
-                                   transacciones.id_moneda,
-                                   2,
-                                   0,
-                                   18.20,
-                                   0)
-               - (reporte_b_datos_secrets.importe_sin_iva * 1.22),
-               2) as numeric(36,2))
+       cast (round (  dbo.ConversionTC (items.importe,
+                                        transacciones.id_moneda,
+                                        2,
+                                        0,
+                                        18.20,
+                                        0)
+                    - (reporte_b_datos_secrets.importe_sin_iva * 1.22),
+                    2) AS NUMERIC (36, 2))
           AS diferencial,
-        (
-          (  (items.cantidad - reporte_b_datos_secrets.cantidad_comprada)
-          
-           / reporte_b_datos_secrets.cantidad_comprada))
+         (items.cantidad - reporte_b_datos_secrets.cantidad_comprada)
+       / reporte_b_datos_secrets.cantidad_comprada
           AS crecimiento_amr,
-       cast(round (
-            (reporte_b_datos_secrets.importe_sin_iva * 1.22)
-          / reporte_b_datos_secrets.precio,
-          2) as numeric(36,2))
+       cast (
+          round (
+               (reporte_b_datos_secrets.importe_sin_iva * 1.22)
+             / reporte_b_datos_secrets.precio,
+             2) AS NUMERIC (36, 2))
           AS piezas_por_presupuesto,
-       cast(round (  (reporte_b_datos_secrets.importe_sin_iva * 1.22)
-               / reporte_b_datos_secrets.precio
-               * dbo.ConversionTC (items.precio_unitario,
-                                   transacciones.id_moneda,
-                                   2,
-                                   0,
-                                   18.20,
-                                   0),
-               2) as numeric(36,2))
+       cast (round (  (reporte_b_datos_secrets.importe_sin_iva * 1.22)
+                    / reporte_b_datos_secrets.precio
+                    * dbo.ConversionTC (items.precio_unitario,
+                                        transacciones.id_moneda,
+                                        2,
+                                        0,
+                                        18.20,
+                                        0),
+                    2) AS NUMERIC (36, 2))
           AS costo_con_crecimiento
-  FROM ((((((items items
-             INNER JOIN
-             SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_ms_md reporte_b_ms_md
-                ON (items.id_material = reporte_b_ms_md.id_material_dreams))
-            INNER JOIN
-            SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_secrets reporte_b_materiales_secrets
-               ON (reporte_b_ms_md.id_material_secrets =
-                      reporte_b_materiales_secrets.id))
-           INNER JOIN
-           SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
-              ON (reporte_b_datos_secrets.id_material_secrets =
-                     reporte_b_materiales_secrets.id))
-          INNER JOIN materiales materiales
+  FROM ((((((SAO1814_HOTEL_DREAMS_PM.dbo.transacciones transacciones
+             INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.monedas monedas
+                ON (transacciones.id_moneda = monedas.id_moneda))
+            INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.items items
+               ON (transacciones.id_transaccion = items.id_transaccion))
+           INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.materiales materiales
+              ON (items.id_material = materiales.id_material))
+          LEFT OUTER JOIN
+          SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_ms_md reporte_b_ms_md
              ON (reporte_b_ms_md.id_material_dreams = materiales.id_material))
-         INNER JOIN transacciones transacciones
-            ON (transacciones.id_transaccion = items.id_transaccion))
-        INNER JOIN empresas empresas
-           ON (transacciones.id_empresa = empresas.id_empresa))
-       INNER JOIN monedas monedas
-          ON (transacciones.id_moneda = monedas.id_moneda)
+         LEFT OUTER JOIN
+         SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_secrets reporte_b_materiales_secrets
+            ON (reporte_b_ms_md.id_material_secrets =
+                   reporte_b_materiales_secrets.id))
+        LEFT OUTER JOIN
+        SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+           ON (reporte_b_datos_secrets.id_material_secrets =
+                  reporte_b_materiales_secrets.id))
+       INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.empresas empresas
+          ON (transacciones.id_empresa = empresas.id_empresa)
  WHERE transacciones.id_transaccion = ".$this->id_transaccion."
                             ");
         
