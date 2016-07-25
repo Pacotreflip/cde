@@ -141,4 +141,22 @@ class ComprasController extends Controller
             
         })->export('xlsx');
     }
+    
+    public function comparativaCompraXLS($id){
+        $compra = Transaccion::with('items.recepciones')->findOrFail($id);
+        Excel::create('ComparativaCompra'.date("Ymd_his"), function($excel)  {
+
+            $excel->sheet("Compras", function($sheet)  {
+                $arreglo = Transaccion::arregloXLS($this->getIdObra());
+                $sheet->fromArray($arreglo);
+                $sheet->row(1, function($row){
+                    $row->setBackground('#cccccc');
+                });
+                $sheet->freezeFirstRow();
+                
+                $sheet->setAutoFilter();
+            });
+            
+        })->export('xlsx');
+    }
 }
