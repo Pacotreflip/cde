@@ -141,72 +141,69 @@ ORDER BY dbo.transacciones.numero_folio
     public function getComparativaXLS(){
         $resultados = DB::connection("cadeco")->select("
             SELECT reporte_b_datos_secrets.proveedor,
-                reporte_b_datos_secrets.no_oc,
-                reporte_b_materiales_secrets.descripcion AS descripcion_producto_oc,
-                reporte_b_datos_secrets.cantidad_comprada AS cantidad_comprada_oc,
-                reporte_b_datos_secrets.unidad,
-                reporte_b_datos_secrets.precio AS precio,
-                reporte_b_datos_secrets.moneda,
-                reporte_b_datos_secrets.importe_sin_iva,
-                transacciones.id_transaccion,
-                empresas.razon_social,
-                materiales.descripcion,
-                items.cantidad AS cantidad_solicitada_amr,
-                items.unidad,
-                items.precio_unitario AS precio_unitario_mo,
-                monedas.nombre AS moneda_original,
-                items.importe,
-                format (dbo.ConversionTC (items.precio_unitario,
+       reporte_b_datos_secrets.no_oc,
+       reporte_b_materiales_secrets.descripcion AS descripcion_producto_oc,
+       reporte_b_datos_secrets.cantidad_comprada AS cantidad_comprada_oc,
+       reporte_b_datos_secrets.unidad,
+       reporte_b_datos_secrets.precio AS precio,
+       reporte_b_datos_secrets.moneda,
+       cast(round(reporte_b_datos_secrets.importe_sin_iva,2) as numeric(36,2))
+          AS importe_sin_iva,
+       empresas.razon_social as proveedor_dreams,
+       materiales.descripcion,
+       items.cantidad AS cantidad_solicitada_amr,
+       items.unidad as unidad_dreams,
+       cast(round(items.precio_unitario,2) as numeric(36,2)) 
+          AS precio_unitario_mo,
+       monedas.nombre AS moneda_original,
+       cast(round (items.importe, 2) as numeric(36,2)) AS importe,
+       cast(round (dbo.ConversionTC (items.precio_unitario,
                                  transacciones.id_moneda,
                                  2,
                                  0,
                                  18.20,
                                  0),
-               'N',
-               'en-us')
+               2) as numeric(36,2))
           AS precio_unitario_dolares,
-       format (dbo.ConversionTC (items.importe,
+       cast(round (dbo.ConversionTC (items.importe,
                                  transacciones.id_moneda,
                                  2,
                                  0,
                                  18.20,
                                  0),
-               'N',
-               'en-us')
+               2) as numeric(36,2))
           AS importe_dolares,
-       format ( (reporte_b_datos_secrets.importe_sin_iva * 1.22),
-               'N',
-               'en-us')
+       cast(round ( (reporte_b_datos_secrets.importe_sin_iva * 1.22),
+               2) as numeric(36,2))
           AS presupuesto,
-       format (  dbo.ConversionTC (items.importe,
+       cast(round (  dbo.ConversionTC (items.importe,
                                    transacciones.id_moneda,
                                    2,
                                    0,
                                    18.20,
                                    0)
                - (reporte_b_datos_secrets.importe_sin_iva * 1.22),
-               'N',
-               'en-us')
+               2) as numeric(36,2))
           AS diferencial,
-       ceiling (
+        (
           (  (items.cantidad - reporte_b_datos_secrets.cantidad_comprada)
-           * 100
+          
            / reporte_b_datos_secrets.cantidad_comprada))
           AS crecimiento_amr,
-       format (
+       cast(round (
             (reporte_b_datos_secrets.importe_sin_iva * 1.22)
           / reporte_b_datos_secrets.precio,
-          'N',
-          'en-us')
+          2) as numeric(36,2))
           AS piezas_por_presupuesto,
-         (reporte_b_datos_secrets.importe_sin_iva * 1.22)
-       / reporte_b_datos_secrets.precio
-       * dbo.ConversionTC (items.precio_unitario,
-                           transacciones.id_moneda,
-                           2,
-                           0,
-                           18.20,
-                           0)
+       cast(round (  (reporte_b_datos_secrets.importe_sin_iva * 1.22)
+               / reporte_b_datos_secrets.precio
+               * dbo.ConversionTC (items.precio_unitario,
+                                   transacciones.id_moneda,
+                                   2,
+                                   0,
+                                   18.20,
+                                   0),
+               2) as numeric(36,2))
           AS costo_con_crecimiento
   FROM ((((((items items
              INNER JOIN
@@ -231,6 +228,6 @@ ORDER BY dbo.transacciones.numero_folio
  WHERE transacciones.id_transaccion = ".$this->id_transaccion."
                             ");
         
-        return  json_decode(json_encode($resultados), true);
+        return  $resultados;
     }
 }

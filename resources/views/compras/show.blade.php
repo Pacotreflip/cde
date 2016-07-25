@@ -89,7 +89,7 @@
   </div>
   <form id="descargaExcel" action="{{ route("comparativa_compra.xls", $compra) }}"></form>
   <button type="button" style="margin-left: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.compras', $compra)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
-  <button type="button" class="btn btn-sm btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel Comparativa</button>
+  <button type="button" class="btn btn-sm btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel Análisis Desviación</button>
 @include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
 @stop
 @section('scripts')
