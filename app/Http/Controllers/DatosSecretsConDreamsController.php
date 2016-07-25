@@ -228,6 +228,6 @@ class DatosSecretsConDreamsController extends Controller
         $dato->delete();
         
         Flash::success('Datos Eliminados Correctamente');
-        return redirect('datosSecretsConDreams');
+        return redirect()->back();
     }
 }
