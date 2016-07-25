@@ -38,7 +38,10 @@
         <td>
             <a class="btn btn-xs btn-success" href="{{ route('datosSecretsConDreams.show', $dato->id) }}"><i class="fa fa-eye"></i></a>
             <a class="btn btn-xs btn-info" href="{{ route('datosSecretsConDreams.edit', $dato->id) }}"><i class="fa fa-pencil"></i></a>
-            <a class="btn btn-xs btn-danger" href="{{ route('datosSecretsConDreams.destroy', $dato->id) }}"><i class="fa fa-remove"></i></a>
+            {!! Form::open(array('url' => 'datosSecretsConDreams/' . $dato->id)) !!}
+            {!! Form::hidden('_method', 'DELETE') !!}
+            <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></button>
+            {!! Form::close() !!}
         </td>
       </tr>  
       @endforeach
