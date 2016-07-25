@@ -4,8 +4,8 @@
 <h1>Datos Secrets Con Dreams
   <a href="{{ route('datosSecretsConDreams.create') }}" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Agregar Datos</a>
 </h1>
-
 <hr>
+@include('partials.search-form')
 
 <div class="table-responsive">
   <table class="table table-hover">
