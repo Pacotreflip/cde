@@ -20,6 +20,7 @@
         <th>presupuesto</th>
         <th>consolidacion_dolares_dreams</th>
         <th>clasificacion</th>
+        <th>Acciones</th>
       </tr>    
     </thead>
     <tbody>
@@ -34,6 +35,11 @@
         <td>{{ $dato->presupuesto }}</td>
         <td>{{ $dato->consolidacion_dolares_dreams }}</td>
         <td>{{ $dato->clasificacion }}</td>
+        <td>
+            <a class="btn btn-xs btn-success" href="{{ route('datosSecretsConDreams.show', $dato->id) }}"><i class="fa fa-eye"></i></a>
+            <a class="btn btn-xs btn-info" href="{{ route('datosSecretsConDreams.edit', $dato->id) }}"><i class="fa fa-pencil"></i></a>
+            <a class="btn btn-xs btn-danger" href="{{ route('datosSecretsConDreams.destroy', $dato->id) }}"><i class="fa fa-remove"></i></a>
+        </td>
       </tr>  
       @endforeach
     </tbody>

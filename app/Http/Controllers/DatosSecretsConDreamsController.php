@@ -13,6 +13,7 @@ use Ghi\Equipamiento\ReporteCostos\AreaDreams;
 use Ghi\Equipamiento\ReporteCostos\AreaReporte;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Laracasts\Flash\Flash;
 
 class DatosSecretsConDreamsController extends Controller
 {
@@ -73,7 +74,9 @@ class DatosSecretsConDreamsController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        DatosSecretsConDreams::create(Input::all());
+        Flash::success('Datos Agregados Correctamente');
+        return redirect()->back();
     }
 
     /**
@@ -82,9 +85,9 @@ class DatosSecretsConDreamsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(DatosSecretsConDreams $datosSecretsConCreams)
+    public function show($id)
     {
-        dd($datosSecretsConCreams);
+        dd(DatosSecretsConDreams::find($id));
     }
 
     /**
@@ -95,7 +98,28 @@ class DatosSecretsConDreamsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $familias = $this->materiales->getListaFamilias(\Ghi\Equipamiento\Articulos\TipoMaterial::TIPO_MATERIALES);
+        $areas_secrets = AreaSecrets::all()->lists('area_secrets', 'id');
+        $areas_dreams = AreaDreams::all()->lists('area_dreams', 'id');
+        $areas_reporte = AreaReporte::all()->lists('area_reporte', 'id');
+        $tipos = DB::connection("cadeco")
+                ->table("Equipamiento.material_clasificadores")
+                ->select("id", "nombre")
+                ->lists("nombre", "id");
+        $monedas = DB::connection("cadeco")
+                ->table("dbo.monedas")
+                ->select("id_moneda", "nombre")
+                ->lists("nombre", "id_moneda");
+        $dato = DatosSecretsConDreams::find($id);
+        
+        return view('datosSecretsConDreams.edit')
+                ->with('dato', $dato)
+                ->with('familias', $familias)
+                ->with('areas_secrets', $areas_secrets)
+                ->with('areas_dreams', $areas_dreams)
+                ->with('areas_reporte', $areas_reporte)
+                ->with('tipos', $tipos)
+                ->with('monedas', $monedas);
     }
 
     /**
@@ -107,7 +131,15 @@ class DatosSecretsConDreamsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $inputs = Input::all();
+        unset($inputs['_token']);
+        unset($inputs['_method']);
+
+        DatosSecretsConDreams::where('id', $id)
+        ->update($inputs);
+        
+        Flash::success('Datos Actualizados Correctamente');
+        return redirect('datosSecretsConDreams');
     }
 
     /**
@@ -118,6 +150,10 @@ class DatosSecretsConDreamsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $dato = DatosSecretsConDreams::find($id);
+        $dato->delete();
+        
+        Flash::success('Datos Eliminados Correctamente');
+        return redirect()->back();
     }
 }
