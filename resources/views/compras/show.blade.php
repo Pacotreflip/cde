@@ -45,7 +45,9 @@
           @foreach($compra->items as $item)
               <tr>
                 <td>{{ $item->material->numero_parte }}</td>
-                <td>{{ $item->material->descripcion }}</td>
+                <td>
+                     <a href="{{ route('articulos.edit', [$item->material]) }}">{{ $item->material->descripcion }}</a>
+                </td>
                 <td>{{ $item->unidad }}</td>
                 <td><a ruta="{{ route('entregas_programadas.index', ['id_item' => $item->id_item]) }}" class="adquirido" title="Ver detalle de entregas programadas" href="#" >{{ $item->cantidad }}</a></td>
                 <td>{{ number_format($item->precio_unitario,2) }}</td>
@@ -85,10 +87,20 @@
           
       </div>
   </div>
-@include('pdf/modal', ['modulo' => 'compras', 'titulo' => 'Compra de Artículos', 'ruta' => route('pdf.compras', $compra),])
+  <form id="descargaExcel" action="{{ route("comparativa_compra.xls", $compra) }}"></form>
+  <button type="button" style="margin-left: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.compras', $compra)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
+  <button type="button" class="btn btn-sm btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel Comparativa</button>
+@include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
 @stop
 @section('scripts')
 <script>
+    $("button.descargar_excel").off().on("click", function(e){
+        $("form#descargaExcel").submit();
+    });
+    function muestraComprobante(ruta){
+        $("#PDFModal .modal-body").html('<iframe src="'+ruta+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');
+        $("#PDFModal").modal("show");
+    }
     $('.adquirido').tooltip(); 
     $('.adquirido').off().on('click', function () {
       showModal($(this).attr('ruta'), this);

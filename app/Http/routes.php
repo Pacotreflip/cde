@@ -86,7 +86,8 @@ Route::get('proveedores/{id}', 'ProveedoresController@edit')->name('proveedores.
 Route::patch('proveedores/{id}', 'ProveedoresController@update')->name('proveedores.update');
 Route::delete('proveedores/{id}', 'ProveedoresController@destroy')->name('proveedores.delete');
 
-// Rutas de compras...
+// Rutas de compras...comparativa_compra
+Route::get("compras/{id}/comparativa/xls", "ComprasController@comparativaCompraXLS")->name('comparativa_compra.xls');
 Route::get("compras/xls", "ComprasController@comprasXLS")->name('compras.xls');
 Route::get('compras', 'ComprasController@index')->name('compras.index');
 Route::get('compras/material/{id_material}', 'ComprasController@index_x_material')->name('compras.index_x_material');
