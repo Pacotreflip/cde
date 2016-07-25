@@ -278,3 +278,7 @@ Route::get('entregas_programadas/create/{id_item}', 'EntregasProgramadasControll
 Route::post('entregas_programadas/store/{id_item}', 'EntregasProgramadasController@store')->name('entregas_programadas.store');
 Route::get('entregas_programadas/{id}/edit', 'EntregasProgramadasController@edit')->name('entregas_programadas.edit');
 Route::post('entregas_programadas/{id}', 'EntregasProgramadasController@update')->name('entregas_programadas.update');
+
+//Rutas de Datos Secrets Con Dreams
+
+Route::resource('datosSecretsConDreams', 'DatosSecretsConDreamsController');
