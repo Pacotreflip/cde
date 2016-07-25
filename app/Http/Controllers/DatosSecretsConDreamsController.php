@@ -31,10 +31,83 @@ class DatosSecretsConDreamsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $datos = $this->buscar($request->buscar);
         return view('datosSecretsConDreams.index')
-                ->with('datosSecretsConDreams', DatosSecretsConDreams::paginate(100));
+                ->with('datosSecretsConDreams', $datos);
+    }
+    
+    protected function buscar($busqueda, $howMany = 100)
+    {
+        return DatosSecretsConDreams::where(function ($query) use ($busqueda) {
+            $query->where('no', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('proveedor', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('no_oc', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('descripcion_producto_oc', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_familia', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('familia', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_area_secrets', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_secrets', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_area_reporte', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_reporte', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_tipo', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('tipo', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_moneda_original', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('moneda_original', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('cantidad_comprada', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('recibidos_por_factura', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('unidad', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('precio', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('moneda', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('importe_sin_iva', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('fecha_factura', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('factura', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('fecha_pago', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_amr', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('fecha_entrega', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('pesos', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('dolares', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('euros', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('consolidado_dolares', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_material_secrets', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('proveedor_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('no_oc_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('descripcion_producto_oc_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_familia_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('familia_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_area_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_area_reporte_p_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_reporte_p_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_tipo_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('tipo_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('cantidad_comprada_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('cantidad_recibida_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('unidad_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('precio_unitario_antes_descuento_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('descuento_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('precio_unitario_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_moneda_original_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('moneda_original_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('importe_sin_iva_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('fecha_factura_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('factura_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('pagado_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('area_amr_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('fecha_entrega_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('presupuesto', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('pesos_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('dolares_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('euros_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('consolidacion_dolares_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('costo_x_habitacion_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('consolidado_banco_dreams', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('id_clasificacion', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('clasificacion', 'LIKE', '%'.$busqueda.'%');
+        })
+            ->orderBy('id', 'DESC')
+            ->paginate($howMany);
     }
 
     /**
