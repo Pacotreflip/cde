@@ -144,10 +144,10 @@ class ComprasController extends Controller
     
     public function comparativaCompraXLS($id){
         $compra = Transaccion::with('items.recepciones')->findOrFail($id);
-        Excel::create('ComparativaCompra'.date("Ymd_his"), function($excel)  {
+        Excel::create('ComparativaCompra_'.$compra->numero_folio."_".date("Ymd_his"), function($excel) use($compra)  {
 
-            $excel->sheet("Compras", function($sheet)  {
-                $arreglo = Transaccion::arregloXLS($this->getIdObra());
+            $excel->sheet("Comparativa", function($sheet) use($compra)  {
+                $arreglo = $compra->getComparativaXLS();
                 $sheet->fromArray($arreglo);
                 $sheet->row(1, function($row){
                     $row->setBackground('#cccccc');
