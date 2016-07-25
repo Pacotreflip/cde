@@ -87,7 +87,8 @@ class DatosSecretsConDreamsController extends Controller
      */
     public function show($id)
     {
-        dd(DatosSecretsConDreams::find($id));
+        return view('datosSecretsConDreams.show')
+        ->with('dato', DatosSecretsConDreams::find($id));
     }
 
     /**

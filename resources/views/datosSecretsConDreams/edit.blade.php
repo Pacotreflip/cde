@@ -3,7 +3,7 @@
 @section('content')
   <ol class="breadcrumb">
     <li><a href="{{ route('datosSecretsConDreams.index') }}">Datos Secrets Con Dreams</a></li>
-    <li class="active">{{ $dato->id }}</li>
+    <li class="active">Editar </li>
   </ol>
 
   <h1>Datos</h1>
