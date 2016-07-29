@@ -74,7 +74,7 @@ class Materiales
     public function buscar($busqueda, $howMany = 30, $except = [])
     {
         return Material::materialesEquipamiento()
-            ->whereNotIn('id_material', $except)
+            ->whereNotIn('materiales.id_material', $except)
             ->where(function ($query) use($busqueda) {
                 $query->where('materiales.descripcion', 'LIKE', '%'.$busqueda.'%')
                     ->orWhere('materiales.numero_parte', 'LIKE', '%'.$busqueda.'%')
