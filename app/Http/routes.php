@@ -263,6 +263,8 @@ Route::get('PDF/entregas/{id}', 'PDFController@entregas')->name('pdf.entregas');
 Route::get('reportes/comparativa', 'ReportesController@index_comparativa')->name('reportes.comparativa');
 Route::post("reportes/comparativa/descarga_excel", "ReportesController@comparativaDescargaExcel")->name('reportes.comparativa_xls');
 Route::get('reportes/estatus_desarrollo', 'ReportesController@index_estatus_desarrollo')->name('reportes.estatus_desarrollo');
+Route::get('reportes/presupuesto', 'ReportesPresupuestoController@index')->name('reportes.presupuesto');
+Route::post('reportes/presupuesto', 'ReportesPresupuestoController@index')->name('reportes.presupuesto');
 Route::post('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
 Route::post('reportes/comparativa_equipamiento/resultado', 'ReportesController@recargaResultado')->name('reportes.tabla_resultado_comparativa_equipamiento');
 Route::get('reportes/comparativa_equipamiento', 'ReportesController@index_reporte_comparativa')->name('reportes.comparativa_equipamiento');
