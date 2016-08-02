@@ -41,4 +41,11 @@ class ReportesPresupuestoController extends Controller
             "reporte_ffe"=>$reporte_ffe,"i"=>1
         ]);
     }
+    public function detalleDreams(){
+        $datos_dreams  = Reporte::getMaterialesDreams();
+        return view('reportes.presupuesto_detalle_dreams', [
+            "datos_dreams"=>$datos_dreams,
+            "i"=>1
+        ]);
+    }
 }

@@ -3,11 +3,7 @@
 @section ('content')
 @if(!$reporte_ffe)
 @elseif(count($reporte_ffe) > 0)
-<div  style="text-align: right">
-    <button class="btn btn-small btn-success descarga_excel" type="button" >
-        <span class="fa fa-download" style="margin-right: 5px"></span> Descarga en Excel
-    </button>
-</div>
+
 <table class="tablesorter" id="table_sort" >
     <thead>
         <tr>
@@ -31,7 +27,7 @@
             @else
             <th style="text-align: right">-</th>
             @endif
-            <th style="text-align: right">{{ number_format($reporte->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right" onclick="detalle_dreams('','','')">{{ number_format($reporte->sum("cotizado_para_acumular"),2) }}</th>
             <th style="text-align: right">{{ number_format($reporte->sum("importe_dolares"),2) }}</th>
         </tr>
         
@@ -269,12 +265,22 @@
 </table>
 
 @endif
-<form id="descargaExcel" method="post" action="{{ route("reportes.materiales_ordenes_compra_xls") }}" >{{ csrf_field() }}</form>
+<form id="detalleDreams" method="post" action="{{ route("reportes.presupuesto_detalle_dreams") }}" >
+    {{ csrf_field() }}
+    <input type="hidden" name="id_tipo" id="id_tipo" value="" />
+    <input type="hidden" name="id_familia" id="id_familia" value="" />
+    <input type="hidden" name="id_area_reporte" id="id_area_reporte" value="" />
+</form>
 
 @stop
 @section('scripts')
 <script>
-
+function detalle_dreams(tipo, familia, area){
+    $("#id_tipo").val(tipo);
+    $("#id_familia").val(familia);
+    $("#id_area_reporte").val(area);
+    $("#detalleDreams").submit();
+}
 $(document).ready(function(){
 $(function(){
     $.tablesorter.addWidget({

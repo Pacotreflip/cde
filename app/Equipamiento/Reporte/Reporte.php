@@ -369,6 +369,29 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             
         return collect($resultados);
     }
+    public static function getMaterialesDreams(){
+        $filtros = "(importe_dolares > 0 or cotizado_para_acumular  > 0)";
+       $resultados = DB::connection("cadeco")->select("SELECT reporte_b_materiales_dreams.clasificador,
+       reporte_b_materiales_dreams.familia,
+       reporte_b_materiales_dreams.area_reporte,
+       reporte_b_materiales_dreams.material,
+       reporte_b_materiales_dreams.id_material,
+       reporte_b_datos_secrets.consolidado_dolares as secrets,
+       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+       reporte_b_materiales_dreams.cotizado_para_acumular,
+       reporte_b_materiales_dreams.importe_dolares,
+       reporte_b_materiales_dreams.id_clasificador,
+       reporte_b_materiales_dreams.id_familia,
+       reporte_b_materiales_dreams.id_area_reporte
+  FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
+       LEFT OUTER JOIN
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+          ON (reporte_b_materiales_dreams.id_material =
+                 reporte_b_datos_secrets.id)
+ WHERE     {$filtros}
+       ");
+       return collect($resultados);
+    }
     public static function getMaterialesOC($id_obra){
         $resultados = DB::connection("cadeco")->select("
             select reporte_materiales_orden_compra.id_material,material, unidad, sum(cantidad_compra) as cantidad_compra, sum(precio_compra)/count(Equipamiento.reporte_materiales_orden_compra.id_material) as precio_compra, 
