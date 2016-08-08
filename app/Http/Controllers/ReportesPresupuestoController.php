@@ -41,10 +41,23 @@ class ReportesPresupuestoController extends Controller
             "reporte_ffe"=>$reporte_ffe,"i"=>1
         ]);
     }
-    public function detalleDreams(){
-        $datos_dreams  = Reporte::getMaterialesDreams();
+    public function detalleDreams(Request $request){
+        $id_tipo = $request->id_tipo;
+        $id_familia = $request->id_familia;
+        $id_area_reporte = $request->id_area_reporte;
+        $datos_dreams  = Reporte::getMaterialesDreams($id_tipo, $id_familia, $id_area_reporte);
         return view('reportes.presupuesto_detalle_dreams', [
             "datos_dreams"=>$datos_dreams,
+            "i"=>1
+        ]);
+    }
+    public function detalleSecrets(Request $request){
+        $id_tipo = $request->id_tipo;
+        $id_familia = $request->id_familia;
+        $id_area_reporte = $request->id_area_reporte;
+        $datos_secrets  = Reporte::getMaterialesSecrets($id_tipo, $id_familia, $id_area_reporte);
+        return view('reportes.presupuesto_detalle_secrets', [
+            "datos_secrets"=>$datos_secrets,
             "i"=>1
         ]);
     }

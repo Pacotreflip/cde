@@ -369,8 +369,24 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             
         return collect($resultados);
     }
-    public static function getMaterialesDreams(){
+    public static function getMaterialesDreams($id_tipo, $id_familia, $id_area_reporte){
         $filtros = "(importe_dolares > 0 or cotizado_para_acumular  > 0)";
+        if($id_tipo == "null"){
+            $filtros .= " and reporte_b_materiales_dreams.id_clasificador is null";
+        }elseif($id_tipo > 0){
+            $filtros .= " and reporte_b_materiales_dreams.id_clasificador={$id_tipo}";
+        }
+        if($id_familia == "null"){
+            $filtros .= " and reporte_b_materiales_dreams.id_familia is null";
+        }elseif($id_familia > 0){
+            $filtros .= " and reporte_b_materiales_dreams.id_familia={$id_familia}";
+        }
+        if($id_area_reporte == "null"){
+            $filtros .= " and reporte_b_materiales_dreams.id_area_reporte is null";
+        }elseif($id_area_reporte > 0){
+            $filtros .= " and reporte_b_materiales_dreams.id_area_reporte={$id_area_reporte}";
+        }
+        
        $resultados = DB::connection("cadeco")->select("SELECT reporte_b_materiales_dreams.clasificador,
        reporte_b_materiales_dreams.familia,
        reporte_b_materiales_dreams.area_reporte,
@@ -385,6 +401,46 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
        reporte_b_materiales_dreams.id_area_reporte
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        LEFT OUTER JOIN
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+          ON (reporte_b_materiales_dreams.id_material =
+                 reporte_b_datos_secrets.id)
+ WHERE     {$filtros}
+       ");
+       return collect($resultados);
+    }
+    public static function getMaterialesSecrets($id_tipo, $id_familia, $id_area_reporte){
+        $filtros = "(consolidado_dolares > 0)";
+        if($id_tipo == "null"){
+            $filtros .= " and reporte_b_datos_secrets.id_tipo is null";
+        }elseif($id_tipo > 0){
+            $filtros .= " and reporte_b_datos_secrets.id_tipo={$id_tipo}";
+        }
+        if($id_familia == "null"){
+            $filtros .= " and reporte_b_datos_secrets.id_familia is null";
+        }elseif($id_familia > 0){
+            $filtros .= " and reporte_b_datos_secrets.id_familia={$id_familia}";
+        }
+        if($id_area_reporte == "null"){
+            $filtros .= " and reporte_b_datos_secrets.id_area_reporte is null";
+        }elseif($id_area_reporte > 0){
+            $filtros .= " and reporte_b_datos_secrets.id_area_reporte={$id_area_reporte}";
+        }
+        
+       $resultados = DB::connection("cadeco")->select("
+           SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+       reporte_b_materiales_dreams.cotizado_para_acumular,
+       reporte_b_materiales_dreams.importe_dolares,
+       reporte_b_datos_secrets.tipo as clasificador,
+       reporte_b_datos_secrets.familia,
+       reporte_b_datos_secrets.area_reporte,
+       reporte_b_datos_secrets.descripcion_producto_oc as material,
+       reporte_b_datos_secrets.id as id_material,
+       reporte_b_datos_secrets.id_tipo as id_clasificador,
+       reporte_b_datos_secrets.id_familia,
+       reporte_b_datos_secrets.id_area_reporte
+  FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
+       RIGHT OUTER JOIN
        SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
           ON (reporte_b_materiales_dreams.id_material =
                  reporte_b_datos_secrets.id)
@@ -427,6 +483,7 @@ on(materiales_fechas_entrega.id_material = Equipamiento.reporte_materiales_orden
             
         return collect($resultados);
     }
+    
     public static function getMaterialesOCVSREQVENN($id_obra){
         $resultados = DB::connection("cadeco")->select("select caso, count(*) as size from (
 select 
