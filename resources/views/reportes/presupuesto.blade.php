@@ -249,8 +249,8 @@
         </tr>
         <tr style="background-color: #C1C1C1">
             <th colspan="4" style="text-align: right; ">Sumatorias:</th>
-            <th style="text-align: right">{{ number_format($reporte_null->sum("secrets"),2) }}</th>
-            <th style="text-align: right">{{ number_format($reporte_null->sum("presupuesto"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("secrets"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("presupuesto"),2) }}</th>
             <th style="text-align: right">{{ number_format($reporte_null->sum("total_dreams"),2) }}</th>
             <th style="text-align: right">{{ number_format($reporte_null->sum("var_tp"),2) }}</th>
             @if($reporte_null->sum("presupuesto")>0)
@@ -258,8 +258,8 @@
             @else
             <th style="text-align: right">-</th>
             @endif
-            <th style="text-align: right; text-decoration: underline" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("cotizado_para_acumular"),2) }}</th>
-            <th style="text-align: right; text-decoration: underline" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_dolares"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_dolares"),2) }}</th>
         </tr>
         
     </thead>
@@ -270,8 +270,19 @@
              <td style=" ">{{ $reporte_null_fila->tipo }}</td>
              <td style=" ">{{ $reporte_null_fila->familia }}</td>
              <td style=" ">{{ $reporte_null_fila->area_reporte }}</td>
-            <td style="text-align: right">{{ number_format($reporte_null_fila->secrets,2) }}</td>
-            <td style="text-align: right">{{ number_format($reporte_null_fila->presupuesto,2) }}</td>
+             
+            @if($reporte_null_fila->secrets > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_filas('null','{{$reporte_null_fila->id_familia}}','{{$reporte_null_fila->id_area_reporte}}')">{{ number_format($reporte_null_fila->secrets,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_null_fila->secrets,2) }}</td>
+            @endif
+            
+            @if($reporte_null_fila->presupuesto > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_filas('null','{{$reporte_null_fila->id_familia}}','{{$reporte_null_fila->id_area_reporte}}')">{{ number_format($reporte_null_fila->presupuesto,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_null_fila->presupuesto,2) }}</td>
+            @endif
+             
             <td style="text-align: right">{{ number_format($reporte_null_fila->total_dreams,2) }}</td>
             <td style="text-align: right">{{ number_format($reporte_null_fila->var_tp,2) }}</td>
             <td style="text-align: right">
@@ -302,8 +313,8 @@
 <tfoot>
     <tr style="background-color: #C1C1C1">
         <td colspan="4" style="text-align: right; ">Sumatorias:</td>
-        <td style="text-align: right">{{ number_format($reporte_null->sum("secrets"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_null->sum("presupuesto"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("secrets"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("presupuesto"),2) }}</td>
         <td style="text-align: right">{{ number_format($reporte_null->sum("total_dreams"),2) }}</td>
         <td style="text-align: right">{{ number_format($reporte_null->sum("var_tp"),2) }}</td>
         @if($reporte_null->sum("presupuesto")>0)
