@@ -25,8 +25,8 @@
             <th style="text-align: right">{{ number_format($datos_secrets->sum("secrets"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_secrets->sum("presupuesto"),2) }}</th>
             
-            <th style="text-align: right">{{ number_format($datos_secrets->sum("cotizado_para_acumular"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_secrets->sum("importe_dolares"),2) }}</th>
+            <th style="text-align: right">{{ number_format($datos_secrets->sum("cotizado_para_acumular"),2) }}</th>
         </tr>
         
     </thead>
@@ -41,8 +41,8 @@
             <td style="text-align: right">{{ number_format($datos_secrets_fila->secrets,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_secrets_fila->presupuesto,2) }}</td>
             
-            <td style="text-align: right">{{ number_format($datos_secrets_fila->cotizado_para_acumular,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_secrets_fila->importe_dolares,2) }}</td>
+            <td style="text-align: right">{{ number_format($datos_secrets_fila->cotizado_para_acumular,2) }}</td>
         </tr>
     @endforeach
 
@@ -53,8 +53,8 @@
         <td style="text-align: right">{{ number_format($datos_secrets->sum("secrets"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_secrets->sum("presupuesto"),2) }}</td>
         
-        <td style="text-align: right">{{ number_format($datos_secrets->sum("cotizado_para_acumular"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_secrets->sum("importe_dolares"),2) }}</td>
+        <td style="text-align: right">{{ number_format($datos_secrets->sum("cotizado_para_acumular"),2) }}</td>
     </tr>
 </tfoot>
 </table>
