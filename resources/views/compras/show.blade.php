@@ -83,17 +83,22 @@
           @endforeach
       </tbody>
     </table>
-      <div id="modal">
+      <div id="div_modal">
           
       </div>
   </div>
   <form id="descargaExcel" action="{{ route("comparativa_compra.xls", $compra) }}"></form>
   <button type="button" style="margin-left: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.compras', $compra)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
   <button type="button" class="btn btn-sm btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel Análisis Desviación</button>
+  <button type="button" class="btn btn-sm btn-info pull-right fechas_pago" style="margin-left: 5px" ruta="{{ route("compra.pagos_programados.index", $compra) }}"><i class="fa fa-money"></i> Fechas de Pago</button>
 @include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
 @stop
 @section('scripts')
 <script>
+    $("button.fechas_pago").off().on("click", function(e) {
+        e.preventDefault();
+        showModal($(this).attr('ruta'));          
+    });
     $("button.descargar_excel").off().on("click", function(e){
         $("form#descargaExcel").submit();
     });
@@ -102,7 +107,8 @@
         $("#PDFModal").modal("show");
     }
     $('.adquirido').tooltip(); 
-    $('.adquirido').off().on('click', function () {
+    $('.adquirido').off().on('click', function (e) {
+      e.preventDefault();
       showModal($(this).attr('ruta'), this);
     });
     
@@ -120,8 +126,8 @@
             $(element).closest('td').LoadingOverlay("hide");   
         },
         success: function (source) {
-          $('#modal').html(source);
-          $('#entregas_programadas_modal').modal('show');
+          $('#div_modal').html(source);
+          $('#modal').modal('show');
           if(element)
             $(element).closest('td').LoadingOverlay("hide");   
         },
@@ -139,9 +145,26 @@
         url: App.host + '/entregas_programadas/create/' + id,
         success: function(source) {
           if(source.error) {
-            swal('No hay cantidad faltante por programar.','','info');
+            swal('','No hay cantidad faltante por programar.','info');
           } else {
-            $('#entregas_programadas_modal').html(source);
+            $('#modal').html(source);
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
+    }
+    
+    function agregarPago(){
+      $.ajax({
+        type: 'GET',
+        url: '{{ route("compra.pagos_programados.create", $compra) }}',
+        success: function(source) {
+          if(source.error) {
+            swal('','No hay monto faltante por programar.','info');
+          } else {
+            $('#modal').html(source);
           }
         },
         error: function(error) {
@@ -183,6 +206,39 @@
       });
     }
     
+    function borrarPago(id_compra, id_pago, element) {
+      swal({   
+        title: "¿Eliminar Pago Programado?",   
+        type: "warning",   
+        showCancelButton: true,   
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,   
+        showLoaderOnConfirm: true
+      }, 
+      function(){   
+        $.ajax({
+          url: App.host + '/compra/' + id_compra + '/pagos_programados/' + id_pago,
+          method: 'DELETE',
+          success: function(response) {
+            $(element).closest('tr').remove();
+            $('#totalProgramado').text(response.totalProgramado);
+            $('#cantidad').text(response.monto);
+            $('#faltante').text(response.faltante);
+            swal({
+              type: "info",
+              title: response.Mensaje,   
+              timer: 1000,   
+              showConfirmButton: false 
+            });
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    }
+    
     function store(id){
       $("#errores").empty();
       $.ajax({
@@ -192,8 +248,53 @@
           $('#entrega_programada_form').serialize()
         ,
         success: function(response) {
-          $('#entregas_programadas_modal').modal('hide');
+          $('#modal').modal('hide');
           showModal(App.host + '/entregas_programadas/index/' + id);
+          swal({
+            type: "success",
+            title: response.Mensaje,   
+            timer: 1000,   
+            showConfirmButton: false 
+          });
+        },
+        error: function(xhr, responseText, thrownError) {
+          var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+          if(ind1 === -1) {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+              salida += '<li>'+elem+'</li>';
+            });
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          } else {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+            var cad1 = xhr.responseText.substring(ind1);
+            var ind2 = cad1.indexOf('</span>');
+            var cad2 = cad1.substring(32,ind2);
+            if(cad2 !== "") {
+              salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+            } else {
+              salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+            }
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          }
+        }
+      });
+    }
+    
+    function storePago(id_compra){
+      $("#errores").empty();
+      $.ajax({
+        url: App.host + '/compra/' + id_compra + '/pagos_programados/store',
+        type: 'POST',
+        data: 
+          $('#pago_programado_form').serialize()
+        ,
+        success: function(response) {
+          $('#modal').modal('hide');
+          showModal(App.host + '/compra/' + id_compra + '/pagos_programados/index');
           swal({
             type: "success",
             title: response.Mensaje,   
@@ -233,7 +334,20 @@
         url: App.host + '/entregas_programadas/' + id + '/edit',
         type: 'GET',
         success: function (source) {
-          $('#entregas_programadas_modal').html(source);
+          $('#modal').html(source);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+      });
+    }
+    
+    function editarPago(id_compra, id_pago) {
+      $.ajax({
+        url: App.host + '/compra/' + id_compra + '/pagos_programados/' + id_pago + '/edit',
+        type: 'GET',
+        success: function (source) {
+          $('#modal').html(source);
         },
         error: function(error) {
             console.log(error);
@@ -247,8 +361,50 @@
         data: $('#edit_entrega_programada_form').serialize(),
         url: App.host  + '/entregas_programadas/' + id,
         success: function(response) {
-          $('#entregas_programadas_modal').modal('hide');
+          $('#modal').modal('hide');
           showModal(App.host + '/entregas_programadas/index/' + id_item);
+          swal({
+            type: "success",
+            title: response.Mensaje,   
+            timer: 1000,   
+            showConfirmButton: false 
+          });
+        },
+        error: function(xhr, responseText, thrownError) {
+          var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+          if(ind1 === -1) {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            $.each($.parseJSON(xhr.responseText), function (ind, elem) { 
+              salida += '<li>'+elem+'</li>';
+            });
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          } else {
+            var salida = '<div class="alert alert-danger" role="alert"><strong>Errores: </strong> <br> <br><ul >';
+            var ind1 = xhr.responseText.indexOf('<span class="exception_message">');
+            var cad1 = xhr.responseText.substring(ind1);
+            var ind2 = cad1.indexOf('</span>');
+            var cad2 = cad1.substring(32,ind2);
+            if(cad2 !== "") {
+              salida += '<li><p><strong>¡ERROR GRAVE!: </strong></p><p>'+cad2+'</p></li>';
+            } else {
+              salida += '<li>Un error grave ocurrió. Por favor intente otra vez.</li>';
+            }
+            salida += '</ul></div>';
+            $("#errores").html(salida);
+          }
+        }
+      });  
+    }
+    
+    function updatePago(id_compra, id_pago) {
+      $.ajax({
+        type: 'POST',
+        data: $('#edit_pago_programado_form').serialize(),
+        url: App.host  + '/compra/' + id_compra + '/pagos_programados/' + id_pago,
+        success: function(response) {
+          $('#modal').modal('hide');
+          showModal(App.host + '/compra/' + id_compra + '/pagos_programados/index');
           swal({
             type: "success",
             title: response.Mensaje,   

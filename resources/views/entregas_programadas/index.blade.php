@@ -1,4 +1,4 @@
-<div id="entregas_programadas_modal" class="modal fade" tabindex="-1" role="dialog">
+<div id="modal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">

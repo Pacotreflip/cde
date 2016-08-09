@@ -230,4 +230,16 @@ ORDER BY dbo.transacciones.numero_folio
         
         return  $resultados;
     }
+    
+    public function pagosProgramados(){
+        return $this->hasMany(PagoProgramado::class, 'id_transaccion', 'id_transaccion');
+    }
+    
+    public function totalProgramado() {
+        $result = 0;
+        foreach($this->pagosProgramados as $pagoProgramado) {
+            $result += $pagoProgramado->monto;
+        }
+        return $result;
+    }
 }

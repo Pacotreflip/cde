@@ -4,7 +4,7 @@ namespace Ghi\Http\Requests;
 
 use Ghi\Http\Requests\Request;
 
-class UpdateEntregaProgramadaRequest extends Request
+class CreatePagoProgramadoRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,17 @@ class UpdateEntregaProgramadaRequest extends Request
     public function rules()
     {       
         return [
-            'cantidad' => 'required|integer|numeric|min:1|max:'.($this->actual + $this->faltante),
-            'fecha_entrega' => 'required',
+            'monto' => 'required|numeric|min:0.1|max:'.$this->faltante,
+            'fecha' => 'required',
             'observaciones' => 'required'
         ];
     }
     
-    public function messages() {
+     public function messages() {
         $messages = [
-            'cantidad.required' => 'Favor de indicar la cantidad.',
-            'cantidad.max' => 'La cantidad a programar debe ser menor o igual a la cantidad programada actual más la cantidad faltante ('.($this->actual + $this->faltante).')',
-            'fecha_entrega.required' => 'Por favor indicar la fecha de entrega programada.',
+            'monto.required' => 'Favor de indicar el monto.',
+            'monto.max' => 'El monto a programar debe ser menor o igual al monto faltante ('.$this->faltante.')',
+            'fecha.required' => 'Por favor indicar la fecha de pago programado.',
             'observaciones.required' => 'Favor de indicar las observaciones.'
         ];
         

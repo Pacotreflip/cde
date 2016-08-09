@@ -105,7 +105,7 @@ class EntregasProgramadasController extends Controller
      */
     public function update(UpdateEntregaProgramadaRequest $request, $id)
     {
-        $entrega_programada = EntregaProgramada::find($id);
+        $entrega_programada = EntregaProgramada::findOrFail($id);
         $entrega_programada->cantidad_programada = $request->input('cantidad');
         $entrega_programada->fecha_entrega = Carbon::parse($request->input('fecha_entrega'))->toDateString();
         $entrega_programada->observaciones = $request->input('observaciones');

@@ -288,3 +288,11 @@ Route::post('entregas_programadas/{id}', 'EntregasProgramadasController@update')
 //Rutas de Datos Secrets Con Dreams
 
 Route::resource('datosSecretsConDreams', 'DatosSecretsConDreamsController');
+
+//Rutas de Pagos Programados
+Route::get('compra/{compra}/pagos_programados/index', 'PagosProgramadosController@index')->name('compra.pagos_programados.index');
+Route::get('compra/{compra}/pagos_programados/create', 'PagosProgramadosController@create')->name('compra.pagos_programados.create');
+Route::get('compra/{compra}/pagos_programados/{pago}/edit', 'PagosProgramadosController@edit')->name('compra.pagos_programados.edit');
+Route::delete('compra/{compra}/pagos_programados/{pago}', 'PagosProgramadosController@destroy')->name('compra.pagos_programados.destroy');
+Route::post('compra/{compra}/pagos_programados/store', 'PagosProgramadosController@store')->name('compra.pagos_programados.store');
+Route::post('compra/{compra}/pagos_programados/{pago}', 'PagosProgramadosController@update')->name('compra.pagos_programados.update');
