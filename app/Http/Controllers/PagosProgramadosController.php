@@ -131,9 +131,9 @@ class PagosProgramadosController extends Controller
         
         return response()->json([
             'Mensaje' => 'Pago eliminado',
-            'monto' => $compra->monto,
-            'totalProgramado' => $compra->totalProgramado(),
-            'faltante' => $compra->monto - $compra->totalProgramado()
+            'monto' => number_format($compra->monto, 2, '.', ','),
+            'totalProgramado' => number_format($compra->totalProgramado(), 2, '.', ','),
+            'faltante' => number_format(($compra->monto - $compra->totalProgramado()), 2, '.', ',')
         ]);
     }
 }
