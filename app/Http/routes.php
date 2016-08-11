@@ -296,3 +296,6 @@ Route::get('compra/{compra}/pagos_programados/{pago}/edit', 'PagosProgramadosCon
 Route::delete('compra/{compra}/pagos_programados/{pago}', 'PagosProgramadosController@destroy')->name('compra.pagos_programados.destroy');
 Route::post('compra/{compra}/pagos_programados/store', 'PagosProgramadosController@store')->name('compra.pagos_programados.store');
 Route::post('compra/{compra}/pagos_programados/{pago}', 'PagosProgramadosController@update')->name('compra.pagos_programados.update');
+
+//Rutas de Programa de Pagos
+ Route::resource('programa_pagos', 'ProgramaPagosController');
