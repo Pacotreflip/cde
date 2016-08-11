@@ -108,6 +108,10 @@
                 </div>
             </div>
         </th>
+        @else
+        <th  style="text-align: center; border: solid 1px #CCC">
+            
+        </th>
         @endif
       @endforeach
     @endforeach
