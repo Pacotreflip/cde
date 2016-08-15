@@ -50,8 +50,9 @@ class ProgramaPagosController extends Controller
         $compras = Transaccion::join("Equipamiento.pagos_programados", "transacciones.id_transaccion", "=", "Equipamiento.pagos_programados.id_transaccion")
                 ->join("empresas", "transacciones.id_empresa", "=", "empresas.id_empresa")
                 ->whereRaw("equipamiento = 1 and Equipamiento.pagos_programados.fecha between '{$fecha_inicial} 00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%' ")
-                ->select(DB::raw("transacciones.id_transaccion, transacciones.monto as monto, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
-                ->groupBy(DB::raw("transacciones.id_transaccion, transacciones.monto, dbo.zerofill(4,transacciones.numero_folio)"))
+                ->select(DB::raw("transacciones.id_transaccion, transacciones.monto as monto, dbo.zerofill(4,transacciones.numero_folio) as folio_oc, empresas.razon_social"))
+                ->groupBy(DB::raw("transacciones.id_transaccion, transacciones.monto, dbo.zerofill(4,transacciones.numero_folio), empresas.razon_social"))
+                ->orderBy("empresas.razon_social")
                 ->get();
                 
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 

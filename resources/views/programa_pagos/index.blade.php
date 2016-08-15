@@ -53,8 +53,9 @@
 <table class="table table-striped table-hover">
     <thead>
       <tr>
-          <th style="width: 20px;text-align: center; border: solid 1px #CCC" rowspan="3">#</th>
-          <th rowspan="3" style="text-align: center; border: solid 1px #CCC">Orden de Compra</th>
+        <th rowspan="3" style="width: 20px;text-align: center; border: solid 1px #CCC" >#</th>
+        <th rowspan="3" style="text-align: center; border: solid 1px #CCC">Proveedor</th>
+        <th rowspan="3" style="width: 150px; text-align: center; border: solid 1px #CCC">Orden de Compra</th>
         @foreach($anios as $anio)
         <th colspan="{{$anio->cantidad_dias}}" style="text-align: center; border: solid 1px #CCC">{{$anio->anio}}</th>
         @endforeach
@@ -78,7 +79,8 @@
     @foreach($compras as $compra)
     <tr>
       <td>{{$i++}}</td>
-      <td><a href="{{ route('compras.show', $compra) }}">OC #{{ $compra->folio_oc }}</a></td>
+      <td>{{ $compra->razon_social }}</td>
+      <td><a href="{{ route('compras.show', $compra) }}">#{{ $compra->folio_oc }}</a></td>
       @foreach($dias as $dia)
         @if(array_key_exists($dia->anio_mes_dia, $compra->anio_mes_dia_pago))
         <th  style="text-align: center; border: solid 1px #CCC;">
