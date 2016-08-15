@@ -31,6 +31,7 @@ class ProgramaPagosController extends Controller
                 ->where("id_obra", "=", $this->getIdObra())
                 ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19 and transacciones.equipamiento= 1")
                 ->select(DB::raw("empresas.razon_social, empresas.id_empresa"))
+                ->orderBy('empresas.razon_social')
                 ->groupBy("empresas.id_empresa", "empresas.razon_social")
                 ->get();
         

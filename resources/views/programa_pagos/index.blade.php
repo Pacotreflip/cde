@@ -95,16 +95,7 @@
                     <div class="form-group">
                         <label>Monto Programado:</label>
                         {{number_format($compra->anio_mes_dia_pago[$dia->anio_mes_dia]["monto"], 2, '.', ',')}}
-                    </div>
-                    <div class="form-group">
-                        <label>Monto Total Programado:</label>
-                        {{number_format($compra->totalProgramado(), 2, '.', ',')}}
-                    </div>
-                    <div class="form-group">
-                        <label>Faltante:</label>
-                        {{number_format(($compra->monto - $compra->totalProgramado()), 2, '.', ',')}}
-                    </div>
-                    
+                    </div>                    
                 </div>
             </div>
         </th>

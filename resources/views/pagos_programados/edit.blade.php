@@ -13,13 +13,13 @@
       <hr>
       <div class="row">
         <div class="col-md-4 col-sm-4 col-xs-4 text-center">
-          <p>Total: <strong id="cantidad">{{ number_format($compra->monto, 2, '.', ',') }}</strong></p>                  
+          <p>Total: <strong id="cantidad">{{ $compra->monto }}</strong></p>                  
         </div>
         <div class="col-md-4 col-sm-4 col-xs-4 text-center">
-          <p>Total Programado: <strong id="totalProgramado">{{ number_format($compra->totalProgramado(), 2, '.', ',') }}</strong></p>                  
+          <p>Total Programado: <strong id="totalProgramado">{{ $compra->totalProgramado() }}</strong></p>                  
         </div>
         <div class="col-md-4 col-sm-4 col-xs-4 text-center">
-          <p>Faltante: <strong id="faltante">{{ number_format(($compra->monto - $compra->totalProgramado()), 2, '.', ',') }}</strong></p>                  
+          <p>Faltante: <strong id="faltante">{{ $compra->monto - $compra->totalProgramado() }}</strong></p>                  
         </div>
       </div>
       <div class="row">

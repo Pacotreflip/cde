@@ -43,7 +43,7 @@ class PagosProgramadosController extends Controller
     {
         $compra = Transaccion::findOrFail($id_compra);
         $faltante = $compra->monto - $compra->totalProgramado();
-        if ($faltante == 0) {
+        if (round($faltante, 2) == 0) {
             return response()->json(['error' => 'error']);
         }
         return view('pagos_programados.create')
@@ -146,9 +146,9 @@ class PagosProgramadosController extends Controller
         
         return response()->json([
             'Mensaje' => 'Pago eliminado',
-            'monto' => number_format($compra->monto, 2, '.', ','),
-            'totalProgramado' => number_format($compra->totalProgramado(), 2, '.', ','),
-            'faltante' => number_format(($compra->monto - $compra->totalProgramado()), 2, '.', ',')
+            'monto' => round($compra->monto, 2),
+            'totalProgramado' => round($compra->totalProgramado(), 2),
+            'faltante' => round(($compra->monto - $compra->totalProgramado()), 2)
         ]);
     }
 }
