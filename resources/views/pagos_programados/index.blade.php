@@ -16,7 +16,7 @@
                 <p>Total Programado: <strong id="totalProgramado">{{ $compra->totalProgramado() }}</strong></p>                  
             </div>
             <div class="col-md-3 col-sm-4 col-xs-4 text-center">
-                <p>Faltante: <strong id="faltante">{{ round($compra->monto, 2) - $compra->totalProgramado() }}</strong></p>                  
+                <p>Faltante: <strong id="faltante">{{ round(round($compra->monto, 2) - $compra->totalProgramado(), 2) }}</strong></p>                  
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12 text-center">
                 <button class="btn btn-success pull-right" onclick="agregarPago()"><i class="fa fa-plus"></i> Agregar</button>
@@ -37,7 +37,7 @@
                       @foreach($compra->pagosProgramados as $pago)
                       <tr>
                           <td>{{ $pago->fecha->format('d-m-Y') }}</td>
-                          <td>{{ $pago->monto }}</td>
+                          <td>{{ round($pago->monto, 2) }}</td>
                           <td>{{ $pago->usuario_registro->present()->nombreCompleto }}</td>
                           <td>{{ $pago->created_at->format('d-m-Y h:i:s') }}</td>
                           <td class="text-center">

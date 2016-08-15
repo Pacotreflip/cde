@@ -28,7 +28,7 @@
           </div>
           <div class="form-group">
             <label for="Cantidad">Monto:</label>
-            <input type="number" class="form-control" value="{{ (round($compra->monto, 2) - $compra->totalProgramado()) }}" name="monto">
+            <input type="number" class="form-control" value="{{ round(round($compra->monto, 2) - $compra->totalProgramado(), 2) }}" name="monto">
           </div>
         </div>
         <div class="col-md-6 col-sm-12"> 

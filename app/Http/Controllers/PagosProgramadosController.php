@@ -148,7 +148,7 @@ class PagosProgramadosController extends Controller
             'Mensaje' => 'Pago eliminado',
             'monto' => round($compra->monto, 2),
             'totalProgramado' => round($compra->totalProgramado(), 2),
-            'faltante' => round(($compra->monto - $compra->totalProgramado()), 2)
+            'faltante' => round($compra->monto, 2) - $compra->totalProgramado()
         ]);
     }
 }
