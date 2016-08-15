@@ -398,12 +398,13 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
        reporte_b_materiales_dreams.importe_dolares,
        reporte_b_materiales_dreams.id_clasificador,
        reporte_b_materiales_dreams.id_familia,
-       reporte_b_materiales_dreams.id_area_reporte
+       reporte_b_materiales_dreams.id_area_reporte,
+       reporte_b_datos_secrets.descripcion_producto_oc AS material_secrets
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        LEFT OUTER JOIN
        SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
-          ON (reporte_b_materiales_dreams.id_material =
-                 reporte_b_datos_secrets.id)
+          ON (reporte_b_materiales_dreams.id_material_secrets =
+                 reporte_b_datos_secrets.id_material_secrets)
  WHERE     {$filtros}
        ");
        return collect($resultados);
@@ -438,14 +439,17 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
        reporte_b_datos_secrets.id as id_material,
        reporte_b_datos_secrets.id_tipo as id_clasificador,
        reporte_b_datos_secrets.id_familia,
-       reporte_b_datos_secrets.id_area_reporte
+       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_materiales_dreams.material AS material_dreams,
+       reporte_b_materiales_dreams.id_material AS id_material_dreams
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        RIGHT OUTER JOIN
        SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
-          ON (reporte_b_materiales_dreams.id_material =
-                 reporte_b_datos_secrets.id)
+          ON (reporte_b_materiales_dreams.id_material_secrets =
+                 reporte_b_datos_secrets.id_material_secrets)
  WHERE     {$filtros}
        ");
+ 
        return collect($resultados);
     }
     public static function getMaterialesOC($id_obra){
