@@ -13,7 +13,8 @@
             <th style="text-align: center;" >Tipo</th>
             <th style="text-align: center;" >Familia</th>
             <th style="text-align: center;" >Área</th>
-            <th style="text-align: center;" >Material</th>
+            <th style="text-align: center;" >Material Secrets</th>
+            <th style="text-align: center;" >Material Dreams</th>
             <th style="text-align: center;" >Secrets</th>
             <th style="text-align: center;" >Presupuesto</th>
             <th style="text-align: center;" >Comprado</th>
@@ -21,7 +22,7 @@
             
         </tr>
         <tr style="background-color: #C1C1C1">
-            <th colspan="5" style="text-align: right; ">Sumatorias:</th>
+            <th colspan="6" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($datos_dreams->sum("secrets"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_dreams->sum("presupuesto"),2) }}</th>
             
@@ -37,6 +38,7 @@
              <td style=" ">{{ $datos_dreams_fila->clasificador }}</td>
              <td style=" ">{{ $datos_dreams_fila->familia }}</td>
              <td style=" ">{{ $datos_dreams_fila->area_reporte }}</td>
+             <td style=" ">{{ $datos_dreams_fila->material_secrets }}</td>
              <td style=" "><a href="{{ route('articulos.edit', [$datos_dreams_fila->id_material]) }}">{{ $datos_dreams_fila->material }}</a></td>
             <td style="text-align: right">{{ number_format($datos_dreams_fila->secrets,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_dreams_fila->presupuesto,2) }}</td>
@@ -49,7 +51,7 @@
 </tbody>
 <tfoot>
     <tr style="background-color: #C1C1C1">
-        <td colspan="5" style="text-align: right; ">Sumatorias:</td>
+        <td colspan="6" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right">{{ number_format($datos_dreams->sum("secrets"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_dreams->sum("presupuesto"),2) }}</td>
         

@@ -13,7 +13,8 @@
             <th style="text-align: center;" >Tipo</th>
             <th style="text-align: center;" >Familia</th>
             <th style="text-align: center;" >Área</th>
-            <th style="text-align: center;" >Material</th>
+            <th style="text-align: center;" >Material Secrets</th>
+            <th style="text-align: center;" >Material Dreams</th>
             <th style="text-align: center;" >Secrets</th>
             <th style="text-align: center;" >Presupuesto</th>
             <th style="text-align: center;" >Comprado Dreams</th>
@@ -21,7 +22,7 @@
             
         </tr>
         <tr style="background-color: #C1C1C1">
-            <th colspan="5" style="text-align: right; ">Sumatorias:</th>
+            <th colspan="6" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($datos_secrets->sum("secrets"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_secrets->sum("presupuesto"),2) }}</th>
             
@@ -34,10 +35,11 @@
         @foreach($datos_secrets as $datos_secrets_fila)
         <tr>
             <td style=" ">{{ $i ++ }}</td>
-             <td style=" ">{{ $datos_secrets_fila->clasificador }}</td>
-             <td style=" ">{{ $datos_secrets_fila->familia }}</td>
-             <td style=" ">{{ $datos_secrets_fila->area_reporte }}</td>
-             <td style=" ">{{ $datos_secrets_fila->material }}</td>
+            <td style=" ">{{ $datos_secrets_fila->clasificador }}</td>
+            <td style=" ">{{ $datos_secrets_fila->familia }}</td>
+            <td style=" ">{{ $datos_secrets_fila->area_reporte }}</td>
+            <td style=" ">{{ $datos_secrets_fila->material }}</td>
+            <td style=" "><a href="{{ route('articulos.edit', [$datos_secrets_fila->id_material_dreams]) }}">{{ $datos_secrets_fila->material_dreams }}</a></td>
             <td style="text-align: right">{{ number_format($datos_secrets_fila->secrets,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_secrets_fila->presupuesto,2) }}</td>
             
@@ -49,7 +51,7 @@
 </tbody>
 <tfoot>
     <tr style="background-color: #C1C1C1">
-        <td colspan="5" style="text-align: right; ">Sumatorias:</td>
+        <td colspan="6" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right">{{ number_format($datos_secrets->sum("secrets"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_secrets->sum("presupuesto"),2) }}</td>
         
