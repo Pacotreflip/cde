@@ -17,17 +17,29 @@
             <th style="text-align: center;" >Material Dreams</th>
             <th style="text-align: center;" >Secrets</th>
             <th style="text-align: center;" >Presupuesto</th>
+            <th style="text-align: center;" >Total Dreams</th>
+            <th style="text-align: center; width: 280px" colspan="2" >Var vs. Presupuesto </th>
             <th style="text-align: center;" >Comprado</th>
             <th style="text-align: center;" >Cotizado</th>
+            <th style="text-align: center;" >Sin Cotizar</th>
             
         </tr>
         <tr style="background-color: #C1C1C1">
             <th colspan="6" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right">{{ number_format($datos_dreams->sum("secrets"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_dreams->sum("presupuesto"),2) }}</th>
+            <th style="text-align: right">{{ number_format($datos_dreams->sum("total_dreams"),2) }}</th>
+            
+            <th style="text-align: right; width: 140px">{{ number_format($datos_dreams->sum("var_tp"),2) }}</th>
+            @if($datos_dreams->sum("presupuesto")>0)
+            <th style="text-align: right; width: 140px">{{ number_format($datos_dreams->sum("var_tp")/($datos_dreams->sum("presupuesto"))*100,2) }}</th>
+            @else
+            <th style="text-align: right; width: 140px">-</th>
+            @endif
             
             <th style="text-align: right">{{ number_format($datos_dreams->sum("importe_dolares"),2) }}</th>
             <th style="text-align: right">{{ number_format($datos_dreams->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right">{{ number_format($datos_dreams->sum("importe_sin_cotizar"),2) }}</th>
         </tr>
         
     </thead>
@@ -42,9 +54,20 @@
              <td style=" "><a href="{{ route('articulos.edit', [$datos_dreams_fila->id_material]) }}">{{ $datos_dreams_fila->material }}</a></td>
             <td style="text-align: right">{{ number_format($datos_dreams_fila->secrets,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_dreams_fila->presupuesto,2) }}</td>
+            <td style="text-align: right">{{ number_format($datos_dreams_fila->total_dreams,2) }}</td>
+            
+            <td style="text-align: right">{{ number_format($datos_dreams_fila->var_tp,2) }}</td>
+            <td style="text-align: right">
+                @if($datos_dreams_fila->var_tp_p == "")
+                -
+                @else
+                {{ number_format($datos_dreams_fila->var_tp_p,2) }}
+                @endif
+            </td>
             
             <td style="text-align: right">{{ number_format($datos_dreams_fila->importe_dolares,2) }}</td>
             <td style="text-align: right">{{ number_format($datos_dreams_fila->cotizado_para_acumular,2) }}</td>
+            <td style="text-align: right">{{ number_format($datos_dreams_fila->importe_sin_cotizar,2) }}</td>
         </tr>
     @endforeach
 
@@ -54,9 +77,20 @@
         <td colspan="6" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right">{{ number_format($datos_dreams->sum("secrets"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_dreams->sum("presupuesto"),2) }}</td>
+        <td style="text-align: right">{{ number_format($datos_dreams->sum("total_dreams"),2) }}</td>
+        
+        
+        <td style="text-align: right">{{ number_format($datos_dreams->sum("var_tp"),2) }}</td>
+        @if($datos_dreams->sum("presupuesto")>0)
+            <td style="text-align: right">{{ number_format($datos_dreams->sum("var_tp")/($datos_dreams->sum("presupuesto"))*100,2) }}</td>
+            @else
+            <td style="text-align: right">-</td>
+            @endif
+        
         
         <td style="text-align: right">{{ number_format($datos_dreams->sum("importe_dolares"),2) }}</td>
         <td style="text-align: right">{{ number_format($datos_dreams->sum("cotizado_para_acumular"),2) }}</td>
+        <td style="text-align: right">{{ number_format($datos_dreams->sum("importe_sin_cotizar"),2) }}</td>
     </tr>
 </tfoot>
 </table>
@@ -84,7 +118,9 @@ $(function(){
 $(".tablesorter").tablesorter({
     theme : "blue",
     widgets :["indexFirstColumn","zebra"],
-    headers: { 0: { sorter: false},8: { sorter: false},9: { sorter: false},10: { sorter: false},11: { sorter: false}}
+    headers: { 0: { sorter: false},8: { sorter: false},9: { sorter: false},10: { sorter: false},11: { sorter: false}
+    ,12: { sorter: false},13: { sorter: false},14: { sorter: false},15: { sorter: false},16: { sorter: false}
+    ,17: { sorter: false},18: { sorter: false}}
 }
         );
 

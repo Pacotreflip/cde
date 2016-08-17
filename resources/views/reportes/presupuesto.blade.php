@@ -14,6 +14,7 @@
             <th style="text-align: center;" colspan="2" >Var vs. Presupuesto </th>
             <th style="text-align: center;" >Comprado</th>
             <th style="text-align: center;" >Cotizado</th>
+            <th style="text-align: center;" >Sin Cotizar</th>
             
         </tr>
         <tr style="background-color: #C1C1C1">
@@ -29,6 +30,7 @@
             @endif
             <th style="text-align: right; text-decoration: underline; cursor:pointer; width: 140px" onclick="detalle_dreams('','','')">{{ number_format($reporte->sum("importe_dolares"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor:pointer; width: 140px" onclick="detalle_dreams('','','')">{{ number_format($reporte->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer; width: 140px" onclick="detalle_dreams('','','')">{{ number_format($reporte->sum("importe_sin_cotizar"),2) }}</th>
         </tr>
         
     </thead>
@@ -48,6 +50,7 @@
             <th style="text-align: center; width: 280px" colspan="2" >Var vs. Presupuesto </th>
             <th style="text-align: center; width: 140px" >Comprado</th>
             <th style="text-align: center; width: 140px" >Cotizado</th>
+            <th style="text-align: center; width: 140px" >Sin Cotizar</th>
             
         </tr>
         <tr style="background-color: #C1C1C1">
@@ -63,6 +66,7 @@
             @endif
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("importe_dolares"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("importe_sin_cotizar"),2) }}</th>
         </tr>
         
     </thead>
@@ -106,6 +110,12 @@
             @else
                 <td style="text-align: right;">{{ number_format($reporte_ffe_fila->cotizado_para_acumular,2) }}</td>
             @endif
+            
+            @if($reporte_ffe_fila->importe_sin_cotizar > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('25','{{$reporte_ffe_fila->id_familia}}','{{$reporte_ffe_fila->id_area_reporte}}')">{{ number_format($reporte_ffe_fila->importe_sin_cotizar,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ffe_fila->importe_sin_cotizar,2) }}</td>
+            @endif
         </tr>
     @endforeach
 
@@ -124,6 +134,7 @@
             @endif
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("importe_dolares"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("cotizado_para_acumular"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("importe_sin_cotizar"),2) }}</td>
     </tr>
 </tfoot>
 </table>
@@ -146,6 +157,7 @@
             <th style="text-align: center; width: 280px" colspan="2" >Var vs. Presupuesto </th>
             <th style="text-align: center; width: 140px" >Comprado</th>
             <th style="text-align: center; width: 140px" >Cotizado</th>
+            <th style="text-align: center; width: 140px" >Sin Cotizar</th>
             
         </tr>
         <tr style="background-color: #C1C1C1">
@@ -161,6 +173,7 @@
             @endif
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("importe_dolares"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("importe_sin_cotizar"),2) }}</th>
         </tr>
         
     </thead>
@@ -205,6 +218,12 @@
             @else
                 <td style="text-align: right;">{{ number_format($reporte_ose_fila->cotizado_para_acumular,2) }}</td>
             @endif
+            
+            @if($reporte_ose_fila->importe_sin_cotizar > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('24','{{$reporte_ose_fila->id_familia}}','{{$reporte_ose_fila->id_area_reporte}}')">{{ number_format($reporte_ose_fila->importe_sin_cotizar,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ose_fila->importe_sin_cotizar,2) }}</td>
+            @endif
         </tr>
     @endforeach
 
@@ -223,6 +242,7 @@
             @endif
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("importe_dolares"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("cotizado_para_acumular"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("importe_sin_cotizar"),2) }}</td>
     </tr>
 </tfoot>
 </table>
@@ -245,6 +265,7 @@
             <th style="text-align: center; width: 280px" colspan="2" >Var vs. Presupuesto </th>
             <th style="text-align: center; width: 140px" >Comprado</th>
             <th style="text-align: center; width: 140px" >Cotizado</th>
+            <th style="text-align: center; width: 140px" >Sin Cotizar</th>
             
         </tr>
         <tr style="background-color: #C1C1C1">
@@ -260,6 +281,7 @@
             @endif
             <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_dolares"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("cotizado_para_acumular"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_sin_cotizar"),2) }}</th>
         </tr>
         
     </thead>
@@ -305,6 +327,12 @@
                 <td style="text-align: right;">{{ number_format($reporte_null_fila->cotizado_para_acumular,2) }}</td>
             @endif
             
+            @if($reporte_null_fila->importe_sin_cotizar > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('null','{{$reporte_null_fila->id_familia}}','{{$reporte_null_fila->id_area_reporte}}')">{{ number_format($reporte_null_fila->importe_sin_cotizar,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_null_fila->importe_sin_cotizar,2) }}</td>
+            @endif
+            
             
         </tr>
     @endforeach
@@ -324,6 +352,7 @@
             @endif
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_dolares"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("cotizado_para_acumular"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("importe_sin_cotizar"),2) }}</td>
     </tr>
 </tfoot>
 </table>
