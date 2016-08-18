@@ -4,7 +4,7 @@
 @if(!$reporte_ffe)
 @elseif(count($reporte_ffe) > 0)
 
-<table class="tablesorter" id="table_sort" >
+<table class="tablesorter1" id="table_sort" >
     <thead>
         <tr>
             <th colspan="4" style="text-align: center;"  >&nbsp;</th>
@@ -21,8 +21,8 @@
             <th colspan="4" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right; cursor: pointer; text-decoration: underline; width: 140px" onclick="detalle_secrets('','','')">{{ number_format($reporte->sum("secrets"),2) }}</th>
             <th style="text-align: right; cursor: pointer; text-decoration: underline; width: 140px" onclick="detalle_secrets('','','')">{{ number_format($reporte->sum("presupuesto"),2) }}</th>
-            <th style="text-align: right; width: 140px">{{ number_format($reporte->sum("total_dreams"),2) }}</th>
-            <th style="text-align: right; width: 140px">{{ number_format($reporte->sum("var_tp"),2) }}</th>
+            <th style="text-align: right; width: 140px; text-decoration: underline; cursor:pointer;" onclick="detalle_dreams('','','')">{{ number_format($reporte->sum("total_dreams"),2) }}</th>
+            <th style="text-align: right; width: 140px; text-decoration: underline; cursor:pointer;" onclick="detalle_secrets_dreams('','','')">{{ number_format($reporte->sum("var_tp"),2) }}</th>
             @if($reporte->sum("presupuesto")>0)
             <th style="text-align: right; width: 140px">{{ number_format($reporte->sum("var_tp")/($reporte->sum("presupuesto"))*100,2) }}</th>
             @else
@@ -57,8 +57,8 @@
             <th colspan="4" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('25','','')">{{ number_format($reporte_ffe->sum("secrets"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('25','','')">{{ number_format($reporte_ffe->sum("presupuesto"),2) }}</th>
-            <th style="text-align: right">{{ number_format($reporte_ffe->sum("total_dreams"),2) }}</th>
-            <th style="text-align: right; width: 140px">{{ number_format($reporte_ffe->sum("var_tp"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("total_dreams"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer;width: 140px" onclick="detalle_secrets_dreams('25','','')">{{ number_format($reporte_ffe->sum("var_tp"),2) }}</th>
             @if($reporte_ffe->sum("presupuesto")>0)
             <th style="text-align: right; width: 140px">{{ number_format($reporte_ffe->sum("var_tp")/($reporte_ffe->sum("presupuesto"))*100,2) }}</th>
             @else
@@ -90,15 +90,29 @@
                 <td style="text-align: right;">{{ number_format($reporte_ffe_fila->presupuesto,2) }}</td>
             @endif
              
-            <td style="text-align: right">{{ number_format($reporte_ffe_fila->total_dreams,2) }}</td>
-            <td style="text-align: right">{{ number_format($reporte_ffe_fila->var_tp,2) }}</td>
+            @if($reporte_ffe_fila->total_dreams  > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('25','{{$reporte_ffe_fila->id_familia}}','{{$reporte_ffe_fila->id_area_reporte}}')">{{ number_format($reporte_ffe_fila->total_dreams,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ffe_fila->total_dreams,2) }}</td>
+            @endif
+            
+            
+            @if($reporte_ffe_fila->var_tp  > 0 || $reporte_ffe_fila->var_tp  < 0 )
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_dreams_filas('25','{{$reporte_ffe_fila->id_familia}}','{{$reporte_ffe_fila->id_area_reporte}}')">{{ number_format($reporte_ffe_fila->var_tp,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ffe_fila->var_tp,2) }}</td>
+            @endif
+            
+            @if($reporte_ffe_fila->var_tp_p == "")
             <td style="text-align: right">
-                @if($reporte_ffe_fila->var_tp_p == "")
-                -
-                @else
-                {{ number_format($reporte_ffe_fila->var_tp_p,2) }}
-                @endif
+            -
             </td>
+            @else
+            <td style="text-align: right">
+            {{ number_format($reporte_ffe_fila->var_tp_p,2) }}
+            </td>
+            @endif
+            
             @if($reporte_ffe_fila->importe_dolares  > 0)
                 <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('25','{{$reporte_ffe_fila->id_familia}}','{{$reporte_ffe_fila->id_area_reporte}}')">{{ number_format($reporte_ffe_fila->importe_dolares,2) }}</td>
             @else
@@ -125,10 +139,10 @@
         <td colspan="4" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('25','','')">{{ number_format($reporte_ffe->sum("secrets"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('25','','')">{{ number_format($reporte_ffe->sum("presupuesto"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_ffe->sum("total_dreams"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_ffe->sum("var_tp"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('25','','')">{{ number_format($reporte_ffe->sum("total_dreams"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_dreams('25','','')">{{ number_format($reporte_ffe->sum("var_tp"),2) }}</td>
         @if($reporte->sum("presupuesto")>0)
-            <td style="text-align: right">{{ number_format($reporte_ffe->sum("var_tp")/($reporte_ffe->sum("presupuesto"))*100,2) }}</td>
+            <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_dreams('25','','')">{{ number_format($reporte_ffe->sum("var_tp")/($reporte_ffe->sum("presupuesto"))*100,2) }}</td>
             @else
             <td style="text-align: right">-</td>
             @endif
@@ -164,8 +178,8 @@
             <th colspan="4" style="text-align: right; ">Sumatorias:</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('24','','')">{{ number_format($reporte_ose->sum("secrets"),2) }}</th>
             <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets('24','','')">{{ number_format($reporte_ose->sum("presupuesto"),2) }}</th>
-            <th style="text-align: right; ">{{ number_format($reporte_ose->sum("total_dreams"),2) }}</th>
-            <th style="text-align: right; width: 140px">{{ number_format($reporte_ose->sum("var_tp"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("total_dreams"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor: pointer; width: 140px" onclick="detalle_secrets_dreams('24','','')">{{ number_format($reporte_ose->sum("var_tp"),2) }}</th>
             @if($reporte_ffe->sum("presupuesto")>0)
             <th style="text-align: right; width: 140px">{{ number_format($reporte_ose->sum("var_tp")/($reporte_ose->sum("presupuesto"))*100,2) }}</th>
             @else
@@ -196,9 +210,20 @@
             @else
                 <td style="text-align: right;">{{ number_format($reporte_ose_fila->presupuesto,2) }}</td>
             @endif
-             
-            <td style="text-align: right">{{ number_format($reporte_ose_fila->total_dreams,2) }}</td>
-            <td style="text-align: right">{{ number_format($reporte_ose_fila->var_tp,2) }}</td>
+                         
+            @if($reporte_ose_fila->total_dreams > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('24','{{$reporte_ose_fila->id_familia}}','{{$reporte_ose_fila->id_area_reporte}}')">{{ number_format($reporte_ose_fila->total_dreams,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ose_fila->total_dreams,2) }}</td>
+            @endif
+            
+            
+            @if($reporte_ose_fila->var_tp  > 0 || $reporte_ose_fila->var_tp  < 0 )
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_dreams_filas('24','{{$reporte_ose_fila->id_familia}}','{{$reporte_ose_fila->id_area_reporte}}')">{{ number_format($reporte_ose_fila->var_tp,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_ose_fila->var_tp,2) }}</td>
+            @endif
+            
             <td style="text-align: right">
                 @if($reporte_ose_fila->var_tp_p == "")
                 -
@@ -233,8 +258,8 @@
         <td colspan="4" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('24','','')">{{ number_format($reporte_ose->sum("secrets"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('24','','')">{{ number_format($reporte_ose->sum("presupuesto"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_ose->sum("total_dreams"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_ose->sum("var_tp"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('24','','')">{{ number_format($reporte_ose->sum("total_dreams"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets_dreams('24','','')">{{ number_format($reporte_ose->sum("var_tp"),2) }}</td>
         @if($reporte_ose->sum("presupuesto")>0)
             <td style="text-align: right">{{ number_format($reporte_ose->sum("var_tp")/($reporte_ose->sum("presupuesto"))*100,2) }}</td>
             @else
@@ -270,10 +295,10 @@
         </tr>
         <tr style="background-color: #C1C1C1">
             <th colspan="4" style="text-align: right; ">Sumatorias:</th>
-            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("secrets"),2) }}</th>
-            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("presupuesto"),2) }}</th>
-            <th style="text-align: right">{{ number_format($reporte_null->sum("total_dreams"),2) }}</th>
-            <th style="text-align: right; width: 140px">{{ number_format($reporte_null->sum("var_tp"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("secrets"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("presupuesto"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("total_dreams"),2) }}</th>
+            <th style="text-align: right; text-decoration: underline; cursor:pointer; width: 140px" onclick="detalle_secrets_dreams('null','','')">{{ number_format($reporte_null->sum("var_tp"),2) }}</th>
             @if($reporte_null->sum("presupuesto")>0)
             <th style="text-align: right; width: 140px">{{ number_format($reporte_null->sum("var_tp")/($reporte_null->sum("presupuesto"))*100,2) }}</th>
             @else
@@ -305,8 +330,19 @@
                 <td style="text-align: right;">{{ number_format($reporte_null_fila->presupuesto,2) }}</td>
             @endif
              
-            <td style="text-align: right">{{ number_format($reporte_null_fila->total_dreams,2) }}</td>
-            <td style="text-align: right">{{ number_format($reporte_null_fila->var_tp,2) }}</td>
+            
+            @if($reporte_null_fila->total_dreams  > 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_dreams_filas('null','{{$reporte_null_fila->id_familia}}','{{$reporte_null_fila->id_area_reporte}}')">{{ number_format($reporte_null_fila->total_dreams,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_null_fila->total_dreams,2) }}</td>
+            @endif
+            
+            @if($reporte_null_fila->var_tp  > 0 || $reporte_null_fila->var_tp  < 0)
+                <td style="text-align: right; text-decoration: underline; cursor: pointer" onclick="detalle_secrets_dreams_filas('null','{{$reporte_null_fila->id_familia}}','{{$reporte_null_fila->id_area_reporte}}')">{{ number_format($reporte_null_fila->var_tp,2) }}</td>
+            @else
+                <td style="text-align: right;">{{ number_format($reporte_null_fila->var_tp,2) }}</td>
+            @endif
+            
             <td style="text-align: right">
                 @if($reporte_null_fila->var_tp_p == "")
                 -
@@ -343,7 +379,7 @@
         <td colspan="4" style="text-align: right; ">Sumatorias:</td>
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("secrets"),2) }}</td>
         <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_secrets('null','','')">{{ number_format($reporte_null->sum("presupuesto"),2) }}</td>
-        <td style="text-align: right">{{ number_format($reporte_null->sum("total_dreams"),2) }}</td>
+        <td style="text-align: right; text-decoration: underline; cursor:pointer" onclick="detalle_dreams('null','','')">{{ number_format($reporte_null->sum("total_dreams"),2) }}</td>
         <td style="text-align: right">{{ number_format($reporte_null->sum("var_tp"),2) }}</td>
         @if($reporte_null->sum("presupuesto")>0)
             <td style="text-align: right">{{ number_format($reporte_null->sum("var_tp")/($reporte_null->sum("presupuesto"))*100,2) }}</td>
@@ -370,9 +406,35 @@
     <input type="hidden" name="id_familia" id="id_familia" value="" />
     <input type="hidden" name="id_area_reporte" id="id_area_reporte" value="" />
 </form>
+<form id="detalleSecretsDreams" method="post" action="{{ route("reportes.presupuesto_detalle_secrets_dreams") }}" >
+    {{ csrf_field() }}
+    <input type="hidden" name="id_tipo" id="id_tipo" value="" />
+    <input type="hidden" name="id_familia" id="id_familia" value="" />
+    <input type="hidden" name="id_area_reporte" id="id_area_reporte" value="" />
+</form>
 @stop
 @section('scripts')
 <script>
+function detalle_secrets_dreams(tipo, familia, area){
+
+    $("#detalleSecretsDreams #id_tipo").val(tipo);
+    $("#detalleSecretsDreams #id_familia").val(familia);
+    $("#detalleSecretsDreams #id_area_reporte").val(area);
+    $("#detalleSecretsDreams").submit();
+}
+function detalle_secrets_dreams_filas(tipo, familia, area){
+    $("#detalleSecretsDreams #id_tipo").val(tipo);
+    if(familia === ""){
+        familia = "null";
+    }
+    
+    $("#detalleSecretsDreams #id_familia").val(familia);
+    if(area === ""){
+        area = "null";
+    }
+    $("#detalleSecretsDreams #id_area_reporte").val(area);
+    $("#detalleSecretsDreams").submit();
+}
 function detalle_dreams(tipo, familia, area){
     $("#id_tipo").val(tipo);
     $("#id_familia").val(familia);
@@ -424,10 +486,19 @@ $(function(){
             }                                   
         }
     });
+$(".tablesorter1").tablesorter({
+    theme : "blue",
+    widgets :["indexFirstColumn","zebra"],
+    headers: { 0: { sorter: false},8: { sorter: false},9: { sorter: false},10: { sorter: false},11: { sorter: false}
+    ,12: { sorter: false},13: { sorter: false},14: { sorter: false},15: { sorter: false},16: { sorter: false}}
+}
+        );
+
 $(".tablesorter").tablesorter({
     theme : "blue",
     widgets :["indexFirstColumn","zebra"],
-    headers: { 0: { sorter: false},8: { sorter: false},9: { sorter: false},10: { sorter: false},11: { sorter: false}}
+    headers: { 0: { sorter: false},17: { sorter: false},18: { sorter: false},19: { sorter: false},11: { sorter: false}
+    ,12: { sorter: false},13: { sorter: false},14: { sorter: false},15: { sorter: false},16: { sorter: false}}
 }
         );
 

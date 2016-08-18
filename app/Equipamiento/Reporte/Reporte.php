@@ -11,6 +11,13 @@ class Reporte {
             SELECT PresupuestoConDreamsCotCom.id_tipo,
             case when PresupuestoConDreamsCotCom.id_tipo is null then 0
             else PresupuestoConDreamsCotCom.id_tipo end id_tipo_agrupar,
+            
+            case when PresupuestoConDreamsCotCom.id_area_reporte is null then 0
+            else PresupuestoConDreamsCotCom.id_area_reporte end id_area_reporte_agrupar,
+
+            case when PresupuestoConDreamsCotCom.familia is null then 'sin_familia'
+            else PresupuestoConDreamsCotCom.familia end familia_agrupar,
+
        PresupuestoConDreamsCotCom.id_area_reporte,
        PresupuestoConDreamsCotCom.id_familia,
        PresupuestoConDreamsCotCom.tipo,
@@ -32,10 +39,11 @@ class Reporte {
  WHERE (PresupuestoConDreamsCotCom.id_tipo = 25)
 ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
          PresupuestoConDreamsCotCom.importe_dolares DESC");
+
             
         $collection =  collect($resultados);//->unique();
         $unique = $collection->unique(function ($item) {
-            return $item->id_tipo_agrupar.$item->id_familia.$item->id_area_reporte;
+            return $item->id_tipo_agrupar.$item->familia_agrupar.$item->id_area_reporte_agrupar;
         });
         //dd($unique);
         return $unique;
@@ -45,6 +53,13 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             SELECT PresupuestoConDreamsCotCom.id_tipo,
             case when PresupuestoConDreamsCotCom.id_tipo is null then 0
             else PresupuestoConDreamsCotCom.id_tipo end id_tipo_agrupar,
+            
+            case when PresupuestoConDreamsCotCom.id_area_reporte is null then 0
+            else PresupuestoConDreamsCotCom.id_area_reporte end id_area_reporte_agrupar,
+
+            case when PresupuestoConDreamsCotCom.id_familia is null then 0
+            else PresupuestoConDreamsCotCom.id_familia end id_familia_agrupar,
+
        PresupuestoConDreamsCotCom.id_area_reporte,
        PresupuestoConDreamsCotCom.id_familia,
        PresupuestoConDreamsCotCom.tipo,
@@ -69,7 +84,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             
         $collection =  collect($resultados);//->unique();
         $unique = $collection->unique(function ($item) {
-            return $item->id_tipo_agrupar.$item->id_familia.$item->id_area_reporte;
+            return $item->id_tipo_agrupar.$item->id_familia_agrupar.$item->id_area_reporte_agrupar;
         });
         //dd($unique);
         return $unique;
@@ -79,6 +94,13 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             SELECT PresupuestoConDreamsCotCom.id_tipo,
             case when PresupuestoConDreamsCotCom.id_tipo is null then 0
             else PresupuestoConDreamsCotCom.id_tipo end id_tipo_agrupar,
+            
+            case when PresupuestoConDreamsCotCom.id_area_reporte is null then 0
+            else PresupuestoConDreamsCotCom.id_area_reporte end id_area_reporte_agrupar,
+
+            case when PresupuestoConDreamsCotCom.id_familia is null then 0
+            else PresupuestoConDreamsCotCom.id_familia end id_familia_agrupar,
+
        PresupuestoConDreamsCotCom.id_area_reporte,
        PresupuestoConDreamsCotCom.id_familia,
        PresupuestoConDreamsCotCom.tipo,
@@ -103,7 +125,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             
         $collection =  collect($resultados);//->unique();
         $unique = $collection->unique(function ($item) {
-            return $item->id_tipo_agrupar.$item->id_familia.$item->id_area_reporte;
+            return $item->id_tipo_agrupar.$item->id_familia_agrupar.$item->id_area_reporte_agrupar;
         });
         //dd($unique);
         return $unique;
@@ -112,8 +134,16 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
             //DB::setFetchMode(PDO::FETCH_ASSOC);
         $resultados = DB::connection("cadeco")->select("
             SELECT PresupuestoConDreamsCotCom.id_tipo,
+            
             case when PresupuestoConDreamsCotCom.id_tipo is null then 0
             else PresupuestoConDreamsCotCom.id_tipo end id_tipo_agrupar,
+            
+            case when PresupuestoConDreamsCotCom.id_area_reporte is null then 0
+            else PresupuestoConDreamsCotCom.id_area_reporte end id_area_reporte_agrupar,
+
+            case when PresupuestoConDreamsCotCom.familia is null then 'sin_familia'
+            else PresupuestoConDreamsCotCom.familia end familia_agrupar,
+
        PresupuestoConDreamsCotCom.id_area_reporte,
        PresupuestoConDreamsCotCom.id_familia,
        PresupuestoConDreamsCotCom.tipo,
@@ -130,7 +160,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
               
        
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.PresupuestoConDreamsCotCom PresupuestoConDreamsCotCom
-where id_tipo IN(25,24,NULL)
+
 ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
          PresupuestoConDreamsCotCom.importe_dolares DESC");
         
@@ -141,7 +171,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
         
         $collection =  collect($resultados);//->unique();
         $unique = $collection->unique(function ($item) {
-            return $item->id_tipo_agrupar.$item->id_familia.$item->id_area_reporte;
+            return $item->id_tipo_agrupar.$item->familia_agrupar.$item->id_area_reporte_agrupar;
         });
         //dd($unique);
         return $unique;
@@ -213,9 +243,158 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
  WHERE     {$filtros}
        ");
  
-       return collect($resultados);
+        $collection =  collect($resultados);
+        $unique = $collection->unique(function ($item) {
+            return $item->id_material.".".$item->id_familia.".".$item->id_clasificador.".".$item->id_area_reporte;
+        });
+        return $unique;
+ 
     }
-    
+    public static function getMaterialesSecretsDreams($id_tipo, $id_familia, $id_area_reporte){
+        $filtros_secrets = "(consolidado_dolares > 0)";
+        if($id_tipo == "null"){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_tipo is null";
+        }elseif($id_tipo > 0){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_tipo={$id_tipo}";
+        }
+        if($id_familia == "null"){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_familia is null";
+        }elseif($id_familia > 0){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_familia={$id_familia}";
+        }
+        if($id_area_reporte == "null"){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_area_reporte is null";
+        }elseif($id_area_reporte > 0){
+            $filtros_secrets .= " and reporte_b_datos_secrets.id_area_reporte={$id_area_reporte}";
+        }
+        
+        $filtros_dreams = "(importe_dolares > 0 or cotizado_para_acumular  > 0 or importe_sin_cotizar  > 0)";
+        if($id_tipo == "null"){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_clasificador is null";
+        }elseif($id_tipo > 0){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_clasificador={$id_tipo}";
+        }
+        if($id_familia == "null"){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_familia is null";
+        }elseif($id_familia > 0){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_familia={$id_familia}";
+        }
+        if($id_area_reporte == "null"){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_area_reporte is null";
+        }elseif($id_area_reporte > 0){
+            $filtros_dreams .= " and reporte_b_materiales_dreams.id_area_reporte={$id_area_reporte}";
+        }
+        $consulta = "
+           SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+       reporte_b_materiales_dreams.cotizado_para_acumular,
+       reporte_b_materiales_dreams.importe_dolares,
+       reporte_b_datos_secrets.tipo as clasificador,
+       reporte_b_datos_secrets.familia,
+       reporte_b_datos_secrets.area_reporte,
+       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
+       reporte_b_datos_secrets.id_material_secrets as id_material,
+       reporte_b_datos_secrets.id_tipo as id_clasificador,
+       reporte_b_datos_secrets.id as id_secrets,
+       reporte_b_materiales_dreams.importe_sin_cotizar,
+       
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
+       
+CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+      ELSE 
+      ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+      END var_tp,
+       
+       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       ELSE
+
+       ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+
+       END var_tp_p,
+
+       reporte_b_datos_secrets.id_familia,
+       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_materiales_dreams.material AS material_dreams,
+       reporte_b_materiales_dreams.id_material AS id_material_dreams
+  FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
+       RIGHT OUTER JOIN
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+          ON (reporte_b_materiales_dreams.id_material_secrets =
+                 reporte_b_datos_secrets.id_material_secrets)
+ WHERE     {$filtros_secrets}
+     UNION 
+     SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+       reporte_b_materiales_dreams.cotizado_para_acumular,
+       reporte_b_materiales_dreams.importe_dolares,
+       reporte_b_datos_secrets.tipo as clasificador,
+       reporte_b_datos_secrets.familia,
+       reporte_b_datos_secrets.area_reporte,
+       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
+       reporte_b_datos_secrets.id_material_secrets as id_material,
+       reporte_b_datos_secrets.id_tipo as id_clasificador,
+       reporte_b_datos_secrets.id as id_secrets,
+       reporte_b_materiales_dreams.importe_sin_cotizar,
+       
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
+       
+CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+      ELSE 
+      ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+      END var_tp,
+       
+       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       ELSE
+
+       ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+
+       END var_tp_p,
+
+       reporte_b_datos_secrets.id_familia,
+       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_materiales_dreams.material AS material_dreams,
+       reporte_b_materiales_dreams.id_material AS id_material_dreams
+  FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
+       LEFT OUTER JOIN
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+          ON (reporte_b_materiales_dreams.id_material_secrets =
+                 reporte_b_datos_secrets.id_material_secrets)
+ WHERE     {$filtros_dreams}
+     
+       ";
+       $resultados = DB::connection("cadeco")->select($consulta);
+       print_r($consulta);
+ 
+       $collection =  collect($resultados);
+        $unique = $collection->unique(function ($item) {
+            return $item->id_secrets."_".$item->id_material."_".$item->id_material_dreams.".".$item->id_familia.".".$item->id_clasificador.".".$item->id_area_reporte;
+        });
+        return $unique;
+    }
     
     public static function getMaterialesSecrets($id_tipo, $id_familia, $id_area_reporte){
         $filtros = "(consolidado_dolares > 0)";
@@ -243,9 +422,38 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
        reporte_b_datos_secrets.tipo as clasificador,
        reporte_b_datos_secrets.familia,
        reporte_b_datos_secrets.area_reporte,
-       reporte_b_datos_secrets.descripcion_producto_oc as material,
+       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
        reporte_b_datos_secrets.id as id_material,
        reporte_b_datos_secrets.id_tipo as id_clasificador,
+
+       reporte_b_materiales_dreams.importe_sin_cotizar,
+       
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
+       
+CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+      ELSE 
+      ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+      END var_tp,
+       
+       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       ELSE
+
+       ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       reporte_b_materiales_dreams.importe_dolares_dreams+
+       reporte_b_materiales_dreams.importe_sin_cotizar)
+       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+
+       END var_tp_p,
+
        reporte_b_datos_secrets.id_familia,
        reporte_b_datos_secrets.id_area_reporte,
        reporte_b_materiales_dreams.material AS material_dreams,
@@ -258,7 +466,11 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
  WHERE     {$filtros}
        ");
  
-       return collect($resultados);
+        $collection =  collect($resultados);
+        $unique = $collection->unique(function ($item) {
+            return $item->id_material.".".$item->id_familia.".".$item->id_clasificador.".".$item->id_area_reporte;
+        });
+        return $unique;
     }
     public static function getMaterialesOC($id_obra){
         $resultados = DB::connection("cadeco")->select("

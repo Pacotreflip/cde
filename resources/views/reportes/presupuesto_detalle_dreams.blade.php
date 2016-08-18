@@ -118,8 +118,7 @@ $(function(){
 $(".tablesorter").tablesorter({
     theme : "blue",
     widgets :["indexFirstColumn","zebra"],
-    headers: { 0: { sorter: false},8: { sorter: false},9: { sorter: false},10: { sorter: false},11: { sorter: false}
-    ,12: { sorter: false},13: { sorter: false},14: { sorter: false},15: { sorter: false},16: { sorter: false}
+    headers: { 0: { sorter: false},19: { sorter: false},20: { sorter: false},21: { sorter: false},13: { sorter: false},14: { sorter: false},15: { sorter: false},16: { sorter: false}
     ,17: { sorter: false},18: { sorter: false}}
 }
         );
