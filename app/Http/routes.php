@@ -265,6 +265,8 @@ Route::post("reportes/comparativa/descarga_excel", "ReportesController@comparati
 Route::get('reportes/estatus_desarrollo', 'ReportesController@index_estatus_desarrollo')->name('reportes.estatus_desarrollo');
 Route::get('reportes/presupuesto', 'ReportesPresupuestoController@index')->name('reportes.presupuesto');
 Route::post('reportes/presupuesto', 'ReportesPresupuestoController@index')->name('reportes.presupuesto');
+Route::get('reportes/presupuesto/detalle_secrets_dreams', 'ReportesPresupuestoController@detalleSecretsDreams')->name('reportes.presupuesto_detalle_secrets_dreams');
+Route::post('reportes/presupuesto/detalle_secrets_dreams', 'ReportesPresupuestoController@detalleSecretsDreams')->name('reportes.presupuesto_detalle_secrets_dreams');
 Route::get('reportes/presupuesto/detalle_secrets', 'ReportesPresupuestoController@detalleSecrets')->name('reportes.presupuesto_detalle_secrets');
 Route::post('reportes/presupuesto/detalle_secrets', 'ReportesPresupuestoController@detalleSecrets')->name('reportes.presupuesto_detalle_secrets');
 Route::get('reportes/presupuesto/detalle_dreams', 'ReportesPresupuestoController@detalleDreams')->name('reportes.presupuesto_detalle_dreams');
