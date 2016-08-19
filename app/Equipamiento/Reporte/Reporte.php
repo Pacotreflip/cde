@@ -199,8 +199,8 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
        reporte_b_materiales_dreams.area_reporte,
        reporte_b_materiales_dreams.material,
        reporte_b_materiales_dreams.id_material,
-       reporte_b_datos_secrets.consolidado_dolares as secrets,
-       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+       reporte_b_datos_secrets_validacion_dreams.consolidado_dolares as secrets,
+       reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22 AS presupuesto,
        reporte_b_materiales_dreams.cotizado_para_acumular,
        reporte_b_materiales_dreams.importe_dolares,
        reporte_b_materiales_dreams.importe_sin_cotizar,
@@ -209,7 +209,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
        
-CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
@@ -217,29 +217,29 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
       ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
       END var_tp,
        
-       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
        ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
-       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22) * 100
 
        END var_tp_p,
        
        reporte_b_materiales_dreams.id_clasificador,
        reporte_b_materiales_dreams.id_familia,
        reporte_b_materiales_dreams.id_area_reporte,
-       reporte_b_datos_secrets.descripcion_producto_oc AS material_secrets
+       reporte_b_datos_secrets_validacion_dreams.descripcion_producto_oc AS material_secrets
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        LEFT OUTER JOIN
-       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets_validacion_dreams reporte_b_datos_secrets_validacion_dreams
           ON (reporte_b_materiales_dreams.id_material_secrets =
-                 reporte_b_datos_secrets.id_material_secrets)
+                 reporte_b_datos_secrets_validacion_dreams.id_material_secrets)
  WHERE     {$filtros}
        ");
  
@@ -253,19 +253,19 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
     public static function getMaterialesSecretsDreams($id_tipo, $id_familia, $id_area_reporte){
         $filtros_secrets = "(consolidado_dolares > 0)";
         if($id_tipo == "null"){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_tipo is null";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_tipo is null";
         }elseif($id_tipo > 0){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_tipo={$id_tipo}";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_tipo={$id_tipo}";
         }
         if($id_familia == "null"){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_familia is null";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_familia is null";
         }elseif($id_familia > 0){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_familia={$id_familia}";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_familia={$id_familia}";
         }
         if($id_area_reporte == "null"){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_area_reporte is null";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_area_reporte is null";
         }elseif($id_area_reporte > 0){
-            $filtros_secrets .= " and reporte_b_datos_secrets.id_area_reporte={$id_area_reporte}";
+            $filtros_secrets .= " and reporte_b_datos_secrets_validacion_dreams.id_area_reporte={$id_area_reporte}";
         }
         
         $filtros_dreams = "(importe_dolares > 0 or cotizado_para_acumular  > 0 or importe_sin_cotizar  > 0)";
@@ -285,24 +285,24 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
             $filtros_dreams .= " and reporte_b_materiales_dreams.id_area_reporte={$id_area_reporte}";
         }
         $consulta = "
-           SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
-       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+           SELECT reporte_b_datos_secrets_validacion_dreams.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22 AS presupuesto,
        reporte_b_materiales_dreams.cotizado_para_acumular,
        reporte_b_materiales_dreams.importe_dolares,
-       reporte_b_datos_secrets.tipo as clasificador,
-       reporte_b_datos_secrets.familia,
-       reporte_b_datos_secrets.area_reporte,
-       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
-       reporte_b_datos_secrets.id_material_secrets as id_material,
-       reporte_b_datos_secrets.id_tipo as id_clasificador,
-       reporte_b_datos_secrets.id as id_secrets,
+       reporte_b_datos_secrets_validacion_dreams.tipo as clasificador,
+       reporte_b_datos_secrets_validacion_dreams.familia,
+       reporte_b_datos_secrets_validacion_dreams.area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.descripcion_producto_oc as material_secrets,
+       reporte_b_datos_secrets_validacion_dreams.id_material_secrets as id_material,
+       reporte_b_datos_secrets_validacion_dreams.id_tipo as id_clasificador,
+       reporte_b_datos_secrets_validacion_dreams.id as id_secrets,
        reporte_b_materiales_dreams.importe_sin_cotizar,
        
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
        
-CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
@@ -310,49 +310,49 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
       ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
       END var_tp,
        
-       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
        ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
-       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22) * 100
 
        END var_tp_p,
 
-       reporte_b_datos_secrets.id_familia,
-       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.id_familia,
+       reporte_b_datos_secrets_validacion_dreams.id_area_reporte,
        reporte_b_materiales_dreams.material AS material_dreams,
        reporte_b_materiales_dreams.id_material AS id_material_dreams
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        RIGHT OUTER JOIN
-       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets_validacion_dreams reporte_b_datos_secrets_validacion_dreams
           ON (reporte_b_materiales_dreams.id_material_secrets =
-                 reporte_b_datos_secrets.id_material_secrets)
+                 reporte_b_datos_secrets_validacion_dreams.id_material_secrets)
  WHERE     {$filtros_secrets}
      UNION 
-     SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
-       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+     SELECT reporte_b_datos_secrets_validacion_dreams.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22 AS presupuesto,
        reporte_b_materiales_dreams.cotizado_para_acumular,
        reporte_b_materiales_dreams.importe_dolares,
-       reporte_b_datos_secrets.tipo as clasificador,
-       reporte_b_datos_secrets.familia,
-       reporte_b_datos_secrets.area_reporte,
-       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
-       reporte_b_datos_secrets.id_material_secrets as id_material,
-       reporte_b_datos_secrets.id_tipo as id_clasificador,
-       reporte_b_datos_secrets.id as id_secrets,
+       reporte_b_datos_secrets_validacion_dreams.tipo as clasificador,
+       reporte_b_datos_secrets_validacion_dreams.familia,
+       reporte_b_datos_secrets_validacion_dreams.area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.descripcion_producto_oc as material_secrets,
+       reporte_b_datos_secrets_validacion_dreams.id_material_secrets as id_material,
+       reporte_b_datos_secrets_validacion_dreams.id_tipo as id_clasificador,
+       reporte_b_datos_secrets_validacion_dreams.id as id_secrets,
        reporte_b_materiales_dreams.importe_sin_cotizar,
        
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
        
-CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
@@ -360,34 +360,33 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
       ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
       END var_tp,
        
-       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
        ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
-       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22) * 100
 
        END var_tp_p,
 
-       reporte_b_datos_secrets.id_familia,
-       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.id_familia,
+       reporte_b_datos_secrets_validacion_dreams.id_area_reporte,
        reporte_b_materiales_dreams.material AS material_dreams,
        reporte_b_materiales_dreams.id_material AS id_material_dreams
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        LEFT OUTER JOIN
-       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets_validacion_dreams reporte_b_datos_secrets_validacion_dreams
           ON (reporte_b_materiales_dreams.id_material_secrets =
-                 reporte_b_datos_secrets.id_material_secrets)
+                 reporte_b_datos_secrets_validacion_dreams.id_material_secrets)
  WHERE     {$filtros_dreams}
      
        ";
        $resultados = DB::connection("cadeco")->select($consulta);
-       print_r($consulta);
  
        $collection =  collect($resultados);
         $unique = $collection->unique(function ($item) {
@@ -399,32 +398,32 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
     public static function getMaterialesSecrets($id_tipo, $id_familia, $id_area_reporte){
         $filtros = "(consolidado_dolares > 0)";
         if($id_tipo == "null"){
-            $filtros .= " and reporte_b_datos_secrets.id_tipo is null";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_tipo is null";
         }elseif($id_tipo > 0){
-            $filtros .= " and reporte_b_datos_secrets.id_tipo={$id_tipo}";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_tipo={$id_tipo}";
         }
         if($id_familia == "null"){
-            $filtros .= " and reporte_b_datos_secrets.id_familia is null";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_familia is null";
         }elseif($id_familia > 0){
-            $filtros .= " and reporte_b_datos_secrets.id_familia={$id_familia}";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_familia={$id_familia}";
         }
         if($id_area_reporte == "null"){
-            $filtros .= " and reporte_b_datos_secrets.id_area_reporte is null";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_area_reporte is null";
         }elseif($id_area_reporte > 0){
-            $filtros .= " and reporte_b_datos_secrets.id_area_reporte={$id_area_reporte}";
+            $filtros .= " and reporte_b_datos_secrets_validacion_dreams.id_area_reporte={$id_area_reporte}";
         }
         
        $resultados = DB::connection("cadeco")->select("
-           SELECT reporte_b_datos_secrets.consolidado_dolares AS secrets,
-       reporte_b_datos_secrets.consolidado_dolares * 1.22 AS presupuesto,
+           SELECT reporte_b_datos_secrets_validacion_dreams.consolidado_dolares AS secrets,
+       reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22 AS presupuesto,
        reporte_b_materiales_dreams.cotizado_para_acumular,
        reporte_b_materiales_dreams.importe_dolares,
-       reporte_b_datos_secrets.tipo as clasificador,
-       reporte_b_datos_secrets.familia,
-       reporte_b_datos_secrets.area_reporte,
-       reporte_b_datos_secrets.descripcion_producto_oc as material_secrets,
-       reporte_b_datos_secrets.id as id_material,
-       reporte_b_datos_secrets.id_tipo as id_clasificador,
+       reporte_b_datos_secrets_validacion_dreams.tipo as clasificador,
+       reporte_b_datos_secrets_validacion_dreams.familia,
+       reporte_b_datos_secrets_validacion_dreams.area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.descripcion_producto_oc as material_secrets,
+       reporte_b_datos_secrets_validacion_dreams.id as id_material,
+       reporte_b_datos_secrets_validacion_dreams.id_tipo as id_clasificador,
 
        reporte_b_materiales_dreams.importe_sin_cotizar,
        
@@ -432,7 +431,7 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
        
-CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN 
+CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
        (reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
@@ -440,29 +439,29 @@ CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN
       ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
       END var_tp,
        
-       CASE WHEN reporte_b_datos_secrets.consolidado_dolares IS NULL THEN NULL
+       CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
        ((reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
-       - (reporte_b_datos_secrets.consolidado_dolares * 1.22))/
-       (reporte_b_datos_secrets.consolidado_dolares * 1.22) * 100
+       - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
+       (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22) * 100
 
        END var_tp_p,
 
-       reporte_b_datos_secrets.id_familia,
-       reporte_b_datos_secrets.id_area_reporte,
+       reporte_b_datos_secrets_validacion_dreams.id_familia,
+       reporte_b_datos_secrets_validacion_dreams.id_area_reporte,
        reporte_b_materiales_dreams.material AS material_dreams,
        reporte_b_materiales_dreams.id_material AS id_material_dreams
   FROM SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_materiales_dreams reporte_b_materiales_dreams
        RIGHT OUTER JOIN
-       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets_validacion_dreams reporte_b_datos_secrets_validacion_dreams
           ON (reporte_b_materiales_dreams.id_material_secrets =
-                 reporte_b_datos_secrets.id_material_secrets)
+                 reporte_b_datos_secrets_validacion_dreams.id_material_secrets)
  WHERE     {$filtros}
        ");
  
