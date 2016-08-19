@@ -27,7 +27,15 @@
   @if (!Auth::user()->hasRole('consulta_provisional') || Auth::user()->hasRole('almacenista'))
   <li><a href="{{ route('asignaciones.index') }}">Asignaciones</a></li>
   <li><a href="{{ route('compras.index') }}">Compras</a></li>
-  <li><a href="{{ route('programa_suministro.index') }}">Programa de Suministro</a></li>
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        Programas <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="{{ route('programa_suministro.index') }}">Programa de Suministro</a></li>
+      <li><a href="{{ route('programa_pagos.index') }}">Programa de Pagos</a></li>
+    </ul>
+  </li>
   <li><a href="{{ route('recepciones.index') }}">Recepción</a></li>
   <li><a href="{{ route('transferencias.index') }}">Transferencia</a></li>
   <li><a href="{{ route('asignaciones.index') }}">Asignación</a></li>
