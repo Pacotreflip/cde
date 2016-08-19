@@ -202,7 +202,7 @@ class Material extends Model
         return number_format($recibido,0,".","");
     }
     
-    public function getAnioMesDiaSuministroAttribute(){
+    public function anio_mes_dia_suministro($folio_oc){
         $dias = DB::connection("cadeco")->select(" select 
             dbo.zerofill(4,transacciones.numero_folio) as folio_oc,
             transacciones.id_transaccion as id_oc,
@@ -219,7 +219,7 @@ class Material extends Model
          from [Equipamiento].[entregas_programadas] join items
          on(items.id_item = entregas_programadas.id_item )
          join transacciones on(transacciones.id_transaccion = items.id_transaccion)
-        where items.id_material = {$this->id_material};");
+        where items.id_material = {$this->id_material} and transacciones.numero_folio = {$folio_oc};");
     $dias_arr = [];
     $cantidad_recibida = $this->cantidad_recibida_modulo_equipamiento;
     foreach($dias as $dia){
@@ -243,7 +243,7 @@ class Material extends Model
             $dias_arr[$dia->anio_mes_dia]["indice_suministro"] = "";
         }
     }
-
+    
     return $dias_arr;
     }
 

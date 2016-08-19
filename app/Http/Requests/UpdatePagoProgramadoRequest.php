@@ -24,7 +24,7 @@ class UpdatePagoProgramadoRequest extends Request
     public function rules()
     {       
         return [
-            'monto' => 'required|numeric|min:0.1|max:'.($this->actual + $this->faltante),
+            'monto' => 'required|numeric|max:'.($this->actual + $this->faltante),
             'fecha' => 'required',
             'observaciones' => 'required'
         ];

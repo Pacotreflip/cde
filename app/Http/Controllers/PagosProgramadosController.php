@@ -43,7 +43,7 @@ class PagosProgramadosController extends Controller
     {
         $compra = Transaccion::findOrFail($id_compra);
         $faltante = $compra->monto - $compra->totalProgramado();
-        if ($faltante == 0) {
+        if (round($faltante, 2) == 0) {
             return response()->json(['error' => 'error']);
         }
         return view('pagos_programados.create')
@@ -59,13 +59,28 @@ class PagosProgramadosController extends Controller
     public function store(CreatePagoProgramadoRequest $request , $id_compra)
     {
         $compra = Transaccion::findOrFail($id_compra);
-        PagoProgramado::create([
-            'monto' => $request->monto,
+        
+        $pagoProgramado = PagoProgramado::where([
             'fecha' => Carbon::parse($request->fecha)->toDateString(),
-            'id_usuario' => auth()->user()->idusuario,
-            'observaciones' => $request->observaciones,
             'id_transaccion' => $compra->id_transaccion
-        ]); 
+        ])->first();
+        
+        if($pagoProgramado) {
+            $pagoProgramado->monto =  $pagoProgramado->monto +$request->monto;
+            $pagoProgramado->id_usuario = auth()->user()->idusuario;
+            $pagoProgramado->observaciones = $request->observaciones;
+
+            $pagoProgramado->save();
+        }
+        else {
+            PagoProgramado::create([
+                'fecha' => Carbon::parse($request->fecha)->toDateString(),
+                'id_transaccion' => $compra->id_transaccion,
+                'monto' => $request->monto,
+                'observaciones' => $request->observaciones,
+                'id_usuario' => auth()->user()->idusuario
+            ]);
+        }
         
        return response()->json(['Mensaje' => 'Registro exitoso de fecha de pago']);
     }
@@ -131,9 +146,9 @@ class PagosProgramadosController extends Controller
         
         return response()->json([
             'Mensaje' => 'Pago eliminado',
-            'monto' => $compra->monto,
-            'totalProgramado' => $compra->totalProgramado(),
-            'faltante' => $compra->monto - $compra->totalProgramado()
+            'monto' => round($compra->monto, 2),
+            'totalProgramado' => round($compra->totalProgramado(), 2),
+            'faltante' => round($compra->monto, 2) - $compra->totalProgramado()
         ]);
     }
 }

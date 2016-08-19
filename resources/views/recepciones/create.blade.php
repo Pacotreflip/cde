@@ -43,16 +43,12 @@
             <div class="row">
               <div class="col-xs-6">
                 <!-- Orden Compra Form Input -->
+                
+                            
                 <div class="form-group">
                   {!! Form::label('orden_compra', '*Folio Orden de Compra:') !!}
-                  <select name="orden_compra" id="oc" class="form-control" required v-model="recepcionForm.orden_compra" v-on:change="fetchMateriales">
-                      <option selected id="" value>-- SELECCIONE UNA ORDEN DE COMPRA --</option>
-                      @foreach($compras as $key => $oc)
-                      <option value="{{ $key }}">{{ $oc }}</option>
-                      @endforeach
-                  </select>
-<!--                  {!! Form::select('orden_compra', $compras, $id_oc, ['class' => 'form-control', 'required', 'id' => 'oc',
-                  'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}-->
+                  {!! Form::select('orden_compra', $compras, $id_oc, ['placeholder' => '-- SELECCIONE UNA ORDEN DE COMPRA --', 'id' => 'oc', 'class' => 'form-control', 'required', 
+                    'v-model' => 'recepcionForm.orden_compra', 'v-on:change' => 'fetchMateriales']) !!}              
                 </div>
               </div>
               <div class="col-xs-6">

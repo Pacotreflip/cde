@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Ghi\Equipamiento\Proveedores\Proveedor;
 use Laracasts\Presenter\PresentableTrait;
 use Ghi\Equipamiento\Presenters\TransaccionPresenter;
+use Carbon\Carbon;
+
 class Transaccion extends Model
 {
     use PresentableTrait;
@@ -241,5 +243,49 @@ ORDER BY dbo.transacciones.numero_folio
             $result += $pagoProgramado->monto;
         }
         return $result;
+    }
+    
+    public function getAnioMesDiaPagoAttribute(){
+        $dias = DB::connection("cadeco")->select(" select 
+            dbo.zerofill(4,transacciones.numero_folio) as folio_oc,
+            transacciones.id_transaccion as id_oc,
+        Equipamiento.pagos_programados.fecha,
+        year( Equipamiento.pagos_programados.fecha) as anio,
+        month( Equipamiento.pagos_programados.fecha) as mes,
+        day( Equipamiento.pagos_programados.fecha) as dia,
+          convert(varchar(4),year( Equipamiento.pagos_programados.fecha)) + 
+        case when len(month( Equipamiento.pagos_programados.fecha))=1 then '0' +convert(varchar(4),month( Equipamiento.pagos_programados.fecha))
+        else convert(varchar(4),month( Equipamiento.pagos_programados.fecha)) end +
+        case when len(day( Equipamiento.pagos_programados.fecha))=1 then '0' +convert(varchar(4),day( Equipamiento.pagos_programados.fecha))
+        else convert(varchar(4),day( Equipamiento.pagos_programados.fecha)) end
+          anio_mes_dia, Equipamiento.pagos_programados.monto
+         from [Equipamiento].[pagos_programados] join transacciones
+         on(transacciones.id_transaccion = pagos_programados.id_transaccion )
+        where transacciones.id_transaccion = {$this->id_transaccion};");
+    $dias_arr = [];
+    $cantidad_recibida = $this->totalProgramado();
+    foreach($dias as $dia){
+        $date = Carbon::createFromFormat('Y-m-d', $dia->fecha);
+        $dias_arr[$dia->anio_mes_dia]["fecha"] = $dia->anio_mes_dia;
+        $dias_arr[$dia->anio_mes_dia]["folio_oc"] = $dia->folio_oc;
+        $dias_arr[$dia->anio_mes_dia]["id_oc"] = $dia->id_oc;
+        $dias_arr[$dia->anio_mes_dia]["fecha"] = $date->format("d-m-Y");
+        $dias_arr[$dia->anio_mes_dia]["monto"] = $dia->monto;
+
+        if($cantidad_recibida>= $dia->monto){
+                $dias_arr[$dia->anio_mes_dia]["monto"] = $dia->monto;
+            $cantidad_recibida -= $dia->monto;
+        }else{
+            $dias_arr[$dia->anio_mes_dia]["monto"] = $cantidad_recibida;
+            $cantidad_recibida = 0;
+        }
+        if($dia->monto > 0){
+            $dias_arr[$dia->anio_mes_dia]["indice_pago"] = number_format(($dias_arr[$dia->anio_mes_dia]["monto"]/Transaccion::find($this->id_transaccion)->monto*100),2,".","");
+        }else{
+            $dias_arr[$dia->anio_mes_dia]["indice_pago"] = "";
+        }
+    }
+    
+    return $dias_arr;
     }
 }
