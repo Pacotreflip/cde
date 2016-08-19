@@ -5,6 +5,7 @@
 <hr>
 {!! Form::open(['route' => 'programa_pagos.index', 'method' => 'get']) !!}
 {{ csrf_field() }}
+<input type='hidden' name="xls" value="0"/>
 <div class="row">
     <div class="col-md-6">
         <div class="col-md-4">
@@ -30,10 +31,15 @@
             </div>
             </div>
         </div>
-        <div class="col-md-4" style="margin-top: 25px">
-            <button type="submit" class="btn btn-small btn-info">
+        <div class="col-md-2" style="margin-top: 25px">
+            <button type="submit" class="btn btn-small btn-info consultar">
                 <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
             </button>
+        </div>
+        <div class="col-md-2" style="margin-top: 25px">
+            <a class="btn btn-small btn-success descargar_excel">
+                <span class="fa fa-table" style="margin-right: 5px"></span>Descargar Excel
+            </a>
         </div>
         <div class="col-md-8">
             <div class="form-group">
@@ -125,5 +131,16 @@ $('.popover-markup>.trigger').popover({
         return $(this).parent().find('.content').html();
     }
 });
+$('.descargar_excel').off().on('click', function(e){
+    $('input[name=xls]').val(1);
+    $('form').submit();
+});
+
+$('.consultar').off().on('click', function(e){
+    $('input[name=xls]').val(0);
+    $('form').submit();
+});
+
+
 </script>
 @stop
