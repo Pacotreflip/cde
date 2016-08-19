@@ -61,4 +61,14 @@ class ReportesPresupuestoController extends Controller
             "i"=>1
         ]);
     }
+    public function detalleSecretsDreams(Request $request){
+        $id_tipo = $request->id_tipo;
+        $id_familia = $request->id_familia;
+        $id_area_reporte = $request->id_area_reporte;
+        $datos_secrets_dreams  = Reporte::getMaterialesSecretsDreams($id_tipo, $id_familia, $id_area_reporte);
+        return view('reportes.presupuesto_detalle_secrets_dreams', [
+            "datos_secrets_dreams"=>$datos_secrets_dreams,
+            "i"=>1
+        ]);
+    }
 }
