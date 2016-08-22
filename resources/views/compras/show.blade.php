@@ -88,10 +88,12 @@
       </div>
   </div>
   <form id="descargaExcel" action="{{ route("comparativa_compra.xls", $compra) }}"></form>
-  <button type="button" style="margin-left: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.compras', $compra)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
+  <div><button type="button" style="margin-left: 5px" class="btn btn-sm btn-success pull-right" onclick="muestraComprobante('{{  route('pdf.compras', $compra)}}')"><i class="fa fa-file-pdf-o" style="margin-right: 5px"></i> Ver Formato PDF</button>
   <button type="button" class="btn btn-sm btn-primary pull-right descargar_excel" style="margin-left: 5px"><span class="fa fa-table" style="margin-right: 5px"></span>Descarga Excel Análisis Desviación</button>
   <button type="button" class="btn btn-sm btn-info pull-right fechas_pago" style="margin-left: 5px" ruta="{{ route("compra.pagos_programados.index", $compra) }}"><i class="fa fa-money"></i> Fechas de Pago</button>
-@include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
+  <a type="button" class="btn btn-sm btn-default pull-right" style="margin-left: 5px" href="{{ route("compras.relacionar_presupuesto.create", $compra) }}"><i class="fa fa-calculator"></i> Relacionar Presupuesto</a>
+  </div>
+  @include('pdf/modal_vacia', ['titulo' => 'Consulta de formatos',]) 
 @stop
 @section('scripts')
 <script>

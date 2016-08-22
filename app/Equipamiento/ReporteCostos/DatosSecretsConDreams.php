@@ -3,6 +3,7 @@
 namespace Ghi\Equipamiento\ReporteCostos;
 
 use Illuminate\Database\Eloquent\Model;
+use Ghi\Equipamiento\Transacciones\Transaccion;
 
 class DatosSecretsConDreams extends Model
 {
@@ -76,4 +77,8 @@ class DatosSecretsConDreams extends Model
     ];
     public $incrementing = false;
     public $timestamps = false;
+    
+    public function transacciones() {
+        return $this->belongsToMany(Transaccion::class, 'Equipamiento.reporte_b_compra_vs_presupuesto', 'id_reporte_b_datos_secrets', 'id_transaccion');
+    }
 }

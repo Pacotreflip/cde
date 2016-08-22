@@ -8,6 +8,7 @@ use Ghi\Equipamiento\Proveedores\Proveedor;
 use Laracasts\Presenter\PresentableTrait;
 use Ghi\Equipamiento\Presenters\TransaccionPresenter;
 use Carbon\Carbon;
+use Ghi\Equipamiento\ReporteCostos\DatosSecretsConDreams;
 
 class Transaccion extends Model
 {
@@ -287,5 +288,9 @@ ORDER BY dbo.transacciones.numero_folio
     }
     
     return $dias_arr;
+    }
+    
+    public function datosSecretsDreams() {
+        return $this->belongsToMany(DatosSecretsConDreams::class, 'Equipamiento.reporte_b_compra_vs_presupuesto', 'id_transaccion', 'id_reporte_b_datos_secrets');
     }
 }

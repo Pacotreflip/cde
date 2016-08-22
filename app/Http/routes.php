@@ -300,4 +300,10 @@ Route::post('compra/{compra}/pagos_programados/store', 'PagosProgramadosControll
 Route::post('compra/{compra}/pagos_programados/{pago}', 'PagosProgramadosController@update')->name('compra.pagos_programados.update');
 
 //Rutas de Programa de Pagos
- Route::resource('programa_pagos', 'ProgramaPagosController');
+Route::resource('programa_pagos', 'ProgramaPagosController');
+
+ //Rutas de Compra vs presupuesto
+Route::get('compras/{compra}/relacionar_presupuesto/create', 'RelacionarPresupuestoController@create')->name('compras.relacionar_presupuesto.create');
+Route::post('compras/{compra}/relacionar_presupuesto/store', 'RelacionarPresupuestoController@store')->name('compras.relacionar_presupuesto.post.store');
+Route::get('compras/{compra}/relacionar_presupuesto/{dato}/store', 'RelacionarPresupuestoController@store')->name('compras.relacionar_presupuesto.get.store');
+Route::delete('compras/{compra}/relacionar_presupuesto/{dato}', 'RelacionarPresupuestoController@destroy')->name('compras.relacionar_presupuesto.destroy');;
