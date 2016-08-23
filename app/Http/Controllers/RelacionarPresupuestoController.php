@@ -64,12 +64,17 @@ class RelacionarPresupuestoController extends Controller
         //$accion = $request->accion;
         $id_secrets = $request->id_secrets;
         $compra->datosSecretsDreams()->detach();
+        if($id_secrets){
         foreach($id_secrets as $key => $value) {
             if(!$compra->datosSecretsDreams->contains($value)) {
                 $compra->datosSecretsDreams()->attach($value);
             }
         }
         Flash::success(' Datos agregados con éxito');
+            }else{
+                Flash::success('Datos actualizados con éxito');
+            }
+        
         
 //        if($accion == "agregar_p"){
 //            foreach($id_secrets as $key => $value) {
