@@ -11,7 +11,7 @@
         <thead>
             <tr >
                 <th style="text-align: center">
-                Total Orden Compra
+                Subtotal Orden Compra (Sin Impuestos)
             </th>
             <th style="text-align: center">
                 Total Presupuesto
@@ -29,9 +29,7 @@
                 <td style="text-align: right">$ <span id="total_presupuesto">{{number_format($compra->total_presupuesto,2,".",",")}}</span></td>
                 <td style="text-align: right">$ <span id="variacion">{{number_format($compra->variacion,2,".",",")}}</span></td>
                 @if($compra->total_presupuesto>0)
-                <td style="text-align: right"><span id="porcentaje_variacion">{{number_format($compra->porcentaje_variacion,2,".",",")}}</span> %</td>
-                @else
-                <td style="text-align: right"><span id="porcentaje_variacion">-</span> %</td>
+                <td style="text-align: right"><span id="porcentaje_variacion">{{$compra->porcentaje_variacion}}</span></td>
                 @endif
             </tr>
         </tbody>

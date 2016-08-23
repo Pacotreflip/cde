@@ -343,7 +343,7 @@ ORDER BY dbo.transacciones.numero_folio
     }
     public function getPorcentajeVariacionAttribute(){
         if($this->total_presupuesto>0)
-            return ($this->total_dolares-$this->total_presupuesto)/$this->total_presupuesto*100;
+            return number_format(($this->total_dolares-$this->total_presupuesto)/$this->total_presupuesto*100,2,".",",")." %";
         else 
             return "-";
     }

@@ -14,6 +14,9 @@
         <th>Folio</th>
         <th>Fecha</th>
         <th>Proveedor</th>
+        <th>Subtotal Dólares</th>
+        <th>Presupuesto</th>
+        <th colspan="2">Variación</th>
         <th>Observaciones</th>
         <th>% Recibido</th>
       </tr>
@@ -24,6 +27,10 @@
           <td><a href="{{ route('compras.show', $compra->id_transaccion) }}"># {{ $compra->numero_folio }}</a></td>
           <td>{{ $compra->fecha->format('d-m-Y') }}</td>
           <td>{{ $compra->empresa->razon_social }}</td>
+          <td style="text-align: right">$ {{number_format($compra->total_dolares,2,".",",")}}</td>
+          <td style="text-align: right">$ {{number_format($compra->total_presupuesto,2,".",",")}}</td>
+          <td style="text-align: right">$ {{number_format($compra->variacion,2,".",",")}}</td>
+          <td style="text-align: right">{{$compra->porcentaje_variacion}}</td>
           <td>{{ str_limit($compra->observaciones, 70) }}</td>
           <td>
         @if($compra->items()->sum('cantidad') > 0)
