@@ -293,4 +293,58 @@ ORDER BY dbo.transacciones.numero_folio
     public function datosSecretsDreams() {
         return $this->belongsToMany(DatosSecretsConDreams::class, 'Equipamiento.reporte_b_compra_vs_presupuesto', 'id_transaccion', 'id_reporte_b_datos_secrets');
     }
+    public function getTotalDolaresAttribute(){
+        $resultados = DB::connection("cadeco")->select("
+            SELECT 
+       
+       
+       cast (round (dbo.ConversionTC (items.importe,
+                                      transacciones.id_moneda,
+                                      2,
+                                      0,
+                                      18.20,
+                                      0),
+                    2) AS NUMERIC (36, 2))
+          AS importe_dolares
+  FROM SAO1814_HOTEL_DREAMS_PM.dbo.transacciones transacciones
+             
+            INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.items items
+               ON (transacciones.id_transaccion = items.id_transaccion)
+           
+          
+         
+        
+       
+ WHERE transacciones.id_transaccion = ".$this->id_transaccion."
+                            ");
+        $col =collect($resultados);
+        $total = $col->sum("importe_dolares");
+        return $total;
+    }
+    public function getTotalPresupuestoAttribute(){
+        $resultados = DB::connection("cadeco")->select("
+            SELECT SUM (reporte_b_datos_secrets.consolidado_dolares*1.22) as total_presupuesto
+  FROM (SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_compra_vs_presupuesto reporte_b_compra_vs_presupuesto
+        INNER JOIN SAO1814_HOTEL_DREAMS_PM.dbo.transacciones transacciones
+           ON (reporte_b_compra_vs_presupuesto.id_transaccion =
+                  transacciones.id_transaccion))
+       INNER JOIN
+       SAO1814_HOTEL_DREAMS_PM.Equipamiento.reporte_b_datos_secrets reporte_b_datos_secrets
+          ON (reporte_b_compra_vs_presupuesto.id_reporte_b_datos_secrets =
+                 reporte_b_datos_secrets.id)
+ WHERE (transacciones.id_transaccion = ".$this->id_transaccion.")
+                            ");
+        $col =collect($resultados);
+        $total = $col->sum("total_presupuesto");
+        return $total;
+    }
+    public function getVariacionAttribute(){
+        return $this->total_dolares-$this->total_presupuesto;
+    }
+    public function getPorcentajeVariacionAttribute(){
+        if($this->total_presupuesto>0)
+            return ($this->total_dolares-$this->total_presupuesto)/$this->total_presupuesto*100;
+        else 
+            return "-";
+    }
 }

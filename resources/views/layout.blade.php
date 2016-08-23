@@ -32,6 +32,7 @@
     <script src="{{ asset("js/dependent-dropdown.js") }}"></script>
     <script src="{{ asset("js/depdrop_locale_es.js") }}"></script>
     <script src="{{ asset("tablefilter/tablefilter.js") }}"></script>
+    <script src="{{ asset("js/jquery.number.min.js") }}"></script>
     <script>
       $(function () {
         $.ajaxSetup({
