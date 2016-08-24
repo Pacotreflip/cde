@@ -177,7 +177,7 @@ ORDER BY PresupuestoConDreamsCotCom.id_area_reporte ASC,
         return $unique;
     }
     public static function getMaterialesDreams($id_tipo, $id_familia, $id_area_reporte){
-        $filtros = "(importe_dolares > 0 or cotizado_para_acumular  > 0 or importe_sin_cotizar  > 0)";
+        $filtros = "(importe_dolares > 0 or cotizado_para_acumular  > 0 or reporte_b_materiales_dreams.importe_sin_cotizar  > 0)";
         if($id_tipo == "null"){
             $filtros .= " and reporte_b_materiales_dreams.id_clasificador is null";
         }elseif($id_tipo > 0){
