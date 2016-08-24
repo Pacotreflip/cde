@@ -414,7 +414,7 @@ CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL 
         }
         
        $resultados = DB::connection("cadeco")->select("
-           SELECT reporte_b_datos_secrets_validacion_dreams.consolidado_dolares AS secrets,
+ SELECT reporte_b_datos_secrets_validacion_dreams.consolidado_dolares AS secrets,
        reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22 AS presupuesto,
        reporte_b_materiales_dreams.cotizado_para_acumular,
        reporte_b_materiales_dreams.importe_dolares,
@@ -427,31 +427,33 @@ CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL 
 
        reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,
        
-       (reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
-       reporte_b_materiales_dreams.cotizado_para_acumular+
-       reporte_b_materiales_dreams.importe_dolares_dreams+
-       reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
+       (isnull(reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,0) +
+       isnull(reporte_b_materiales_dreams.cotizado_para_acumular,0)+
+       isnull(reporte_b_materiales_dreams.importe_dolares_dreams,0)+
+       isnull(reporte_b_materiales_dreams.importe_sin_cotizar,0)) as total_dreams,
        
 CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
-       ((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
-       reporte_b_materiales_dreams.cotizado_para_acumular+
-       reporte_b_materiales_dreams.importe_dolares_dreams+
-       reporte_b_materiales_dreams.importe_sin_cotizar)
+       (isnull(reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,0)+
+       isnull(reporte_b_materiales_dreams.cotizado_para_acumular,0)+
+       isnull(reporte_b_materiales_dreams.importe_dolares_dreams,0)+
+       isnull(reporte_b_materiales_dreams.importe_sin_cotizar,0))
       ELSE 
-      (((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
-      reporte_b_materiales_dreams.cotizado_para_acumular+
-       reporte_b_materiales_dreams.importe_dolares_dreams+
-       reporte_b_materiales_dreams.importe_sin_cotizar)
+      ((
+      isnull(reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,0)+
+      isnull(reporte_b_materiales_dreams.cotizado_para_acumular,0)+
+       isnull(reporte_b_materiales_dreams.importe_dolares_dreams,0)+
+       isnull(reporte_b_materiales_dreams.importe_sin_cotizar,0))
        - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
       END var_tp,
        
        CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
-       (((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
-       reporte_b_materiales_dreams.cotizado_para_acumular+
-       reporte_b_materiales_dreams.importe_dolares_dreams+
-       reporte_b_materiales_dreams.importe_sin_cotizar)
+       ((
+       isnull(reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,0)+
+       isnull(reporte_b_materiales_dreams.cotizado_para_acumular,0)+
+       isnull(reporte_b_materiales_dreams.importe_dolares_dreams,0)+
+       isnull(reporte_b_materiales_dreams.importe_sin_cotizar,0))
        - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
        (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22) * 100
 
