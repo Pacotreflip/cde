@@ -425,18 +425,21 @@ CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL 
        reporte_b_datos_secrets_validacion_dreams.id as id_material,
        reporte_b_datos_secrets_validacion_dreams.id_tipo as id_clasificador,
 
-       reporte_b_materiales_dreams.importe_sin_cotizar,
+       reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar,
        
-       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       (reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
+       reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar) as total_dreams,
        
 CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN 
-       (reporte_b_materiales_dreams.cotizado_para_acumular+
+       ((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
+       reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
       ELSE 
-      ((reporte_b_materiales_dreams.cotizado_para_acumular+
+      (((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
+      reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
        - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))
@@ -445,7 +448,8 @@ CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL 
        CASE WHEN reporte_b_datos_secrets_validacion_dreams.consolidado_dolares IS NULL THEN NULL
        ELSE
 
-       ((reporte_b_materiales_dreams.cotizado_para_acumular+
+       (((reporte_b_datos_secrets_validacion_dreams.importe_sin_cotizar+
+       reporte_b_materiales_dreams.cotizado_para_acumular+
        reporte_b_materiales_dreams.importe_dolares_dreams+
        reporte_b_materiales_dreams.importe_sin_cotizar)
        - (reporte_b_datos_secrets_validacion_dreams.consolidado_dolares * 1.22))/
