@@ -28,9 +28,7 @@
                     $ {{number_format($compra->total_dolares,2,".",",")}}</td>
                 <td style="text-align: right">$ <span id="total_presupuesto">{{number_format($compra->total_presupuesto,2,".",",")}}</span></td>
                 <td style="text-align: right">$ <span id="variacion">{{number_format($compra->variacion,2,".",",")}}</span></td>
-                @if($compra->total_presupuesto>0)
                 <td style="text-align: right"><span id="porcentaje_variacion">{{$compra->porcentaje_variacion}}</span></td>
-                @endif
             </tr>
         </tbody>
     </table>
