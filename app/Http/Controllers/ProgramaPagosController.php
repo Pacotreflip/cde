@@ -53,9 +53,9 @@ class ProgramaPagosController extends Controller
                 ->join("empresas", "transacciones.id_empresa", "=", "empresas.id_empresa")
                 ->join("monedas", "monedas.id_moneda", "=", "transacciones.id_moneda")
                 ->whereRaw("equipamiento = 1 and Equipamiento.pagos_programados.fecha between '{$fecha_inicial} 00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%' ")
-                ->select(DB::raw("transacciones.id_transaccion, transacciones.monto as monto, monedas.abreviatura as moneda, dbo.zerofill(4,transacciones.numero_folio) as folio_oc, empresas.razon_social"))
-                ->groupBy(DB::raw("transacciones.id_transaccion, transacciones.monto, monedas.abreviatura, dbo.zerofill(4,transacciones.numero_folio), empresas.razon_social"))
-                ->orderBy("empresas.razon_social")
+                ->select(DB::raw("transacciones.id_transaccion, transacciones.monto as monto, monedas.abreviatura as moneda, dbo.zerofill(4,transacciones.numero_folio) as folio_oc, empresas.razon_social, Equipamiento.pagos_programados.fecha, Equipamiento.pagos_programados.monto as monto_programado"))
+                ->groupBy(DB::raw("Equipamiento.pagos_programados.fecha, transacciones.id_transaccion, transacciones.monto, monedas.abreviatura, dbo.zerofill(4,transacciones.numero_folio), empresas.razon_social, Equipamiento.pagos_programados.monto"))
+                ->orderBy("Equipamiento.pagos_programados.fecha")
                 ->get();
                 
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 
@@ -257,7 +257,7 @@ where transacciones.equipamiento = 1 and Equipamiento.pagos_programados.fecha be
                     $sheet->setCellValueByColumnAndRow(10, $inicial, '# '.$compra->folio_oc);
 
                     foreach($data['dias'] as $dia) {
-                        if(array_key_exists($dia->anio_mes_dia, $compra->anio_mes_dia_pago)) {
+                        if($dia->anio_mes_dia == str_replace('-', '', $compra->fecha->toDateString())) {
                             $sheet->setCellValueByColumnAndRow($column, $inicial, number_format($compra->anio_mes_dia_pago[$dia->anio_mes_dia]["monto"], 2, '.', ',').' '.$compra->moneda);
                             $column++;
                         } else {

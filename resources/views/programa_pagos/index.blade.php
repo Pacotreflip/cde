@@ -88,7 +88,7 @@
       <td>{{ $compra->razon_social }}</td>
       <td><a href="{{ route('compras.show', $compra) }}">#{{ $compra->folio_oc }}</a></td>
       @foreach($dias as $dia)
-        @if(array_key_exists($dia->anio_mes_dia, $compra->anio_mes_dia_pago))
+        @if($dia->anio_mes_dia == str_replace('-', '', $compra->fecha->toDateString()))
         <th  style="text-align: center; border: solid 1px #CCC;">
             <div class="popover-markup"> 
                     <span class="trigger label label-info" style="cursor: pointer">{{$compra->anio_mes_dia_pago[$dia->anio_mes_dia]["indice_pago"]}} %</span>
