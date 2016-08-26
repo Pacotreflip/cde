@@ -13,6 +13,8 @@ use Ghi\Equipamiento\Recepciones\RecibeArticulosAsignacion;
 use Ghi\Equipamiento\Articulos\Material;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Ghi\Equipamiento\Programas\ProgramaSuministroXLS;
+
 class ProgramaSuministroController extends Controller
 {
     public function __construct()
@@ -30,7 +32,7 @@ class ProgramaSuministroController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {   
         //dd($request->all());
         //$recepciones = $this->buscar($request->buscar);
         $proveedores = Proveedor::join("transacciones", "empresas.id_empresa", "=", "transacciones.id_empresa")
@@ -148,18 +150,27 @@ else convert(varchar(4),day( fecha_entrega)) end
 where transacciones.equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%'
     group by year( fecha_entrega),month( fecha_entrega),day( fecha_entrega)
 ");
+        $data = [
+            "fecha_inicial" => $fecha_inicial,
+            "fecha_final" => $fecha_final,
+            "anios" => $anios,
+            "meses" => $meses,
+            "dias" => $dias,
+            "i" => 1,
+            "hoy" => $hoy,
+            "id_obra" => $this->getIdObra(),
+            "materiales" => $materiales,
+            "proveedores" => $proveedores,
+            "proveedor" => $proveedor
+        ];
+
+        if($request->xls == 1) {
+            $excel = new ProgramaSuministroXLS($data);
+            $excel->download();     
+        }
+        
         return view('programa_suministro.index')
-        ->with("fecha_inicial",$fecha_inicial)
-        ->with("fecha_final",$fecha_final)
-        ->with("anios",$anios)
-        ->with("meses",$meses)
-        ->with("dias",$dias)
-        ->with("i",1)
-        ->with("hoy",$hoy)
-        ->with("id_obra",$this->getIdObra())
-        ->with("materiales",$materiales)
-        ->withProveedores($proveedores)
-        ->withProveedor($proveedor);
+        ->with($data);
             //->withRecepciones($recepciones);
     }
 
