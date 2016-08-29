@@ -40,6 +40,7 @@ class ProgramaSuministroController extends Controller
                 ->whereRaw("equipamiento = 1 and transacciones.tipo_transaccion = 19 and transacciones.equipamiento= 1")
                 ->select(DB::raw("empresas.razon_social, empresas.id_empresa"))
                 ->groupBy("empresas.id_empresa", "empresas.razon_social")
+                ->orderBy('razon_social')
                 ->get();
         $proveedor = isset($request->proveedor) ? $request->proveedor : "";
         $hoy = Carbon::now();
@@ -57,8 +58,8 @@ class ProgramaSuministroController extends Controller
             ->join("transacciones", "transacciones.id_transaccion","=", "items.id_transaccion")
             ->join("empresas", "transacciones.id_empresa", "=", "empresas.id_empresa")
             ->whereRaw("equipamiento = 1 and fecha_entrega between '{$fecha_inicial}  00:00:00' and '{$fecha_final} 23:59:59' and empresas.razon_social LIKE '%{$proveedor}%' ")->orderBy('fecha_entrega')
-            ->select(DB::raw(" min(fecha_entrega) as fecha_entrega,materiales.id_material, descripcion, items.id_transaccion as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
-            ->groupBy(DB::raw(" materiales.id_material, descripcion, items.id_transaccion , dbo.zerofill(4,transacciones.numero_folio)"))
+            ->select(DB::raw(" min(fecha_entrega) as fecha_entrega,materiales.id_material, empresas.razon_social as proveedor, descripcion, items.id_transaccion as id_oc, dbo.zerofill(4,transacciones.numero_folio) as folio_oc"))
+            ->groupBy(DB::raw(" materiales.id_material, descripcion, items.id_transaccion , dbo.zerofill(4,transacciones.numero_folio), empresas.razon_social"))
             ->get();
         
         $anios = DB::connection("cadeco")->select("select anio, count(*) as cantidad_dias 

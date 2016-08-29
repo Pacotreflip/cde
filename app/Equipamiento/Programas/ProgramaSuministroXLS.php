@@ -102,10 +102,12 @@ class ProgramaSuministroXLS {
             $inicial = 10;
             $sheet->mergeCells('B'.(($inicial)).':B'.($inicial+2));
             $sheet->setCellValue('B'.(($inicial)), '#');
-            $sheet->mergeCells('C'.(($inicial)).':J'.($inicial+2));
-            $sheet->setCellValue('C'.($inicial), 'Material');
-            $sheet->mergeCells('K'.($inicial).':L'.($inicial+2));
-            $sheet->setCellValue('K'.($inicial), 'Orden de Compra');
+            $sheet->mergeCells('C'.(($inicial)).':D'.($inicial+2));
+            $sheet->setCellValue('C'.($inicial), 'Proveedor');
+            $sheet->mergeCells('E'.($inicial).':O'.($inicial+2));
+            $sheet->setCellValue('E'.($inicial), 'Material');
+            $sheet->mergeCells('P'.($inicial).':Q'.($inicial+2));
+            $sheet->setCellValue('P'.($inicial), 'Orden de Compra');
             
             $sheet->setBorder('B4:B8', 'thin');
             $sheet->setCellValue('B5', '%');
@@ -122,14 +124,14 @@ class ProgramaSuministroXLS {
             $sheet->setCellValue('C7', 'Se han recibido algunos artículos y la fecha esperada de entrega no ha sido rebasada');
             $sheet->setCellValue('C8', 'Suministrado Completamente (100%)');
             
-            $column = 12;
+            $column = 17;
             foreach($data['anios'] as $anio) {
                 $sheet->setCellValueByColumnAndRow($column, $inicial, $anio->anio);
                 $sheet->mergeCells($this->cellsToMergeByColsRow($column, $column+$anio->cantidad_dias - 1,$inicial, $inicial));
                 $column += $anio->cantidad_dias;
             }
 
-            $column = 12;
+            $column = 17;
             $inicial++;
             foreach($data['meses'] as $mes) {
                 $sheet->setCellValueByColumnAndRow($column, $inicial, $mes->mesdes);
@@ -137,7 +139,7 @@ class ProgramaSuministroXLS {
                 $column += $mes->cantidad_dias;
             }
 
-            $column = 12;
+            $column = 17;
             $inicial++;
             foreach($data['dias'] as $dia) {
                 $sheet->setCellValueByColumnAndRow($column, $inicial, $dia->dia);
@@ -148,13 +150,14 @@ class ProgramaSuministroXLS {
             $i = $data['i'];
 
             foreach($data['materiales'] as $material) {
-                $column = 12;
-
-                $sheet->mergeCells($this->cellsToMergeByColsRow(2, 9, $inicial, $inicial));
-                $sheet->mergeCells($this->cellsToMergeByColsRow(10, 11, $inicial, $inicial));
+                $column = 17;
+                $sheet->mergeCells($this->cellsToMergeByColsRow(2, 3, $inicial, $inicial));
+                $sheet->mergeCells($this->cellsToMergeByColsRow(4, 14, $inicial, $inicial));
+                $sheet->mergeCells($this->cellsToMergeByColsRow(15, 16, $inicial, $inicial));
                 $sheet->setCellValueByColumnAndRow(1, $inicial, $i);
-                $sheet->setCellValueByColumnAndRow(2, $inicial, $material->descripcion);
-                $sheet->setCellValueByColumnAndRow(10, $inicial, '# '.$material->folio_oc);
+                $sheet->setCellValueByColumnAndRow(2, $inicial, $material->proveedor);
+                $sheet->setCellValueByColumnAndRow(4, $inicial, $material->descripcion);
+                $sheet->setCellValueByColumnAndRow(15, $inicial, '# '.$material->folio_oc);
 
                 foreach($data['dias'] as $dia) {
                     if(array_key_exists($dia->anio_mes_dia, $material->anio_mes_dia_suministro($material->folio_oc)) ) {
