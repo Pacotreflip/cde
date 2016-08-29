@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="col-md-2" style="margin-top: 25px">
-            <button type="submit" class="btn btn-small btn-info">
+            <button type="submit" class="btn btn-small btn-info consultar">
                 <span class="glyphicon glyphicon-list-alt" style="margin-right: 5px"></span>Consultar
             </button>
         </div>
