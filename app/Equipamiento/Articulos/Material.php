@@ -744,7 +744,7 @@ class Material extends Model
         return $query->leftJoin("items","items.id_material","=", "materiales.id_material")
             ->leftJoin("Equipamiento.materiales_requeridos_area","materiales.id_material","=", "Equipamiento.materiales_requeridos_area.id_material")
             ->leftJoin("transacciones","items.id_transaccion","=", "transacciones.id_transaccion")
-            ->whereRaw('LEN(nivel) > 4 and (Equipamiento.materiales_requeridos_area.id_material is not null or materiales.control_equipamiento = 1 or (transacciones.equipamiento = 1))')
+            ->whereRaw('LEN(nivel) > 4 and (Equipamiento.materiales_requeridos_area.id_material is not null or materiales.control_equipamiento = 1 or (transacciones.equipamiento = 1 and transacciones.estado != -2))')
             ;
     }
     

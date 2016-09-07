@@ -78,7 +78,8 @@ class Transaccion extends Model
     {
         return $query->where('tipo_transaccion', Tipo::ORDEN_COMPRA)
             ->where('opciones', 1)
-            ->where('equipamiento', 1);
+            ->where('equipamiento', 1)
+            ->where('transacciones.estado','<>', -2);
     }
     
     public function recibido()
